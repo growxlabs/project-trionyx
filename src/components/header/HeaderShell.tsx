@@ -68,16 +68,19 @@ export const HeaderShell = () => {
         ref={headerRef}
         className="sticky top-0 z-50 w-full bg-[#F5F5EE]/90 lg:bg-transparent border-b border-[rgba(23,23,20,0.07)] transition-colors"
       >
-        <div className="w-full px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        <div className="w-full px-5 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between">
           {/* Official Brand Logo */}
           <div className="flex items-center gap-3">
             <Link
               href="/"
               className="inline-flex items-center group py-1"
               aria-label="Trionyx Home"
-              onClick={() => setIsProductsOpen(false)}
+              onClick={() => {
+                setIsProductsOpen(false);
+                setMobileMenuOpen(false);
+              }}
             >
-              <TrionyxLogo size="md" />
+              <TrionyxLogo size="md" className="h-8 sm:h-10 lg:h-11" />
             </Link>
           </div>
 
@@ -123,11 +126,11 @@ export const HeaderShell = () => {
           </nav>
 
           {/* 
-            RIGHT UTILITY & ACTIONS CLUSTER
+            RIGHT UTILITY & ACTIONS CLUSTER (DESKTOP)
             - Contact: Restrained neutral secondary action
             - Dealer Access: Visually distinct primary utility action (concentrated orange)
           */}
-          <div className="hidden sm:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-3">
             <Link href="/contact" tabIndex={-1}>
               <Button variant="outline" size="sm">
                 Contact
@@ -143,20 +146,16 @@ export const HeaderShell = () => {
             </Link>
           </div>
 
-          {/* Mobile Hamburger Toggle Button */}
-          <div className="flex md:hidden items-center gap-2">
-            <Link href="/dealer-access" tabIndex={-1} className="sm:hidden">
-              <Button variant="primary" size="sm">
-                Dealer Access
-              </Button>
-            </Link>
+          {/* Mobile Menu Button — Clean 48px Square Button */}
+          <div className="flex md:hidden items-center">
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label={mobileMenuOpen ? 'Close Menu' : 'Open Menu'}
-              className="w-10 h-10 rounded-[4px] border border-[rgba(23,23,20,0.12)] bg-[#F5F5EE] flex items-center justify-center text-[#171714] hover:bg-[#EFECE3] transition-colors"
+              aria-expanded={mobileMenuOpen}
+              className="w-12 h-12 rounded-[6px] border border-[rgba(23,23,20,0.12)] bg-[#F5F5EE] active:bg-[#EFECE3] flex items-center justify-center text-[#171714] hover:border-[rgba(23,23,20,0.22)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26522]"
             >
-              {mobileMenuOpen ? <CloseIcon size={18} /> : <MenuIcon size={18} />}
+              {mobileMenuOpen ? <CloseIcon size={20} /> : <MenuIcon size={20} />}
             </button>
           </div>
         </div>
@@ -174,14 +173,14 @@ export const HeaderShell = () => {
 
         {/* MOBILE EXPANDABLE MENU */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-[rgba(23,23,20,0.07)] bg-[#F5F5EE] px-6 py-5 shadow-[0_12px_24px_rgba(23,23,20,0.04)] animate-in fade-in slide-in-from-top-2 duration-150">
+          <div className="md:hidden border-t border-[rgba(23,23,20,0.07)] bg-[#F5F5EE] px-5 py-5 shadow-[0_12px_24px_rgba(23,23,20,0.04)] animate-in fade-in slide-in-from-top-2 duration-150">
             <div className="flex flex-col space-y-1">
               {/* Products Expandable Group */}
               <div>
                 <button
                   type="button"
                   onClick={() => setMobileProductsOpen(!mobileProductsOpen)}
-                  className="w-full flex items-center justify-between py-2.5 px-3 rounded-[3px] text-[15px] font-semibold text-[#171714] hover:bg-[#EFECE3] transition-colors"
+                  className="w-full flex items-center justify-between py-3 px-3.5 rounded-[4px] text-[15.5px] font-semibold text-[#171714] hover:bg-[#EFECE3] transition-colors"
                 >
                   <span>Products</span>
                   <ChevronDownIcon
@@ -230,15 +229,15 @@ export const HeaderShell = () => {
               <Link
                 href="/installer-network"
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-2.5 px-3 rounded-[3px] text-[15px] font-medium text-[#171714] hover:bg-[#EFECE3] hover:text-[#171714] transition-colors"
+                className="py-3 px-3.5 rounded-[4px] text-[15.5px] font-medium text-[#171714] hover:bg-[#EFECE3] transition-colors"
               >
                 Installer Network
               </Link>
 
               <Link
-                href="/about"
+                href="/#about"
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-2.5 px-3 rounded-[3px] text-[15px] font-medium text-[#171714] hover:bg-[#EFECE3] hover:text-[#171714] transition-colors"
+                className="py-3 px-3.5 rounded-[4px] text-[15.5px] font-medium text-[#171714] hover:bg-[#EFECE3] transition-colors"
               >
                 About
               </Link>
@@ -246,25 +245,22 @@ export const HeaderShell = () => {
               <Link
                 href="/contact"
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-2.5 px-3 rounded-[3px] text-[15px] font-medium text-[#171714] hover:bg-[#EFECE3] hover:text-[#171714] transition-colors"
+                className="py-3 px-3.5 rounded-[4px] text-[15.5px] font-medium text-[#171714] hover:bg-[#EFECE3] transition-colors"
               >
                 Contact
               </Link>
             </div>
 
-            <div className="mt-5 pt-4 border-t border-[rgba(23,23,20,0.07)] flex flex-col gap-2.5">
-              <Link href="/dealer-access" onClick={() => setMobileMenuOpen(false)} className="w-full">
+            {/* Dealer Access visually emphasized */}
+            <div className="mt-5 pt-4 border-t border-[rgba(23,23,20,0.07)]">
+              <Link href="/dealer-access" onClick={() => setMobileMenuOpen(false)} className="w-full block">
                 <Button
                   variant="primary"
                   size="md"
                   fullWidth
+                  className="h-11 text-[15px] font-semibold tracking-[-0.01em]"
                 >
                   Dealer Access
-                </Button>
-              </Link>
-              <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="w-full">
-                <Button variant="outline" size="md" fullWidth>
-                  Contact Trionyx
                 </Button>
               </Link>
             </div>
@@ -274,12 +270,15 @@ export const HeaderShell = () => {
 
       {/* 
         SUBTLE BACKDROP TREATMENT
-        De-emphasizes underlying page content while mega menu is open without heavily darkening it
+        De-emphasizes underlying page content while mega menu or mobile menu is open
       */}
-      {isProductsOpen && (
+      {(isProductsOpen || mobileMenuOpen) && (
         <div
-          className="fixed inset-0 top-20 bg-[#171714]/[0.05] backdrop-blur-[2px] transition-opacity duration-200 z-40 pointer-events-auto"
-          onClick={() => setIsProductsOpen(false)}
+          className="fixed inset-0 top-16 md:top-20 bg-[#171714]/[0.05] backdrop-blur-[2px] transition-opacity duration-200 z-40 pointer-events-auto"
+          onClick={() => {
+            setIsProductsOpen(false);
+            setMobileMenuOpen(false);
+          }}
           aria-hidden="true"
         />
       )}
