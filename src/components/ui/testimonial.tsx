@@ -66,16 +66,16 @@ export function ClientFeedback() {
         </TimelineContent>
       </article>
 
-      {/* 3-Column Bento Grid matching component structure */}
-      <div className="lg:grid lg:grid-cols-3 gap-3.5 flex flex-col w-full max-w-[1340px] mx-auto lg:py-12 pt-10 pb-4 lg:px-8 px-4">
+      {/* 3-Column Bento Grid on desktop / Horizontal Scroller on mobile */}
+      <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth px-6 no-scrollbar lg:grid lg:grid-cols-3 lg:gap-3.5 lg:overflow-visible lg:px-8 w-full max-w-[1340px] mx-auto lg:py-12 pt-10 pb-4">
         {/* COLUMN 1 */}
-        <div className="md:flex lg:flex-col lg:space-y-3.5 h-full lg:gap-0 gap-3.5">
+        <div className="contents lg:flex lg:flex-col lg:space-y-3.5 lg:h-full lg:gap-0">
           {/* Card 1: Studio Owner (Large Featured Card) */}
           <TimelineContent
             animationNum={0}
             customVariants={revealVariants}
             timelineRef={testimonialRef}
-            className="lg:flex-[7] flex-[6] flex flex-col justify-between relative bg-[#FCFBF7] text-[#171714] overflow-hidden rounded-xl border border-[rgba(23,23,20,0.08)] p-6 shadow-[0_2px_10px_rgba(23,23,20,0.02)]"
+            className="w-[84vw] max-w-[340px] shrink-0 snap-start lg:w-auto lg:max-w-none lg:flex-[7] flex flex-col justify-between relative bg-[#FCFBF7] text-[#171714] overflow-hidden rounded-xl border border-[rgba(23,23,20,0.08)] p-6 shadow-[0_2px_10px_rgba(23,23,20,0.02)]"
           >
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#17171408_1px,transparent_1px),linear-gradient(to_bottom,#17171408_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)] pointer-events-none"></div>
             
@@ -112,7 +112,7 @@ export function ClientFeedback() {
             animationNum={1}
             customVariants={revealVariants}
             timelineRef={testimonialRef}
-            className="lg:flex-[3] flex-[4] lg:h-fit lg:shrink-0 flex flex-col justify-between relative bg-[#F26522] text-white overflow-hidden rounded-xl border border-[#F26522] p-6 shadow-[0_4px_20px_rgba(242,101,34,0.18)]"
+            className="w-[84vw] max-w-[340px] shrink-0 snap-start lg:w-auto lg:max-w-none lg:flex-[3] lg:h-fit flex flex-col justify-between relative bg-[#F26522] text-white overflow-hidden rounded-xl border border-[#F26522] p-6 shadow-[0_4px_20px_rgba(242,101,34,0.18)]"
           >
             <div className="flex items-center gap-1 mb-4 text-white/90">
               {'★'.repeat(5)}
@@ -144,13 +144,13 @@ export function ClientFeedback() {
         </div>
 
         {/* COLUMN 2 (Center Column: Architectural Dark Cards) */}
-        <div className="lg:h-full md:flex lg:flex-col h-fit lg:space-y-3.5 lg:gap-0 gap-3.5">
+        <div className="contents lg:flex lg:flex-col lg:space-y-3.5 lg:h-full lg:gap-0">
           {/* Card 3 */}
           <TimelineContent
             animationNum={2}
             customVariants={revealVariants}
             timelineRef={testimonialRef}
-            className="flex flex-col justify-between relative bg-[#171714] text-white overflow-hidden rounded-xl border border-[#262622] p-6 shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
+            className="w-[84vw] max-w-[340px] shrink-0 snap-start lg:w-auto lg:max-w-none flex flex-col justify-between relative bg-[#171714] text-white overflow-hidden rounded-xl border border-[#262622] p-6 shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
           >
             <div className="flex items-center gap-1 mb-3 text-[#F26522]">
               {'★'.repeat(5)}
@@ -185,7 +185,7 @@ export function ClientFeedback() {
             animationNum={3}
             customVariants={revealVariants}
             timelineRef={testimonialRef}
-            className="flex flex-col justify-between relative bg-[#171714] text-white overflow-hidden rounded-xl border border-[#262622] p-6 shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
+            className="w-[84vw] max-w-[340px] shrink-0 snap-start lg:w-auto lg:max-w-none flex flex-col justify-between relative bg-[#171714] text-white overflow-hidden rounded-xl border border-[#262622] p-6 shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
           >
             <div className="flex items-center gap-1 mb-3 text-[#F26522]">
               {'★'.repeat(5)}
@@ -220,7 +220,7 @@ export function ClientFeedback() {
             animationNum={4}
             customVariants={revealVariants}
             timelineRef={testimonialRef}
-            className="flex flex-col justify-between relative bg-[#171714] text-white overflow-hidden rounded-xl border border-[#262622] p-6 shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
+            className="w-[84vw] max-w-[340px] shrink-0 snap-start lg:w-auto lg:max-w-none flex flex-col justify-between relative bg-[#171714] text-white overflow-hidden rounded-xl border border-[#262622] p-6 shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
           >
             <div className="flex items-center gap-1 mb-3 text-[#F26522]">
               {'★'.repeat(5)}
@@ -252,13 +252,13 @@ export function ClientFeedback() {
         </div>
 
         {/* COLUMN 3 */}
-        <div className="h-full md:flex lg:flex-col lg:space-y-3.5 lg:gap-0 gap-3.5">
+        <div className="contents lg:flex lg:flex-col lg:space-y-3.5 lg:h-full lg:gap-0">
           {/* Card 6: Brand Orange Accent Card */}
           <TimelineContent
             animationNum={5}
             customVariants={revealVariants}
             timelineRef={testimonialRef}
-            className="lg:flex-[3] flex-[4] flex flex-col justify-between relative bg-[#F26522] text-white overflow-hidden rounded-xl border border-[#F26522] p-6 shadow-[0_4px_20px_rgba(242,101,34,0.18)]"
+            className="w-[84vw] max-w-[340px] shrink-0 snap-start lg:w-auto lg:max-w-none lg:flex-[3] flex flex-col justify-between relative bg-[#F26522] text-white overflow-hidden rounded-xl border border-[#F26522] p-6 shadow-[0_4px_20px_rgba(242,101,34,0.18)]"
           >
             <div className="flex items-center gap-1 mb-4 text-white/90">
               {'★'.repeat(5)}
@@ -293,7 +293,7 @@ export function ClientFeedback() {
             animationNum={6}
             customVariants={revealVariants}
             timelineRef={testimonialRef}
-            className="lg:flex-[7] flex-[6] flex flex-col justify-between relative bg-[#FCFBF7] text-[#171714] overflow-hidden rounded-xl border border-[rgba(23,23,20,0.08)] p-6 shadow-[0_2px_10px_rgba(23,23,20,0.02)]"
+            className="w-[84vw] max-w-[340px] shrink-0 snap-start lg:w-auto lg:max-w-none lg:flex-[7] flex flex-col justify-between relative bg-[#FCFBF7] text-[#171714] overflow-hidden rounded-xl border border-[rgba(23,23,20,0.08)] p-6 shadow-[0_2px_10px_rgba(23,23,20,0.02)]"
           >
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#17171408_1px,transparent_1px),linear-gradient(to_bottom,#17171408_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)] pointer-events-none"></div>
 
