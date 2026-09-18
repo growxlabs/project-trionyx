@@ -60,13 +60,21 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
           style={{ fontFamily: '"Instrument Sans", sans-serif' }}
           className="w-full md:col-span-7 flex flex-col justify-center md:pl-6 lg:pl-8 xl:pl-12"
         >
-          {/* Main Heading — Restored bold / font-semibold */}
+          {/* About Title */}
+          <span
+            style={{ fontFamily: '"Instrument Sans", sans-serif' }}
+            className="text-[11px] sm:text-[12px] font-medium tracking-[0.14em] uppercase text-[#68665F] mb-4 block"
+          >
+            ABOUT TRIONYX
+          </span>
+
+          {/* Two Decades Heading — Styled with same font style & normal weight as Founded */}
           <h2
             style={{
               fontFamily: '"Instrument Sans", sans-serif',
-              letterSpacing: '-0.03em',
+              letterSpacing: '-0.025em',
             }}
-            className="text-[#171714] font-semibold text-[30px] xs:text-[34px] sm:text-[38px] lg:text-[44px] leading-[1.12] max-w-[540px]"
+            className="text-[#171714] font-normal text-[28px] xs:text-[32px] sm:text-[36px] lg:text-[42px] leading-[1.18] max-w-[540px]"
           >
             Two decades in the automotive industry.
           </h2>
@@ -113,8 +121,18 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
             </p>
           </div>
 
+          {/* Proof Line */}
+          <div className="mt-7 sm:mt-8 pt-6 border-t border-[rgba(23,23,20,0.08)] max-w-[480px] lg:max-w-[500px]">
+            <span
+              style={{ fontFamily: '"Instrument Sans", sans-serif' }}
+              className="text-[12px] font-medium tracking-[0.16em] uppercase text-[#68665F]"
+            >
+              EST. 2006 &nbsp;·&nbsp; 20 YEARS
+            </span>
+          </div>
+
           {/* Single Action CTA */}
-          <div className="mt-8 sm:mt-10">
+          <div className="mt-6 sm:mt-8 lg:mt-10">
             <Button
               variant="outline"
               size="lg"
