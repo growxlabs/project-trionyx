@@ -9,7 +9,7 @@ export const ReviewsSection: React.FC = () => {
     <SectionFrame
       id="reviews"
       hasBottomBorder
-      className="bg-[#F7F6F0] overflow-hidden"
+      className="bg-[#F5F5EE] overflow-hidden"
     >
       <ClientFeedback />
     </SectionFrame>

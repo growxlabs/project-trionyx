@@ -23,7 +23,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
     <SectionFrame
       id="about"
       hasBottomBorder
-      className="bg-[#F7F6F0] overflow-hidden"
+      className="bg-[#F5F5EE] overflow-hidden"
     >
       <ContentGrid className="md:grid-cols-12 pt-8 pb-14 sm:pt-16 sm:pb-20 md:py-20 lg:py-32 items-center gap-10 md:gap-10 lg:gap-16">
         {/* DESKTOP / TABLET VISUAL COLUMN (Hidden on mobile <768px, left on tablet/desktop) */}
@@ -42,7 +42,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
             </div>
 
             {/* Overlapping Secondary Accent Image: Premium vehicle finish & surface reflection */}
-            <div className="absolute right-0 bottom-0 w-[58%] sm:w-[56%] aspect-[4/3] overflow-hidden rounded-[4px] border-2 border-[#F7F6F0] shadow-[0_16px_40px_rgba(23,23,20,0.09)] bg-[#EFECE3] transition-transform duration-700 ease-out group-hover:translate-x-1 group-hover:-translate-y-1">
+            <div className="absolute right-0 bottom-0 w-[58%] sm:w-[56%] aspect-[4/3] overflow-hidden rounded-[4px] border-2 border-[#F5F5EE] shadow-[0_16px_40px_rgba(23,23,20,0.09)] bg-[#EFECE3] transition-transform duration-700 ease-out group-hover:translate-x-1 group-hover:-translate-y-1">
               <Image
                 src="/images/about/ceramic-coating-surface.jpg"
                 alt="Hydrophobic ceramic coating and clearcoat finish on automotive surface"
@@ -87,7 +87,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
               </div>
 
               {/* Overlapping Secondary Accent Image: around 52% width, overlapping bottom-right */}
-              <div className="absolute right-0 bottom-0 w-[52%] aspect-[4/3] overflow-hidden rounded-[4px] border-2 border-[#F7F6F0] shadow-[0_16px_36px_rgba(23,23,20,0.10)] bg-[#EFECE3]">
+              <div className="absolute right-0 bottom-0 w-[52%] aspect-[4/3] overflow-hidden rounded-[4px] border-2 border-[#F5F5EE] shadow-[0_16px_36px_rgba(23,23,20,0.10)] bg-[#EFECE3]">
                 <Image
                   src="/images/about/ceramic-coating-surface.jpg"
                   alt="Hydrophobic ceramic coating and clearcoat finish on automotive surface"
@@ -100,10 +100,10 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
             </div>
           </div>
 
-          {/* Full Body Copy — All with the exact same 16px font size, font family & line height */}
+          {/* Full Body Copy — Uniform #171714 text color matching the heading */}
           <div
             style={{ fontFamily: '"Instrument Sans", sans-serif' }}
-            className="mt-6 space-y-4 sm:space-y-5 text-[#68665F] text-[16px] leading-[1.7] max-w-[480px] lg:max-w-[500px] font-normal"
+            className="mt-6 space-y-4 sm:space-y-5 text-[#171714] text-[16px] leading-[1.7] max-w-[480px] lg:max-w-[500px] font-normal"
           >
             <p>
               Founded in 2006, Trionyx has spent nearly two decades working across the automotive products market, building experience around vehicle protection, care and related product categories.

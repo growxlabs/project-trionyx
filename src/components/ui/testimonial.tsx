@@ -26,7 +26,7 @@ export function ClientFeedback() {
 
   return (
     <section
-      className="relative w-full bg-[#F7F6F0] py-16 sm:py-20 lg:py-24 text-[#171714] overflow-hidden"
+      className="relative w-full bg-[#F5F5EE] py-16 sm:py-20 lg:py-24 text-[#171714] overflow-hidden"
       ref={testimonialRef}
     >
       {/* Section Header: Trionyx Editorial Hierarchy */}
