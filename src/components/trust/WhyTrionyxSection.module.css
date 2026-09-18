@@ -123,37 +123,7 @@
   pointer-events: none;
 }
 
-/* Floating Status Indicator at bottom of Sticky Visual */
-.stickyStatusPill {
-  position: relative;
-  z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(12px);
-  padding: 8px 16px;
-  border-radius: 100px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  align-self: flex-start;
-}
 
-.stickyStatusDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #F26522;
-}
-
-.stickyStatusText {
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #171714;
-}
 
 /* ========================================================================= */
 /* RIGHT COLUMN: SCROLLING CARDS SEQUENCE                                    */
@@ -355,10 +325,12 @@
   background: #FFFFFF;
   border: 1px solid rgba(23, 23, 20, 0.08);
   box-shadow: 0 4px 20px rgba(23, 23, 20, 0.03);
+  min-height: 340px;
 }
 
 .cardPartnership .cardTop {
   color: #68665F;
+  margin-bottom: 32px;
 }
 
 .statusPill {
@@ -374,51 +346,13 @@
 }
 
 .cardPartnership h3 {
-  margin-top: 40px;
   color: #171714;
 }
 
 .cardPartnership p {
   color: #68665F;
   max-width: 440px;
-}
-
-.proofSteps {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  margin-top: 48px;
-  border-top: 1px solid rgba(23, 23, 20, 0.08);
-  padding-top: 20px;
-  gap: 16px;
-}
-
-.proofSteps div {
-  display: flex;
-  flex-direction: column;
-}
-
-.proofSteps span {
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  color: #F26522;
-  margin-bottom: 6px;
-}
-
-.proofSteps strong {
-  font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 15px;
-  font-weight: 600;
-  color: #171714;
-  line-height: 1.2;
-}
-
-.proofSteps small {
-  font-size: 11.5px;
-  color: #68665F;
-  margin-top: 4px;
-  line-height: 1.4;
+  margin-top: 16px;
 }
 
 /* --- Card 04: Our Market (Warm Neutral Sand Tile) --- */
@@ -426,67 +360,24 @@
   background: #EFE8DD;
   border: 1px solid rgba(23, 23, 20, 0.08);
   box-shadow: 0 4px 20px rgba(23, 23, 20, 0.03);
+  min-height: 340px;
 }
 
 .cardMarket .cardTop {
   color: #68665F;
+  margin-bottom: 32px;
 }
 
-.marketContent {
-  display: grid;
-  grid-template-columns: 1.35fr 1fr;
-  align-items: center;
-  gap: 28px;
-  margin-top: 36px;
-}
-
-.marketContent h3 {
+.cardMarket h3 {
   color: #171714;
 }
 
-.marketContent p {
-  margin-top: 14px;
+.cardMarket p {
+  margin-top: 16px;
   color: #68665F;
-  font-size: 14.5px;
-  line-height: 1.6;
-}
-
-.conditionList {
-  display: flex;
-  flex-direction: column;
-  border-left: 1px solid rgba(23, 23, 20, 0.10);
-  padding-left: 24px;
-}
-
-.conditionList span {
-  font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 13.5px;
-  font-weight: 550;
-  color: #171714;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(23, 23, 20, 0.08);
-  letter-spacing: -0.01em;
-}
-
-.conditionList span:first-child {
-  padding-top: 0;
-}
-
-.conditionList span:last-child {
-  border-bottom: 0;
-  padding-bottom: 0;
-}
-
-.cardMarketFooter {
-  margin-top: 36px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(23, 23, 20, 0.08);
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  color: #7A6B58;
-  text-transform: uppercase;
+  font-size: 15px;
+  line-height: 1.65;
+  max-width: 440px;
 }
 
 /* ========================================================================= */

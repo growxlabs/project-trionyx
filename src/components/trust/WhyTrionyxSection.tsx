@@ -13,8 +13,8 @@ interface VisualPhase {
 
 const visualPhases: VisualPhase[] = [
   {
-    src: '/images/about/ppf-installation.jpg',
-    alt: 'Automotive protective film precision installation in workshop',
+    src: '/images/about/experience-workbench.png',
+    alt: 'Illustrative automotive application workbench with film samples and experienced technician hands',
     label: '01 / 04 · SINCE 2006',
   },
   {
@@ -23,14 +23,14 @@ const visualPhases: VisualPhase[] = [
     label: '02 / 04 · THE PORTFOLIO',
   },
   {
-    src: '/images/about/installation.jpg',
-    alt: 'Certified automotive installer partner workshop studio',
+    src: '/images/about/dealer-distribution.png',
+    alt: 'Illustrative automotive distribution team checking inventory and outbound product boxes',
     label: '03 / 04 · DEALER SUPPORT',
   },
   {
-    src: '/images/about/ceramic-coating-surface.jpg',
-    alt: 'Automotive ceramic coating water sheeting under demanding road conditions',
-    label: '04 / 04 · BUILT FOR INDIA',
+    src: '/images/about/india-road.png',
+    alt: 'Illustrative vehicle on a rain-damp Kerala road with palms and local roadside buildings',
+    label: '04 / 04 · INDIA',
   },
 ];
 
@@ -117,15 +117,9 @@ export function WhyTrionyxSection() {
                 />
               </div>
             ))}
-            <div className={styles.visualVignette} />
           </div>
-
-          {/* Floating Phase Pill Indicator */}
-          <div className={styles.stickyStatusPill}>
-            <span className={styles.stickyStatusDot} />
-            <span className={styles.stickyStatusText}>
-              {visualPhases[activeCardIndex]?.label || visualPhases[0].label}
-            </span>
+          <div className={styles.cardTop} style={{ position: 'relative', zIndex: 2, alignSelf: 'flex-start', padding: '10px 14px', borderRadius: 6, background: '#F7F6F0', color: '#171714' }}>
+            {visualPhases[activeCardIndex].label}
           </div>
         </div>
 
@@ -151,8 +145,8 @@ export function WhyTrionyxSection() {
             </div>
 
             <div className={styles.experienceBody}>
-              <h3>Experience that<br />moves you forward.</h3>
-              <p>Two decades in automotive products. A foundation built on understanding the market and the people who keep it moving.</p>
+              <h3>Since 2006</h3>
+              <p>Nearly two decades in the automotive products market.</p>
             </div>
 
             <div className={styles.cardExperienceFooter}>
@@ -195,9 +189,6 @@ export function WhyTrionyxSection() {
             </div>
           </article>
 
-          {/* ----------------------------------------------------------------------- */}
-          {/* CARD 03: The Partnership / Dealer Support (Clean White Editorial)      */}
-          {/* ----------------------------------------------------------------------- */}
           <article
             ref={(el) => { cardRefs.current[2] = el; }}
             className={`${styles.card} ${styles.cardPartnership}`}
@@ -210,24 +201,6 @@ export function WhyTrionyxSection() {
               <h3>More than supply.<br />Support that stays.</h3>
               <p>Product availability, practical guidance and support built around long-term dealer relationships.</p>
             </div>
-
-            <div className={styles.proofSteps}>
-              <div>
-                <span>01</span>
-                <strong>Choose</strong>
-                <small>Product guidance</small>
-              </div>
-              <div>
-                <span>02</span>
-                <strong>Source</strong>
-                <small>Availability support</small>
-              </div>
-              <div>
-                <span>03</span>
-                <strong>Grow</strong>
-                <small>Lasting relationships</small>
-              </div>
-            </div>
           </article>
 
           {/* ----------------------------------------------------------------------- */}
@@ -237,26 +210,14 @@ export function WhyTrionyxSection() {
             ref={(el) => { cardRefs.current[3] = el; }}
             className={`${styles.card} ${styles.cardMarket}`}
           >
-            <div className={styles.cardTop}>
-              <span>04 / OUR MARKET</span>
-              <span>INDIA</span>
-            </div>
-
-            <div className={styles.marketContent}>
-              <div>
-                <h3>For the roads<br />we call home.</h3>
-                <p>Products and distribution shaped around Indian automotive demand and everyday operating conditions.</p>
+            <div>
+              <div className={styles.cardTop}>
+                <span>04 / OUR MARKET</span>
+                <span>INDIA</span>
               </div>
 
-              <div className={styles.conditionList}>
-                <span>Summer heat</span>
-                <span>Monsoon days</span>
-                <span>Everyday roads</span>
-              </div>
-            </div>
-
-            <div className={styles.cardMarketFooter}>
-              LOCAL UNDERSTANDING. LONG-TERM COMMITMENT.
+              <h3>For the roads<br />we call home.</h3>
+              <p>Products and distribution shaped around Indian automotive demand and everyday operating conditions.</p>
             </div>
           </article>
         </div>
