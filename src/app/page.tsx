@@ -4,6 +4,7 @@ import { MeshGradientCanvas } from '@/components/hero/MeshGradientCanvas';
 import { HeroSection } from '@/components/hero/HeroSection';
 import { AboutSection } from '@/components/about/AboutSection';
 import { ReviewsSection } from '@/components/reviews/ReviewsSection';
+import { WhyTrionyxSection } from '@/components/trust';
 
 export default function HomePage() {
   return (
@@ -33,6 +34,9 @@ export default function HomePage() {
 
           {/* Section 03: Customer Reviews */}
           <ReviewsSection />
+
+          {/* Section 04: Why Trionyx (Trust) */}
+          <WhyTrionyxSection />
         </main>
       </PageFrame>
     </div>
