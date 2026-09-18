@@ -49,7 +49,6 @@ export const HeroSection = ({
         <div className="md:col-span-7 flex flex-col justify-center">
           {/* Small Context Tag: strictly aligned flush to Column 1 */}
           <div className="flex items-center gap-2 mb-3.5 sm:mb-5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#F26522]" aria-hidden="true" />
             <span className="text-[11px] sm:text-[12px] font-bold tracking-[0.14em] uppercase text-[#68665F] font-mono">
               {context}
             </span>

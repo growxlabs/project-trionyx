@@ -18,16 +18,9 @@ export function WhyTrionyxSection() {
       <div className={styles.innerContainer}>
         {/* Centered Header */}
         <div className={styles.header}>
-          <div className={styles.eyebrowContainer}>
-            <span className={styles.eyebrowDot} aria-hidden="true" />
-            <p className={styles.eyebrow}>WHY TRIONYX</p>
-          </div>
           <h2 id="why-trionyx-heading" className={styles.title}>
             Built on experience. Chosen for what comes with it.
           </h2>
-          <p className={styles.subtitle}>
-            Two decades in automotive products, a growing portfolio, dealer support and a clear focus on the Indian market.
-          </p>
         </div>
 
         {/* 4 Editorial Trust Cards Row */}

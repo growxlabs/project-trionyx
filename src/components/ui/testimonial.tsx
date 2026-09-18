@@ -327,10 +327,7 @@ export function ClientFeedback() {
         </div>
       </div>
 
-      {/* Subtle Architectural Baseline */}
-      <div className="absolute border-b border-[rgba(23,23,20,0.08)] bottom-4 h-16 z-[2] md:w-full w-[90%] md:left-0 left-[5%] pointer-events-none">
-        <div className="max-w-[1340px] mx-auto w-full h-full relative before:absolute before:-left-2 before:-bottom-2 before:w-4 before:h-4 before:bg-[#FCFBF7] before:shadow-sm before:border before:border-[rgba(23,23,20,0.12)] after:absolute after:-right-2 after:-bottom-2 after:w-4 after:h-4 after:bg-[#FCFBF7] after:shadow-sm after:border after:border-[rgba(23,23,20,0.12)]"></div>
-      </div>
+
     </section>
   );
 }
