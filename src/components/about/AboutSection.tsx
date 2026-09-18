@@ -56,19 +56,25 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
         </div>
 
         {/* CONTENT COLUMN (Full width on mobile, right on tablet/desktop) */}
-        <div className="w-full md:col-span-7 flex flex-col justify-center md:pl-6 lg:pl-8 xl:pl-12">
+        <div
+          style={{ fontFamily: '"Instrument Sans", sans-serif' }}
+          className="w-full md:col-span-7 flex flex-col justify-center md:pl-6 lg:pl-8 xl:pl-12 font-normal"
+        >
           {/* 1. Small Eyebrow: 16px mb */}
-          <span className="text-[11px] sm:text-[12px] font-bold tracking-[0.14em] uppercase text-[#68665F] font-mono mb-4 block">
+          <span
+            style={{ fontFamily: '"Instrument Sans", sans-serif' }}
+            className="text-[11px] sm:text-[12px] font-normal tracking-[0.14em] uppercase text-[#68665F] mb-4 block"
+          >
             ABOUT TRIONYX
           </span>
 
-          {/* 2. Main Heading: clearly subordinated to Hero headline */}
+          {/* 2. Main Heading */}
           <h2
             style={{
               fontFamily: '"Instrument Sans", sans-serif',
               letterSpacing: '-0.03em',
             }}
-            className="text-[#171714] font-semibold text-[30px] xs:text-[34px] sm:text-[38px] lg:text-[44px] leading-[1.12] max-w-[540px]"
+            className="text-[#171714] font-normal text-[30px] xs:text-[34px] sm:text-[38px] lg:text-[44px] leading-[1.12] max-w-[540px]"
           >
             Two decades in the automotive industry.
           </h2>
@@ -103,7 +109,10 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
           </div>
 
           {/* 4. Two Short Story Paragraphs: 16-20px gap, controlled width */}
-          <div className="space-y-4 sm:space-y-5 text-[#68665F] text-[15px] sm:text-[16.5px] leading-[1.68] sm:leading-[1.7] max-w-[480px] lg:max-w-[500px] font-normal tracking-[-0.01em]">
+          <div
+            style={{ fontFamily: '"Instrument Sans", sans-serif' }}
+            className="space-y-4 sm:space-y-5 text-[#68665F] text-[15px] sm:text-[16.5px] leading-[1.68] sm:leading-[1.7] max-w-[480px] lg:max-w-[500px] font-normal tracking-[-0.01em]"
+          >
             <p>
               Founded in 2006, Trionyx has spent nearly two decades working across the automotive products market, building experience around vehicle protection, care and related product categories.
             </p>
@@ -114,7 +123,10 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
 
           {/* 5. Restrained Proof Line: 28-32px margin top */}
           <div className="mt-7 sm:mt-8 pt-6 border-t border-[rgba(23,23,20,0.08)] max-w-[480px] lg:max-w-[500px]">
-            <span className="font-mono text-[11px] sm:text-[12px] font-semibold tracking-[0.16em] uppercase text-[#8C897E]">
+            <span
+              style={{ fontFamily: '"Instrument Sans", sans-serif' }}
+              className="text-[11px] sm:text-[12px] font-normal tracking-[0.16em] uppercase text-[#8C897E]"
+            >
               EST. 2006 &nbsp;·&nbsp; 20 YEARS
             </span>
           </div>
@@ -126,7 +138,8 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
               size="lg"
               onClick={onCtaClick}
               trailingIcon={<ArrowRightIcon size={16} strokeWidth={2} />}
-              className="w-full sm:w-auto justify-center h-12 text-[15px] group hover:border-[rgba(23,23,20,0.28)]"
+              className="w-full sm:w-auto justify-center h-12 text-[15px] group hover:border-[rgba(23,23,20,0.28)] font-normal"
+              style={{ fontFamily: '"Instrument Sans", sans-serif' }}
             >
               About Trionyx
             </Button>
