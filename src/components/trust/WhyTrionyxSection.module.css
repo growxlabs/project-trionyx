@@ -1,5 +1,5 @@
 /* ========================================================================= */
-/* WHY TRIONYX SECTION — 4 EDITORIAL TRUST CARDS                             */
+/* WHY TRIONYX SECTION — CLEAN 4-CARD ROW                                    */
 /* ========================================================================= */
 
 .section {
@@ -18,7 +18,7 @@
 .header {
   text-align: center;
   max-width: 820px;
-  margin: 0 auto 48px;
+  margin: 0 auto 52px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -34,15 +34,6 @@
   color: #171714;
 }
 
-.subtitle {
-  font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: clamp(15px, 1.2vw, 17px);
-  line-height: 1.5;
-  color: #68665F;
-  margin: 0;
-  max-width: 680px;
-}
-
 /* --- 4 Columns Grid (Desktop: 1 row / 4 cols; Mobile: 2x2) --- */
 .grid {
   display: grid;
@@ -56,11 +47,11 @@
   border-radius: 18px;
   overflow: hidden;
   position: relative;
-  min-height: 490px;
-  padding: 30px 24px 26px;
+  min-height: 300px;
+  padding: 32px 26px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
 
@@ -69,93 +60,55 @@
   box-shadow: 0 12px 32px -8px rgba(23, 23, 20, 0.10);
 }
 
-.cardTop {
+.cardContent {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 22px;
-}
-
-.topLabelOrange {
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: #F26522;
-  text-transform: uppercase;
-}
-
-.topLabelMuted {
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: #68665F;
-  text-transform: uppercase;
-}
-
-.topMetaDark {
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.10em;
-  color: #A6A599;
-  text-transform: uppercase;
+  flex-direction: column;
 }
 
 .cardTitle {
   font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 21px;
+  font-size: 20px;
   font-weight: 600;
   letter-spacing: -0.025em;
-  line-height: 1.2;
+  line-height: 1.25;
   color: #171714;
-  margin: 0 0 6px;
+  margin: 0 0 12px;
 }
 
 .cardTitleLight {
   font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 21px;
+  font-size: 20px;
   font-weight: 600;
   letter-spacing: -0.025em;
-  line-height: 1.2;
-  color: #F7F6F0;
-  margin: 0 0 10px;
-}
-
-.cardStatement {
-  font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 14.5px;
-  font-weight: 600;
-  color: #383730;
-  line-height: 1.35;
-  margin: 0 0 10px;
+  line-height: 1.25;
+  color: #F5F5EE;
+  margin: 0 0 12px;
 }
 
 .cardDesc {
   font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 13.5px;
-  line-height: 1.55;
-  color: #68665F;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #57564F;
   margin: 0;
 }
 
 .cardDescLight {
   font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 13.5px;
+  font-size: 14px;
   line-height: 1.6;
   color: #B5B6AA;
   margin: 0;
 }
 
 /* ========================================================================= */
-/* CARD 01: EXPERIENCE (Dark Dramatic Card)                                  */
+/* CARD 01: SINCE 2006 (Dark Anchor Tile)                                    */
 /* ========================================================================= */
 .cardExperience {
   background: #171714;
-  color: #F7F6F0;
+  color: #F5F5EE;
   border: 1px solid rgba(255, 255, 255, 0.09);
+  justify-content: space-between;
 }
 
 .cardExperience:hover {
@@ -164,43 +117,16 @@
 
 .yearDisplay {
   font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: clamp(54px, 4.5vw, 68px);
+  font-size: clamp(48px, 4vw, 58px);
   line-height: 0.95;
   font-weight: 600;
   letter-spacing: -0.05em;
   color: #F26522;
-  margin: 10px 0 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.yearSub {
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  color: #A6A599;
-  text-transform: uppercase;
-}
-
-.cardFooterDark {
-  border-top: 1px solid rgba(255, 255, 255, 0.10);
-  margin-top: 24px;
-  padding-top: 14px;
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 9.5px;
-  font-weight: 600;
-  letter-spacing: 0.10em;
-  color: #9C9D91;
-  text-transform: uppercase;
+  margin-bottom: 24px;
 }
 
 /* ========================================================================= */
-/* CARD 02: THE PORTFOLIO (Curved Film Material Visual)                      */
+/* CARD 02: PRODUCT RANGE (Materials Visual Tile)                            */
 /* ========================================================================= */
 .cardPortfolio {
   background: #EEECE5;
@@ -232,49 +158,23 @@
   background: linear-gradient(
     180deg,
     rgba(238, 236, 229, 0.97) 0%,
-    rgba(238, 236, 229, 0.90) 45%,
-    rgba(238, 236, 229, 0.35) 75%,
-    rgba(238, 236, 229, 0.85) 100%
+    rgba(238, 236, 229, 0.90) 55%,
+    rgba(238, 236, 229, 0.50) 100%
   );
 }
 
 .portfolioContent {
   position: relative;
   z-index: 2;
-  padding: 30px 24px 26px;
+  padding: 32px 26px;
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-}
-
-.tagWrapper {
-  margin-top: 24px;
-}
-
-.tagList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.tagList li {
-  border: 1px solid rgba(23, 23, 20, 0.12);
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(8px);
-  border-radius: 100px;
-  font-size: 11px;
-  font-weight: 500;
-  padding: 5px 11px;
-  color: #171714;
-  letter-spacing: -0.01em;
+  justify-content: flex-start;
 }
 
 /* ========================================================================= */
-/* CARD 03: THE PARTNERSHIP (Clean White Card)                               */
+/* CARD 03: DEALER SUPPORT (Clean White Tile)                                */
 /* ========================================================================= */
 .cardSupport {
   background: #FFFFFF;
@@ -285,35 +185,8 @@
   border-color: rgba(23, 23, 20, 0.20);
 }
 
-.statusBadge {
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 9.5px;
-  font-weight: 700;
-  color: #171714;
-  border: 1px solid rgba(23, 23, 20, 0.12);
-  background: #FAF9F5;
-  padding: 4px 9px;
-  border-radius: 100px;
-  letter-spacing: 0.08em;
-}
-
-.supportFooter {
-  border-top: 1px solid rgba(23, 23, 20, 0.08);
-  margin-top: 24px;
-  padding-top: 14px;
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 9.5px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: #8C8A80;
-  text-transform: uppercase;
-}
-
 /* ========================================================================= */
-/* CARD 04: OUR MARKET (Warm Light Sand Tile)                                */
+/* CARD 04: BUILT FOR INDIA (Warm Sand Tile)                                 */
 /* ========================================================================= */
 .cardMarket {
   background: #EFE8DD;
@@ -322,45 +195,6 @@
 
 .cardMarket:hover {
   border-color: rgba(23, 23, 20, 0.20);
-}
-
-.marketBadge {
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 10px;
-  font-weight: 700;
-  color: #171714;
-  letter-spacing: 0.12em;
-}
-
-.conditionsList {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 20px;
-}
-
-.conditionsList span {
-  font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 12.5px;
-  font-weight: 550;
-  color: #171714;
-  padding: 6px 10px;
-  background: rgba(255, 255, 255, 0.65);
-  border: 1px solid rgba(23, 23, 20, 0.08);
-  border-radius: 6px;
-  letter-spacing: -0.01em;
-}
-
-.marketFooter {
-  border-top: 1px solid rgba(23, 23, 20, 0.08);
-  margin-top: 14px;
-  padding-top: 12px;
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 9.5px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: #7A6B58;
-  text-transform: uppercase;
 }
 
 /* ========================================================================= */
@@ -382,12 +216,12 @@
   }
 
   .card {
-    min-height: 440px;
-    padding: 24px 20px;
+    min-height: 260px;
+    padding: 26px 22px;
   }
 
   .portfolioContent {
-    padding: 24px 20px;
+    padding: 26px 22px;
   }
 }
 
