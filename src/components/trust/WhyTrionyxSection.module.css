@@ -1,25 +1,27 @@
 /* ========================================================================= */
-/* WHY TRIONYX SECTION — STICKY SCROLL STORYTELLING LAYOUT                   */
+/* WHY TRIONYX SECTION — APPROVED EDITORIAL PROOF TILES                      */
 /* ========================================================================= */
 
 .section {
   background: #F7F6F0;
-  padding: 88px 32px 120px;
+  padding: 80px 32px 100px;
   color: #171714;
-  position: relative;
 }
 
 /* --- Section Header Row --- */
 .headingRow {
-  margin-bottom: 56px;
-  max-width: 800px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 48px;
+  margin-bottom: 40px;
 }
 
 .eyebrowContainer {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 .eyebrowDot {
@@ -43,7 +45,7 @@
 
 .headingRow h2 {
   font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: clamp(34px, 3.8vw, 52px);
+  font-size: clamp(32px, 3.4vw, 46px);
   font-weight: 600;
   letter-spacing: -0.035em;
   line-height: 1.08;
@@ -56,97 +58,28 @@
   display: block;
 }
 
-/* --- Main Two-Column Container --- */
-.storyContainer {
-  display: flex;
-  align-items: flex-start;
-  gap: 48px;
-  position: relative;
+.intro {
+  max-width: 320px;
+  color: #68665F;
+  font-size: 14.5px;
+  line-height: 1.65;
+  margin: 0 0 4px;
+  letter-spacing: -0.01em;
 }
 
-/* ========================================================================= */
-/* LEFT COLUMN: STICKY AUTOMOTIVE VISUAL                                     */
-/* ========================================================================= */
-.stickyVisualColumn {
-  width: 48%;
-  position: sticky;
-  top: 110px;
-  height: calc(100vh - 160px);
-  min-height: 520px;
-  max-height: 680px;
-  border-radius: 24px;
-  overflow: hidden;
-  background: #1C1E1B;
-  border: 1px solid rgba(23, 23, 20, 0.10);
-  box-shadow: 0 16px 48px -12px rgba(23, 23, 20, 0.12);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 32px;
+/* --- 2 × 2 Architectural Grid --- */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 24px;
 }
 
-.visualImageWrapper {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-
-.visualLayer {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-  transform: scale(1.04);
-}
-
-.visualLayerActive {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.visualLayer img {
-  object-fit: cover;
-  object-position: center;
-}
-
-/* Subtle Vignette Gradient */
-.visualVignette {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(23, 23, 20, 0.15) 0%,
-    rgba(23, 23, 20, 0.05) 50%,
-    rgba(23, 23, 20, 0.65) 100%
-  );
-  z-index: 1;
-  pointer-events: none;
-}
-
-
-
-/* ========================================================================= */
-/* RIGHT COLUMN: SCROLLING CARDS SEQUENCE                                    */
-/* ========================================================================= */
-.scrollingCardsColumn {
-  width: 52%;
-  display: flex;
-  flex-direction: column;
-  gap: 36px;
-  padding-bottom: 24px;
-}
-
-/* Base Card Style */
+/* --- Universal Card Baseline --- */
 .card {
-  border-radius: 24px;
+  border-radius: 20px;
   overflow: hidden;
-  padding: 40px;
   position: relative;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  min-height: 420px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .cardTop {
@@ -155,7 +88,7 @@
   justify-content: space-between;
   gap: 16px;
   font-family: var(--font-geist-mono), monospace;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -163,7 +96,7 @@
 
 .card h3 {
   font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: clamp(26px, 2.4vw, 34px);
+  font-size: clamp(24px, 2.2vw, 32px);
   font-weight: 600;
   line-height: 1.12;
   letter-spacing: -0.03em;
@@ -171,32 +104,41 @@
 }
 
 .card p {
-  font-size: 15px;
+  font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
   line-height: 1.65;
   color: #68665F;
-  margin: 16px 0 0;
-  letter-spacing: -0.01em;
+  margin: 14px 0 0;
 }
 
-/* --- Card 01: Experience (Dark / Dramatic) --- */
-.cardExperience {
-  background: #1C1E1B;
+/* ========================================================================= */
+/* TILE 01: EXPERIENCE (Dark Dramatic Anchor)                                */
+/* ========================================================================= */
+.heritage {
+  background: #171714;
   color: #F7F6F0;
   border: 1px solid rgba(255, 255, 255, 0.09);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  min-height: 440px;
+  padding: 34px;
+  display: flex;
+  flex-direction: column;
 }
 
-.cardExperience .cardTop span:first-child {
-  color: #F26522;
+.heritage:hover {
+  border-color: rgba(255, 255, 255, 0.16);
 }
 
-.cardExperience .cardTop span:last-child {
+.heritage .cardTop {
   color: #C2C1B4;
 }
 
-.yearDisplay {
+.heritage .cardTop span:first-child {
+  color: #F26522;
+}
+
+.year {
   font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: clamp(72px, 6.8vw, 100px);
+  font-size: clamp(80px, 8vw, 116px);
   line-height: 0.95;
   font-weight: 600;
   letter-spacing: -0.05em;
@@ -207,7 +149,7 @@
   gap: 16px;
 }
 
-.yearDisplay span {
+.year span {
   font-family: var(--font-geist-mono), monospace;
   font-size: 11px;
   font-weight: 600;
@@ -217,25 +159,30 @@
   white-space: nowrap;
 }
 
-.experienceBody {
+.cardBottom {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 24px;
+  align-items: start;
   margin-top: auto;
 }
 
-.experienceBody h3 {
+.cardBottom h3 {
+  font-size: 23px;
   color: #F7F6F0;
-  font-size: 26px;
-  line-height: 1.15;
+  line-height: 1.16;
 }
 
-.experienceBody p {
+.cardBottom p {
+  margin: 0;
   color: #B5B6AA;
-  font-size: 14.5px;
-  line-height: 1.65;
+  font-size: 13px;
+  line-height: 1.6;
 }
 
-.cardExperienceFooter {
+.heritageFooter {
   border-top: 1px solid rgba(255, 255, 255, 0.10);
-  margin-top: 28px;
+  margin-top: 24px;
   padding-top: 16px;
   display: flex;
   justify-content: space-between;
@@ -248,92 +195,110 @@
   text-transform: uppercase;
 }
 
-/* --- Card 02: Portfolio (Light + Product Visual) --- */
-.cardPortfolio {
+/* ========================================================================= */
+/* TILE 02: THE PORTFOLIO (Light Visual Card with Curved Film)               */
+/* ========================================================================= */
+.products {
   background: #EEECE5;
   border: 1px solid rgba(23, 23, 20, 0.08);
-  box-shadow: 0 4px 20px rgba(23, 23, 20, 0.03);
+  min-height: 440px;
+  padding: 0;
 }
 
-.cardPortfolioImage {
+.products:hover {
+  border-color: rgba(23, 23, 20, 0.16);
+}
+
+.materialImage {
   position: absolute;
   right: 0;
   top: 0;
   bottom: 0;
-  width: 55%;
-  opacity: 0.95;
+  width: 62%;
 }
 
-.cardPortfolioImage img {
+.materialImage img {
   object-fit: cover;
   object-position: center right;
 }
 
-.cardPortfolioContent {
+.productContent {
   position: relative;
   z-index: 1;
+  padding: 34px;
+  min-height: 440px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
+  align-items: flex-start;
   max-width: 360px;
   background: linear-gradient(
     90deg,
     rgba(238, 236, 229, 0.98) 0%,
-    rgba(238, 236, 229, 0.92) 65%,
-    rgba(238, 236, 229, 0.45) 85%,
+    rgba(238, 236, 229, 0.94) 55%,
+    rgba(238, 236, 229, 0.40) 85%,
     transparent 100%
   );
 }
 
-.cardPortfolioContent .cardTop span {
+.productContent .cardTop span {
   color: #68665F;
 }
 
-.cardPortfolioContent h3 {
-  margin-top: 48px;
+.productContent h3 {
+  margin-top: 50px;
   color: #171714;
 }
 
-.cardPortfolioContent p {
+.productContent p {
+  max-width: 260px;
   color: #68665F;
 }
 
-.tagList {
+.tags {
   list-style: none;
   padding: 0;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin: 32px 0 0;
+  margin: auto 0 0;
+  padding-top: 24px;
 }
 
-.tagList li {
+.tags li {
   border: 1px solid rgba(23, 23, 20, 0.12);
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(8px);
   border-radius: 100px;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 500;
-  padding: 6px 14px;
+  padding: 6px 13px;
   color: #171714;
   letter-spacing: -0.01em;
 }
 
-/* --- Card 03: Partnership (Clean White Editorial) --- */
-.cardPartnership {
+/* ========================================================================= */
+/* TILE 03: THE PARTNERSHIP (Light Editorial Card, Text-Led)                 */
+/* ========================================================================= */
+.support {
   background: #FFFFFF;
   border: 1px solid rgba(23, 23, 20, 0.08);
-  box-shadow: 0 4px 20px rgba(23, 23, 20, 0.03);
-  min-height: 340px;
+  min-height: 380px;
+  padding: 34px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.cardPartnership .cardTop {
+.support:hover {
+  border-color: rgba(23, 23, 20, 0.16);
+}
+
+.support .cardTop {
   color: #68665F;
-  margin-bottom: 32px;
+  margin-bottom: 20px;
 }
 
-.statusPill {
+.status {
   font-family: var(--font-geist-mono), monospace;
   font-size: 9.5px;
   font-weight: 700;
@@ -345,138 +310,206 @@
   letter-spacing: 0.1em;
 }
 
-.cardPartnership h3 {
+.supportContent {
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+.support h3 {
   color: #171714;
+  font-size: clamp(26px, 2.5vw, 36px);
 }
 
-.cardPartnership p {
-  color: #68665F;
-  max-width: 440px;
-  margin-top: 16px;
-}
-
-/* --- Card 04: Our Market (Warm Neutral Sand Tile) --- */
-.cardMarket {
-  background: #EFE8DD;
-  border: 1px solid rgba(23, 23, 20, 0.08);
-  box-shadow: 0 4px 20px rgba(23, 23, 20, 0.03);
-  min-height: 340px;
-}
-
-.cardMarket .cardTop {
-  color: #68665F;
-  margin-bottom: 32px;
-}
-
-.cardMarket h3 {
-  color: #171714;
-}
-
-.cardMarket p {
-  margin-top: 16px;
+.support p {
+  max-width: 480px;
   color: #68665F;
   font-size: 15px;
-  line-height: 1.65;
-  max-width: 440px;
+  margin-top: 16px;
 }
 
 /* ========================================================================= */
-/* MOBILE VIEW (< 1024px)                                                    */
+/* TILE 04: OUR MARKET (Warm Light-Beige Sand Tile)                          */
 /* ========================================================================= */
-.mobileVisual {
-  display: none;
+.india {
+  background: #EFE8DD;
+  border: 1px solid rgba(23, 23, 20, 0.08);
+  min-height: 380px;
+  padding: 34px;
+  display: flex;
+  flex-direction: column;
 }
 
+.india:hover {
+  border-color: rgba(23, 23, 20, 0.16);
+}
+
+.india .cardTop {
+  color: #68665F;
+  margin-bottom: 20px;
+}
+
+.indiaContent {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  align-items: center;
+  gap: 28px;
+  margin-top: auto;
+}
+
+.indiaContent h3 {
+  color: #171714;
+}
+
+.indiaContent p {
+  margin-top: 12px;
+  color: #68665F;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.conditions {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid rgba(23, 23, 20, 0.10);
+  padding-left: 24px;
+}
+
+.conditions span {
+  font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+  font-weight: 550;
+  color: #171714;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(23, 23, 20, 0.08);
+  letter-spacing: -0.01em;
+}
+
+.conditions span:first-child {
+  padding-top: 0;
+}
+
+.conditions span:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.indiaFooter {
+  margin-top: auto;
+  padding-top: 22px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #7A6B58;
+  text-transform: uppercase;
+}
+
+/* ========================================================================= */
+/* RESPONSIVE BREAKPOINTS                                                    */
+/* ========================================================================= */
 @media (max-width: 1024px) {
-  .section {
-    padding: 64px 20px 80px;
-  }
-
   .headingRow {
-    margin-bottom: 36px;
-  }
-
-  /* Disable sticky two-column layout */
-  .storyContainer {
+    align-items: flex-start;
     flex-direction: column;
-    gap: 24px;
-  }
-
-  .stickyVisualColumn {
-    display: none; /* Desktop sticky visual hidden on mobile */
-  }
-
-  /* Full-width mobile visual directly after heading */
-  .mobileVisual {
-    display: block;
-    width: 100%;
-    height: 260px;
-    border-radius: 20px;
-    overflow: hidden;
-    position: relative;
-    margin-bottom: 16px;
-    border: 1px solid rgba(23, 23, 20, 0.08);
-  }
-
-  .mobileVisual img {
-    object-fit: cover;
-    object-position: center;
-  }
-
-  .scrollingCardsColumn {
-    width: 100%;
     gap: 20px;
   }
-
-  .card {
-    padding: 28px;
-    border-radius: 20px;
-    min-height: auto;
+  .intro {
+    max-width: 460px;
   }
-
-  .cardPortfolioImage {
-    width: 100%;
-    opacity: 0.8;
-  }
-
-  .cardPortfolioContent {
-    max-width: 100%;
-    background: linear-gradient(
-      180deg,
-      rgba(238, 236, 229, 0.98) 0%,
-      rgba(238, 236, 229, 0.92) 60%,
-      rgba(238, 236, 229, 0.40) 100%
-    );
-  }
-
-  .marketContent {
+  .grid {
     grid-template-columns: 1fr;
     gap: 20px;
   }
-
-  .conditionList {
+  .cardBottom {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .indiaContent {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .conditions {
     border-left: 0;
     padding-left: 0;
     flex-direction: row;
     flex-wrap: wrap;
     gap: 10px;
   }
-
-  .conditionList span {
-    border: 1px solid rgba(23, 23, 20, 0.08);
+  .conditions span {
+    font-size: 12px;
+    padding: 7px 12px;
     background: rgba(255, 255, 255, 0.6);
-    border-radius: 8px;
-    padding: 8px 12px;
+    border-radius: 6px;
+    border-bottom: 0;
   }
 }
 
-@media (max-width: 480px) {
-  .yearDisplay {
-    font-size: 64px;
+@media (max-width: 768px) {
+  .section {
+    padding: 60px 20px 72px;
   }
-
-  .proofSteps {
+  .headingRow {
+    margin-bottom: 28px;
+  }
+  .grid {
     grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .card {
+    padding: 24px;
+    border-radius: 16px;
+  }
+  .heritage {
+    min-height: 380px;
+  }
+  .year {
+    font-size: 76px;
     gap: 14px;
+    margin: 16px 0 20px;
+  }
+  .cardBottom {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .cardBottom h3 {
+    font-size: 22px;
+  }
+  .products {
+    min-height: 380px;
+  }
+  .materialImage {
+    width: 100%;
+  }
+  .productContent {
+    padding: 24px;
+    min-height: 380px;
+    max-width: 100%;
+    background: linear-gradient(
+      180deg,
+      rgba(238, 236, 229, 0.96) 0%,
+      rgba(238, 236, 229, 0.90) 50%,
+      rgba(238, 236, 229, 0.35) 100%
+    );
+  }
+  .productContent h3 {
+    margin-top: 44px;
+  }
+  .support {
+    min-height: auto;
+  }
+  .india {
+    min-height: auto;
+  }
+  .indiaContent {
+    margin-top: 16px;
+  }
+}
+
+@media (max-width: 420px) {
+  .year {
+    font-size: 68px;
+  }
+  .year span {
+    font-size: 10px;
   }
 }
