@@ -47,13 +47,6 @@ export const HeroSection = ({
       <ContentGrid className="relative z-10 pt-2 pb-8 sm:py-20 lg:py-24">
         {/* COLUMNS 1 THROUGH 7: Structured Typography & Primary Actions */}
         <div className="md:col-span-7 flex flex-col justify-center">
-          {/* Small Context Tag: strictly aligned flush to Column 1 */}
-          <div className="flex items-center gap-2 mb-3.5 sm:mb-5">
-            <span className="text-[11px] sm:text-[12px] font-bold tracking-[0.14em] uppercase text-[#68665F] font-mono">
-              {context}
-            </span>
-          </div>
-
           {/* Mobile Art-Directed Headline: natural line flow, no awkward 1-word breaks */}
           <h1
             style={{
@@ -81,13 +74,8 @@ export const HeroSection = ({
             {headlineLine3 && <span className="block">{headlineLine3}</span>}
           </h1>
 
-          {/* Supporting Copy: Narrower, approximately columns 1 through 6 */}
-          <p className="mt-5 sm:mt-8 text-[15px] sm:text-[1.1875rem] text-[#68665F] font-normal leading-[1.6] sm:leading-[1.65] max-w-[340px] sm:max-w-[540px] tracking-[-0.01em]">
-            {supportingText}
-          </p>
-
           {/* Actions: Full-width / stacked rhythm on mobile, inline row on desktop */}
-          <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
+          <div className="mt-8 sm:mt-12 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
             <Button
               variant="primary"
               size="lg"
