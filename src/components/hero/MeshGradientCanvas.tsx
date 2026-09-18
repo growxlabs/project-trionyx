@@ -30,21 +30,21 @@ vec3 surface(vec2 uv) {
     // Dedicated art-directed mobile ribbon:
     // Enters upper-right behind menu button and header, flows gracefully down the right flank
     if (u_layer < 0.5) {
-      // Layer 0: Wide ambient atmospheric veil
-      left = bezier(vec2(0.20, -0.25), vec2(0.32 + 0.03 * sway, 0.22), vec2(0.48 + 0.04 * curl, 0.58), vec2(0.70, 1.15), v);
-      right = bezier(vec2(1.10, -0.25), vec2(1.18, 0.20), vec2(1.24, 0.65), vec2(1.30, 1.25), v);
+      // Layer 0: Ambient under-veil
+      left = bezier(vec2(0.12, -0.25), vec2(0.20 + 0.045 * sway, 0.25), vec2(0.38 + 0.05 * curl, 0.48), vec2(0.78, 1.05), v);
+      right = bezier(vec2(0.68, -0.25), vec2(0.78, 0.20), vec2(0.84, 0.65), vec2(1.05, 1.20), v);
     } else if (u_layer < 1.5) {
-      // Layer 1: Undercut shadow cavity for 3D depth
-      left = bezier(vec2(0.34, -0.25), vec2(0.46 + 0.03 * sway, 0.25), vec2(0.58, 0.65), vec2(0.76, 1.18), v);
-      right = bezier(vec2(1.12, -0.25), vec2(1.20 + 0.02 * curl, 0.24), vec2(1.25, 0.68), vec2(1.32, 1.25), v);
+      // Layer 1: Undercut shadow cavity (narrow crease creating deep 3D depth)
+      left = bezier(vec2(0.62, -0.25), vec2(0.64 + 0.05 * sway, 0.18), vec2(0.78, 0.64), vec2(0.80, 1.15), v);
+      right = bezier(vec2(0.72, -0.25), vec2(0.76 + 0.04 * curl, 0.23), vec2(0.85, 0.64), vec2(0.96, 1.15), v);
     } else if (u_layer < 2.5) {
-      // Layer 2: Primary heroic Trionyx orange ribbon
-      left = bezier(vec2(0.26, -0.25), vec2(0.40 + 0.03 * sway, 0.20), vec2(0.54 + 0.03 * curl, 0.56), vec2(0.74, 1.18), v);
-      right = bezier(vec2(1.12, -0.25), vec2(1.20 + 0.02 * curl, 0.22), vec2(1.25 + 0.02 * sway, 0.66), vec2(1.32, 1.25), v);
+      // Layer 2: Primary heroic Trionyx orange ribbon body
+      left = bezier(vec2(0.28, -0.25), vec2(0.32 + 0.04 * sway, 0.14), vec2(0.48 + 0.055 * curl, 0.44), vec2(0.75, 0.95), v);
+      right = bezier(vec2(0.62, -0.25), vec2(0.72 + 0.025 * curl, 0.20), vec2(0.78 + 0.025 * sway, 0.58), vec2(0.92, 1.15), v);
     } else {
-      // Layer 3: Front illuminated golden amber gleam ridge
-      left = bezier(vec2(0.38, -0.25), vec2(0.50 + 0.02 * curl, 0.22), vec2(0.62 + 0.02 * sway, 0.60), vec2(0.80, 1.20), v);
-      right = bezier(vec2(1.14, -0.25), vec2(1.22 + 0.02 * curl, 0.24), vec2(1.28 + 0.02 * sway, 0.68), vec2(1.34, 1.25), v);
+      // Layer 3: Front illuminated golden amber fold rim (crisp gleaming edge)
+      left = bezier(vec2(0.54, -0.25), vec2(0.70 + 0.025 * curl, 0.20), vec2(0.78 + 0.025 * sway, 0.60), vec2(0.74, 1.15), v);
+      right = bezier(vec2(0.64, -0.25), vec2(0.78 + 0.028 * curl, 0.22), vec2(0.86 + 0.02 * sway, 0.62), vec2(0.82, 1.15), v);
     }
   } else {
     // Desktop ribbon: 100% unchanged
@@ -161,19 +161,12 @@ void main() {
   color = contrast(color, 1.05);
 
   float feather = u_layer < 0.5 ? 0.075 : 0.028;
-  if (u_mobile > 0.5) {
-    feather = u_layer < 0.5 ? 0.32 : 0.16;
-  }
   float alpha = smoothstep(0.0, feather, u) * (1.0 - smoothstep(0.965, 1.0, u));
   if (u_mobile > 0.5) {
-    // Graceful bottom fade to eliminate abrupt horizontal cutoff above About section
-    float bottomFade = smoothstep(1.0, 0.62, v_surface.y);
+    // Graceful bottom dissolve so the cloth flows into the canvas without a hard horizontal cut
+    float bottomFade = smoothstep(1.0, 0.70, v_surface.y);
     alpha *= bottomFade;
-    if (u_layer < 0.5) {
-      alpha *= 0.65;
-    } else {
-      alpha *= 0.88;
-    }
+    alpha *= 0.96;
   } else {
     alpha *= 0.98;
   }
