@@ -1,46 +1,591 @@
-.section { background: #f7f6f0; padding: 96px 32px 104px; color: #171714; }
-.headingRow { display: flex; justify-content: space-between; align-items: flex-end; gap: 48px; margin-bottom: 48px; }
-.eyebrow { font: 600 11px/1.4 monospace; letter-spacing: .15em; color: #b84b16; margin: 0 0 22px; }
-.headingRow h2 { font-size: clamp(32px, 3.3vw, 50px); font-weight: 600; letter-spacing: -.045em; line-height: 1.09; margin: 0; }
-.headingRow h2 span { color: #77766d; }
-.intro { max-width: 290px; color: #68665f; font-size: 15px; line-height: 1.7; margin: 0 0 3px; }
-.grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 22px; }
-.card { border: 1px solid #deddd5; border-radius: 20px; overflow: hidden; padding: 32px; position: relative; }
-.cardTop { display: flex; align-items: center; justify-content: space-between; gap: 16px; font: 600 10px/1.4 monospace; letter-spacing: .12em; }
-.card h3 { font-size: clamp(26px, 2.3vw, 34px); font-weight: 550; line-height: 1.13; letter-spacing: -.035em; margin: 0; }
-.card p { font-size: 15px; line-height: 1.7; color: #68665f; margin: 16px 0 0; max-width: 360px; }
-.heritage { background: #20221f; color: #f7f6f0; min-height: 435px; display: flex; flex-direction: column; }
-.heritage .cardTop { color: #d2d1c5; }
-.year { font-size: clamp(80px, 8.6vw, 128px); line-height: 1; font-weight: 500; letter-spacing: -.075em; color: #ff9456; margin: 26px 0; display: flex; align-items: flex-end; gap: 24px; }
-.year span { font: 400 12px/1.5 monospace; letter-spacing: 0; max-width: 70px; margin-bottom: 12px; color: #d2d1c5; }
-.cardBottom { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; margin-top: auto; }
-.cardBottom h3 { font-size: 25px; }
-.cardBottom p { margin: 0; color: #c0c1b6; font-size: 13px; }
-.heritageFooter { border-top: 1px solid #45473f; margin-top: 28px; padding-top: 18px; display: flex; justify-content: space-between; gap: 16px; font: 10px/1.4 monospace; letter-spacing: .09em; color: #babbaf; }
-.products { background: #eeece5; min-height: 435px; padding: 0; }
-.materialImage { position: absolute; inset: 0; }
-.materialImage img { object-fit: cover; object-position: center; }
-.productContent { position: relative; z-index: 1; padding: 32px; min-height: 435px; display: flex; flex-direction: column; align-items: flex-start; background: linear-gradient(90deg,rgba(247,246,240,.97) 0%,rgba(247,246,240,.90) 30%,rgba(247,246,240,.12) 78%); }
-.productContent h3 { margin-top: 60px; }
-.productContent p { max-width: 240px; }
-.tags { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 7px; margin: auto 0 0; padding-top: 24px; }
-.tags li { border: 1px solid #d6d1c5; background: #f7f6f0e8; border-radius: 100px; font-size: 11px; padding: 7px 11px; color: #46473f; }
-.support { background: #fffefa; min-height: 340px; }
-.support .cardTop, .india .cardTop { color: #a4451a; margin-bottom: 28px; }
-.status { font-size: 9px; color: #565c50; border: 1px solid #d6dbcf; padding: 5px 9px; border-radius: 100px; }
-.support p { max-width: 420px; }
-.supportSteps { display: grid; grid-template-columns: repeat(3,1fr); margin-top: 30px; border-top: 1px solid #deddd5; padding-top: 18px; }
-.supportSteps div { display: flex; flex-direction: column; padding-right: 8px; }
-.supportSteps span { font: 10px monospace; color: #b84b16; margin-bottom: 10px; }
-.supportSteps strong { font-size: 14px; font-weight: 600; }
-.supportSteps small { font-size: 11px; color: #77766d; margin-top: 4px; }
-.india { background: #f0e7d9; display: flex; flex-direction: column; }
-.indiaContent { display: grid; grid-template-columns: 1.5fr 1fr; align-items: center; gap: 26px; }
-.conditions { display: flex; flex-direction: column; gap: 0; border-left: 1px solid #d1c4b0; padding-left: 22px; }
-.conditions span { font-size: 13px; padding: 15px 0; border-bottom: 1px solid #d1c4b0; }
-.conditions span:last-child { border-bottom: 0; }
-.indiaFooter { margin-top: auto; padding-top: 32px; font: 10px/1.5 monospace; letter-spacing: .08em; color: #73614b; }
-@media (max-width: 1000px) { .headingRow { align-items: start; flex-direction: column; gap: 22px; } .intro { max-width: 480px; } .cardBottom { grid-template-columns: 1fr; gap: 12px; } .indiaContent { grid-template-columns: 1fr; gap: 18px; } .conditions { border-left: 0; padding-left: 0; flex-direction: row; flex-wrap: wrap; gap: 12px; } .conditions span { font-size: 11px; padding: 9px 0; } }
-@media (max-width: 760px) { .section { padding: 60px 20px; } .headingRow { margin-bottom: 30px; } .grid { grid-template-columns: 1fr; gap: 16px; } .card { padding: 26px; border-radius: 16px; } .heritage { min-height: 390px; } .year { font-size: 86px; gap: 16px; } .cardBottom { grid-template-columns: 1fr 1fr; gap: 16px; } .cardBottom h3 { font-size: 23px; } .products { padding: 0; } .productContent { padding: 26px; min-height: 410px; } .productContent h3 { margin-top: 55px; } .support { min-height: 340px; } .india { min-height: 330px; } .supportSteps small { line-height: 1.5; } }
-@media (max-width: 380px) { .cardBottom { grid-template-columns: 1fr; } .year { font-size: 86px; } .cardTop { font-size: 9px; letter-spacing: .06em; } .heritageFooter { font-size: 8px; } }
+/* ========================================================================= */
+/* WHY TRIONYX SECTION — STICKY SCROLL STORYTELLING LAYOUT                   */
+/* ========================================================================= */
 
+.section {
+  background: #F7F6F0;
+  padding: 88px 32px 120px;
+  color: #171714;
+  position: relative;
+}
+
+/* --- Section Header Row --- */
+.headingRow {
+  margin-bottom: 56px;
+  max-width: 800px;
+}
+
+.eyebrowContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.eyebrowDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #F26522;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.eyebrow {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #68665F;
+  margin: 0;
+}
+
+.headingRow h2 {
+  font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: clamp(34px, 3.8vw, 52px);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+  margin: 0;
+  color: #171714;
+}
+
+.headingRow h2 span {
+  color: #7A786E;
+  display: block;
+}
+
+/* --- Main Two-Column Container --- */
+.storyContainer {
+  display: flex;
+  align-items: flex-start;
+  gap: 48px;
+  position: relative;
+}
+
+/* ========================================================================= */
+/* LEFT COLUMN: STICKY AUTOMOTIVE VISUAL                                     */
+/* ========================================================================= */
+.stickyVisualColumn {
+  width: 48%;
+  position: sticky;
+  top: 110px;
+  height: calc(100vh - 160px);
+  min-height: 520px;
+  max-height: 680px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: #1C1E1B;
+  border: 1px solid rgba(23, 23, 20, 0.10);
+  box-shadow: 0 16px 48px -12px rgba(23, 23, 20, 0.12);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 32px;
+}
+
+.visualImageWrapper {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.visualLayer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: scale(1.04);
+}
+
+.visualLayerActive {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.visualLayer img {
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Subtle Vignette Gradient */
+.visualVignette {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(23, 23, 20, 0.15) 0%,
+    rgba(23, 23, 20, 0.05) 50%,
+    rgba(23, 23, 20, 0.65) 100%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Floating Status Indicator at bottom of Sticky Visual */
+.stickyStatusPill {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  padding: 8px 16px;
+  border-radius: 100px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  align-self: flex-start;
+}
+
+.stickyStatusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #F26522;
+}
+
+.stickyStatusText {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #171714;
+}
+
+/* ========================================================================= */
+/* RIGHT COLUMN: SCROLLING CARDS SEQUENCE                                    */
+/* ========================================================================= */
+.scrollingCardsColumn {
+  width: 52%;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  padding-bottom: 24px;
+}
+
+/* Base Card Style */
+.card {
+  border-radius: 24px;
+  overflow: hidden;
+  padding: 40px;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.card h3 {
+  font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: clamp(26px, 2.4vw, 34px);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+.card p {
+  font-size: 15px;
+  line-height: 1.65;
+  color: #68665F;
+  margin: 16px 0 0;
+  letter-spacing: -0.01em;
+}
+
+/* --- Card 01: Experience (Dark / Dramatic) --- */
+.cardExperience {
+  background: #1C1E1B;
+  color: #F7F6F0;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.cardExperience .cardTop span:first-child {
+  color: #F26522;
+}
+
+.cardExperience .cardTop span:last-child {
+  color: #C2C1B4;
+}
+
+.yearDisplay {
+  font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: clamp(72px, 6.8vw, 100px);
+  line-height: 0.95;
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  color: #F26522;
+  margin: 20px 0 24px;
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.yearDisplay span {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.10em;
+  color: #C2C1B4;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.experienceBody {
+  margin-top: auto;
+}
+
+.experienceBody h3 {
+  color: #F7F6F0;
+  font-size: 26px;
+  line-height: 1.15;
+}
+
+.experienceBody p {
+  color: #B5B6AA;
+  font-size: 14.5px;
+  line-height: 1.65;
+}
+
+.cardExperienceFooter {
+  border-top: 1px solid rgba(255, 255, 255, 0.10);
+  margin-top: 28px;
+  padding-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #9C9D91;
+  text-transform: uppercase;
+}
+
+/* --- Card 02: Portfolio (Light + Product Visual) --- */
+.cardPortfolio {
+  background: #EEECE5;
+  border: 1px solid rgba(23, 23, 20, 0.08);
+  box-shadow: 0 4px 20px rgba(23, 23, 20, 0.03);
+}
+
+.cardPortfolioImage {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 55%;
+  opacity: 0.95;
+}
+
+.cardPortfolioImage img {
+  object-fit: cover;
+  object-position: center right;
+}
+
+.cardPortfolioContent {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  max-width: 360px;
+  background: linear-gradient(
+    90deg,
+    rgba(238, 236, 229, 0.98) 0%,
+    rgba(238, 236, 229, 0.92) 65%,
+    rgba(238, 236, 229, 0.45) 85%,
+    transparent 100%
+  );
+}
+
+.cardPortfolioContent .cardTop span {
+  color: #68665F;
+}
+
+.cardPortfolioContent h3 {
+  margin-top: 48px;
+  color: #171714;
+}
+
+.cardPortfolioContent p {
+  color: #68665F;
+}
+
+.tagList {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 32px 0 0;
+}
+
+.tagList li {
+  border: 1px solid rgba(23, 23, 20, 0.12);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  border-radius: 100px;
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 6px 14px;
+  color: #171714;
+  letter-spacing: -0.01em;
+}
+
+/* --- Card 03: Partnership (Clean White Editorial) --- */
+.cardPartnership {
+  background: #FFFFFF;
+  border: 1px solid rgba(23, 23, 20, 0.08);
+  box-shadow: 0 4px 20px rgba(23, 23, 20, 0.03);
+}
+
+.cardPartnership .cardTop {
+  color: #68665F;
+}
+
+.statusPill {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #171714;
+  border: 1px solid rgba(23, 23, 20, 0.12);
+  background: #FAF9F5;
+  padding: 4px 10px;
+  border-radius: 100px;
+  letter-spacing: 0.1em;
+}
+
+.cardPartnership h3 {
+  margin-top: 40px;
+  color: #171714;
+}
+
+.cardPartnership p {
+  color: #68665F;
+  max-width: 440px;
+}
+
+.proofSteps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 48px;
+  border-top: 1px solid rgba(23, 23, 20, 0.08);
+  padding-top: 20px;
+  gap: 16px;
+}
+
+.proofSteps div {
+  display: flex;
+  flex-direction: column;
+}
+
+.proofSteps span {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #F26522;
+  margin-bottom: 6px;
+}
+
+.proofSteps strong {
+  font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #171714;
+  line-height: 1.2;
+}
+
+.proofSteps small {
+  font-size: 11.5px;
+  color: #68665F;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* --- Card 04: Our Market (Warm Neutral Sand Tile) --- */
+.cardMarket {
+  background: #EFE8DD;
+  border: 1px solid rgba(23, 23, 20, 0.08);
+  box-shadow: 0 4px 20px rgba(23, 23, 20, 0.03);
+}
+
+.cardMarket .cardTop {
+  color: #68665F;
+}
+
+.marketContent {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  align-items: center;
+  gap: 28px;
+  margin-top: 36px;
+}
+
+.marketContent h3 {
+  color: #171714;
+}
+
+.marketContent p {
+  margin-top: 14px;
+  color: #68665F;
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+.conditionList {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid rgba(23, 23, 20, 0.10);
+  padding-left: 24px;
+}
+
+.conditionList span {
+  font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13.5px;
+  font-weight: 550;
+  color: #171714;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(23, 23, 20, 0.08);
+  letter-spacing: -0.01em;
+}
+
+.conditionList span:first-child {
+  padding-top: 0;
+}
+
+.conditionList span:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.cardMarketFooter {
+  margin-top: 36px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(23, 23, 20, 0.08);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #7A6B58;
+  text-transform: uppercase;
+}
+
+/* ========================================================================= */
+/* MOBILE VIEW (< 1024px)                                                    */
+/* ========================================================================= */
+.mobileVisual {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .section {
+    padding: 64px 20px 80px;
+  }
+
+  .headingRow {
+    margin-bottom: 36px;
+  }
+
+  /* Disable sticky two-column layout */
+  .storyContainer {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .stickyVisualColumn {
+    display: none; /* Desktop sticky visual hidden on mobile */
+  }
+
+  /* Full-width mobile visual directly after heading */
+  .mobileVisual {
+    display: block;
+    width: 100%;
+    height: 260px;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 16px;
+    border: 1px solid rgba(23, 23, 20, 0.08);
+  }
+
+  .mobileVisual img {
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .scrollingCardsColumn {
+    width: 100%;
+    gap: 20px;
+  }
+
+  .card {
+    padding: 28px;
+    border-radius: 20px;
+    min-height: auto;
+  }
+
+  .cardPortfolioImage {
+    width: 100%;
+    opacity: 0.8;
+  }
+
+  .cardPortfolioContent {
+    max-width: 100%;
+    background: linear-gradient(
+      180deg,
+      rgba(238, 236, 229, 0.98) 0%,
+      rgba(238, 236, 229, 0.92) 60%,
+      rgba(238, 236, 229, 0.40) 100%
+    );
+  }
+
+  .marketContent {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .conditionList {
+    border-left: 0;
+    padding-left: 0;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .conditionList span {
+    border: 1px solid rgba(23, 23, 20, 0.08);
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 8px;
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .yearDisplay {
+    font-size: 64px;
+  }
+
+  .proofSteps {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
