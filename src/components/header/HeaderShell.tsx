@@ -66,7 +66,7 @@ export const HeaderShell = () => {
     <>
       <header
         ref={headerRef}
-        className="sticky top-0 z-50 w-full bg-[#F5F5EE]/90 lg:bg-transparent border-b border-[rgba(23,23,20,0.07)] transition-colors"
+        className="sticky top-0 z-50 w-full bg-transparent md:bg-[#F5F5EE]/90 lg:bg-transparent border-b-0 md:border-b md:border-[rgba(23,23,20,0.07)] transition-colors"
       >
         <div className="w-full px-5 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between">
           {/* Official Brand Logo */}

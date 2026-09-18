@@ -40,25 +40,33 @@ export const HeroSection = ({
   return (
     <SectionFrame
       id="hero"
-      hasBottomBorder
-      className="overflow-hidden min-h-[600px] lg:min-h-[640px] flex items-center"
+      hasBottomBorder={false}
+      className="overflow-hidden min-h-0 sm:min-h-[540px] lg:min-h-[640px] flex items-center border-b-0 md:border-b md:border-[rgba(23,23,20,0.07)]"
     >
-      {/* FULL-BLEED ANIMATED MESH GRADIENT BACKGROUND */}
-
-
-      {/* INTERNAL 12-COLUMN CONTENT GRID (32px padding, 24px column gaps) */}
-      <ContentGrid className="relative z-10 py-16 sm:py-20 lg:py-24">
+      {/* INTERNAL 12-COLUMN CONTENT GRID (32px padding on desktop, 20px-24px on mobile) */}
+      <ContentGrid className="relative z-10 pt-4 pb-14 sm:py-20 lg:py-24">
         {/* COLUMNS 1 THROUGH 7: Structured Typography & Primary Actions */}
         <div className="lg:col-span-7 flex flex-col justify-center">
           {/* Small Context Tag: strictly aligned flush to Column 1 */}
-          <div className="flex items-center gap-2 mb-4 sm:mb-5">
+          <div className="flex items-center gap-2 mb-3.5 sm:mb-5">
             <span className="w-1.5 h-1.5 rounded-full bg-[#F26522]" aria-hidden="true" />
             <span className="text-[11px] sm:text-[12px] font-bold tracking-[0.14em] uppercase text-[#68665F] font-mono">
               {context}
             </span>
           </div>
 
-          {/* Main Headline: Spans approximately columns 1 through 7 */}
+          {/* Mobile Art-Directed Headline: natural line flow, no awkward 1-word breaks */}
+          <h1
+            style={{
+              fontFamily: '"Instrument Sans", sans-serif',
+              letterSpacing: '-0.035em',
+            }}
+            className="md:hidden text-[#171714] font-semibold text-[34px] sm:text-[42px] leading-[1.04] max-w-[340px]"
+          >
+            Engineered for the road. Designed around your vehicle.
+          </h1>
+
+          {/* Desktop Headline: 100% unchanged */}
           <h1
             style={{
               fontFamily: '"Instrument Sans", sans-serif',
@@ -67,7 +75,7 @@ export const HeroSection = ({
               lineHeight: 0.99,
               letterSpacing: '-0.035em',
             }}
-            className="text-[#171714]"
+            className="hidden md:block text-[#171714]"
           >
             <span className="block">{headlineLine1}</span>
             <span className="block">{headlineLine2}</span>
@@ -75,18 +83,18 @@ export const HeroSection = ({
           </h1>
 
           {/* Supporting Copy: Narrower, approximately columns 1 through 6 */}
-          <p className="mt-6 sm:mt-8 text-[1.0625rem] sm:text-[1.1875rem] text-[#68665F] font-normal leading-[1.65] max-w-[540px] tracking-[-0.01em]">
+          <p className="mt-5 sm:mt-8 text-[15px] sm:text-[1.1875rem] text-[#68665F] font-normal leading-[1.6] sm:leading-[1.65] max-w-[340px] sm:max-w-[540px] tracking-[-0.01em]">
             {supportingText}
           </p>
 
-          {/* Actions: Starts flush at Column 1 */}
-          <div className="mt-8 sm:mt-10 flex flex-wrap items-center gap-3.5 sm:gap-4">
+          {/* Actions: Full-width / stacked rhythm on mobile, inline row on desktop */}
+          <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
             <Button
               variant="primary"
               size="lg"
               onClick={onPrimaryCta}
               trailingIcon={<ArrowRightIcon size={16} color="inverse" strokeWidth={2} />}
-              className="shadow-[0_1px_3px_rgba(242,101,34,0.2)]"
+              className="w-full sm:w-auto justify-center h-12 text-[15px] shadow-[0_1px_3px_rgba(242,101,34,0.2)]"
             >
               {primaryCtaText}
             </Button>
@@ -96,6 +104,7 @@ export const HeroSection = ({
               size="lg"
               onClick={onSecondaryCta}
               trailingIcon={<ChevronRightIcon size={15} color="muted" strokeWidth={1.75} />}
+              className="w-full sm:w-auto justify-center h-12 text-[15px]"
             >
               {secondaryCtaText}
             </Button>

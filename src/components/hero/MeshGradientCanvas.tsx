@@ -13,6 +13,7 @@ uniform float u_layer;
 varying vec2 v_surface;
 varying vec3 v_normal;
 varying float v_depth;
+varying vec2 v_pos;
 vec2 bezier(vec2 a, vec2 b, vec2 c, vec2 d, float t) {
   float q = 1.0 - t;
   return q*q*q*a + 3.0*q*q*t*b + 3.0*q*t*t*c + t*t*t*d;
@@ -25,18 +26,37 @@ vec3 surface(vec2 uv) {
   float curl = sin(t * 0.73 + 1.1 + u_layer * 0.6);
   vec2 left;
   vec2 right;
-  if (u_layer < 0.5) {
-    left = bezier(vec2(0.28,-0.30), vec2(0.36+0.045*sway,0.27), vec2(0.53+0.05*curl,0.46), vec2(0.96,0.99),v);
-    right = bezier(vec2(0.81,-0.30), vec2(0.90,0.20), vec2(0.92,0.70),vec2(1.11,1.25),v);
-  } else if (u_layer < 1.5) {
-    left = bezier(vec2(0.77,-0.30),vec2(0.78+0.05*sway,0.20),vec2(0.94,0.70),vec2(0.94,1.25),v);
-    right = bezier(vec2(0.85,-0.30),vec2(0.89+0.04*curl,0.25),vec2(0.96,0.68),vec2(1.15,1.20),v);
-  } else if (u_layer < 2.5) {
-    left = bezier(vec2(0.46,-0.30),vec2(0.48+0.04*sway,0.14),vec2(0.65+0.055*curl,0.42),vec2(0.91,0.87),v);
-    right = bezier(vec2(0.76,-0.30),vec2(0.87+0.025*curl,0.20),vec2(0.89+0.025*sway,0.60),vec2(0.92,1.25),v);
+  if (u_mobile > 0.5) {
+    // Dedicated art-directed mobile ribbon:
+    // Starts at top right (v = 0), sweeping down the right flank and curving inward
+    if (u_layer < 0.5) {
+      left = bezier(vec2(0.42, -0.25), vec2(0.48 + 0.04 * sway, 0.22), vec2(0.46 + 0.05 * curl, 0.60), vec2(0.60, 1.20), v);
+      right = bezier(vec2(0.88, -0.25), vec2(0.96, 0.20), vec2(0.99, 0.65), vec2(1.18, 1.25), v);
+    } else if (u_layer < 1.5) {
+      left = bezier(vec2(0.55, -0.25), vec2(0.62 + 0.04 * sway, 0.25), vec2(0.60, 0.68), vec2(0.72, 1.25), v);
+      right = bezier(vec2(0.92, -0.25), vec2(1.02 + 0.03 * curl, 0.24), vec2(1.06, 0.70), vec2(1.22, 1.25), v);
+    } else if (u_layer < 2.5) {
+      left = bezier(vec2(0.46, -0.25), vec2(0.54 + 0.035 * sway, 0.18), vec2(0.52 + 0.04 * curl, 0.54), vec2(0.66, 1.20), v);
+      right = bezier(vec2(0.90, -0.25), vec2(1.00 + 0.02 * curl, 0.22), vec2(1.04 + 0.02 * sway, 0.66), vec2(1.18, 1.25), v);
+    } else {
+      left = bezier(vec2(0.58, -0.25), vec2(0.68 + 0.02 * curl, 0.22), vec2(0.68 + 0.025 * sway, 0.62), vec2(0.78, 1.25), v);
+      right = bezier(vec2(0.94, -0.25), vec2(1.06 + 0.02 * curl, 0.26), vec2(1.12 + 0.02 * sway, 0.68), vec2(1.25, 1.25), v);
+    }
   } else {
-    left = bezier(vec2(0.70,-0.30),vec2(0.88+0.025*curl,0.22),vec2(0.95+0.025*sway,0.64),vec2(0.87,1.25),v);
-    right = bezier(vec2(0.79,-0.30),vec2(0.94+0.028*curl,0.24),vec2(1.00+0.02*sway,0.65),vec2(0.94,1.25),v);
+    // Desktop ribbon: 100% unchanged
+    if (u_layer < 0.5) {
+      left = bezier(vec2(0.28,-0.30), vec2(0.36+0.045*sway,0.27), vec2(0.53+0.05*curl,0.46), vec2(0.96,0.99),v);
+      right = bezier(vec2(0.81,-0.30), vec2(0.90,0.20), vec2(0.92,0.70),vec2(1.11,1.25),v);
+    } else if (u_layer < 1.5) {
+      left = bezier(vec2(0.77,-0.30),vec2(0.78+0.05*sway,0.20),vec2(0.94,0.70),vec2(0.94,1.25),v);
+      right = bezier(vec2(0.85,-0.30),vec2(0.89+0.04*curl,0.25),vec2(0.96,0.68),vec2(1.15,1.20),v);
+    } else if (u_layer < 2.5) {
+      left = bezier(vec2(0.46,-0.30),vec2(0.48+0.04*sway,0.14),vec2(0.65+0.055*curl,0.42),vec2(0.91,0.87),v);
+      right = bezier(vec2(0.76,-0.30),vec2(0.87+0.025*curl,0.20),vec2(0.89+0.025*sway,0.60),vec2(0.92,1.25),v);
+    } else {
+      left = bezier(vec2(0.70,-0.30),vec2(0.88+0.025*curl,0.22),vec2(0.95+0.025*sway,0.64),vec2(0.87,1.25),v);
+      right = bezier(vec2(0.79,-0.30),vec2(0.94+0.028*curl,0.24),vec2(1.00+0.02*sway,0.65),vec2(0.94,1.25),v);
+    }
   }
   vec2 p = mix(left,right,u);
   float envelope = sin(v*3.14159);
@@ -45,7 +65,6 @@ vec3 surface(vec2 uv) {
   p.y += sin(u*3.14159) * envelope * (0.075*wave + 0.035*curl);
   p.x += sin(u*3.14159) * envelope * 0.022*ripple;
   float z = 0.10*sin(u*3.14159)*envelope*wave;
-  p.x = mix(p.x, 0.53+p.x*0.53, u_mobile);
   return vec3(p,z);
 }
 void main() {
@@ -56,6 +75,7 @@ void main() {
   v_normal = normalize(cross(du,dv));
   v_depth = p.z;
   v_surface = uv;
+  v_pos = p.xy;
   gl_Position = vec4(p.x*2.0-1.0,1.0-p.y*2.0,0.0,1.0);
 }
 `;
@@ -68,6 +88,7 @@ uniform float u_layer;
 varying vec2 v_surface;
 varying vec3 v_normal;
 varying float v_depth;
+varying vec2 v_pos;
 
 vec3 contrast(in vec3 v, in float a) {
   return (v - 0.5) * a + 0.5;
@@ -137,7 +158,14 @@ void main() {
 
   float feather = u_layer < 0.5 ? 0.075 : 0.028;
   float alpha = smoothstep(0.0, feather, u) * (1.0 - smoothstep(0.965, 1.0, u));
-  alpha *= mix(0.98, 0.34, u_mobile);
+  if (u_mobile > 0.5) {
+    // Soft, luminous mobile presence with text-safe edge feathering
+    float textProtection = smoothstep(0.24, 0.58, v_pos.x);
+    alpha *= mix(0.40, 0.85, textProtection);
+    alpha *= 0.82;
+  } else {
+    alpha *= 0.98;
+  }
   gl_FragColor = vec4(color * alpha, alpha);
 }
 `;
@@ -250,7 +278,7 @@ export function MeshGradientCanvas() {
       canvas!.width = Math.max(1, Math.round(rect.width * dpr));
       canvas!.height = Math.max(1, Math.round(rect.height * dpr));
       gl!.viewport(0, 0, canvas!.width, canvas!.height);
-      if (program) gl!.uniform1f(mobileLocation, rect.width < 640 ? 1 : 0);
+      if (program) gl!.uniform1f(mobileLocation, rect.width < 768 ? 1 : 0);
       draw(performance.now());
     }
 
