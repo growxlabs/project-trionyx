@@ -58,28 +58,20 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
         {/* CONTENT COLUMN (Full width on mobile, right on tablet/desktop) */}
         <div
           style={{ fontFamily: '"Instrument Sans", sans-serif' }}
-          className="w-full md:col-span-7 flex flex-col justify-center md:pl-6 lg:pl-8 xl:pl-12 font-normal"
+          className="w-full md:col-span-7 flex flex-col justify-center md:pl-6 lg:pl-8 xl:pl-12"
         >
-          {/* 1. Small Eyebrow: 16px mb */}
-          <span
-            style={{ fontFamily: '"Instrument Sans", sans-serif' }}
-            className="text-[11px] sm:text-[12px] font-normal tracking-[0.14em] uppercase text-[#68665F] mb-4 block"
-          >
-            ABOUT TRIONYX
-          </span>
-
-          {/* 2. Main Heading */}
+          {/* Main Heading — Restored bold / font-semibold */}
           <h2
             style={{
               fontFamily: '"Instrument Sans", sans-serif',
               letterSpacing: '-0.03em',
             }}
-            className="text-[#171714] font-normal text-[30px] xs:text-[34px] sm:text-[38px] lg:text-[44px] leading-[1.12] max-w-[540px]"
+            className="text-[#171714] font-semibold text-[30px] xs:text-[34px] sm:text-[38px] lg:text-[44px] leading-[1.12] max-w-[540px]"
           >
             Two decades in the automotive industry.
           </h2>
 
-          {/* 3. Mobile Overlapping Imagery: Bold presence, aligned with left narrative flow */}
+          {/* Mobile Overlapping Imagery: Bold presence, aligned with left narrative flow */}
           <div className="md:hidden mt-7 mb-8 w-full max-w-[420px]">
             <div className="relative w-full pb-8 pr-7 sm:pr-9 group">
               {/* Primary Base Image: around 72% width */}
@@ -108,10 +100,10 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
             </div>
           </div>
 
-          {/* 4. Two Short Story Paragraphs: 16-20px gap, controlled width */}
+          {/* Full Body Copy — All with the exact same 16px font size, font family & line height */}
           <div
             style={{ fontFamily: '"Instrument Sans", sans-serif' }}
-            className="space-y-4 sm:space-y-5 text-[#68665F] text-[15px] sm:text-[16.5px] leading-[1.68] sm:leading-[1.7] max-w-[480px] lg:max-w-[500px] font-normal tracking-[-0.01em]"
+            className="mt-6 space-y-4 sm:space-y-5 text-[#68665F] text-[16px] leading-[1.7] max-w-[480px] lg:max-w-[500px] font-normal"
           >
             <p>
               Founded in 2006, Trionyx has spent nearly two decades working across the automotive products market, building experience around vehicle protection, care and related product categories.
@@ -121,24 +113,14 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
             </p>
           </div>
 
-          {/* 5. Restrained Proof Line: 28-32px margin top */}
-          <div className="mt-7 sm:mt-8 pt-6 border-t border-[rgba(23,23,20,0.08)] max-w-[480px] lg:max-w-[500px]">
-            <span
-              style={{ fontFamily: '"Instrument Sans", sans-serif' }}
-              className="text-[11px] sm:text-[12px] font-normal tracking-[0.16em] uppercase text-[#8C897E]"
-            >
-              EST. 2006 &nbsp;·&nbsp; 20 YEARS
-            </span>
-          </div>
-
-          {/* 6. Single Action CTA: 24px mt on mobile */}
-          <div className="mt-6 sm:mt-8 lg:mt-10">
+          {/* Single Action CTA */}
+          <div className="mt-8 sm:mt-10">
             <Button
               variant="outline"
               size="lg"
               onClick={onCtaClick}
               trailingIcon={<ArrowRightIcon size={16} strokeWidth={2} />}
-              className="w-full sm:w-auto justify-center h-12 text-[15px] group hover:border-[rgba(23,23,20,0.28)] font-normal"
+              className="w-full sm:w-auto justify-center h-12 text-[15px] group hover:border-[rgba(23,23,20,0.28)]"
               style={{ fontFamily: '"Instrument Sans", sans-serif' }}
             >
               About Trionyx
