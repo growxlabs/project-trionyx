@@ -28,19 +28,19 @@ vec3 surface(vec2 uv) {
   vec2 right;
   if (u_mobile > 0.5) {
     // Dedicated art-directed mobile ribbon:
-    // Starts at top right (v = 0), sweeping down the right flank and curving inward
+    // Enters upper-right behind menu button and header, flows gracefully down the right flank
     if (u_layer < 0.5) {
-      left = bezier(vec2(0.42, -0.25), vec2(0.48 + 0.04 * sway, 0.22), vec2(0.46 + 0.05 * curl, 0.60), vec2(0.60, 1.20), v);
-      right = bezier(vec2(0.88, -0.25), vec2(0.96, 0.20), vec2(0.99, 0.65), vec2(1.18, 1.25), v);
+      left = bezier(vec2(0.56, -0.25), vec2(0.62 + 0.03 * sway, 0.22), vec2(0.60 + 0.04 * curl, 0.58), vec2(0.72, 1.15), v);
+      right = bezier(vec2(0.98, -0.25), vec2(1.06, 0.20), vec2(1.10, 0.65), vec2(1.26, 1.25), v);
     } else if (u_layer < 1.5) {
-      left = bezier(vec2(0.55, -0.25), vec2(0.62 + 0.04 * sway, 0.25), vec2(0.60, 0.68), vec2(0.72, 1.25), v);
-      right = bezier(vec2(0.92, -0.25), vec2(1.02 + 0.03 * curl, 0.24), vec2(1.06, 0.70), vec2(1.22, 1.25), v);
+      left = bezier(vec2(0.66, -0.25), vec2(0.72 + 0.03 * sway, 0.25), vec2(0.70, 0.68), vec2(0.82, 1.25), v);
+      right = bezier(vec2(1.02, -0.25), vec2(1.12 + 0.02 * curl, 0.24), vec2(1.16, 0.70), vec2(1.30, 1.25), v);
     } else if (u_layer < 2.5) {
-      left = bezier(vec2(0.46, -0.25), vec2(0.54 + 0.035 * sway, 0.18), vec2(0.52 + 0.04 * curl, 0.54), vec2(0.66, 1.20), v);
-      right = bezier(vec2(0.90, -0.25), vec2(1.00 + 0.02 * curl, 0.22), vec2(1.04 + 0.02 * sway, 0.66), vec2(1.18, 1.25), v);
+      left = bezier(vec2(0.58, -0.25), vec2(0.65 + 0.03 * sway, 0.18), vec2(0.64 + 0.03 * curl, 0.54), vec2(0.76, 1.18), v);
+      right = bezier(vec2(1.00, -0.25), vec2(1.10 + 0.02 * curl, 0.22), vec2(1.14 + 0.02 * sway, 0.66), vec2(1.28, 1.25), v);
     } else {
-      left = bezier(vec2(0.58, -0.25), vec2(0.68 + 0.02 * curl, 0.22), vec2(0.68 + 0.025 * sway, 0.62), vec2(0.78, 1.25), v);
-      right = bezier(vec2(0.94, -0.25), vec2(1.06 + 0.02 * curl, 0.26), vec2(1.12 + 0.02 * sway, 0.68), vec2(1.25, 1.25), v);
+      left = bezier(vec2(0.68, -0.25), vec2(0.76 + 0.02 * curl, 0.22), vec2(0.76 + 0.02 * sway, 0.62), vec2(0.86, 1.25), v);
+      right = bezier(vec2(1.04, -0.25), vec2(1.15 + 0.02 * curl, 0.26), vec2(1.20 + 0.02 * sway, 0.68), vec2(1.32, 1.25), v);
     }
   } else {
     // Desktop ribbon: 100% unchanged
@@ -160,9 +160,12 @@ void main() {
   float alpha = smoothstep(0.0, feather, u) * (1.0 - smoothstep(0.965, 1.0, u));
   if (u_mobile > 0.5) {
     // Soft, luminous mobile presence with text-safe edge feathering
-    float textProtection = smoothstep(0.24, 0.58, v_pos.x);
-    alpha *= mix(0.40, 0.85, textProtection);
-    alpha *= 0.82;
+    float textProtection = smoothstep(0.48, 0.72, v_pos.x);
+    alpha *= mix(0.12, 0.95, textProtection);
+    // Graceful bottom fade to eliminate abrupt horizontal cutoff above About section
+    float bottomFade = smoothstep(0.96, 0.68, v_surface.y);
+    alpha *= bottomFade;
+    alpha *= 0.88;
   } else {
     alpha *= 0.98;
   }
