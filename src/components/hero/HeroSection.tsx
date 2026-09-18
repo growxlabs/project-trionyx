@@ -44,7 +44,7 @@ export const HeroSection = ({
       className="overflow-hidden min-h-0 sm:min-h-[540px] lg:min-h-[640px] flex items-center border-b-0 md:border-b md:border-[rgba(23,23,20,0.07)]"
     >
       {/* INTERNAL 12-COLUMN CONTENT GRID (32px padding on desktop, 20px-24px on mobile) */}
-      <ContentGrid className="relative z-10 pt-4 pb-14 sm:py-20 lg:py-24">
+      <ContentGrid className="relative z-10 pt-2 pb-8 sm:py-20 lg:py-24">
         {/* COLUMNS 1 THROUGH 7: Structured Typography & Primary Actions */}
         <div className="md:col-span-7 flex flex-col justify-center">
           {/* Small Context Tag: strictly aligned flush to Column 1 */}

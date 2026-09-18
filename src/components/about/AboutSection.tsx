@@ -25,7 +25,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
       hasBottomBorder
       className="bg-[#F7F6F0] overflow-hidden"
     >
-      <ContentGrid className="md:grid-cols-12 pt-12 pb-16 sm:pt-16 sm:pb-20 md:py-20 lg:py-32 items-center gap-10 md:gap-10 lg:gap-16">
+      <ContentGrid className="md:grid-cols-12 pt-8 pb-14 sm:pt-16 sm:pb-20 md:py-20 lg:py-32 items-center gap-10 md:gap-10 lg:gap-16">
         {/* DESKTOP / TABLET VISUAL COLUMN (Hidden on mobile <768px, left on tablet/desktop) */}
         <div className="hidden md:flex md:col-span-5 relative w-full justify-start">
           <div className="relative w-full max-w-[460px] lg:max-w-none group pb-8 pr-6 sm:pr-10 lg:pr-12">
