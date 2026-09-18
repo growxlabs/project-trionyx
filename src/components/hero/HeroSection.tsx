@@ -46,7 +46,7 @@ export const HeroSection = ({
       {/* INTERNAL 12-COLUMN CONTENT GRID (32px padding on desktop, 20px-24px on mobile) */}
       <ContentGrid className="relative z-10 pt-4 pb-14 sm:py-20 lg:py-24">
         {/* COLUMNS 1 THROUGH 7: Structured Typography & Primary Actions */}
-        <div className="lg:col-span-7 flex flex-col justify-center">
+        <div className="md:col-span-7 flex flex-col justify-center">
           {/* Small Context Tag: strictly aligned flush to Column 1 */}
           <div className="flex items-center gap-2 mb-3.5 sm:mb-5">
             <span className="w-1.5 h-1.5 rounded-full bg-[#F26522]" aria-hidden="true" />
@@ -112,7 +112,7 @@ export const HeroSection = ({
         </div>
 
         {/* COLUMNS 8 THROUGH 12: Spatial negative space allowing freeform artwork to command the right field */}
-        <div className="hidden lg:block lg:col-span-5 pointer-events-none" aria-hidden="true" />
+        <div className="hidden md:block md:col-span-5 pointer-events-none" aria-hidden="true" />
       </ContentGrid>
     </SectionFrame>
   );

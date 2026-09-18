@@ -25,9 +25,9 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
       hasBottomBorder
       className="bg-[#F7F6F0] overflow-hidden"
     >
-      <ContentGrid className="pt-12 pb-16 sm:pt-16 sm:pb-20 lg:py-32 items-center gap-12 lg:gap-16">
-        {/* DESKTOP VISUAL COLUMN (Hidden on mobile, left on desktop) */}
-        <div className="hidden lg:flex lg:col-span-5 relative w-full justify-start">
+      <ContentGrid className="md:grid-cols-12 pt-12 pb-16 sm:pt-16 sm:pb-20 md:py-20 lg:py-32 items-center gap-10 md:gap-10 lg:gap-16">
+        {/* DESKTOP / TABLET VISUAL COLUMN (Hidden on mobile <768px, left on tablet/desktop) */}
+        <div className="hidden md:flex md:col-span-5 relative w-full justify-start">
           <div className="relative w-full max-w-[460px] lg:max-w-none group pb-8 pr-6 sm:pr-10 lg:pr-12">
             {/* Primary Base Image: Precision workshop installation & coating activity */}
             <div className="relative w-[82%] sm:w-[80%] aspect-[4/5] overflow-hidden rounded-[4px] border border-[rgba(23,23,20,0.08)] shadow-[0_12px_36px_rgba(23,23,20,0.05)] bg-[#EFECE3]">
@@ -55,8 +55,8 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
           </div>
         </div>
 
-        {/* CONTENT COLUMN (Full width on mobile, right on desktop) */}
-        <div className="w-full lg:col-span-7 flex flex-col justify-center lg:pl-4 xl:pl-8">
+        {/* CONTENT COLUMN (Full width on mobile, right on tablet/desktop) */}
+        <div className="w-full md:col-span-7 flex flex-col justify-center md:pl-6 lg:pl-8 xl:pl-12">
           {/* 1. Small Eyebrow: 16px mb */}
           <span className="text-[11px] sm:text-[12px] font-bold tracking-[0.14em] uppercase text-[#68665F] font-mono mb-4 block">
             ABOUT TRIONYX
@@ -73,28 +73,28 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
             Two decades in the automotive industry.
           </h2>
 
-          {/* 3. Mobile Overlapping Imagery: Sits immediately after heading */}
-          <div className="lg:hidden mt-7 mb-8 sm:mt-8 sm:mb-10 w-full flex justify-center">
-            <div className="relative w-[88%] max-w-[340px] sm:max-w-[400px] pb-6 pr-6 group">
-              {/* Primary Base Image: around 70% width */}
-              <div className="relative w-[70%] aspect-[4/5] overflow-hidden rounded-[4px] border border-[rgba(23,23,20,0.08)] shadow-[0_10px_28px_rgba(23,23,20,0.06)] bg-[#EFECE3]">
+          {/* 3. Mobile Overlapping Imagery: Bold presence, aligned with left narrative flow */}
+          <div className="md:hidden mt-7 mb-8 w-full max-w-[420px]">
+            <div className="relative w-full pb-8 pr-7 sm:pr-9 group">
+              {/* Primary Base Image: around 72% width */}
+              <div className="relative w-[72%] aspect-[4/5] overflow-hidden rounded-[4px] border border-[rgba(23,23,20,0.08)] shadow-[0_12px_32px_rgba(23,23,20,0.06)] bg-[#EFECE3]">
                 <Image
                   src="/images/about/ppf-installation.jpg"
                   alt="Automotive protective film and ceramic coating installation workshop"
                   fill
-                  sizes="(max-width: 768px) 65vw, 35vw"
+                  sizes="(max-width: 768px) 75vw, 35vw"
                   className="object-cover"
                   priority={false}
                 />
               </div>
 
-              {/* Overlapping Secondary Accent Image: around 50% width, overlapping bottom-right */}
-              <div className="absolute right-0 bottom-0 w-[50%] aspect-[4/3] overflow-hidden rounded-[4px] border-2 border-[#F7F6F0] shadow-[0_14px_34px_rgba(23,23,20,0.10)] bg-[#EFECE3]">
+              {/* Overlapping Secondary Accent Image: around 52% width, overlapping bottom-right */}
+              <div className="absolute right-0 bottom-0 w-[52%] aspect-[4/3] overflow-hidden rounded-[4px] border-2 border-[#F7F6F0] shadow-[0_16px_36px_rgba(23,23,20,0.10)] bg-[#EFECE3]">
                 <Image
                   src="/images/about/ceramic-coating-surface.jpg"
                   alt="Hydrophobic ceramic coating and clearcoat finish on automotive surface"
                   fill
-                  sizes="(max-width: 768px) 45vw, 25vw"
+                  sizes="(max-width: 768px) 55vw, 25vw"
                   className="object-cover"
                   priority={false}
                 />
