@@ -30,17 +30,7 @@ export function ClientFeedback() {
       ref={testimonialRef}
     >
       {/* Section Header: Trionyx Editorial Hierarchy */}
-      <article className="max-w-screen-md mx-auto text-center space-y-3 px-4 sm:px-6">
-        <TimelineContent
-          as="span"
-          className="text-[11px] sm:text-[12px] font-bold tracking-[0.16em] uppercase text-[#68665F] font-mono block"
-          animationNum={0}
-          customVariants={revealVariants}
-          timelineRef={testimonialRef}
-        >
-          CUSTOMER REVIEWS
-        </TimelineContent>
-
+      <article className="max-w-screen-md mx-auto text-center px-4 sm:px-6 mb-2">
         <TimelineContent
           as="h2"
           style={{
@@ -48,21 +38,11 @@ export function ClientFeedback() {
             letterSpacing: '-0.03em',
           }}
           className="text-[32px] sm:text-[40px] lg:text-[46px] font-semibold leading-[1.1] text-[#171714]"
-          animationNum={1}
+          animationNum={0}
           customVariants={revealVariants}
           timelineRef={testimonialRef}
         >
           Trusted across studios and certified installers.
-        </TimelineContent>
-
-        <TimelineContent
-          as="p"
-          className="mx-auto text-[15px] sm:text-[16px] text-[#68665F] max-w-xl font-normal leading-[1.6]"
-          animationNum={2}
-          customVariants={revealVariants}
-          timelineRef={testimonialRef}
-        >
-          What automotive professionals, studio partners, and vehicle owners say about Trionyx surface protection.
         </TimelineContent>
       </article>
 
