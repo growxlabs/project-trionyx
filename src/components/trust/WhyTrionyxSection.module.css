@@ -4,7 +4,7 @@
 
 .section {
   background: #F7F6F0;
-  padding: 88px 32px 104px;
+  padding: 80px 32px 100px;
   color: #171714;
 }
 
@@ -14,14 +14,14 @@
   justify-content: space-between;
   align-items: flex-end;
   gap: 48px;
-  margin-bottom: 44px;
+  margin-bottom: 40px;
 }
 
 .eyebrowContainer {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 .eyebrowDot {
@@ -45,7 +45,7 @@
 
 .headingRow h2 {
   font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: clamp(32px, 3.4vw, 48px);
+  font-size: clamp(32px, 3.4vw, 46px);
   font-weight: 600;
   letter-spacing: -0.035em;
   line-height: 1.08;
@@ -96,15 +96,15 @@
 
 .card h3 {
   font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: clamp(24px, 2.2vw, 32px);
+  font-size: clamp(24px, 2.1vw, 30px);
   font-weight: 600;
-  line-height: 1.12;
+  line-height: 1.14;
   letter-spacing: -0.03em;
   margin: 0;
 }
 
 .card p {
-  font-size: 14.5px;
+  font-size: 14px;
   line-height: 1.65;
   color: #68665F;
   margin: 14px 0 0;
@@ -117,7 +117,7 @@
 .heritage {
   background: #1C1E1B;
   color: #F7F6F0;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.09);
   min-height: 440px;
   padding: 34px;
   display: flex;
@@ -125,7 +125,7 @@
 }
 
 .heritage:hover {
-  border-color: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.16);
 }
 
 .heritage .cardTop {
@@ -138,53 +138,51 @@
 
 .year {
   font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: clamp(84px, 8.4vw, 124px);
+  font-size: clamp(80px, 8vw, 116px);
   line-height: 0.95;
   font-weight: 600;
-  letter-spacing: -0.06em;
+  letter-spacing: -0.05em;
   color: #F26522;
-  margin: 22px 0 26px;
+  margin: 20px 0 24px;
   display: flex;
-  align-items: flex-end;
-  gap: 20px;
+  align-items: baseline;
+  gap: 16px;
 }
 
 .year span {
   font-family: var(--font-geist-mono), monospace;
   font-size: 11px;
-  font-weight: 500;
-  line-height: 1.45;
-  letter-spacing: 0.02em;
-  max-width: 85px;
-  margin-bottom: 12px;
+  font-weight: 600;
+  letter-spacing: 0.10em;
   color: #C2C1B4;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .cardBottom {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.1fr 1fr;
   gap: 24px;
   align-items: start;
   margin-top: auto;
 }
 
 .cardBottom h3 {
-  font-size: 24px;
+  font-size: 23px;
   color: #F7F6F0;
-  line-height: 1.15;
+  line-height: 1.16;
 }
 
 .cardBottom p {
   margin: 0;
   color: #B5B6AA;
-  font-size: 13.5px;
+  font-size: 13px;
   line-height: 1.6;
 }
 
 .heritageFooter {
   border-top: 1px solid rgba(255, 255, 255, 0.10);
-  margin-top: 26px;
+  margin-top: 24px;
   padding-top: 16px;
   display: flex;
   justify-content: space-between;
@@ -208,12 +206,15 @@
 }
 
 .products:hover {
-  border-color: rgba(23, 23, 20, 0.15);
+  border-color: rgba(23, 23, 20, 0.16);
 }
 
 .materialImage {
   position: absolute;
-  inset: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 62%;
 }
 
 .materialImage img {
@@ -229,12 +230,12 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  max-width: 360px;
   background: linear-gradient(
     90deg,
-    rgba(247, 246, 240, 0.98) 0%,
-    rgba(247, 246, 240, 0.92) 36%,
-    rgba(247, 246, 240, 0.45) 66%,
-    rgba(247, 246, 240, 0.05) 90%,
+    rgba(238, 236, 229, 0.98) 0%,
+    rgba(238, 236, 229, 0.94) 55%,
+    rgba(238, 236, 229, 0.40) 85%,
     transparent 100%
   );
 }
@@ -244,12 +245,12 @@
 }
 
 .productContent h3 {
-  margin-top: 56px;
+  margin-top: 50px;
   color: #171714;
 }
 
 .productContent p {
-  max-width: 250px;
+  max-width: 260px;
   color: #68665F;
 }
 
@@ -268,7 +269,7 @@
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(8px);
   border-radius: 100px;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 500;
   padding: 6px 13px;
   color: #171714;
@@ -281,19 +282,19 @@
 .support {
   background: #FFFFFF;
   border: 1px solid rgba(23, 23, 20, 0.08);
-  min-height: 360px;
+  min-height: 380px;
   padding: 34px;
   display: flex;
   flex-direction: column;
 }
 
 .support:hover {
-  border-color: rgba(23, 23, 20, 0.15);
+  border-color: rgba(23, 23, 20, 0.16);
 }
 
 .support .cardTop {
   color: #68665F;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .status {
@@ -322,22 +323,22 @@
   grid-template-columns: repeat(3, 1fr);
   margin-top: auto;
   border-top: 1px solid rgba(23, 23, 20, 0.08);
-  padding-top: 20px;
+  padding-top: 18px;
+  gap: 16px;
 }
 
 .supportSteps div {
   display: flex;
   flex-direction: column;
-  padding-right: 12px;
 }
 
 .supportSteps span {
   font-family: var(--font-geist-mono), monospace;
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   color: #F26522;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .supportSteps strong {
@@ -345,13 +346,14 @@
   font-size: 14.5px;
   font-weight: 600;
   color: #171714;
+  line-height: 1.2;
 }
 
 .supportSteps small {
   font-size: 11.5px;
-  color: #7A786E;
+  color: #68665F;
   margin-top: 3px;
-  line-height: 1.45;
+  line-height: 1.4;
 }
 
 /* ========================================================================= */
@@ -360,24 +362,24 @@
 .india {
   background: #EFE8DD;
   border: 1px solid rgba(23, 23, 20, 0.08);
-  min-height: 360px;
+  min-height: 380px;
   padding: 34px;
   display: flex;
   flex-direction: column;
 }
 
 .india:hover {
-  border-color: rgba(23, 23, 20, 0.15);
+  border-color: rgba(23, 23, 20, 0.16);
 }
 
 .india .cardTop {
   color: #68665F;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .indiaContent {
   display: grid;
-  grid-template-columns: 1.4fr 1fr;
+  grid-template-columns: 1.35fr 1fr;
   align-items: center;
   gap: 28px;
   margin-top: auto;
@@ -388,9 +390,9 @@
 }
 
 .indiaContent p {
-  margin-top: 14px;
+  margin-top: 12px;
   color: #68665F;
-  font-size: 14px;
+  font-size: 13.5px;
   line-height: 1.6;
 }
 
@@ -403,10 +405,10 @@
 
 .conditions span {
   font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 550;
   color: #171714;
-  padding: 13px 0;
+  padding: 12px 0;
   border-bottom: 1px solid rgba(23, 23, 20, 0.08);
   letter-spacing: -0.01em;
 }
@@ -422,7 +424,7 @@
 
 .indiaFooter {
   margin-top: auto;
-  padding-top: 24px;
+  padding-top: 22px;
   font-family: var(--font-geist-mono), monospace;
   font-size: 10px;
   font-weight: 600;
@@ -460,12 +462,12 @@
     padding-left: 0;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 10px;
   }
   .conditions span {
-    font-size: 12.5px;
-    padding: 8px 12px;
-    background: rgba(255, 255, 255, 0.5);
+    font-size: 12px;
+    padding: 7px 12px;
+    background: rgba(255, 255, 255, 0.6);
     border-radius: 6px;
     border-bottom: 0;
   }
@@ -473,10 +475,10 @@
 
 @media (max-width: 768px) {
   .section {
-    padding: 64px 20px 72px;
+    padding: 60px 20px 72px;
   }
   .headingRow {
-    margin-bottom: 32px;
+    margin-bottom: 28px;
   }
   .grid {
     grid-template-columns: 1fr;
@@ -490,9 +492,9 @@
     min-height: 380px;
   }
   .year {
-    font-size: 80px;
+    font-size: 76px;
     gap: 14px;
-    margin: 18px 0 20px;
+    margin: 16px 0 20px;
   }
   .cardBottom {
     grid-template-columns: 1fr;
@@ -502,20 +504,24 @@
     font-size: 22px;
   }
   .products {
-    min-height: 400px;
+    min-height: 380px;
+  }
+  .materialImage {
+    width: 100%;
   }
   .productContent {
     padding: 24px;
-    min-height: 400px;
+    min-height: 380px;
+    max-width: 100%;
     background: linear-gradient(
       180deg,
-      rgba(247, 246, 240, 0.96) 0%,
-      rgba(247, 246, 240, 0.90) 50%,
-      rgba(247, 246, 240, 0.35) 100%
+      rgba(238, 236, 229, 0.96) 0%,
+      rgba(238, 236, 229, 0.90) 50%,
+      rgba(238, 236, 229, 0.35) 100%
     );
   }
   .productContent h3 {
-    margin-top: 48px;
+    margin-top: 44px;
   }
   .support {
     min-height: auto;
@@ -523,23 +529,17 @@
   .supportSteps {
     gap: 12px;
   }
-  .supportSteps small {
-    font-size: 11px;
-  }
   .india {
     min-height: auto;
   }
   .indiaContent {
     margin-top: 16px;
   }
-  .conditions span {
-    border: 1px solid rgba(23, 23, 20, 0.08);
-  }
 }
 
 @media (max-width: 420px) {
   .year {
-    font-size: 72px;
+    font-size: 68px;
   }
   .year span {
     font-size: 10px;
