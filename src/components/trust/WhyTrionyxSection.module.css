@@ -1,0 +1,46 @@
+.section { background: #f7f6f0; padding: 96px 32px 104px; color: #171714; }
+.headingRow { display: flex; justify-content: space-between; align-items: flex-end; gap: 48px; margin-bottom: 48px; }
+.eyebrow { font: 600 11px/1.4 monospace; letter-spacing: .15em; color: #b84b16; margin: 0 0 22px; }
+.headingRow h2 { font-size: clamp(32px, 3.3vw, 50px); font-weight: 600; letter-spacing: -.045em; line-height: 1.09; margin: 0; }
+.headingRow h2 span { color: #77766d; }
+.intro { max-width: 290px; color: #68665f; font-size: 15px; line-height: 1.7; margin: 0 0 3px; }
+.grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 22px; }
+.card { border: 1px solid #deddd5; border-radius: 20px; overflow: hidden; padding: 32px; position: relative; }
+.cardTop { display: flex; align-items: center; justify-content: space-between; gap: 16px; font: 600 10px/1.4 monospace; letter-spacing: .12em; }
+.card h3 { font-size: clamp(26px, 2.3vw, 34px); font-weight: 550; line-height: 1.13; letter-spacing: -.035em; margin: 0; }
+.card p { font-size: 15px; line-height: 1.7; color: #68665f; margin: 16px 0 0; max-width: 360px; }
+.heritage { background: #20221f; color: #f7f6f0; min-height: 435px; display: flex; flex-direction: column; }
+.heritage .cardTop { color: #d2d1c5; }
+.year { font-size: clamp(80px, 8.6vw, 128px); line-height: 1; font-weight: 500; letter-spacing: -.075em; color: #ff9456; margin: 26px 0; display: flex; align-items: flex-end; gap: 24px; }
+.year span { font: 400 12px/1.5 monospace; letter-spacing: 0; max-width: 70px; margin-bottom: 12px; color: #d2d1c5; }
+.cardBottom { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; margin-top: auto; }
+.cardBottom h3 { font-size: 25px; }
+.cardBottom p { margin: 0; color: #c0c1b6; font-size: 13px; }
+.heritageFooter { border-top: 1px solid #45473f; margin-top: 28px; padding-top: 18px; display: flex; justify-content: space-between; gap: 16px; font: 10px/1.4 monospace; letter-spacing: .09em; color: #babbaf; }
+.products { background: #eeece5; min-height: 435px; padding: 0; }
+.materialImage { position: absolute; inset: 0; }
+.materialImage img { object-fit: cover; object-position: center; }
+.productContent { position: relative; z-index: 1; padding: 32px; min-height: 435px; display: flex; flex-direction: column; align-items: flex-start; background: linear-gradient(90deg,rgba(247,246,240,.97) 0%,rgba(247,246,240,.90) 30%,rgba(247,246,240,.12) 78%); }
+.productContent h3 { margin-top: 60px; }
+.productContent p { max-width: 240px; }
+.tags { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 7px; margin: auto 0 0; padding-top: 24px; }
+.tags li { border: 1px solid #d6d1c5; background: #f7f6f0e8; border-radius: 100px; font-size: 11px; padding: 7px 11px; color: #46473f; }
+.support { background: #fffefa; min-height: 340px; }
+.support .cardTop, .india .cardTop { color: #a4451a; margin-bottom: 28px; }
+.status { font-size: 9px; color: #565c50; border: 1px solid #d6dbcf; padding: 5px 9px; border-radius: 100px; }
+.support p { max-width: 420px; }
+.supportSteps { display: grid; grid-template-columns: repeat(3,1fr); margin-top: 30px; border-top: 1px solid #deddd5; padding-top: 18px; }
+.supportSteps div { display: flex; flex-direction: column; padding-right: 8px; }
+.supportSteps span { font: 10px monospace; color: #b84b16; margin-bottom: 10px; }
+.supportSteps strong { font-size: 14px; font-weight: 600; }
+.supportSteps small { font-size: 11px; color: #77766d; margin-top: 4px; }
+.india { background: #f0e7d9; display: flex; flex-direction: column; }
+.indiaContent { display: grid; grid-template-columns: 1.5fr 1fr; align-items: center; gap: 26px; }
+.conditions { display: flex; flex-direction: column; gap: 0; border-left: 1px solid #d1c4b0; padding-left: 22px; }
+.conditions span { font-size: 13px; padding: 15px 0; border-bottom: 1px solid #d1c4b0; }
+.conditions span:last-child { border-bottom: 0; }
+.indiaFooter { margin-top: auto; padding-top: 32px; font: 10px/1.5 monospace; letter-spacing: .08em; color: #73614b; }
+@media (max-width: 1000px) { .headingRow { align-items: start; flex-direction: column; gap: 22px; } .intro { max-width: 480px; } .cardBottom { grid-template-columns: 1fr; gap: 12px; } .indiaContent { grid-template-columns: 1fr; gap: 18px; } .conditions { border-left: 0; padding-left: 0; flex-direction: row; flex-wrap: wrap; gap: 12px; } .conditions span { font-size: 11px; padding: 9px 0; } }
+@media (max-width: 760px) { .section { padding: 60px 20px; } .headingRow { margin-bottom: 30px; } .grid { grid-template-columns: 1fr; gap: 16px; } .card { padding: 26px; border-radius: 16px; } .heritage { min-height: 390px; } .year { font-size: 86px; gap: 16px; } .cardBottom { grid-template-columns: 1fr 1fr; gap: 16px; } .cardBottom h3 { font-size: 23px; } .products { padding: 0; } .productContent { padding: 26px; min-height: 410px; } .productContent h3 { margin-top: 55px; } .support { min-height: 340px; } .india { min-height: 330px; } .supportSteps small { line-height: 1.5; } }
+@media (max-width: 380px) { .cardBottom { grid-template-columns: 1fr; } .year { font-size: 86px; } .cardTop { font-size: 9px; letter-spacing: .06em; } .heritageFooter { font-size: 8px; } }
+

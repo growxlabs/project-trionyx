@@ -1,167 +1,61 @@
-import React from 'react';
-import { SectionFrame, ContentGrid } from '../frame';
+import Image from 'next/image';
+import { SectionFrame } from '../frame';
+import styles from './WhyTrionyxSection.module.css';
 
-interface TrustPoint {
-  number: string;
-  title: string;
-  description: string;
-}
-
-const trustPoints: TrustPoint[] = [
-  {
-    number: '01',
-    title: 'Since 2006',
-    description: 'Nearly two decades of experience in the automotive products market.',
-  },
-  {
-    number: '02',
-    title: 'Product-focused',
-    description: 'A growing automotive portfolio built around protection, care and related product categories.',
-  },
-  {
-    number: '03',
-    title: 'Dealer support',
-    description: 'Product availability, guidance and support designed around long-term dealer relationships.',
-  },
-  {
-    number: '04',
-    title: 'Made for the Indian market',
-    description: 'Products and distribution shaped around Indian automotive demand and operating conditions.',
-  },
-];
-
-/**
- * WHY TRIONYX SECTION
- * 
- * Trust section built with a premium editorial layout:
- * - Desktop: 2 × 2 editorial information grid with subtle horizontal & vertical separator rules
- * - Mobile: Purpose-built 1-column sequence with 24–28px item rhythm and subtle dividers
- * - Integrated directly into the #F7F6F0 canvas with generous negative space (no SaaS boxed cards)
- */
-export const WhyTrionyxSection: React.FC = () => {
+export function WhyTrionyxSection() {
   return (
-    <SectionFrame
-      id="why-trionyx"
-      hasBottomBorder
-      className="bg-[#F7F6F0] overflow-hidden"
-    >
-      <ContentGrid className="pt-14 pb-[72px] sm:pt-20 sm:pb-24 lg:pt-24 lg:pb-32">
-        {/* Section Header: Eyebrow + Strong Editorial Heading */}
-        <div className="md:col-span-12 mb-10 md:mb-16">
-          {/* Eyebrow: 16px mb on mobile */}
-          <div className="flex items-center gap-2 mb-4">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#F26522]" aria-hidden="true" />
-            <span className="text-[11px] sm:text-[12px] font-bold tracking-[0.16em] uppercase text-[#68665F] font-mono">
-              WHY TRIONYX
-            </span>
+    <SectionFrame id="why-trionyx" className={styles.section} aria-labelledby="why-trionyx-heading">
+      <div className={styles.headingRow}>
+        <div>
+          <p className={styles.eyebrow}>THE TRIONYX DIFFERENCE</p>
+          <h2 id="why-trionyx-heading">Built on experience.<br /><span>Chosen for what comes with it.</span></h2>
+        </div>
+        <p className={styles.intro}>The right products are only the beginning. Experience, guidance and lasting dealer relationships make the difference.</p>
+      </div>
+
+      <div className={styles.grid}>
+        <article className={`${styles.card} ${styles.heritage}`}>
+          <div className={styles.cardTop}><span>01 / EXPERIENCE</span><span>EST. 2006</span></div>
+          <div className={styles.year}>2006<span>Our starting line.</span></div>
+          <div className={styles.cardBottom}>
+            <h3>Experience that<br />moves you forward.</h3>
+            <p>Two decades in automotive products. A foundation built on understanding the market and the people who keep it moving.</p>
           </div>
+          <div className={styles.heritageFooter}><span>AUTOMOTIVE FOCUS</span><span>THEN. NOW. NEXT.</span></div>
+        </article>
 
-          {/* Main Heading: Editorial line breaks, strong typography */}
-          <h2
-            style={{
-              fontFamily: '"Instrument Sans", sans-serif',
-              letterSpacing: '-0.03em',
-            }}
-            className="text-[#171714] font-semibold text-[28px] sm:text-[38px] lg:text-[46px] leading-[1.08] max-w-[660px]"
-          >
-            <span className="block">Built on experience.</span>
-            <span className="block">Chosen for what comes with it.</span>
-          </h2>
-        </div>
+        <article className={`${styles.card} ${styles.products}`}>
+          <div className={styles.materialImage}>
+            <Image src="/trionyx-materials.png" alt="Curved translucent protection film and orange and charcoal automotive surfaces" fill sizes="(max-width: 760px) 100vw, 55vw" />
+          </div>
+          <div className={styles.productContent}>
+            <div className={styles.cardTop}><span>02 / THE PORTFOLIO</span></div>
+            <h3>Protection.<br />Care. Possibility.</h3>
+            <p>A growing automotive portfolio, with a clear focus on the details that matter.</p>
+            <ul className={styles.tags} aria-label="Product categories"><li>Films</li><li>Coatings</li><li>Surface protection</li></ul>
+          </div>
+        </article>
 
-        {/* 
-          DESKTOP 2 × 2 EDITORIAL INFORMATION GRID (Hidden on mobile <768px)
-          - Subtle horizontal and vertical separator rules
-          - Large negative space, no floating boxed cards
-        */}
-        <div className="hidden md:grid md:col-span-12 md:grid-cols-2">
-          {trustPoints.map((item, index) => {
-            const isTopRow = index < 2;
-            const isLeftColumn = index % 2 === 0;
+        <article className={`${styles.card} ${styles.support}`}>
+          <div className={styles.cardTop}><span>03 / THE PARTNERSHIP</span><span className={styles.status}>DEALER FIRST</span></div>
+          <h3>More than supply.<br />Support that stays.</h3>
+          <p>Product availability, practical guidance and support built around long-term dealer relationships.</p>
+          <div className={styles.supportSteps}>
+            <div><span>01</span><strong>Choose</strong><small>Product guidance</small></div>
+            <div><span>02</span><strong>Source</strong><small>Availability support</small></div>
+            <div><span>03</span><strong>Grow</strong><small>Lasting relationships</small></div>
+          </div>
+        </article>
 
-            return (
-              <div
-                key={item.number}
-                className={`flex flex-col justify-start transition-colors duration-200 ${
-                  isTopRow
-                    ? 'border-b border-[rgba(23,23,20,0.08)] pb-12 lg:pb-14'
-                    : 'pt-12 lg:pt-14'
-                } ${
-                  isLeftColumn
-                    ? 'border-r border-[rgba(23,23,20,0.08)] pr-10 lg:pr-16'
-                    : 'pl-10 lg:pl-16'
-                }`}
-              >
-                {/* Number: mono uppercase metadata treatment */}
-                <div className="flex items-center gap-2 mb-3.5">
-                  <span className="font-mono text-[11px] lg:text-[12px] font-bold tracking-[0.16em] uppercase text-[#F26522]">
-                    {item.number}
-                  </span>
-                </div>
-
-                {/* Short Title */}
-                <h3
-                  style={{
-                    fontFamily: '"Instrument Sans", sans-serif',
-                    letterSpacing: '-0.02em',
-                  }}
-                  className="text-[20px] lg:text-[23px] font-semibold text-[#171714] mb-3 leading-snug"
-                >
-                  {item.title}
-                </h3>
-
-                {/* Supporting Description */}
-                <p className="text-[15px] lg:text-[15.5px] text-[#68665F] leading-[1.65] max-w-[440px] font-normal tracking-[-0.01em]">
-                  {item.description}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* 
-          MOBILE 1-COLUMN VERTICAL SEQUENCE (Visible only on mobile <768px)
-          - Purpose-built vertical flow
-          - 24–28px vertical padding rhythm
-          - Thin subtle separator between items
-          - No boxed cards
-        */}
-        <div className="md:hidden flex flex-col w-full">
-          {trustPoints.map((item, index) => {
-            const isLast = index === trustPoints.length - 1;
-
-            return (
-              <div
-                key={item.number}
-                className={`flex flex-col ${
-                  index === 0 ? 'pt-0 pb-6 sm:pb-7' : 'py-6 sm:py-7'
-                } ${!isLast ? 'border-b border-[rgba(23,23,20,0.08)]' : ''}`}
-              >
-                {/* Number: mono metadata style */}
-                <span className="font-mono text-[11px] font-bold tracking-[0.16em] uppercase text-[#F26522] mb-2">
-                  {item.number}
-                </span>
-
-                {/* Short Title */}
-                <h3
-                  style={{
-                    fontFamily: '"Instrument Sans", sans-serif',
-                    letterSpacing: '-0.02em',
-                  }}
-                  className="text-[19px] sm:text-[20px] font-semibold text-[#171714] mb-2 leading-snug"
-                >
-                  {item.title}
-                </h3>
-
-                {/* Supporting Description */}
-                <p className="text-[14.5px] sm:text-[15px] text-[#68665F] leading-[1.6] max-w-[360px] font-normal tracking-[-0.01em]">
-                  {item.description}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-      </ContentGrid>
+        <article className={`${styles.card} ${styles.india}`}>
+          <div className={styles.cardTop}><span>04 / OUR MARKET</span><span>INDIA</span></div>
+          <div className={styles.indiaContent}>
+            <div><h3>For the roads<br />we call home.</h3><p>Products and distribution shaped around Indian automotive demand and everyday operating conditions.</p></div>
+            <div className={styles.conditions}><span>Summer heat</span><span>Monsoon days</span><span>Everyday roads</span></div>
+          </div>
+          <div className={styles.indiaFooter}>LOCAL UNDERSTANDING. LONG-TERM COMMITMENT.</div>
+        </article>
+      </div>
     </SectionFrame>
   );
-};
+}
