@@ -1,0 +1,23 @@
+.reveal {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1.12;
+  max-height: 560px;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #171714;
+}
+
+.surface {
+  object-fit: cover;
+  object-position: 43% center;
+}
+
+@media (max-width: 767px) {
+  .reveal {
+    aspect-ratio: 4 / 3;
+    max-height: 420px;
+    border-radius: 12px;
+  }
+  .surface { object-position: center 58%; }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "@trionyx/design-tokens",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "devDependencies": {
+    "@trionyx/config": "workspace:*",
+    "typescript": "^5"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}
