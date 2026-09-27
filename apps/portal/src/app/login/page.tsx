@@ -67,15 +67,11 @@ export default function InternalLoginPage() {
               />
             </div>
 
-            <div className="inline-flex items-center px-2 py-0.5 rounded-[3px] bg-[var(--surface-subtle)] border border-[var(--border)] text-[11px] font-bold tracking-[0.1em] uppercase text-[var(--accent-text)] mb-3">
-              INTERNAL ACCESS
-            </div>
-
             <h1 className="text-[24px] sm:text-[26px] font-semibold text-[var(--text-primary)] tracking-[-0.025em] leading-tight m-0">
-              Operations Sign In
+              Sign in to Trionyx
             </h1>
             <p className="text-[13.5px] text-[var(--text-secondary)] leading-relaxed mt-2 m-0">
-              Restricted management portal for regional distributors, executive directors, and administrative operations.
+              For authorised distributors and Trionyx team members.
             </p>
           </div>
 
@@ -110,7 +106,7 @@ export default function InternalLoginPage() {
                 htmlFor="email"
                 className="block text-[12px] font-semibold tracking-wide uppercase text-[var(--text-primary)] mb-2"
               >
-                Email Address
+                Email
               </label>
               <input
                 id="email"
@@ -121,7 +117,7 @@ export default function InternalLoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isLoading}
-                placeholder="name@trionyx.com"
+                placeholder="Enter your email address"
                 className="w-full h-[52px] px-4 bg-[var(--surface-raised)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/60 text-[15px] rounded-[4px] border border-[var(--border)] transition-all duration-150 outline-none hover:border-[var(--border-strong)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--focus-ring)]/15 disabled:bg-[var(--surface-subtle)] disabled:cursor-not-allowed"
               />
             </div>
@@ -194,17 +190,13 @@ export default function InternalLoginPage() {
                     <span>Signing in...</span>
                   </>
                 ) : (
-                  <span>Sign In</span>
+                  <span>Sign in</span>
                 )}
               </button>
             </div>
           </form>
         </div>
 
-        {/* Security / Confidentiality Footer */}
-        <p className="text-center text-[12px] text-[var(--text-secondary)]/80 mt-6 leading-relaxed">
-          Authorized internal personnel only. All access attempts are cryptographically verified and audited.
-        </p>
       </div>
     </main>
   );
