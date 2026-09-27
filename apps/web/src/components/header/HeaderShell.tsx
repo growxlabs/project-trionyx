@@ -122,6 +122,7 @@ export const HeaderShell = () => {
             </div>
 
             <NavLink href="/installer-network">Installer Network</NavLink>
+            <NavLink href="/warranty">Warranty</NavLink>
             <NavLink href="/about">About</NavLink>
           </nav>
 
@@ -233,6 +234,14 @@ export const HeaderShell = () => {
                 className="py-3 px-3.5 rounded-[4px] text-[15.5px] font-medium text-[#171714] hover:bg-[#ECE9E4] transition-colors"
               >
                 Installer Network
+              </Link>
+
+              <Link
+                href="/warranty"
+                onClick={() => setMobileMenuOpen(false)}
+                className="py-3 px-3.5 rounded-[4px] text-[15.5px] font-medium text-[#171714] hover:bg-[#ECE9E4] transition-colors"
+              >
+                Warranty
               </Link>
 
               <Link

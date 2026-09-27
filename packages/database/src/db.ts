@@ -167,7 +167,7 @@ export async function runPostgresMigrations(client: Client = getDbClient()): Pro
 
   const check = await client.execute({
     sql: 'SELECT name FROM _migrations WHERE name = ?',
-    args: ['0009_contact_enquiries_status_constraint'],
+    args: ['0010_warranties_and_policies'],
   });
 
   if (check.rows.length === 0) {
@@ -850,6 +850,56 @@ export async function runMigrations(client: Client = getDbClient()): Promise<voi
           {
             sql: 'INSERT INTO _migrations (name) VALUES (?)',
             args: ['0009_contact_enquiries_status_constraint'],
+          },
+        ],
+        'write'
+      );
+    }
+
+    // Check if warranties and policies migration has been applied
+    const existingWarrantyMigration = await client.execute({
+      sql: 'SELECT name FROM _migrations WHERE name = ?',
+      args: ['0010_warranties_and_policies'],
+    });
+
+    if (existingWarrantyMigration.rows.length === 0) {
+      await client.batch(
+        [
+          `CREATE TABLE IF NOT EXISTS warranty_policies (
+            id TEXT PRIMARY KEY,
+            product_id TEXT NOT NULL UNIQUE REFERENCES products(id) ON DELETE CASCADE,
+            duration_months INTEGER NOT NULL,
+            status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'INACTIVE')),
+            created_at TEXT NOT NULL DEFAULT (datetime('now')),
+            updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+          );`,
+          `CREATE INDEX IF NOT EXISTS idx_warranty_policies_product ON warranty_policies(product_id);`,
+          `CREATE TABLE IF NOT EXISTS warranties (
+            id TEXT PRIMARY KEY,
+            serial_record_id TEXT NOT NULL UNIQUE REFERENCES serial_numbers(id) ON DELETE RESTRICT,
+            product_id TEXT NOT NULL REFERENCES products(id) ON DELETE RESTRICT,
+            dealer_id TEXT REFERENCES dealers(id) ON DELETE SET NULL,
+            installation_date TEXT NOT NULL,
+            warranty_start_date TEXT NOT NULL,
+            warranty_end_date TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'VOID')),
+            activated_by TEXT NOT NULL,
+            activated_by_type TEXT NOT NULL CHECK (activated_by_type IN ('INTERNAL', 'DEALER')),
+            activated_at TEXT NOT NULL DEFAULT (datetime('now')),
+            voided_at TEXT,
+            voided_by TEXT,
+            void_reason TEXT,
+            created_at TEXT NOT NULL DEFAULT (datetime('now')),
+            updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+          );`,
+          `CREATE INDEX IF NOT EXISTS idx_warranties_serial ON warranties(serial_record_id);`,
+          `CREATE INDEX IF NOT EXISTS idx_warranties_product ON warranties(product_id);`,
+          `CREATE INDEX IF NOT EXISTS idx_warranties_dealer ON warranties(dealer_id);`,
+          `CREATE INDEX IF NOT EXISTS idx_warranties_status ON warranties(status);`,
+          `CREATE INDEX IF NOT EXISTS idx_warranties_end_date ON warranties(warranty_end_date);`,
+          {
+            sql: 'INSERT INTO _migrations (name) VALUES (?)',
+            args: ['0010_warranties_and_policies'],
           },
         ],
         'write'

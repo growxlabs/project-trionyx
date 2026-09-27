@@ -406,6 +406,44 @@ CREATE TABLE IF NOT EXISTS enquiry_notes (
 CREATE INDEX IF NOT EXISTS idx_enquiry_notes_enquiry ON enquiry_notes(enquiry_id);
 CREATE INDEX IF NOT EXISTS idx_enquiry_notes_created ON enquiry_notes(created_at);
 
+-- 22. Warranty policies
+CREATE TABLE IF NOT EXISTS warranty_policies (
+  id TEXT PRIMARY KEY,
+  product_id TEXT NOT NULL UNIQUE REFERENCES products(id) ON DELETE CASCADE,
+  duration_months INTEGER NOT NULL,
+  status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'INACTIVE')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_warranty_policies_product ON warranty_policies(product_id);
+
+-- 23. Warranties
+CREATE TABLE IF NOT EXISTS warranties (
+  id TEXT PRIMARY KEY,
+  serial_record_id TEXT NOT NULL UNIQUE REFERENCES serial_numbers(id) ON DELETE RESTRICT,
+  product_id TEXT NOT NULL REFERENCES products(id) ON DELETE RESTRICT,
+  dealer_id TEXT REFERENCES dealers(id) ON DELETE SET NULL,
+  installation_date TEXT NOT NULL,
+  warranty_start_date TEXT NOT NULL,
+  warranty_end_date TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'VOID')),
+  activated_by TEXT NOT NULL,
+  activated_by_type TEXT NOT NULL CHECK (activated_by_type IN ('INTERNAL', 'DEALER')),
+  activated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  voided_at TIMESTAMPTZ,
+  voided_by TEXT,
+  void_reason TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_warranties_serial ON warranties(serial_record_id);
+CREATE INDEX IF NOT EXISTS idx_warranties_product ON warranties(product_id);
+CREATE INDEX IF NOT EXISTS idx_warranties_dealer ON warranties(dealer_id);
+CREATE INDEX IF NOT EXISTS idx_warranties_status ON warranties(status);
+CREATE INDEX IF NOT EXISTS idx_warranties_end_date ON warranties(warranty_end_date);
+
 -- Mark all migrations as applied in _migrations
 INSERT INTO _migrations (name) VALUES
   ('0001_initial_auth_schema'),
@@ -416,5 +454,6 @@ INSERT INTO _migrations (name) VALUES
   ('0006_dealer_requests_created_by'),
   ('0007_contact_enquiries'),
   ('0008_contact_enquiries_management'),
-  ('0009_contact_enquiries_status_constraint')
+  ('0009_contact_enquiries_status_constraint'),
+  ('0010_warranties_and_policies')
 ON CONFLICT (name) DO NOTHING;

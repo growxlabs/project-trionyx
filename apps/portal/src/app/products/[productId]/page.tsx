@@ -7,6 +7,7 @@ import {
   categoriesRepository,
   serialsRepository,
   serialMovementsRepository,
+  warrantyPoliciesRepository,
   ensureDatabaseReady,
 } from '@trionyx/database';
 import { InternalShell } from '../../../components/shell/InternalShell';
@@ -39,10 +40,11 @@ export default async function ProductDetailPage({
     notFound();
   }
 
-  const [category, serials, movements] = await Promise.all([
+  const [category, serials, movements, warrantyPolicy] = await Promise.all([
     categoriesRepository.findById(product.categoryId),
     serialsRepository.listByProduct(productId),
     serialMovementsRepository.listWithDetails({ productId, limit: 100 }),
+    warrantyPoliciesRepository.findByProductId(productId),
   ]);
 
   return (
@@ -52,6 +54,7 @@ export default async function ProductDetailPage({
         category={category}
         serials={serials}
         movements={movements}
+        warrantyPolicy={warrantyPolicy}
         user={user}
       />
     </InternalShell>

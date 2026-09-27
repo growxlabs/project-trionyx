@@ -470,3 +470,50 @@ export const createEnquiryNoteSchema = z.object({
 });
 export type CreateEnquiryNoteInput = z.infer<typeof createEnquiryNoteSchema>;
 
+/**
+ * Warranty Validation Schemas
+ */
+
+export const checkWarrantySchema = z.object({
+  serialNumber: z
+    .string()
+    .trim()
+    .min(1, 'Serial number is required')
+    .max(100, 'Serial number is too long')
+    .transform((val) => val.trim().toUpperCase()),
+});
+export type CheckWarrantyInput = z.infer<typeof checkWarrantySchema>;
+
+export const activateWarrantySchema = z.object({
+  serialNumber: z
+    .string()
+    .trim()
+    .min(1, 'Serial number is required')
+    .max(100, 'Serial number is too long')
+    .transform((val) => val.trim().toUpperCase()),
+  installationDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Installation date must be in YYYY-MM-DD format'),
+});
+export type ActivateWarrantyInput = z.infer<typeof activateWarrantySchema>;
+
+export const voidWarrantySchema = z.object({
+  reason: z
+    .string()
+    .trim()
+    .min(3, 'Reason must be at least 3 characters')
+    .max(500, 'Reason cannot exceed 500 characters'),
+});
+export type VoidWarrantyInput = z.infer<typeof voidWarrantySchema>;
+
+export const upsertWarrantyPolicySchema = z.object({
+  durationMonths: z
+    .number()
+    .int('Duration must be a whole number of months')
+    .min(1, 'Duration must be at least 1 month')
+    .max(120, 'Duration cannot exceed 120 months (10 years)'),
+  status: z.enum(['ACTIVE', 'INACTIVE']).default('ACTIVE'),
+});
+export type UpsertWarrantyPolicyInput = z.infer<typeof upsertWarrantyPolicySchema>;
+
+

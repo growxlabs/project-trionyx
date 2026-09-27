@@ -10,6 +10,7 @@ import type {
   SerialMovementWithDetails,
   SerialStatus,
   SafeUser,
+  WarrantyPolicy,
 } from '@trionyx/types';
 import { ConfirmDialog } from '../../../components/ui/ConfirmDialog';
 import { Modal } from '../../../components/ui/Modal';
@@ -20,6 +21,7 @@ interface ProductDetailViewProps {
   category: ProductCategory | null;
   serials: SerialNumberWithDetails[];
   movements: SerialMovementWithDetails[];
+  warrantyPolicy?: WarrantyPolicy | null;
   user: SafeUser;
 }
 
@@ -28,6 +30,7 @@ export function ProductDetailView({
   category,
   serials: initialSerials,
   movements: initialMovements,
+  warrantyPolicy,
   user,
 }: ProductDetailViewProps) {
   const router = useRouter();
@@ -36,7 +39,15 @@ export function ProductDetailView({
   const [product, setProduct] = useState<ProductWithRelations>(initialProduct);
   const [serials, setSerials] = useState<SerialNumberWithDetails[]>(initialSerials);
   const [movements] = useState<SerialMovementWithDetails[]>(initialMovements);
-  const [activeTab, setActiveTab] = useState<'overview' | 'serials' | 'specs' | 'media' | 'movements'>('overview');
+  const [policy, setPolicy] = useState<WarrantyPolicy | null>(warrantyPolicy ?? null);
+  const [activeTab, setActiveTab] = useState<'overview' | 'serials' | 'specs' | 'media' | 'movements' | 'warranty'>('overview');
+
+  // Warranty Policy Modal State
+  const [showPolicyModal, setShowPolicyModal] = useState(false);
+  const [policyDuration, setPolicyDuration] = useState<number>(warrantyPolicy?.durationMonths ?? 24);
+  const [policyStatus, setPolicyStatus] = useState<'ACTIVE' | 'INACTIVE'>(warrantyPolicy?.status ?? 'ACTIVE');
+  const [isSavingPolicy, setIsSavingPolicy] = useState(false);
+  const [policyError, setPolicyError] = useState<string | null>(null);
 
   // Serial list search & status filter
   const [serialSearch, setSerialSearch] = useState('');
@@ -215,6 +226,42 @@ export function ProductDetailView({
     }
   };
 
+  const handleSaveWarrantyPolicy = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (policyDuration < 1 || policyDuration > 120) {
+      setPolicyError('Duration must be between 1 and 120 months');
+      return;
+    }
+
+    setIsSavingPolicy(true);
+    setPolicyError(null);
+
+    try {
+      const res = await fetch(`/api/v1/internal/products/${product.id}/warranty-policy`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          durationMonths: Number(policyDuration),
+          status: policyStatus,
+        }),
+      });
+
+      const json = await res.json();
+      if (!res.ok) {
+        setPolicyError(json.error?.message || 'Failed to update warranty policy');
+        return;
+      }
+
+      setPolicy(json.data);
+      setShowPolicyModal(false);
+      router.refresh();
+    } catch {
+      setPolicyError('Network error while saving warranty policy');
+    } finally {
+      setIsSavingPolicy(false);
+    }
+  };
+
   const statusBadge = (status: SerialStatus) => {
     switch (status) {
       case 'AVAILABLE':
@@ -377,6 +424,16 @@ export function ProductDetailView({
           { key: 'specs', label: `Specifications (${product.specifications.length})` },
           { key: 'media', label: `Media & Docs (${product.media.length})` },
           { key: 'movements', label: `Movement History (${movements.length})` },
+          {
+            key: 'warranty',
+            label: `Warranty Policy (${
+              policy?.status === 'ACTIVE'
+                ? `${policy.durationMonths}m`
+                : policy
+                ? 'Inactive'
+                : 'Not Set'
+            })`,
+          },
         ].map((tab) => (
           <button
             key={tab.key}
@@ -446,6 +503,51 @@ export function ProductDetailView({
                   <span className="text-[var(--text-primary)]">{new Date(product.updatedAt).toLocaleString()}</span>
                 </div>
               </div>
+            </div>
+
+            {/* Warranty Status Banner in Overview */}
+            <div className="pt-4 border-t border-[var(--border)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-center text-[var(--text-primary)] shrink-0">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    <path d="M9 12l2 2 4-4" />
+                  </svg>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[13px] font-semibold text-[var(--text-primary)]">Warranty Policy:</span>
+                    <span
+                      className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider border ${
+                        policy?.status === 'ACTIVE'
+                          ? 'bg-[var(--status-success-soft)] text-[var(--status-success)] border-[var(--status-success-border)]'
+                          : policy
+                          ? 'bg-[var(--status-warning-soft)] text-[var(--status-warning)] border-[var(--status-warning-border)]'
+                          : 'bg-[var(--surface-subtle)] text-[var(--text-muted)] border-[var(--border)]'
+                      }`}
+                    >
+                      {policy?.status === 'ACTIVE'
+                        ? `${policy.durationMonths} Months (${Math.round((policy.durationMonths / 12) * 10) / 10} yrs)`
+                        : policy
+                        ? 'Inactive'
+                        : 'Not Configured'}
+                    </span>
+                  </div>
+                  <p className="text-[12px] text-[var(--text-secondary)] m-0 mt-0.5">
+                    {policy?.status === 'ACTIVE'
+                      ? 'Authorized dealers can register warranty cards for active serial numbers.'
+                      : 'Dealers cannot activate warranties until an active policy is configured.'}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('warranty')}
+                className="text-[12.5px] font-semibold text-[var(--accent-text)] hover:underline self-start sm:self-auto cursor-pointer"
+              >
+                Manage Policy →
+              </button>
             </div>
           </div>
         </div>
@@ -785,6 +887,147 @@ export function ProductDetailView({
         </div>
       )}
 
+      {/* Tab 6: Warranty Policy */}
+      {activeTab === 'warranty' && (
+        <div className="space-y-6">
+          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] p-6 shadow-[0_1px_3px_rgba(23,23,20,0.03)] space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--border)]">
+              <div>
+                <h2 className="text-[16px] font-semibold text-[var(--text-primary)] m-0">
+                  Product Warranty Policy
+                </h2>
+                <p className="text-[12.5px] text-[var(--text-secondary)] mt-0.5 m-0">
+                  Controls factory warranty eligibility, duration, and dealer activation rules for this product formulation.
+                </p>
+              </div>
+
+              {canWrite && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPolicyDuration(policy?.durationMonths ?? 24);
+                    setPolicyStatus(policy?.status ?? 'ACTIVE');
+                    setPolicyError(null);
+                    setShowPolicyModal(true);
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[6px] bg-[var(--text-primary)] hover:bg-[var(--surface-subtle)] text-[var(--background)] text-[13px] font-medium transition-colors shadow-sm self-start sm:self-auto cursor-pointer"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  {policy ? 'Edit Warranty Policy' : 'Configure Warranty Policy'}
+                </button>
+              )}
+            </div>
+
+            {policy ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="md:col-span-2 space-y-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="p-4 rounded-[6px] border border-[var(--border)] bg-[var(--background)]">
+                      <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)] block mb-1">
+                        Policy Status
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`inline-flex items-center px-2.5 py-1 rounded-[4px] text-[12px] font-bold tracking-wide uppercase border ${
+                            policy.status === 'ACTIVE'
+                              ? 'bg-[var(--status-success-soft)] text-[var(--status-success)] border-[var(--status-success-border)]'
+                              : 'bg-[var(--status-warning-soft)] text-[var(--status-warning)] border-[var(--status-warning-border)]'
+                          }`}
+                        >
+                          {policy.status}
+                        </span>
+                        <span className="text-[12px] text-[var(--text-secondary)]">
+                          {policy.status === 'ACTIVE'
+                            ? 'Dealers can activate warranties'
+                            : 'Activations currently paused'}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-[6px] border border-[var(--border)] bg-[var(--background)]">
+                      <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)] block mb-1">
+                        Standard Warranty Duration
+                      </span>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-[22px] font-bold text-[var(--text-primary)]">
+                          {policy.durationMonths}
+                        </span>
+                        <span className="text-[13px] text-[var(--text-secondary)] font-medium">
+                          months ({Math.round((policy.durationMonths / 12) * 10) / 10} {policy.durationMonths === 12 ? 'year' : 'years'})
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-[6px] border border-[var(--border)] bg-[var(--background)] space-y-2">
+                    <h3 className="text-[13px] font-bold uppercase tracking-wider text-[var(--text-secondary)] m-0">
+                      Standard Terms & Coverage
+                    </h3>
+                    <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed m-0">
+                      Standard factory warranty covers manufacturing defects, formulation integrity, adhesion performance, and environmental degradation when applied according to official Trionyx surface preparation protocol by an authorized dealer.
+                    </p>
+                    <p className="text-[12px] text-[var(--text-muted)] m-0 pt-1">
+                      Warranty period begins strictly from the documented <strong>Installation Date</strong> entered during registration.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-[var(--background)] border border-[var(--border)] rounded-[6px] p-4 space-y-3 self-start text-[12.5px]">
+                  <div>
+                    <span className="text-[var(--text-muted)] block text-[11px] uppercase font-semibold">Policy ID</span>
+                    <span className="font-mono text-[var(--text-primary)] break-all">{policy.id}</span>
+                  </div>
+                  <div>
+                    <span className="text-[var(--text-muted)] block text-[11px] uppercase font-semibold">Product Code</span>
+                    <span className="font-mono font-bold text-[var(--accent-text)]">{product.productCode}</span>
+                  </div>
+                  <div>
+                    <span className="text-[var(--text-muted)] block text-[11px] uppercase font-semibold">Configured</span>
+                    <span className="text-[var(--text-primary)]">{new Date(policy.createdAt).toLocaleDateString()}</span>
+                  </div>
+                  <div>
+                    <span className="text-[var(--text-muted)] block text-[11px] uppercase font-semibold">Last Modified</span>
+                    <span className="text-[var(--text-primary)]">{new Date(policy.updatedAt).toLocaleDateString()}</span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="p-8 text-center border border-dashed border-[var(--border-strong)] rounded-[8px] bg-[var(--background)] space-y-3">
+                <div className="w-12 h-12 mx-auto rounded-full bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-center text-[var(--text-muted)]">
+                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-[14px] font-semibold text-[var(--text-primary)] m-0">
+                    No Warranty Policy Configured
+                  </h3>
+                  <p className="text-[13px] text-[var(--text-secondary)] max-w-md mx-auto mt-1 m-0">
+                    Dealers cannot register or activate warranties for serial numbers of this product until a duration policy is established.
+                  </p>
+                </div>
+                {canWrite && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPolicyDuration(24);
+                      setPolicyStatus('ACTIVE');
+                      setPolicyError(null);
+                      setShowPolicyModal(true);
+                    }}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[6px] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-foreground)] text-[13px] font-semibold transition-colors cursor-pointer"
+                  >
+                    Configure Policy Now
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Archive Product Confirmation Modal */}
       <ConfirmDialog
         isOpen={showArchiveDialog}
@@ -960,6 +1203,136 @@ export function ProductDetailView({
           setLookupInitialSerial(undefined);
         }}
       />
+
+      {/* Warranty Policy Configuration Modal */}
+      <Modal
+        isOpen={showPolicyModal}
+        onClose={() => setShowPolicyModal(false)}
+        title={policy ? `Edit Warranty Policy — ${product.productCode}` : `Configure Warranty Policy — ${product.productCode}`}
+        subtitle={`Set factory warranty terms for ${product.name}`}
+      >
+        <form onSubmit={handleSaveWarrantyPolicy} className="space-y-5">
+          {policyError && (
+            <div className="p-3 rounded bg-[var(--status-danger-soft)] border border-[var(--status-danger-border)] text-[var(--status-danger)] text-[13px]">
+              {policyError}
+            </div>
+          )}
+
+          <div>
+            <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1.5">
+              Warranty Duration (Months) *
+            </label>
+            <div className="flex items-center gap-3">
+              <input
+                type="number"
+                min={1}
+                max={120}
+                required
+                value={policyDuration}
+                onChange={(e) => setPolicyDuration(parseInt(e.target.value, 10) || 1)}
+                className="w-32 px-3.5 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[14px] font-mono font-bold focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
+              />
+              <span className="text-[13px] text-[var(--text-secondary)]">
+                months ({Math.round((policyDuration / 12) * 10) / 10} years)
+              </span>
+            </div>
+
+            {/* Quick preset buttons */}
+            <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+              {[
+                { label: '12m (1 yr)', value: 12 },
+                { label: '24m (2 yrs)', value: 24 },
+                { label: '36m (3 yrs)', value: 36 },
+                { label: '60m (5 yrs)', value: 60 },
+                { label: '120m (10 yrs)', value: 120 },
+              ].map((preset) => (
+                <button
+                  key={preset.value}
+                  type="button"
+                  onClick={() => setPolicyDuration(preset.value)}
+                  className={`px-2.5 py-1 text-[11.5px] rounded-[4px] border transition-colors cursor-pointer ${
+                    policyDuration === preset.value
+                      ? 'bg-[var(--accent)] text-[var(--accent-foreground)] border-[var(--accent)] font-semibold'
+                      : 'border-[var(--border)] hover:bg-[var(--background)] text-[var(--text-secondary)]'
+                  }`}
+                >
+                  {preset.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1.5">
+              Policy Status *
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <label
+                className={`flex items-start gap-2.5 p-3 rounded-[6px] border cursor-pointer transition-colors ${
+                  policyStatus === 'ACTIVE'
+                    ? 'border-[var(--status-success)] bg-[var(--status-success-soft)]'
+                    : 'border-[var(--border)] hover:bg-[var(--background)]'
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="policyStatus"
+                  value="ACTIVE"
+                  checked={policyStatus === 'ACTIVE'}
+                  onChange={() => setPolicyStatus('ACTIVE')}
+                  className="mt-0.5"
+                />
+                <div>
+                  <span className="text-[13px] font-semibold text-[var(--text-primary)] block">Active</span>
+                  <span className="text-[11.5px] text-[var(--text-secondary)] block mt-0.5">
+                    Dealers can activate warranties for this product.
+                  </span>
+                </div>
+              </label>
+
+              <label
+                className={`flex items-start gap-2.5 p-3 rounded-[6px] border cursor-pointer transition-colors ${
+                  policyStatus === 'INACTIVE'
+                    ? 'border-[var(--status-warning)] bg-[var(--status-warning-soft)]'
+                    : 'border-[var(--border)] hover:bg-[var(--background)]'
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="policyStatus"
+                  value="INACTIVE"
+                  checked={policyStatus === 'INACTIVE'}
+                  onChange={() => setPolicyStatus('INACTIVE')}
+                  className="mt-0.5"
+                />
+                <div>
+                  <span className="text-[13px] font-semibold text-[var(--text-primary)] block">Inactive</span>
+                  <span className="text-[11.5px] text-[var(--text-secondary)] block mt-0.5">
+                    Blocks dealer registrations. Existing warranties remain valid.
+                  </span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[var(--border)]">
+            <button
+              type="button"
+              onClick={() => setShowPolicyModal(false)}
+              className="px-4 py-2 rounded-[6px] border border-[var(--border)] hover:bg-[var(--background)] text-[var(--text-primary)] text-[13px] font-medium cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSavingPolicy}
+              className="px-4 py-2 rounded-[6px] bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 text-[var(--accent-foreground)] text-[13px] font-semibold transition-colors cursor-pointer"
+            >
+              {isSavingPolicy ? 'Saving Policy...' : 'Save Warranty Policy'}
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }

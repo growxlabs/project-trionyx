@@ -19,4 +19,6 @@ export * from './repositories/dealerSessions';
 export * from './repositories/dealerRequestMessages';
 export * from './repositories/contactEnquiries';
 export * from './repositories/enquiryNotes';
+export * from './repositories/warrantyPolicies';
+export * from './repositories/warranties';
 export * from './storage';

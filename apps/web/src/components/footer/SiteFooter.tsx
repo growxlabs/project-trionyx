@@ -43,6 +43,7 @@ export function SiteFooter() {
         <FooterColumn title="Explore" className="col-span-1 md:col-span-2">
           <li><Link href="/#graphene" className={linkClass}>Products</Link></li>
           <li><Link href="/dealer-access" className={linkClass}>Dealer Access</Link></li>
+          <li><Link href="/warranty" className={linkClass}>Warranty</Link></li>
         </FooterColumn>
 
         <FooterColumn title="Company" className="col-span-1 md:col-span-2">

@@ -9,6 +9,7 @@ export * from './services/dealerRequests';
 export * from './services/dealerAuth';
 export * from './services/dealerPortal';
 export * from './services/contactEnquiries';
+export * from './services/warranties';
 export * from './client';
 
 // Retain legacy public stubs for consumer web

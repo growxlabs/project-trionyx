@@ -77,7 +77,11 @@ export type AuditEvent =
   | 'CONTACT_ENQUIRY_CREATED'
   | 'CONTACT_ENQUIRY_STATUS_CHANGED'
   | 'CONTACT_ENQUIRY_ASSIGNED'
-  | 'CONTACT_ENQUIRY_NOTE_ADDED';
+  | 'CONTACT_ENQUIRY_NOTE_ADDED'
+  | 'WARRANTY_ACTIVATED'
+  | 'WARRANTY_VOIDED'
+  | 'WARRANTY_POLICY_CREATED'
+  | 'WARRANTY_POLICY_UPDATED';
 
 export interface AuditLog {
   id: string;
@@ -620,3 +624,62 @@ export interface EnquiryNote {
   authorName?: string | null;
   createdAt: string;
 }
+
+/**
+ * WARRANTY DOMAIN
+ */
+
+export interface WarrantyPolicy {
+  id: string;
+  productId: string;
+  durationMonths: number;
+  status: 'ACTIVE' | 'INACTIVE';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type WarrantyStatus = 'ACTIVE' | 'VOID';
+export type DerivedWarrantyStatus = 'ACTIVE' | 'EXPIRED' | 'VOID';
+
+export interface Warranty {
+  id: string;
+  serialRecordId: string;
+  serialNumber: string;
+  productId: string;
+  productName?: string | null;
+  productCode?: string | null;
+  dealerId?: string | null;
+  dealerName?: string | null;
+  installationDate: string; // YYYY-MM-DD
+  warrantyStartDate: string; // YYYY-MM-DD
+  warrantyEndDate: string; // YYYY-MM-DD
+  status: WarrantyStatus;
+  derivedStatus?: DerivedWarrantyStatus;
+  activatedBy: string;
+  activatedByType: 'INTERNAL' | 'DEALER';
+  activatedByName?: string | null;
+  activatedAt: string;
+  voidedAt?: string | null;
+  voidedBy?: string | null;
+  voidReason?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type PublicWarrantyCheckStatus =
+  | 'ACTIVE'
+  | 'EXPIRED'
+  | 'NOT_ACTIVATED'
+  | 'NOT_FOUND';
+
+export interface PublicWarrantyCheckResult {
+  status: PublicWarrantyCheckStatus;
+  productName?: string | null;
+  serialNumber: string;
+  installationDate?: string | null;
+  activatedAt?: string | null;
+  warrantyEndDate?: string | null;
+  dealerName?: string | null;
+  message?: string | null;
+}
+
