@@ -7,7 +7,7 @@ function mapSpecRow(row: Record<string, unknown>): ProductSpecification {
   return {
     id: String(row.id),
     productId: String(row.product_id),
-    label: String(row.label),
+    label: String(row.label ?? row.name ?? ''),
     value: String(row.value),
     sortOrder: Number(row.sort_order ?? 0),
   };
@@ -34,9 +34,9 @@ export const specificationsRepository = {
       const sortOrder = s.sortOrder !== undefined ? s.sortOrder : i;
 
       await client.execute({
-        sql: `INSERT INTO product_specifications (id, product_id, label, value, sort_order)
-              VALUES (?, ?, ?, ?, ?)`,
-        args: [id, productId, s.label.trim(), s.value.trim(), sortOrder],
+        sql: `INSERT INTO product_specifications (id, product_id, group_name, name, label, value, sort_order)
+              VALUES (?, ?, 'General', ?, ?, ?, ?)`,
+        args: [id, productId, s.label.trim(), s.label.trim(), s.value.trim(), sortOrder],
       });
 
       created.push({
@@ -53,7 +53,7 @@ export const specificationsRepository = {
 
   async listByProduct(productId: string, client: Client = getDbClient()): Promise<ProductSpecification[]> {
     const result = await client.execute({
-      sql: 'SELECT * FROM product_specifications WHERE product_id = ? ORDER BY sort_order ASC, label ASC',
+      sql: 'SELECT id, product_id, COALESCE(label, name, \'\') as label, value, sort_order FROM product_specifications WHERE product_id = ? ORDER BY sort_order ASC, label ASC',
       args: [productId],
     });
     return result.rows.map(mapSpecRow);
