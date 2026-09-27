@@ -49,7 +49,9 @@ export async function POST(
     );
 
     const dealerPortalBaseUrl =
-      process.env.NEXT_PUBLIC_DEALER_PORTAL_URL || 'http://localhost:3001';
+      process.env.NEXT_PUBLIC_DEALER_PORTAL_URL ||
+      process.env.DEALER_PORTAL_URL ||
+      'http://localhost:3001';
     const invitationLink = `${dealerPortalBaseUrl}${activationPath}`;
 
     return NextResponse.json(

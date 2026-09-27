@@ -10,7 +10,9 @@ export const metadata: Metadata = {
 };
 
 export default function DealerAccessPage() {
-  const portalBase = process.env.DEALER_PORTAL_URL ??
+  const portalBase =
+    process.env.DEALER_PORTAL_URL ??
+    process.env.NEXT_PUBLIC_DEALER_PORTAL_URL ??
     (process.env.NODE_ENV === "development" ? "http://localhost:3001" : undefined);
   let loginUrl: URL | undefined;
 
