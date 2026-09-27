@@ -94,7 +94,7 @@ export function GrapheneSection() {
                   <div className={styles.cardContent}>
                     <div>
                       <p className={styles.cardKicker}>
-                        <span className={styles.cardKickerLine} aria-hidden="true" />
+
                         {product.number} / {product.category}
                       </p>
                     </div>

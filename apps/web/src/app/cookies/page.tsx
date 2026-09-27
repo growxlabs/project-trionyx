@@ -64,7 +64,7 @@ const cookieSections: LegalSection[] = [
           For authorized detailing studios and operators accessing our restricted Dealer Portal, we deploy specialized security
           cookies:
         </p>
-        <div className="bg-[#FCFBF7] border border-[#171714]/12 rounded-[6px] p-4 text-[13px] space-y-2">
+        <div className="bg-[#F5F5EE] border border-[#171714]/12 rounded-[6px] p-4 text-[13px] space-y-2">
           <div className="flex items-center justify-between font-mono text-[12px] font-bold text-[#F26522]">
             <span>trionyx_dealer_session</span>
             <span className="text-[#68665F] font-normal font-sans">HTTP-Only / Secure / SameSite</span>
@@ -184,7 +184,7 @@ const cookieSections: LegalSection[] = [
         </p>
 
         {/* Restrained Information Block */}
-        <div className="bg-[#FCFBF7] border border-[#171714]/12 rounded-[6px] p-5 sm:p-6 mt-4 max-w-lg space-y-3 text-[14px]">
+        <div className="bg-[#F5F5EE] border border-[#171714]/12 rounded-[6px] p-5 sm:p-6 mt-4 max-w-lg space-y-3 text-[14px]">
           <div>
             <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#68665F] block">
               Corporate Entity

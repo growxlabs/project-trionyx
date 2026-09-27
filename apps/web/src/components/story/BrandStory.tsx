@@ -88,7 +88,7 @@ export function BrandStory() {
               >
                 <p className={styles.chapterLabel}>{chapter.label}</p>
                 <div className={styles.copy}>
-                  <span className={styles.rule} aria-hidden="true" />
+
                   <h3>{chapter.title}<em>{chapter.emphasis}</em></h3>
                   <p>{chapter.body}</p>
                 </div>

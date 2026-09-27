@@ -4,7 +4,7 @@
   grid-template-columns: minmax(0, 52%) minmax(0, 48%);
   min-height: 100svh;
   color: #171714;
-  background: #f7f6f0;
+  background: #f5f5ee;
 }
 
 .leftPanel {
@@ -14,7 +14,7 @@
   padding: 48px clamp(32px, 6vw, 96px);
   background:
     radial-gradient(ellipse at 0% 100%, rgba(242, 101, 34, .045), transparent 42%),
-    #f7f6f0;
+    #f5f5ee;
 }
 
 .leftContent { width: min(100%, 480px); }
@@ -36,16 +36,13 @@
 .backLink:hover span { transform: translateX(-3px); }
 
 .eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  display: block;
   margin: 0 0 15px;
   color: #77746c;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: .16em;
 }
-.eyebrow span { width: 24px; height: 1px; background: var(--orange); }
 .title {
   margin: 0;
   font-family: "Instrument Sans", var(--font-sans), sans-serif;

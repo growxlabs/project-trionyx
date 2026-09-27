@@ -10,7 +10,7 @@ export const rawColors = {
   brandRed: '#D9362B',
 
   // Locked neutral foundation
-  canvas: '#F7F6F0',
+  canvas: '#F5F5EE',
   elevatedSurface: '#FCFBF7',
   secondarySurface: '#EFECE3',
   border: '#E5E3DB',
@@ -20,10 +20,10 @@ export const rawColors = {
   // Backward-compatible semantic aliases
   primaryOrange: '#F26522',
   primaryRed: '#D9362B',
-  mainCanvas: '#F7F6F0',
+  mainCanvas: '#F5F5EE',
   elevatedWhite: '#FCFBF7',
   white: '#FCFBF7',
-  warmWhite: '#F7F6F0',
+  warmWhite: '#F5F5EE',
   deepCharcoal: '#171714',
   graphite: '#171714',
   lightGray: '#EFECE3',
@@ -34,13 +34,13 @@ export const rawColors = {
 
 export const semanticTokens = {
   background: {
-    base: rawColors.canvas,             // #F7F6F0
+    base: rawColors.canvas,             // #F5F5EE
     subtle: rawColors.secondarySurface, // #EFECE3
     muted: rawColors.secondarySurface,
     elevated: rawColors.elevatedSurface, // #FCFBF7
   },
   surface: {
-    default: rawColors.canvas,          // #F7F6F0
+    default: rawColors.canvas,          // #F5F5EE
     subtle: rawColors.secondarySurface, // #EFECE3
     elevated: rawColors.elevatedSurface, // #FCFBF7
     dark: rawColors.primaryText,        // #171714

@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function WarrantyPage() {
   return (
-    <div className="min-h-screen bg-[#F7F6F0] text-[#171714] flex flex-col">
+    <div className="min-h-screen bg-[#F5F5EE] text-[#171714] flex flex-col">
       <PageFrame>
         {/* Header */}
         <div className="relative isolate overflow-hidden">
@@ -40,7 +40,7 @@ export default function WarrantyPage() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
                 {/* Left: Check Form */}
                 <div className="lg:col-span-7 xl:col-span-8">
-                  <div className="bg-[#FCFBF7] border border-[var(--section-divider)] rounded-[8px] p-6 sm:p-10 relative overflow-hidden shadow-xs">
+                  <div className="bg-[#F5F5EE] border border-[var(--section-divider)] rounded-[8px] p-6 sm:p-10 relative overflow-hidden shadow-xs">
                     <WarrantyCheckForm />
                   </div>
                 </div>
@@ -49,7 +49,7 @@ export default function WarrantyPage() {
                 <aside className="lg:col-span-5 xl:col-span-4">
                   <div className="space-y-8 lg:sticky lg:top-32">
                     {/* Information Block */}
-                    <div className="bg-[#FCFBF7] border border-[var(--section-divider)] rounded-[8px] p-6">
+                    <div className="bg-[#F5F5EE] border border-[var(--section-divider)] rounded-[8px] p-6">
                       <h3 className="text-[13px] font-bold text-[#171714] uppercase tracking-[0.1em] mb-4">
                         About Serial Numbers
                       </h3>

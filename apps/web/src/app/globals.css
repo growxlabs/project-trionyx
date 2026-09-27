@@ -6,14 +6,14 @@
   --color-brand-red: #D9362B;
   --color-brand-charcoal: #171714;
   --color-brand-graphite: #171714;
-  --color-brand-warm-white: #F7F6F0;
-  --color-brand-light-gray: #ECE9E4;
+  --color-brand-warm-white: #F5F5EE;
+  --color-brand-light-gray: #EFECE3;
   --color-brand-body-gray: #68665F;
 
-  --color-surface-default: #F7F6F0;
-  --color-surface-subtle: #ECE9E4;
-  --color-surface-muted: #ECE9E4;
-  --color-surface-elevated: #FCFBF7;
+  --color-surface-default: #F5F5EE;
+  --color-surface-subtle: #EFECE3;
+  --color-surface-muted: #EFECE3;
+  --color-surface-elevated: #F5F5EE;
 
   --color-text-primary: #171714;
   --color-text-secondary: #68665F;
@@ -39,19 +39,19 @@
   --page-gutter: 32px;
   --frame-border: rgba(23, 23, 20, 0.07);
 
-  --page-bg: #F7F6F0;
-  --surface-elevated: #FCFBF7;
-  --surface-beige: #ECE9E4;
+  --page-bg: #F5F5EE;
+  --surface-elevated: #F5F5EE;
+  --surface-beige: #EFECE3;
   --surface-dark: #171714;
 
-  --background: #F7F6F0;
+  --background: #F5F5EE;
   --foreground: #171714;
   --brand-orange: #F26522;
   --brand-red: #D9362B;
   --brand-charcoal: #171714;
-  --brand-warm-white: #F7F6F0;
-  --brand-elevated: #FCFBF7;
-  --brand-secondary: #ECE9E4;
+  --brand-warm-white: #F5F5EE;
+  --brand-elevated: #F5F5EE;
+  --brand-secondary: #EFECE3;
   --brand-border: rgba(23, 23, 20, 0.07);
   --brand-body-gray: #68665F;
   --section-space: clamp(56px, 5vw, 80px);
@@ -62,19 +62,14 @@
   --body-small-size: 14px;
   --body-small-leading: 1.6;
   --serif-accent: Georgia, "Times New Roman", serif;
-  --eyebrow-rule-width: 24px;
-  --eyebrow-rule-height: 1px;
-  --eyebrow-gap: 12px;
   --eyebrow-size: 10px;
   --eyebrow-weight: 600;
   --eyebrow-tracking: 0.16em;
 }
 
 .section-eyebrow {
-  display: flex;
-  align-items: center;
-  gap: var(--eyebrow-gap);
-  margin: 0 0 24px;
+  display: block;
+  margin: 0 0 16px;
   color: var(--brand-body-gray);
   font-family: var(--font-sans);
   font-size: var(--eyebrow-size);
@@ -83,18 +78,12 @@
   line-height: 1.4;
   text-transform: uppercase;
 }
-.section-eyebrow-rule {
-  display: block;
-  flex: 0 0 var(--eyebrow-rule-width);
-  height: var(--eyebrow-rule-height);
-  background: var(--brand-orange);
-}
 .section-heading { font-family: var(--font-sans); font-weight: var(--heading-weight); }
 .serif-accent { font-family: var(--serif-accent); font-style: italic; font-weight: 400; }
 .body-copy { color: var(--brand-body-gray); font-size: var(--body-size); line-height: var(--body-leading); }
 .body-copy-small { color: var(--brand-body-gray); font-size: var(--body-small-size); line-height: var(--body-small-leading); }
 
-/* Warm tactile paper canvas (#F7F6F0) */
+/* Warm tactile paper canvas (#F5F5EE) */
 html,
 body {
   background-color: var(--color-surface-default);
@@ -116,7 +105,7 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #ECE9E4;
+  background: #EFECE3;
 }
 ::-webkit-scrollbar-thumb {
   background: #D5D2C7;

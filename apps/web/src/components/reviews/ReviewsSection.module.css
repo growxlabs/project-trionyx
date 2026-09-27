@@ -1,7 +1,7 @@
 .section {
   position: relative;
   width: 100%;
-  background-color: #F7F6F0;
+  background-color: #F5F5EE;
   color: #171714;
   padding: var(--section-space) 0;
   border-bottom: 1px solid var(--section-divider);

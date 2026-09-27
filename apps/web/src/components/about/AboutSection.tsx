@@ -17,21 +17,21 @@ export interface AboutSectionProps {
  *   precision workshop application and finished protected surface.
  * - Right (56% content): Context eyebrow, substantial heading, 2-paragraph story,
  *   restrained "EST. 2006 · 20 YEARS" proof line, and single CTA.
- * - Canvas: Continues warm Trionyx canvas (#F7F6F0) within continuous page rails.
+ * - Canvas: Continues warm Trionyx canvas (#F5F5EE) within continuous page rails.
  */
 export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
   return (
     <SectionFrame
       id="about"
       hasBottomBorder
-      className="bg-[#F7F6F0] overflow-hidden"
+      className="bg-[#F5F5EE] overflow-hidden"
     >
       <ContentGrid className="md:grid-cols-12 py-[var(--section-space)] items-center gap-10 md:gap-10 lg:gap-16">
         {/* DESKTOP / TABLET VISUAL COLUMN (Hidden on mobile <768px, left on tablet/desktop) */}
         <div className="hidden md:flex md:col-span-5 relative w-full justify-start">
           <div className="relative w-full max-w-[460px] lg:max-w-none group pb-8 pr-6 sm:pr-10 lg:pr-12">
             {/* Primary Base Image: Precision workshop installation & coating activity */}
-            <div className="relative w-[82%] sm:w-[80%] aspect-[4/5] overflow-hidden rounded-[4px] border border-[rgba(23,23,20,0.08)] shadow-[0_12px_36px_rgba(23,23,20,0.05)] bg-[#ECE9E4]">
+            <div className="relative w-[82%] sm:w-[80%] aspect-[4/5] overflow-hidden rounded-[4px] border border-[rgba(23,23,20,0.08)] shadow-[0_12px_36px_rgba(23,23,20,0.05)] bg-[#EFECE3]">
               <Image
                 src="/images/about/ppf-installation.jpg"
                 alt="Automotive protective film and ceramic coating installation workshop"
@@ -43,7 +43,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
             </div>
 
             {/* Overlapping Secondary Accent Image: Premium vehicle finish & surface reflection */}
-            <div className="absolute right-0 bottom-0 w-[58%] sm:w-[56%] aspect-[4/3] overflow-hidden rounded-[4px] border-2 border-[#F7F6F0] shadow-[0_16px_40px_rgba(23,23,20,0.09)] bg-[#ECE9E4] transition-transform duration-700 ease-out group-hover:translate-x-1 group-hover:-translate-y-1">
+            <div className="absolute right-0 bottom-0 w-[58%] sm:w-[56%] aspect-[4/3] overflow-hidden rounded-[4px] border-2 border-[#F5F5EE] shadow-[0_16px_40px_rgba(23,23,20,0.09)] bg-[#EFECE3] transition-transform duration-700 ease-out group-hover:translate-x-1 group-hover:-translate-y-1">
               <Image
                 src="/images/about/ceramic-coating-surface.jpg"
                 alt="Hydrophobic ceramic coating and clearcoat finish on automotive surface"
@@ -79,7 +79,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
           <div className="md:hidden mt-7 mb-8 w-full max-w-[420px]">
             <div className="relative w-full pb-8 pr-7 sm:pr-9 group">
               {/* Primary Base Image: around 72% width */}
-              <div className="relative w-[72%] aspect-[4/5] overflow-hidden rounded-[4px] border border-[rgba(23,23,20,0.08)] shadow-[0_12px_32px_rgba(23,23,20,0.06)] bg-[#ECE9E4]">
+              <div className="relative w-[72%] aspect-[4/5] overflow-hidden rounded-[4px] border border-[rgba(23,23,20,0.08)] shadow-[0_12px_32px_rgba(23,23,20,0.06)] bg-[#EFECE3]">
                 <Image
                   src="/images/about/ppf-installation.jpg"
                   alt="Automotive protective film and ceramic coating installation workshop"
@@ -91,7 +91,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
               </div>
 
               {/* Overlapping Secondary Accent Image: around 52% width, overlapping bottom-right */}
-              <div className="absolute right-0 bottom-0 w-[52%] aspect-[4/3] overflow-hidden rounded-[4px] border-2 border-[#F7F6F0] shadow-[0_16px_36px_rgba(23,23,20,0.10)] bg-[#ECE9E4]">
+              <div className="absolute right-0 bottom-0 w-[52%] aspect-[4/3] overflow-hidden rounded-[4px] border-2 border-[#F5F5EE] shadow-[0_16px_36px_rgba(23,23,20,0.10)] bg-[#EFECE3]">
                 <Image
                   src="/images/about/ceramic-coating-surface.jpg"
                   alt="Hydrophobic ceramic coating and clearcoat finish on automotive surface"

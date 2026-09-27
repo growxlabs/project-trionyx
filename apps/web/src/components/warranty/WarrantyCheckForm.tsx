@@ -99,7 +99,7 @@ export function WarrantyCheckForm() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full sm:w-auto min-w-[200px] h-12 px-8 bg-[#171714] hover:bg-[#2A2A26] active:bg-[#000000] text-[#F7F6F0] text-[14px] font-semibold tracking-[0.04em] uppercase rounded-[4px] transition-colors duration-150 inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed select-none"
+          className="w-full sm:w-auto min-w-[200px] h-12 px-8 bg-[#171714] hover:bg-[#2A2A26] active:bg-[#000000] text-[#F5F5EE] text-[14px] font-semibold tracking-[0.04em] uppercase rounded-[4px] transition-colors duration-150 inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed select-none"
         >
           {isLoading ? (
             <>

@@ -90,7 +90,7 @@ export function LegalPageShell({
   const activeSection = sections.find((s) => s.id === activeSectionId) || sections[0];
 
   return (
-    <div className="min-h-screen bg-[#F7F6F0] text-[#171714] flex flex-col antialiased selection:bg-[#F26522]/15 selection:text-[#171714]">
+    <div className="min-h-screen bg-[#F5F5EE] text-[#171714] flex flex-col antialiased selection:bg-[#F26522]/15 selection:text-[#171714]">
       <PageFrame>
         {/* Navigation Header */}
         <div className="relative isolate overflow-hidden">
@@ -123,13 +123,13 @@ export function LegalPageShell({
               <div className="border-b border-[#171714]/10 mb-8 sm:mb-12" />
 
               {/* Mobile / Tablet Collapsible Contents Control */}
-              <div className="lg:hidden mb-8 sticky top-16 z-30 bg-[#F7F6F0]/95 backdrop-blur-xs py-2">
+              <div className="lg:hidden mb-8 sticky top-16 z-30 bg-[#F5F5EE]/95 backdrop-blur-xs py-2">
                 <button
                   type="button"
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                   aria-expanded={mobileMenuOpen}
                   aria-label="Table of contents menu"
-                  className="w-full flex items-center justify-between px-4 py-2.5 rounded-[6px] border border-[#171714]/12 bg-[#FCFBF7] text-[#171714] text-[13.5px] font-medium transition-colors cursor-pointer"
+                  className="w-full flex items-center justify-between px-4 py-2.5 rounded-[6px] border border-[#171714]/12 bg-[#F5F5EE] text-[#171714] text-[13.5px] font-medium transition-colors cursor-pointer"
                 >
                   <span className="flex items-center gap-2 truncate">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-[#F26522]">
@@ -154,7 +154,7 @@ export function LegalPageShell({
                 </button>
 
                 {mobileMenuOpen && (
-                  <div className="mt-1.5 max-h-[60vh] overflow-y-auto rounded-[6px] border border-[#171714]/12 bg-[#FCFBF7] p-2 shadow-[0_4px_16px_rgba(23,23,20,0.06)] space-y-0.5 animate-in fade-in zoom-in-95 duration-100">
+                  <div className="mt-1.5 max-h-[60vh] overflow-y-auto rounded-[6px] border border-[#171714]/12 bg-[#F5F5EE] p-2 shadow-[0_4px_16px_rgba(23,23,20,0.06)] space-y-0.5 animate-in fade-in zoom-in-95 duration-100">
                     {sections.map((sec) => (
                       <button
                         key={sec.id}
@@ -165,8 +165,8 @@ export function LegalPageShell({
                         }}
                         className={`w-full text-left flex items-baseline gap-2.5 px-3 py-2 rounded-[4px] text-[13px] transition-colors cursor-pointer ${
                           activeSectionId === sec.id
-                            ? 'bg-[#ECE9E4] text-[#F26522] font-semibold'
-                            : 'text-[#171714]/85 hover:bg-[#ECE9E4]/60'
+                            ? 'bg-[#EFECE3] text-[#F26522] font-semibold'
+                            : 'text-[#171714]/85 hover:bg-[#EFECE3]/60'
                         }`}
                       >
                         <span className="font-mono text-[11px] opacity-75 shrink-0">

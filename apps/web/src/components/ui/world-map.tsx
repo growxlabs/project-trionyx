@@ -143,7 +143,7 @@ export const WorldMap: React.FC<WorldMapProps> = ({ className = '' }) => {
                   cy={dest.y}
                   r={isHovered ? 3.4 : 2.5}
                   fill={isHovered ? '#F26522' : '#171714'}
-                  stroke="#F7F6F0"
+                  stroke="#F5F5EE"
                   strokeWidth={1}
                 />
 
@@ -163,7 +163,7 @@ export const WorldMap: React.FC<WorldMapProps> = ({ className = '' }) => {
                       x="0"
                       y="-4.5"
                       textAnchor="middle"
-                      className="font-mono text-[7px] font-semibold fill-[#F7F6F0] tracking-wider"
+                      className="font-mono text-[7px] font-semibold fill-[#F5F5EE] tracking-wider"
                     >
                       {dest.name}
                     </text>
@@ -181,7 +181,7 @@ export const WorldMap: React.FC<WorldMapProps> = ({ className = '' }) => {
             cx={ORIGIN_CITY.x}
             cy={ORIGIN_CITY.y}
             r={4.5}
-            fill="#F7F6F0"
+            fill="#F5F5EE"
             stroke="#F26522"
             strokeWidth={1.5}
           />

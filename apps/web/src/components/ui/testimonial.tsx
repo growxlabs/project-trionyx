@@ -26,7 +26,7 @@ export function ClientFeedback() {
 
   return (
     <section
-      className="relative w-full bg-[#F7F6F0] py-16 sm:py-20 lg:py-24 text-[#171714] overflow-hidden"
+      className="relative w-full bg-[#F5F5EE] py-16 sm:py-20 lg:py-24 text-[#171714] overflow-hidden"
       ref={testimonialRef}
     >
       {/* Section Header: Trionyx Editorial Hierarchy */}
@@ -55,7 +55,7 @@ export function ClientFeedback() {
             animationNum={0}
             customVariants={revealVariants}
             timelineRef={testimonialRef}
-            className="w-[84vw] max-w-[340px] shrink-0 snap-start lg:w-auto lg:max-w-none lg:flex-[7] flex flex-col justify-between relative bg-[#FCFBF7] text-[#171714] overflow-hidden rounded-xl border border-[rgba(23,23,20,0.08)] p-6 shadow-[0_2px_10px_rgba(23,23,20,0.02)]"
+            className="w-[84vw] max-w-[340px] shrink-0 snap-start lg:w-auto lg:max-w-none lg:flex-[7] flex flex-col justify-between relative bg-[#F5F5EE] text-[#171714] overflow-hidden rounded-xl border border-[rgba(23,23,20,0.08)] p-6 shadow-[0_2px_10px_rgba(23,23,20,0.02)]"
           >
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#17171408_1px,transparent_1px),linear-gradient(to_bottom,#17171408_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)] pointer-events-none"></div>
             
@@ -273,7 +273,7 @@ export function ClientFeedback() {
             animationNum={6}
             customVariants={revealVariants}
             timelineRef={testimonialRef}
-            className="w-[84vw] max-w-[340px] shrink-0 snap-start lg:w-auto lg:max-w-none lg:flex-[7] flex flex-col justify-between relative bg-[#FCFBF7] text-[#171714] overflow-hidden rounded-xl border border-[rgba(23,23,20,0.08)] p-6 shadow-[0_2px_10px_rgba(23,23,20,0.02)]"
+            className="w-[84vw] max-w-[340px] shrink-0 snap-start lg:w-auto lg:max-w-none lg:flex-[7] flex flex-col justify-between relative bg-[#F5F5EE] text-[#171714] overflow-hidden rounded-xl border border-[rgba(23,23,20,0.08)] p-6 shadow-[0_2px_10px_rgba(23,23,20,0.02)]"
           >
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#17171408_1px,transparent_1px),linear-gradient(to_bottom,#17171408_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)] pointer-events-none"></div>
 

@@ -1,6 +1,6 @@
 .section {
   padding: var(--section-space) clamp(24px, 5.4vw, 84px);
-  background: #F7F6F0;
+  background: #F5F5EE;
   color: #171714;
 }
 

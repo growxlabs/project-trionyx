@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="min-h-screen bg-[#F7F6F0] text-[#171714] flex flex-col">
+    <div className="min-h-screen bg-[#F5F5EE] text-[#171714] flex flex-col">
       <PageFrame>
         {/* Header */}
         <div className="relative isolate overflow-hidden">
@@ -43,7 +43,7 @@ export default function ContactPage() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
                 {/* Left: Form */}
                 <div className="lg:col-span-7 xl:col-span-8">
-                  <div className="bg-[#FCFBF7] border border-[var(--section-divider)] rounded-[8px] p-6 sm:p-8 relative overflow-hidden">
+                  <div className="bg-[#F5F5EE] border border-[var(--section-divider)] rounded-[8px] p-6 sm:p-8 relative overflow-hidden">
                     <ContactForm />
                   </div>
                 </div>
@@ -61,7 +61,7 @@ export default function ContactPage() {
                           href={companyContact.phoneHref}
                           className="flex items-start gap-3 group"
                         >
-                          <span className="w-9 h-9 rounded-[4px] bg-[#ECE9E4] flex items-center justify-center shrink-0 mt-0.5">
+                          <span className="w-9 h-9 rounded-[4px] bg-[#EFECE3] flex items-center justify-center shrink-0 mt-0.5">
                             <PhoneIcon size={16} color="muted" />
                           </span>
                           <div>
@@ -76,7 +76,7 @@ export default function ContactPage() {
                           href={companyContact.emailHref}
                           className="flex items-start gap-3 group"
                         >
-                          <span className="w-9 h-9 rounded-[4px] bg-[#ECE9E4] flex items-center justify-center shrink-0 mt-0.5">
+                          <span className="w-9 h-9 rounded-[4px] bg-[#EFECE3] flex items-center justify-center shrink-0 mt-0.5">
                             <MailIcon size={16} color="muted" />
                           </span>
                           <div>
@@ -88,7 +88,7 @@ export default function ContactPage() {
                         </a>
 
                         <div className="flex items-start gap-3">
-                          <span className="w-9 h-9 rounded-[4px] bg-[#ECE9E4] flex items-center justify-center shrink-0 mt-0.5">
+                          <span className="w-9 h-9 rounded-[4px] bg-[#EFECE3] flex items-center justify-center shrink-0 mt-0.5">
                             <MapPinIcon size={16} color="muted" />
                           </span>
                           <div>
@@ -121,7 +121,7 @@ export default function ContactPage() {
                     <div className="border-t border-[rgba(23,23,20,0.07)]" />
 
                     {/* Dealer / Partner callout */}
-                    <div className="bg-[#ECE9E4] rounded-[6px] p-5">
+                    <div className="bg-[#EFECE3] rounded-[6px] p-5">
                       <p className="text-[13px] font-semibold text-[#171714] mb-1.5">
                         Existing dealers
                       </p>

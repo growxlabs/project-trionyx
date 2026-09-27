@@ -1,7 +1,7 @@
 .section {
   position: relative;
   width: 100%;
-  background-color: #F7F6F0;
+  background-color: #F5F5EE;
   padding: var(--section-space) 0;
 }
 
@@ -99,9 +99,9 @@
 }
 
 .cardKicker {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--eyebrow-gap);
+  display: block;
+
+
   font-family: var(--font-sans);
   font-size: var(--eyebrow-size);
   font-weight: var(--eyebrow-weight);
@@ -111,11 +111,6 @@
   margin: 0 0 20px;
 }
 
-.cardKickerLine {
-  width: var(--eyebrow-rule-width);
-  height: var(--eyebrow-rule-height);
-  background-color: var(--brand-orange);
-}
 
 .cardBody {
   margin: auto 0;

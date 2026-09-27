@@ -44,7 +44,7 @@ export default function DealerAccessPage() {
               <span aria-hidden="true">←</span> Back to site
             </Link>
           </div>
-          <p className={styles.eyebrow}><span aria-hidden="true" /> PARTNER PORTAL</p>
+          <p className={styles.eyebrow}>PARTNER PORTAL</p>
           <h1 id="dealer-access-title" className={styles.title}>
             Dealer Access
           </h1>
