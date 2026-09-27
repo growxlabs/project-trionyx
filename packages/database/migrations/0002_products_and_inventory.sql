@@ -1,5 +1,5 @@
 -- 0002_products_and_inventory.sql
--- Canonical schema migration for Products, Variants, Specifications, Media, Locations, and Inventory Ledger
+-- Canonical PostgreSQL / Supabase migration for Products, Variants, Specifications, Media, Locations, and Inventory Ledger
 
 -- 1. Product Categories
 CREATE TABLE IF NOT EXISTS product_categories (
@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS product_categories (
   description TEXT,
   status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'INACTIVE')),
   sort_order INTEGER NOT NULL DEFAULT 0,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_product_categories_slug ON product_categories(slug);
@@ -29,8 +29,8 @@ CREATE TABLE IF NOT EXISTS products (
   public_visibility TEXT NOT NULL DEFAULT 'PRIVATE' CHECK (public_visibility IN ('PRIVATE', 'PUBLIC')),
   created_by TEXT REFERENCES users(id) ON DELETE SET NULL,
   updated_by TEXT REFERENCES users(id) ON DELETE SET NULL,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_products_code ON products(product_code);
@@ -49,8 +49,8 @@ CREATE TABLE IF NOT EXISTS product_variants (
   unit TEXT,
   barcode TEXT,
   status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'INACTIVE', 'ARCHIVED')),
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_variants_product ON product_variants(product_id);
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS product_media (
   mime_type TEXT NOT NULL,
   alt_text TEXT,
   sort_order INTEGER NOT NULL DEFAULT 0,
-  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_product_media_product ON product_media(product_id);
@@ -90,8 +90,8 @@ CREATE TABLE IF NOT EXISTS inventory_locations (
   code TEXT NOT NULL UNIQUE,
   name TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'INACTIVE')),
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_inventory_locations_code ON inventory_locations(code);
@@ -105,8 +105,8 @@ CREATE TABLE IF NOT EXISTS inventory_items (
   on_hand INTEGER NOT NULL DEFAULT 0 CHECK (on_hand >= 0),
   reserved INTEGER NOT NULL DEFAULT 0 CHECK (reserved >= 0),
   reorder_level INTEGER NOT NULL DEFAULT 0 CHECK (reorder_level >= 0),
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   UNIQUE(variant_id, location_id)
 );
 
@@ -127,7 +127,7 @@ CREATE TABLE IF NOT EXISTS stock_movements (
   reference TEXT,
   notes TEXT,
   created_by TEXT NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_stock_movements_variant ON stock_movements(variant_id);
@@ -135,3 +135,6 @@ CREATE INDEX IF NOT EXISTS idx_stock_movements_location ON stock_movements(locat
 CREATE INDEX IF NOT EXISTS idx_stock_movements_type ON stock_movements(type);
 CREATE INDEX IF NOT EXISTS idx_stock_movements_created_at ON stock_movements(created_at);
 CREATE INDEX IF NOT EXISTS idx_stock_movements_code ON stock_movements(movement_code);
+
+INSERT INTO _migrations (name) VALUES ('0002_products_and_inventory')
+ON CONFLICT (name) DO NOTHING;

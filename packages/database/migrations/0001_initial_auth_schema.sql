@@ -1,10 +1,10 @@
 -- 0001_initial_auth_schema.sql
--- Canonical schema migration for Trionyx Auth (Step 1)
+-- PostgreSQL / Supabase compatible migration for Trionyx Auth
 
 CREATE TABLE IF NOT EXISTS _migrations (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id SERIAL PRIMARY KEY,
   name TEXT NOT NULL UNIQUE,
-  applied_at TEXT NOT NULL DEFAULT (datetime('now'))
+  applied_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS users (
@@ -14,11 +14,12 @@ CREATE TABLE IF NOT EXISTS users (
   password_hash TEXT NOT NULL,
   role TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'ACTIVE',
-  last_login_at TEXT,
+  last_login_at TIMESTAMPTZ,
   failed_login_count INTEGER NOT NULL DEFAULT 0,
-  locked_until TEXT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  locked_until TIMESTAMPTZ,
+  distributor_id TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
@@ -29,9 +30,9 @@ CREATE TABLE IF NOT EXISTS sessions (
   id TEXT PRIMARY KEY,
   user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   token_hash TEXT NOT NULL UNIQUE,
-  expires_at TEXT NOT NULL,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  last_seen_at TEXT NOT NULL DEFAULT (datetime('now'))
+  expires_at TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  last_seen_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_sessions_token_hash ON sessions(token_hash);
@@ -45,9 +46,12 @@ CREATE TABLE IF NOT EXISTS audit_logs (
   ip_address TEXT,
   user_agent TEXT,
   metadata TEXT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_audit_logs_user_id ON audit_logs(user_id);
 CREATE INDEX IF NOT EXISTS idx_audit_logs_event ON audit_logs(event);
 CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at);
+
+INSERT INTO _migrations (name) VALUES ('0001_initial_auth_schema')
+ON CONFLICT (name) DO NOTHING;

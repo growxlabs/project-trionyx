@@ -1,5 +1,5 @@
 -- Migration: 0004_dealers_distributors
--- Canonical Dealer and Distributor Management Domain for Trionyx
+-- Canonical Dealer and Distributor Management Domain for Trionyx (PostgreSQL / Supabase)
 
 -- 1. Distributors Table
 CREATE TABLE IF NOT EXISTS distributors (
@@ -24,8 +24,8 @@ CREATE TABLE IF NOT EXISTS distributors (
   notes TEXT,
   created_by TEXT NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
   updated_by TEXT NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_distributors_code ON distributors(distributor_code);
@@ -58,8 +58,8 @@ CREATE TABLE IF NOT EXISTS dealers (
   notes TEXT,
   created_by TEXT NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
   updated_by TEXT NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_dealers_code ON dealers(dealer_code);
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS dealer_distributor_history (
   new_distributor_id TEXT REFERENCES distributors(id) ON DELETE SET NULL,
   reason TEXT,
   changed_by TEXT NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
-  changed_at TEXT NOT NULL DEFAULT (datetime('now'))
+  changed_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_history_dealer ON dealer_distributor_history(dealer_id);
@@ -99,9 +99,9 @@ CREATE TABLE IF NOT EXISTS dealer_requests (
   priority TEXT NOT NULL DEFAULT 'MEDIUM' CHECK (priority IN ('LOW', 'MEDIUM', 'HIGH', 'URGENT')),
   assigned_to TEXT REFERENCES users(id) ON DELETE SET NULL,
   created_by TEXT NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
-  resolved_at TEXT
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  resolved_at TIMESTAMPTZ
 );
 
 CREATE INDEX IF NOT EXISTS idx_requests_code ON dealer_requests(request_code);
@@ -116,8 +116,11 @@ CREATE TABLE IF NOT EXISTS internal_notes (
   entity_id TEXT NOT NULL,
   body TEXT NOT NULL,
   created_by TEXT NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
-  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_internal_notes_target ON internal_notes(entity_type, entity_id);
 CREATE INDEX IF NOT EXISTS idx_internal_notes_date ON internal_notes(created_at);
+
+INSERT INTO _migrations (name) VALUES ('0004_dealers_distributors')
+ON CONFLICT (name) DO NOTHING;
