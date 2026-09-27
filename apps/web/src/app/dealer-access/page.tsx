@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import DealerLoginForm from "./DealerLoginForm";
 import styles from "./dealer-access.module.css";
 
@@ -13,14 +14,22 @@ export default function DealerAccessPage() {
     <main className={styles.page}>
       <div className={styles.leftPanel}>
         <div className={styles.leftContent}>
-          <Image
-            className={styles.logo}
-            src="/brand/trionyx-logo-dark.png"
-            alt="Trionyx — Always Exceed Expectations"
-            width={2092}
-            height={752}
-            priority
-          />
+          <div className={styles.brandRow}>
+            <Link href="/" className={styles.brandLink} aria-label="Back to Trionyx home">
+              <Image
+                className={styles.logo}
+                src="/brand/trionyx-logo-dark.png"
+                alt="Trionyx — Always Exceed Expectations"
+                width={2092}
+                height={752}
+                priority
+              />
+            </Link>
+            <Link href="/" className={styles.backLink}>
+              <span aria-hidden="true">←</span> Back to site
+            </Link>
+          </div>
+          <p className={styles.eyebrow}><span aria-hidden="true" /> PARTNER PORTAL</p>
           <h1 id="dealer-access-title" className={styles.title}>
             Dealer Access
           </h1>
@@ -28,6 +37,7 @@ export default function DealerAccessPage() {
           <section className={styles.formCard} aria-label="Dealer sign-in form">
             <DealerLoginForm />
           </section>
+          <p className={styles.accessNote}>FOR AUTHORISED TRIONYX DEALERS <span>·</span> INDIA</p>
         </div>
       </div>
       <div className={styles.visual}>
@@ -39,6 +49,10 @@ export default function DealerAccessPage() {
           className={styles.coatingImage}
           priority
         />
+        <div className={styles.visualCaption}>
+          <span>01 / SURFACE PROTECTION</span>
+          <span>ALWAYS EXCEED EXPECTATIONS</span>
+        </div>
       </div>
     </main>
   );

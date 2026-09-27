@@ -46,47 +46,10 @@ export const WorldNetworkMap: React.FC = () => {
             opacity: 1;
           }
         }
-        @keyframes flowPacket {
-          0% {
-            stroke-dashoffset: 60;
-          }
-          100% {
-            stroke-dashoffset: 0;
-          }
-        }
-        @keyframes radarWave {
-          0% {
-            transform: scale(1);
-            opacity: 0.85;
-          }
-          60% {
-            transform: scale(2.8);
-            opacity: 0;
-          }
-          100% {
-            transform: scale(2.8);
-            opacity: 0;
-          }
-        }
-        @keyframes pulseIndiaCore {
-          0%, 100% {
-            opacity: 0.22;
-          }
-          50% {
-            opacity: 0.42;
-          }
-        }
         .world-route {
           stroke-dasharray: 200;
           stroke-dashoffset: 200;
           animation: drawWorldRoute 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        .flow-packet {
-          stroke-dasharray: 3 14;
-          animation: flowPacket 2.2s linear infinite;
-        }
-        .india-highlight-fill {
-          animation: pulseIndiaCore 4s ease-in-out infinite;
         }
       `}</style>
 
@@ -98,16 +61,6 @@ export const WorldNetworkMap: React.FC = () => {
           aria-label="World map with India highlighted and Vijayawada operational hub"
         >
           <defs>
-            {/* Ambient Orange Glow Filter for India */}
-            <filter id="indiaGlow" x="-25%" y="-25%" width="150%" height="150%">
-              <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor="#F26522" floodOpacity="0.55" />
-            </filter>
-
-            {/* Origin Hub Glow */}
-            <filter id="hubGlow" x="-50%" y="-50%" width="200%" height="200%">
-              <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#F26522" floodOpacity="0.7" />
-            </filter>
-
             {/* Route Gradient */}
             <linearGradient id="routeGradient" x1="0%" y1="100%" x2="0%" y2="0%">
               <stop offset="0%" stopColor="#F26522" stopOpacity="0.9" />
@@ -148,7 +101,7 @@ export const WorldNetworkMap: React.FC = () => {
           />
 
           {/* 3. INDIA HIGHLIGHT: Complete Official Boundary (Jammu & Kashmir, Ladakh included) in Vibrant Trionyx Orange */}
-          <g filter="url(#indiaGlow)">
+          <g>
             {/* Primary Orange Fill & Vibrant Stroke */}
             <path
               d={INDIA_PATH}
@@ -158,11 +111,11 @@ export const WorldNetworkMap: React.FC = () => {
               strokeLinejoin="round"
               strokeLinecap="round"
             />
-            {/* Inner pulsing core fill */}
+            {/* Quiet inner fill */}
             <path
               d={INDIA_PATH}
               fill="#F26522"
-              className="india-highlight-fill"
+              opacity="0.14"
               stroke="none"
             />
           </g>
@@ -183,15 +136,6 @@ export const WorldNetworkMap: React.FC = () => {
                     strokeLinecap="round"
                     className="world-route"
                     style={{ animationDelay: city.delay }}
-                  />
-                  <path
-                    d={arc}
-                    fill="none"
-                    stroke={isHovered ? '#F26522' : 'rgba(242, 101, 34, 0.7)'}
-                    strokeWidth={isHovered ? 2 : 1.25}
-                    strokeLinecap="round"
-                    className="flow-packet"
-                    opacity={isHovered ? 1 : 0.8}
                   />
                 </g>
               );
@@ -232,43 +176,13 @@ export const WorldNetworkMap: React.FC = () => {
             })}
           </g>
 
-          {/* 6. ORIGIN HUB: VIJAYAWADA (PULSING BEACON & CALLOUT) */}
+          {/* 6. ORIGIN HUB: VIJAYAWADA & CALLOUT */}
           <g
             className="origin-beacon cursor-pointer"
             style={{ transformOrigin: `${ORIGIN_CITY.x}px ${ORIGIN_CITY.y}px` }}
             onMouseEnter={() => setActiveCity(ORIGIN_CITY.id)}
             onMouseLeave={() => setActiveCity(null)}
           >
-            {/* Radar wave 1 */}
-            <circle
-              cx={ORIGIN_CITY.x}
-              cy={ORIGIN_CITY.y}
-              r={7}
-              fill="none"
-              stroke="#F26522"
-              strokeWidth="1.2"
-              opacity="0.85"
-              style={{
-                animation: 'radarWave 2.6s cubic-bezier(0, 0.2, 0.8, 1) infinite',
-                transformOrigin: `${ORIGIN_CITY.x}px ${ORIGIN_CITY.y}px`,
-              }}
-            />
-
-            {/* Radar wave 2 */}
-            <circle
-              cx={ORIGIN_CITY.x}
-              cy={ORIGIN_CITY.y}
-              r={12}
-              fill="none"
-              stroke="#F26522"
-              strokeWidth="0.8"
-              opacity="0.45"
-              style={{
-                animation: 'radarWave 2.6s cubic-bezier(0, 0.2, 0.8, 1) 0.8s infinite',
-                transformOrigin: `${ORIGIN_CITY.x}px ${ORIGIN_CITY.y}px`,
-              }}
-            />
-
             {/* Solid Origin Beacon */}
             <circle
               cx={ORIGIN_CITY.x}
@@ -277,7 +191,6 @@ export const WorldNetworkMap: React.FC = () => {
               fill="#FCFBF7"
               stroke="#F26522"
               strokeWidth="1.75"
-              filter="url(#hubGlow)"
             />
             <circle cx={ORIGIN_CITY.x} cy={ORIGIN_CITY.y} r={2} fill="#F26522" />
 

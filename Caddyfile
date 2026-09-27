@@ -1,0 +1,15 @@
+# Caddy configuration for Trionyx
+# Replace example domains (trionyx.in, ops.trionyx.in, dealers.trionyx.in) with your actual domains.
+# Caddy automatically provisions and renews SSL certificates (Let's Encrypt).
+
+trionyx.in, www.trionyx.in {
+    reverse_proxy trionyx-app:3000
+}
+
+ops.trionyx.in {
+    reverse_proxy trionyx-app:3002
+}
+
+dealers.trionyx.in {
+    reverse_proxy trionyx-app:3001
+}

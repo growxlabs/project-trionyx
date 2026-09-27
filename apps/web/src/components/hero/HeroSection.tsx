@@ -42,10 +42,10 @@ export const HeroSection = ({
     <SectionFrame
       id="hero"
       hasBottomBorder={false}
-      className="overflow-hidden flex items-center border-b-0 md:border-b md:border-[rgba(23,23,20,0.07)]"
+      className="bg-[#F7F6F0] relative overflow-hidden flex items-center border-b-0 md:border-b md:border-[rgba(23,23,20,0.07)]"
     >
       {/* INTERNAL 12-COLUMN CONTENT GRID (32px padding on desktop, 20px-24px on mobile) */}
-      <ContentGrid className="relative z-10 py-10 sm:py-12 lg:py-16 items-center !gap-y-10">
+      <ContentGrid className="relative z-10 pt-4 sm:pt-6 lg:pt-8 pb-10 sm:pb-12 lg:pb-16 items-center !gap-y-10">
         <div className="md:col-span-7 flex flex-col justify-center lg:pr-10">
           <p className="mb-5 flex items-center gap-3 text-[11px] sm:text-xs font-semibold tracking-[0.16em] text-[#686860]">
             <span className="h-px w-7 bg-[#FA611B]" aria-hidden="true" />

@@ -38,13 +38,34 @@ DEALER PORTAL (Partner Authenticated)
 ├── /dealer/orders                         # Wholesale Inquiries & Stock Replenishment
 └── /dealer/warranty-register              # Customer Warranty Submission Portal
 
-PRIVATE INTERNAL OPERATIONS (Restricted Access)
+PRIVATE INTERNAL OPERATIONS (apps/portal - Port 3002)
 │
-├── /portal                                # Redirects to /portal/login
-├── /portal/login                          # Multi-Role Internal Authentication Gateway
-├── /portal/distributor                    # Regional Hub Fulfillment & Supply Operations
-├── /portal/management                     # Executive & Managing Director Business Overview
-└── /portal/admin                          # System Administration, User Roles, & Catalog CMS
+├── /login                                  # Multi-Role Internal Authentication Gateway (Step 1 Complete)
+├── /overview                               # Unified Operational Shell & Overview (Step 2 Shell Complete)
+│
+├── /products                               # Automotive Products Master Catalog (Step 2 Complete)
+│   ├── /products/new                       # Product Creation & Initial SKU Registration
+│   ├── /products/[productId]               # Canonical Product Detail Master Record
+│   └── /products/[productId]/edit          # Product Metadata & Technical Specification Editor
+│
+├── /inventory                              # Multi-Facility Inventory Balances Table (Step 2 Complete)
+│   ├── /inventory/movements                # Immutable Stock Movements Ledger (Double-Entry Audit)
+│   └── /inventory/locations                # Warehouses, Regional Hubs, & Transit Depots
+│
+├── /api/auth/login                         # Auth Login Route Handler
+├── /api/auth/logout                        # Auth Logout Route Handler
+├── /api/auth/me                            # Session Verification Route Handler
+├── /api/categories                         # Category List & Creation Handler
+├── /api/products                           # Product List & Creation Handler
+├── /api/products/[id]                      # Product Detail & Update Handler
+├── /api/products/[id]/archive              # Product Archival Handler
+├── /api/upload                             # Multi-part Media & TDS/MSDS Document Upload Handler
+├── /api/media/[id]                         # Product Media Asset Deletion Handler
+├── /api/inventory/locations                # Inventory Location List & Creation Handler
+├── /api/inventory/receive                  # Transactional Stock Receipt Handler
+├── /api/inventory/adjust                   # Transactional Stock Adjustment Handler
+├── /api/inventory/transfer                 # Transactional Inter-Facility Transfer Handler
+└── /api/inventory/reorder-level            # Inventory Reorder Threshold Handler
 ```
 
 ---

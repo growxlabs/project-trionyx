@@ -1,0 +1,98 @@
+import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import * as path from 'path';
+import * as fs from 'fs';
+import { randomUUID } from 'crypto';
+import { requireInternalUser, canWriteProducts, AUTH_CONFIG } from '@trionyx/auth';
+import { mediaRepository, productsRepository, uploadMediaAsset } from '@trionyx/database';
+import type { MediaType } from '@trionyx/types';
+
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'];
+const ALLOWED_DOC_TYPES = ['application/pdf', 'text/csv'];
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5 MB
+const MAX_DOC_SIZE = 10 * 1024 * 1024; // 10 MB
+
+export async function POST(request: Request) {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get(AUTH_CONFIG.cookieName)?.value;
+    const { user } = await requireInternalUser(token);
+
+    if (!canWriteProducts(user.role)) {
+      return NextResponse.json(
+        { success: false, error: 'You do not have permission to upload product media.' },
+        { status: 403 }
+      );
+    }
+
+    const formData = await request.formData();
+    const file = formData.get('file') as File | null;
+    const productId = formData.get('productId') as string | null;
+    const altText = (formData.get('altText') as string | null) || null;
+
+    if (!file || !productId) {
+      return NextResponse.json(
+        { success: false, error: 'File and productId are required.' },
+        { status: 400 }
+      );
+    }
+
+    const product = await productsRepository.findById(productId);
+    if (!product) {
+      return NextResponse.json({ success: false, error: 'Product not found.' }, { status: 404 });
+    }
+
+    const mimeType = file.type;
+    const fileSize = file.size;
+    let mediaType: MediaType;
+
+    if (ALLOWED_IMAGE_TYPES.includes(mimeType)) {
+      if (fileSize > MAX_IMAGE_SIZE) {
+        return NextResponse.json(
+          { success: false, error: 'Image exceeds maximum allowed size of 5 MB.' },
+          { status: 400 }
+        );
+      }
+      mediaType = 'IMAGE';
+    } else if (ALLOWED_DOC_TYPES.includes(mimeType)) {
+      if (fileSize > MAX_DOC_SIZE) {
+        return NextResponse.json(
+          { success: false, error: 'Document exceeds maximum allowed size of 10 MB.' },
+          { status: 400 }
+        );
+      }
+      mediaType = 'DOCUMENT';
+    } else {
+      return NextResponse.json(
+        { success: false, error: `Unsupported file type: ${mimeType}. Allowed: JPEG, PNG, WebP, SVG, PDF, CSV.` },
+        { status: 400 }
+      );
+    }
+
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const uploadResult = await uploadMediaAsset({
+      buffer,
+      originalName: file.name,
+      mimeType,
+      folder: 'products',
+    });
+
+    const media = await mediaRepository.create({
+      productId,
+      type: mediaType,
+      storagePath: uploadResult.storagePath,
+      fileName: file.name,
+      fileSize,
+      mimeType,
+      altText,
+    });
+
+    return NextResponse.json({ success: true, media }, { status: 201 });
+  } catch (err: unknown) {
+    if (err instanceof Error && err.message === 'UNAUTHENTICATED') {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+    const message = err instanceof Error ? err.message : 'Upload failed';
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
+  }
+}

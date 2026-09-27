@@ -6,14 +6,14 @@
   --color-brand-red: #D9362B;
   --color-brand-charcoal: #171714;
   --color-brand-graphite: #171714;
-  --color-brand-warm-white: #F5F5EE;
-  --color-brand-light-gray: #EFECE3;
+  --color-brand-warm-white: #F7F6F0;
+  --color-brand-light-gray: #ECE9E4;
   --color-brand-body-gray: #68665F;
 
-  --color-surface-default: #F5F5EE;
-  --color-surface-subtle: #EFECE3;
-  --color-surface-muted: #EFECE3;
-  --color-surface-elevated: #F5F5EE;
+  --color-surface-default: #F7F6F0;
+  --color-surface-subtle: #ECE9E4;
+  --color-surface-muted: #ECE9E4;
+  --color-surface-elevated: #FCFBF7;
 
   --color-text-primary: #171714;
   --color-text-secondary: #68665F;
@@ -39,23 +39,28 @@
   --page-gutter: 32px;
   --frame-border: rgba(23, 23, 20, 0.07);
 
-  --background: #F5F5EE;
+  --page-bg: #F7F6F0;
+  --surface-elevated: #FCFBF7;
+  --surface-beige: #ECE9E4;
+  --surface-dark: #171714;
+
+  --background: #F7F6F0;
   --foreground: #171714;
   --brand-orange: #F26522;
   --brand-red: #D9362B;
   --brand-charcoal: #171714;
-  --brand-warm-white: #F5F5EE;
-  --brand-elevated: #F5F5EE;
-  --brand-secondary: #EFECE3;
+  --brand-warm-white: #F7F6F0;
+  --brand-elevated: #FCFBF7;
+  --brand-secondary: #ECE9E4;
   --brand-border: rgba(23, 23, 20, 0.07);
   --brand-body-gray: #68665F;
 }
 
-/* Warm tactile paper canvas (#F5F5EE) */
+/* Warm tactile paper canvas (#F7F6F0) */
 html,
 body {
-  background-color: #F5F5EE;
-  color: #171714;
+  background-color: var(--color-surface-default);
+  color: var(--color-text-primary);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -73,7 +78,7 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #EFECE3;
+  background: #ECE9E4;
 }
 ::-webkit-scrollbar-thumb {
   background: #D5D2C7;

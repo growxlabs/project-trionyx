@@ -66,7 +66,7 @@ export const HeaderShell = () => {
     <>
       <header
         ref={headerRef}
-        className="sticky top-0 z-50 w-full bg-transparent md:bg-[#F5F5EE]/90 lg:bg-transparent border-b-0 md:border-b md:border-[rgba(23,23,20,0.07)] transition-colors"
+        className="sticky top-0 z-50 w-full bg-transparent md:bg-[#F7F6F0]/90 lg:bg-transparent border-b-0 md:border-b md:border-[rgba(23,23,20,0.07)] transition-colors"
       >
         <div className="w-full px-5 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between">
           {/* Official Brand Logo */}
@@ -106,8 +106,8 @@ export const HeaderShell = () => {
                 aria-controls="products-mega-menu"
                 className={`text-[14px] font-medium transition-colors duration-150 inline-flex items-center gap-1.5 py-2 px-3 rounded-[3px] cursor-pointer select-none outline-none focus-visible:ring-2 focus-visible:ring-[#F26522] ${
                   isProductsOpen
-                    ? 'text-[#F26522] font-semibold bg-[#EFECE3]'
-                    : 'text-[#171714] hover:text-[#171714] hover:bg-[#EFECE3]'
+                    ? 'rounded-[1px] text-[#F26522] font-semibold bg-transparent'
+                    : 'text-[#171714] hover:text-[#171714] hover:bg-[#ECE9E4]'
                 }`}
               >
                 <span>Products</span>
@@ -154,7 +154,7 @@ export const HeaderShell = () => {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label={mobileMenuOpen ? 'Close Menu' : 'Open Menu'}
               aria-expanded={mobileMenuOpen}
-              className="w-12 h-12 rounded-[6px] border border-[rgba(23,23,20,0.12)] bg-[#F5F5EE] active:bg-[#EFECE3] flex items-center justify-center text-[#171714] hover:border-[rgba(23,23,20,0.22)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26522]"
+              className="w-12 h-12 rounded-[6px] border border-[rgba(23,23,20,0.12)] bg-[#F7F6F0] active:bg-[#ECE9E4] flex items-center justify-center text-[#171714] hover:border-[rgba(23,23,20,0.22)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26522]"
             >
               {mobileMenuOpen ? <CloseIcon size={20} /> : <MenuIcon size={20} />}
             </button>
@@ -174,14 +174,14 @@ export const HeaderShell = () => {
 
         {/* MOBILE EXPANDABLE MENU */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-[rgba(23,23,20,0.07)] bg-[#F5F5EE] px-5 py-5 shadow-[0_12px_24px_rgba(23,23,20,0.04)] animate-in fade-in slide-in-from-top-2 duration-150">
+          <div className="md:hidden border-t border-[rgba(23,23,20,0.07)] bg-[#F7F6F0] px-5 py-5 shadow-[0_12px_24px_rgba(23,23,20,0.04)] animate-in fade-in slide-in-from-top-2 duration-150">
             <div className="flex flex-col space-y-1">
               {/* Products Expandable Group */}
               <div>
                 <button
                   type="button"
                   onClick={() => setMobileProductsOpen(!mobileProductsOpen)}
-                  className="w-full flex items-center justify-between py-3 px-3.5 rounded-[4px] text-[15.5px] font-semibold text-[#171714] hover:bg-[#EFECE3] transition-colors"
+                  className="w-full flex items-center justify-between py-3 px-3.5 rounded-[4px] text-[15.5px] font-semibold text-[#171714] hover:bg-[#ECE9E4] transition-colors"
                 >
                   <span>Products</span>
                   <ChevronDownIcon
@@ -230,7 +230,7 @@ export const HeaderShell = () => {
               <Link
                 href="/installer-network"
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-3 px-3.5 rounded-[4px] text-[15.5px] font-medium text-[#171714] hover:bg-[#EFECE3] transition-colors"
+                className="py-3 px-3.5 rounded-[4px] text-[15.5px] font-medium text-[#171714] hover:bg-[#ECE9E4] transition-colors"
               >
                 Installer Network
               </Link>
@@ -238,7 +238,7 @@ export const HeaderShell = () => {
               <Link
                 href="/#about"
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-3 px-3.5 rounded-[4px] text-[15.5px] font-medium text-[#171714] hover:bg-[#EFECE3] transition-colors"
+                className="py-3 px-3.5 rounded-[4px] text-[15.5px] font-medium text-[#171714] hover:bg-[#ECE9E4] transition-colors"
               >
                 About
               </Link>
@@ -246,7 +246,7 @@ export const HeaderShell = () => {
               <Link
                 href="/contact"
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-3 px-3.5 rounded-[4px] text-[15.5px] font-medium text-[#171714] hover:bg-[#EFECE3] transition-colors"
+                className="py-3 px-3.5 rounded-[4px] text-[15.5px] font-medium text-[#171714] hover:bg-[#ECE9E4] transition-colors"
               >
                 Contact
               </Link>
@@ -269,13 +269,12 @@ export const HeaderShell = () => {
         )}
       </header>
 
-      {/* 
-        SUBTLE BACKDROP TREATMENT
-        De-emphasizes underlying page content while mega menu or mobile menu is open
-      */}
+      {/* The mobile menu keeps its backdrop; the desktop dropdown remains part of the header surface. */}
       {(isProductsOpen || mobileMenuOpen) && (
         <div
-          className="fixed inset-0 top-16 md:top-20 bg-[#171714]/[0.05] backdrop-blur-[2px] transition-opacity duration-200 z-40 pointer-events-auto"
+          className={`fixed inset-0 top-16 md:top-20 transition-opacity duration-200 z-40 pointer-events-auto ${
+            mobileMenuOpen ? 'bg-[#171714]/[0.05] backdrop-blur-[2px]' : 'bg-transparent'
+          }`}
           onClick={() => {
             setIsProductsOpen(false);
             setMobileMenuOpen(false);

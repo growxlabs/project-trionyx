@@ -8,10 +8,14 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@trionyx/types": "workspace:*"
+    "@node-rs/argon2": "^2.2.1",
+    "@trionyx/database": "workspace:*",
+    "@trionyx/types": "workspace:*",
+    "@trionyx/validation": "workspace:*"
   },
   "devDependencies": {
     "@trionyx/config": "workspace:*",
+    "@types/node": "^20",
     "typescript": "^5"
   },
   "scripts": {

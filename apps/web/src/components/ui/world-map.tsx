@@ -51,11 +51,6 @@ export const WorldMap: React.FC<WorldMapProps> = ({ className = '' }) => {
         aria-label="Aceternity-style dotted geographic world map with India and Vijayawada network highlighted"
       >
         <defs>
-          {/* Subtle soft orange glow for origin */}
-          <filter id="originPulseGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#F26522" floodOpacity="0.6" />
-          </filter>
-
           {/* Route line subtle gradient */}
           <linearGradient id="trionyxRouteGradient" x1="0%" y1="100%" x2="0%" y2="0%">
             <stop offset="0%" stopColor="#F26522" stopOpacity="0.95" />
@@ -75,18 +70,12 @@ export const WorldMap: React.FC<WorldMapProps> = ({ className = '' }) => {
         {/* 2. INDIA DOTS: Distinct Trionyx orange accent tone, prominent radius */}
         <g className="india-dots-layer">
           {INDIA_DOTS.map((dot, idx) => (
-            <motion.circle
+            <circle
               key={`ind-dot-${idx}`}
               cx={dot.x}
               cy={dot.y}
               r={2.05}
-              initial={{ fill: 'rgba(23, 23, 20, 0.18)', scale: 0.8, opacity: 0.3 }}
-              animate={{ fill: '#F26522', scale: 1, opacity: 1 }}
-              transition={{
-                duration: 0.8,
-                delay: 0.5 + (idx % 12) * 0.04,
-                ease: 'easeOut',
-              }}
+              fill="#F26522"
             />
           ))}
         </g>
@@ -141,29 +130,21 @@ export const WorldMap: React.FC<WorldMapProps> = ({ className = '' }) => {
                 <circle cx={dest.x} cy={dest.y} r={10} fill="transparent" />
 
                 {/* Destination Point Halo on Hover */}
-                <motion.circle
+                <circle
                   cx={dest.x}
                   cy={dest.y}
                   r={isHovered ? 6 : 0}
                   fill="rgba(242, 101, 34, 0.2)"
-                  transition={{ duration: 0.2 }}
                 />
 
                 {/* Destination Point */}
-                <motion.circle
+                <circle
                   cx={dest.x}
                   cy={dest.y}
                   r={isHovered ? 3.4 : 2.5}
                   fill={isHovered ? '#F26522' : '#171714'}
                   stroke="#F7F6F0"
                   strokeWidth={1}
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{
-                    duration: 0.5,
-                    delay: dest.delay + 0.6,
-                    ease: 'easeOut',
-                  }}
                 />
 
                 {/* Clean hover tooltip with city name */}
@@ -195,73 +176,22 @@ export const WorldMap: React.FC<WorldMapProps> = ({ className = '' }) => {
 
         {/* 5. VIJAYAWADA ORIGIN MARKER: Real geographic position (16.5062°N, 80.6480°E) */}
         <g className="origin-marker">
-          {/* Restrained pulse ring 1 */}
-          <motion.circle
-            cx={ORIGIN_CITY.x}
-            cy={ORIGIN_CITY.y}
-            r={6}
-            fill="none"
-            stroke="#F26522"
-            strokeWidth={1}
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{
-              scale: [1, 2.5, 2.5],
-              opacity: [0.8, 0, 0],
-            }}
-            transition={{
-              duration: 2.8,
-              delay: 1.4,
-              repeat: Infinity,
-              ease: 'easeOut',
-            }}
-            style={{ transformOrigin: `${ORIGIN_CITY.x}px ${ORIGIN_CITY.y}px` }}
-          />
-
-          {/* Restrained pulse ring 2 */}
-          <motion.circle
-            cx={ORIGIN_CITY.x}
-            cy={ORIGIN_CITY.y}
-            r={10}
-            fill="none"
-            stroke="#F26522"
-            strokeWidth={0.7}
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{
-              scale: [1, 2.3, 2.3],
-              opacity: [0.5, 0, 0],
-            }}
-            transition={{
-              duration: 2.8,
-              delay: 2.2,
-              repeat: Infinity,
-              ease: 'easeOut',
-            }}
-            style={{ transformOrigin: `${ORIGIN_CITY.x}px ${ORIGIN_CITY.y}px` }}
-          />
-
           {/* Thin outer ring */}
-          <motion.circle
+          <circle
             cx={ORIGIN_CITY.x}
             cy={ORIGIN_CITY.y}
             r={4.5}
             fill="#F7F6F0"
             stroke="#F26522"
             strokeWidth={1.5}
-            filter="url(#originPulseGlow)"
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 1.2, ease: 'easeOut' }}
           />
 
           {/* Small solid orange center */}
-          <motion.circle
+          <circle
             cx={ORIGIN_CITY.x}
             cy={ORIGIN_CITY.y}
             r={2.6}
             fill="#F26522"
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.4, delay: 1.25, ease: 'easeOut' }}
           />
 
           {/* Refined label VIJAYAWADA extending into open bay waters */}

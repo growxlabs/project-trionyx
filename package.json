@@ -6,10 +6,14 @@
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
+    "start": "turbo start",
     "lint": "turbo lint",
-    "typecheck": "turbo typecheck"
+    "typecheck": "turbo typecheck",
+    "internal-user:create": "tsx scripts/create-internal-user.ts",
+    "test": "tsx --test --test-concurrency=1 packages/auth/src/__tests__/*.test.ts"
   },
   "devDependencies": {
+    "tsx": "^4.23.15",
     "turbo": "^2.4.4",
     "typescript": "^5"
   }

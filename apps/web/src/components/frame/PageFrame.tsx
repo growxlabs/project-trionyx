@@ -23,7 +23,7 @@ export const PageFrame: React.FC<PageFrameProps> = ({
 }) => {
   return (
     <div
-      className={`relative mx-auto bg-[#F5F5EE] w-full border-x-0 md:w-[calc(100%-48px)] md:border-l md:border-r md:border-[rgba(23,23,20,0.07)] lg:w-[min(calc(100%-64px),1440px)] ${className}`}
+      className={`relative mx-auto bg-[#F7F6F0] w-full border-x-0 md:w-[calc(100%-48px)] md:border-l md:border-r md:border-[rgba(23,23,20,0.07)] lg:w-[min(calc(100%-64px),1440px)] ${className}`}
       {...props}
     >
       {children}

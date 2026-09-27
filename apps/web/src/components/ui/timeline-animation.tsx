@@ -43,7 +43,7 @@ export const TimelineContent: React.FC<TimelineContentProps> = ({
     },
   };
 
-  const Component = (motion[as as keyof typeof motion] || motion.div) as any;
+  const Component = (motion[as as keyof typeof motion] || motion.div) as React.ElementType;
 
   return (
     <Component

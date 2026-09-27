@@ -1,6 +1,22 @@
 export * from '@trionyx/types';
-
-// Database client abstraction layer
-export const dbClient = {
-  status: 'initialized',
-};
+export * from './db';
+export * from './repositories/users';
+export * from './repositories/sessions';
+export * from './repositories/audit';
+export * from './repositories/categories';
+export * from './repositories/products';
+export * from './repositories/specifications';
+export * from './repositories/media';
+export * from './repositories/locations';
+export * from './repositories/serials';
+export * from './repositories/serialMovements';
+export * from './repositories/distributors';
+export * from './repositories/dealers';
+export * from './repositories/dealerRequests';
+export * from './repositories/internalNotes';
+export * from './repositories/dealerUsers';
+export * from './repositories/dealerSessions';
+export * from './repositories/dealerRequestMessages';
+export * from './repositories/contactEnquiries';
+export * from './repositories/enquiryNotes';
+export * from './storage';

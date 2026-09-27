@@ -5,6 +5,7 @@ export interface TrionyxLogoProps {
   className?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   priority?: boolean;
+  variant?: 'dark' | 'light';
 }
 
 const sizeClasses = {
@@ -18,11 +19,12 @@ export const TrionyxLogo = ({
   className = '',
   size = 'md',
   priority = true,
+  variant = 'dark',
 }: TrionyxLogoProps) => {
   return (
     <div className={`relative inline-flex items-center shrink-0 ${sizeClasses[size]} ${className}`}>
       <Image
-        src="/brand/trionyx-logo-dark.png"
+        src={variant === 'light' ? '/brand/trionyx-logo-light.png' : '/brand/trionyx-logo-dark.png'}
         alt="Trionyx — Always Exceed Expectations"
         width={2092}
         height={752}

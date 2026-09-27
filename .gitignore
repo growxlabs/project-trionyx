@@ -42,3 +42,8 @@ next-env.d.ts
 
 # turborepo
 .turbo
+
+# local database
+*.db
+*.db-shm
+*.db-wal

@@ -160,7 +160,7 @@ export const IndiaNetworkMap: React.FC = () => {
 
   return (
     <div className="relative w-full h-full flex items-center justify-center select-none overflow-visible">
-      {/* Dynamic CSS animations for SVG route drawing & pulses */}
+      {/* Route drawing animation */}
       <style jsx>{`
         @keyframes drawRoute {
           0% {
@@ -175,53 +175,10 @@ export const IndiaNetworkMap: React.FC = () => {
             opacity: 1;
           }
         }
-        @keyframes flowPacket {
-          0% {
-            stroke-dashoffset: 160;
-          }
-          100% {
-            stroke-dashoffset: 0;
-          }
-        }
-        @keyframes pingOrigin {
-          0% {
-            transform: scale(1);
-            opacity: 0.8;
-          }
-          70% {
-            transform: scale(2.6);
-            opacity: 0;
-          }
-          100% {
-            transform: scale(2.6);
-            opacity: 0;
-          }
-        }
-        @keyframes nodeAppear {
-          0% {
-            transform: scale(0);
-            opacity: 0;
-          }
-          60% {
-            transform: scale(1.25);
-            opacity: 1;
-          }
-          100% {
-            transform: scale(1);
-            opacity: 1;
-          }
-        }
         .route-path {
           stroke-dasharray: 800;
           stroke-dashoffset: 800;
           animation: drawRoute 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        .pulse-packet {
-          stroke-dasharray: 6 32;
-          animation: flowPacket 3.2s linear infinite;
-        }
-        .node-pop {
-          animation: nodeAppear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
       `}</style>
 
@@ -231,11 +188,6 @@ export const IndiaNetworkMap: React.FC = () => {
         aria-label="Interactive Trionyx India Network Map centered at Vijayawada"
       >
         <defs>
-          {/* Subtle warm drop shadow for nodes */}
-          <filter id="originGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow dx="0" dy="1" stdDeviation="4" floodColor="#F26522" floodOpacity="0.35" />
-          </filter>
-
           {/* Linear gradient for routes starting from Vijayawada */}
           <linearGradient id="routeGradient" x1="0%" y1="100%" x2="0%" y2="0%">
             <stop offset="0%" stopColor="#F26522" stopOpacity="0.8" />
@@ -308,16 +260,6 @@ export const IndiaNetworkMap: React.FC = () => {
                   style={{ animationDelay: city.delay }}
                 />
 
-                {/* Flowing energy packet traveling outward continuously */}
-                <path
-                  d={arcPath}
-                  fill="none"
-                  stroke={isHovered ? '#F26522' : 'rgba(242, 101, 34, 0.45)'}
-                  strokeWidth={isHovered ? 2.5 : 1.5}
-                  strokeLinecap="round"
-                  className="pulse-packet"
-                  opacity={isHovered ? 1 : 0.65}
-                />
               </g>
             );
           })}
@@ -358,11 +300,7 @@ export const IndiaNetworkMap: React.FC = () => {
             return (
               <g
                 key={`node-${city.id}`}
-                className="node-pop cursor-pointer group"
-                style={{
-                  transformOrigin: `${city.x}px ${city.y}px`,
-                  animationDelay: `${parseFloat(city.delay) + 0.6}s`,
-                }}
+                className="cursor-pointer group"
                 onMouseEnter={() => setHoveredCity(city.id)}
                 onMouseLeave={() => setHoveredCity(null)}
               >
@@ -417,39 +355,11 @@ export const IndiaNetworkMap: React.FC = () => {
           })}
         </g>
 
-        {/* 5. ORIGIN NODE: VIJAYAWADA (The Source Beacon) */}
+        {/* 5. ORIGIN NODE: VIJAYAWADA */}
         <g
           className="origin-beacon cursor-pointer"
           style={{ transformOrigin: `${ORIGIN_CITY.x}px ${ORIGIN_CITY.y}px` }}
         >
-          {/* Radar ripple rings expanding outward */}
-          <circle
-            cx={ORIGIN_CITY.x}
-            cy={ORIGIN_CITY.y}
-            r={16}
-            fill="none"
-            stroke="#F26522"
-            strokeWidth="1.5"
-            opacity="0.75"
-            style={{
-              animation: 'pingOrigin 2.8s cubic-bezier(0, 0.2, 0.8, 1) infinite',
-              transformOrigin: `${ORIGIN_CITY.x}px ${ORIGIN_CITY.y}px`,
-            }}
-          />
-          <circle
-            cx={ORIGIN_CITY.x}
-            cy={ORIGIN_CITY.y}
-            r={24}
-            fill="none"
-            stroke="#F26522"
-            strokeWidth="1"
-            opacity="0.35"
-            style={{
-              animation: 'pingOrigin 2.8s cubic-bezier(0, 0.2, 0.8, 1) 0.9s infinite',
-              transformOrigin: `${ORIGIN_CITY.x}px ${ORIGIN_CITY.y}px`,
-            }}
-          />
-
           {/* Distinct Outer Ring */}
           <circle
             cx={ORIGIN_CITY.x}
@@ -458,7 +368,6 @@ export const IndiaNetworkMap: React.FC = () => {
             fill="#FCFBF7"
             stroke="#F26522"
             strokeWidth="2"
-            filter="url(#originGlow)"
           />
 
           {/* Solid Brand Orange Core */}

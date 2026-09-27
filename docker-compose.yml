@@ -1,0 +1,35 @@
+services:
+  trionyx-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: trionyx_app
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      # Persistent SQLite database storage
+      - ./data:/app/data
+      - ./trionyx.db:/app/trionyx.db
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+      - "3002:3002"
+
+  caddy:
+    image: caddy:alpine
+    container_name: trionyx_caddy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - trionyx-app
+
+volumes:
+  caddy_data:
+  caddy_config:

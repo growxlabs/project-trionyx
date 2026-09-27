@@ -1,11 +1,15 @@
 .reveal {
   position: relative;
   width: 100%;
-  aspect-ratio: 1 / 1.12;
-  max-height: 560px;
+  aspect-ratio: 1 / 1.15;
+  max-width: 480px;
+  max-height: 540px;
+  margin-left: auto;
   overflow: hidden;
-  border-radius: 16px;
-  background: #171714;
+  border-radius: 4px;
+  border: 1px solid rgba(23, 23, 20, 0.08);
+  box-shadow: 0 16px 40px -12px rgba(23, 23, 20, 0.09), 0 2px 6px rgba(23, 23, 20, 0.04);
+  background: #ECE9E4;
 }
 
 .surface {
@@ -16,8 +20,11 @@
 @media (max-width: 767px) {
   .reveal {
     aspect-ratio: 4 / 3;
-    max-height: 420px;
-    border-radius: 12px;
+    max-height: 380px;
+    border-radius: 4px;
+    margin-left: 0;
   }
-  .surface { object-position: center 58%; }
+  .surface {
+    object-position: center 58%;
+  }
 }

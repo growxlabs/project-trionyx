@@ -10,7 +10,7 @@ export const rawColors = {
   brandRed: '#D9362B',
 
   // Locked neutral foundation
-  canvas: '#F5F5EE',
+  canvas: '#F7F6F0',
   elevatedSurface: '#FCFBF7',
   secondarySurface: '#EFECE3',
   border: '#E5E3DB',
@@ -20,10 +20,10 @@ export const rawColors = {
   // Backward-compatible semantic aliases
   primaryOrange: '#F26522',
   primaryRed: '#D9362B',
-  mainCanvas: '#F5F5EE',
+  mainCanvas: '#F7F6F0',
   elevatedWhite: '#FCFBF7',
   white: '#FCFBF7',
-  warmWhite: '#F5F5EE',
+  warmWhite: '#F7F6F0',
   deepCharcoal: '#171714',
   graphite: '#171714',
   lightGray: '#EFECE3',
@@ -90,6 +90,38 @@ export const semanticTokens = {
     disabledText: '#99968E',
     disabledBg: '#EFECE3',
     disabledBorder: '#E5E3DB',
+  },
+} as const;
+
+/**
+ * Semantic theme contract shared by Trionyx applications. CSS implementations
+ * live at the app boundary so each application can adopt the same names while
+ * choosing when to opt into the palette.
+ */
+export const themeTokens = {
+  modes: ['light', 'dark', 'system'] as const,
+  storageKey: 'trionyx-ops-theme',
+  attributes: { theme: 'data-theme', preference: 'data-theme-preference' },
+  light: {
+    background: '#F5F4EE', surface: '#FCFBF7', surfaceRaised: '#FFFFFF',
+    surfaceSubtle: '#F1F0E9', textPrimary: '#171714', textSecondary: '#68665F',
+    textMuted: '#8B877E', border: 'rgba(23, 23, 20, 0.09)',
+    borderStrong: 'rgba(23, 23, 20, 0.16)', accent: '#F26522', accentText: '#A94012', accentForeground: '#171714',
+    accentHover: '#D94A12', accentSoft: 'rgba(242, 101, 34, 0.10)', accentSoftBorder: '#FCD9C6',
+    success: '#166534', successSoft: '#ECFDF3', successBorder: '#A7E3BF', warning: '#92400E',
+    warningSoft: '#FFFBEB', warningBorder: '#F5D88C', danger: '#B42318', dangerSoft: '#FEF3F2', dangerBorder: '#FECACA',
+    info: '#1D4ED8', infoSoft: '#EFF6FF', infoBorder: '#BFDBFE',
+  },
+  dark: {
+    background: '#11110F', surface: '#171714', surfaceRaised: '#1D1D19',
+    surfaceSubtle: '#22221E', textPrimary: '#F5F3EC', textSecondary: '#B7B2A8',
+    textMuted: '#858178', border: 'rgba(255, 255, 255, 0.08)',
+    borderStrong: 'rgba(255, 255, 255, 0.14)', accent: '#F26522', accentText: '#FF7433', accentForeground: '#171714',
+    accentHover: '#FF7433', accentSoft: 'rgba(242, 101, 34, 0.14)', accentSoftBorder: 'rgba(242, 101, 34, 0.30)',
+    success: '#86D6A5', successSoft: 'rgba(35, 120, 72, 0.18)', successBorder: 'rgba(91, 190, 130, 0.34)',
+    warning: '#F0C36D', warningSoft: 'rgba(169, 112, 25, 0.18)', warningBorder: 'rgba(227, 174, 76, 0.34)',
+    danger: '#F2A09A', dangerSoft: 'rgba(177, 52, 42, 0.18)', dangerBorder: 'rgba(230, 111, 101, 0.34)',
+    info: '#94BFFF', infoSoft: 'rgba(49, 99, 184, 0.20)', infoBorder: 'rgba(116, 161, 237, 0.34)',
   },
 } as const;
 

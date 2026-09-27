@@ -83,3 +83,14 @@
 - **Card Default**: `0 1px 3px 0 rgba(23, 23, 20, 0.04), 0 1px 2px -1px rgba(23, 23, 20, 0.04)`
 - **Card Hover**: `0 12px 32px -8px rgba(23, 23, 20, 0.10)`
 - **Button Glow**: `0 1px 3px rgba(242, 101, 34, 0.20)`
+
+
+## Internal Operations theme foundation
+
+The internal portal supports `light`, `dark`, and `system` preferences. Its theme preference is stored under `trionyx-ops-theme`; choosing `system` keeps that value and follows live `prefers-color-scheme` changes. The root layout resolves the preference before first paint and sets `data-theme` and native `color-scheme` on the document element.
+
+Internal Operations components use the semantic theme properties from `packages/design-tokens/src/theme.css`, exported as `@trionyx/design-tokens/theme.css`: `--background`, `--surface`, `--surface-raised`, `--surface-subtle`, `--text-primary`, `--text-secondary`, `--text-muted`, `--border`, `--border-strong`, `--accent`, `--accent-text`, `--accent-foreground`, `--accent-hover`, and `--accent-soft`. Status roles use `--status-success`, `--status-success-soft`, `--status-warning`, `--status-warning-soft`, `--status-danger`, `--status-danger-soft`, `--status-info`, and `--status-info-soft`, plus matching `-border` properties.
+
+Light mode preserves Trionyx's warm paper palette (`#F5F4EE`, `#FCFBF7`, `#FFFFFF`) with charcoal text and restrained orange. Dark mode uses warm charcoal (`#11110F`, `#171714`, `#1D1D19`, `#22221E`), cream text, quiet borders, and the same orange accent. Use `bg-[var(--surface-raised)]`, `text-[var(--text-primary)]`, and other semantic utilities for new internal screens; use `--accent-text` for readable accent copy and `--accent-foreground` over orange buttons. Do not add fixed light/dark values to components.
+
+The portal uses the dark-text brand asset on light surfaces and the transparent light-text asset on dark surfaces. Keep logo selection theme-aware without placing a background plate behind the mark. Preserve text labels and accessible focus indicators in all status variants and theme modes. Theme controls belong in the user menu on desktop and in the mobile navigation drawer on smaller screens.

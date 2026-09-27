@@ -14,7 +14,7 @@ import { WorldMap } from '../ui/world-map';
  * - No body paragraph, no CTA buttons, no cards, no rectangular borders
  * - World dots: subtle warm grey, low contrast, no country borders, no ocean fill
  * - India dots: highlighted in Trionyx orange (#F26522) with distinct dotted language
- * - Vijayawada origin: real geographic position (16.5062°N, 80.6480°E), solid orange center, thin outer ring, restrained pulse, small label
+ * - Vijayawada origin: real geographic position (16.5062°N, 80.6480°E), solid orange center, thin outer ring, small label
  * - Thin animated curved routes radiating from Vijayawada to Indian hubs (Hyderabad, Bengaluru, Chennai, Mumbai, Delhi NCR, Kolkata, Ahmedabad, Kochi)
  */
 export const NetworkSection: React.FC = () => {

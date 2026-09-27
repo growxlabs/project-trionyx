@@ -1,0 +1,60 @@
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+
+const AUTH_COOKIE_NAME = 'trionyx_portal_session';
+
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
+
+  // Static assets and API routes are exempt from page redirects
+  if (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/brand') ||
+    pathname === '/favicon.ico' ||
+    pathname.startsWith('/api')
+  ) {
+    return NextResponse.next();
+  }
+
+  const isLoginPage = pathname === '/login';
+
+  // 1. Guest trying to access protected route -> redirect to /login
+  if (!token && !isLoginPage) {
+    const loginUrl = new URL('/login', request.url);
+    const response = NextResponse.redirect(loginUrl);
+    response.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate');
+    return response;
+  }
+
+  // 2. User with session token trying to access /login -> redirect to /overview
+  if (token && isLoginPage) {
+    const overviewUrl = new URL('/overview', request.url);
+    const response = NextResponse.redirect(overviewUrl);
+    response.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate');
+    return response;
+  }
+
+  const response = NextResponse.next();
+
+  // Prevent caching for all internal portal pages
+  if (!isLoginPage) {
+    response.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate');
+    response.headers.set('Pragma', 'no-cache');
+  }
+
+  return response;
+}
+
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except for:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder files
+     */
+    '/((?!_next/static|_next/image|favicon.ico).*)',
+  ],
+};

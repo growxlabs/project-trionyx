@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap');
+@import "tailwindcss";
+@import "@trionyx/design-tokens/theme.css";
+
+@theme {
+  --color-brand-orange: #F26522;
+  --color-brand-red: #D9362B;
+  --color-brand-charcoal: var(--text-primary);
+  --color-brand-graphite: var(--text-primary);
+  --color-brand-warm-white: var(--background);
+  --color-brand-light-gray: var(--surface-subtle);
+  --color-brand-body-gray: var(--text-secondary);
+
+  --color-surface-default: var(--background);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-surface-muted: var(--surface-subtle);
+  --color-surface-elevated: var(--surface-raised);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-inverse: var(--background);
+
+  --color-border-subtle: var(--border);
+  --color-border-default: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --font-sans: 'Instrument Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: monospace;
+
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-full: 9999px;
+}
+
+:root {
+  --page-max: 1440px;
+  --page-gutter: 32px;
+
+  --foreground: var(--text-primary);
+  --brand-orange: var(--accent);
+  --brand-red: var(--status-danger);
+  --brand-charcoal: var(--text-primary);
+  --brand-warm-white: var(--background);
+  --brand-elevated: var(--surface-raised);
+  --brand-secondary: var(--surface-subtle);
+  --brand-border: var(--border);
+  --brand-body-gray: var(--text-secondary);
+}
+
+/* Keep the page canvas tied to the selected theme. */
+html,
+body {
+  background-color: var(--background);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Subtle focus ring style for accessible navigation */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Legacy neutral utility classes, scoped to the internal portal. */
+[data-theme] .bg-white,
+[data-theme] .bg-\[\#FCFBF7\] { background-color: var(--legacy-raised); }
+[data-theme] .bg-\[\#FAF9F5\],
+[data-theme] .bg-\[\#FAF8F5\],
+[data-theme] .bg-\[\#F9F8F5\] { background-color: var(--surface); }
+[data-theme] .bg-\[\#F5F5EE\],
+[data-theme] .bg-\[\#F5F4EE\] { background-color: var(--legacy-background); }
+[data-theme] .bg-\[\#F0EFEA\] { background-color: var(--legacy-subtle); }
+[data-theme] .bg-\[\#EFECE3\],
+[data-theme] .bg-\[\#EBE9DE\] { background-color: var(--legacy-subtle); }
+[data-theme] .text-\[\#171714\],
+[data-theme] .text-\[\#45443F\] { color: var(--legacy-text); }
+[data-theme] .text-\[\#68665F\],
+[data-theme] .text-\[\#8C8980\],
+[data-theme] .text-\[\#9C9A91\] { color: var(--legacy-secondary); }
+[data-theme] .text-\[\#9E9B90\] { color: var(--legacy-muted); }
+[data-theme] .border-\[\#E5E3DB\] { border-color: var(--legacy-border-soft); }
+[data-theme] .border-\[\#D5D2C7\] { border-color: var(--legacy-border); }
+[data-theme] .divide-\[\#E5E3DB\] > :not(:last-child) { border-color: var(--legacy-border-soft); }
+[data-theme] .hover\:bg-\[\#F5F5EE\]:hover { background-color: var(--legacy-background); }
+[data-theme] .hover\:bg-\[\#EFECE3\]:hover { background-color: var(--legacy-subtle); }
+[data-theme] .active\:bg-\[\#EFECE3\]:active { background-color: var(--legacy-subtle); }
+[data-theme] .hover\:text-\[\#171714\]:hover { color: var(--legacy-text); }
+[data-theme] .placeholder\:text-\[\#8C8980\]::placeholder { color: var(--legacy-muted); }
+
+/* Status roles adapt without losing their visible labels. */
+[data-theme] .bg-\[\#ECFDF5\], [data-theme] .bg-\[\#F0FDF4\] { background-color: var(--legacy-status-success-soft); }
+[data-theme] .text-\[\#065F46\], [data-theme] .text-\[\#15803D\] { color: var(--legacy-status-success); }
+[data-theme] .border-\[\#A7F3D0\], [data-theme] .border-\[\#BBF7D0\] { border-color: var(--legacy-status-success-border); }
+[data-theme] .bg-\[\#FFFBEB\], [data-theme] .bg-\[\#FEFCE8\] { background-color: var(--legacy-status-warning-soft); }
+[data-theme] .text-\[\#92400E\], [data-theme] .text-\[\#D97706\] { color: var(--legacy-status-warning); }
+[data-theme] .border-\[\#FDE68A\] { border-color: var(--legacy-status-warning-border); }
+[data-theme] .bg-\[\#FEF2F2\] { background-color: var(--legacy-status-danger-soft); }
+[data-theme] .text-\[\#991B1B\], [data-theme] .text-\[\#B91C1C\], [data-theme] .text-\[\#DC2626\] { color: var(--legacy-status-danger); }
+[data-theme] .border-\[\#FECACA\] { border-color: var(--legacy-status-danger-border); }
+[data-theme] .bg-\[\#EFF6FF\] { background-color: var(--legacy-status-info-soft); }
+[data-theme] .text-\[\#1D4ED8\] { color: var(--legacy-status-info); }
+[data-theme] .border-\[\#BFDBFE\] { border-color: var(--legacy-status-info-border); }
+
+/* Role badges and danger actions use the same semantic variants. */
+[data-theme] .bg-\[\#FFF7ED\] { background: var(--status-warning-soft); }
+[data-theme] .text-\[\#C2410C\] { color: var(--status-warning); }
+[data-theme] .border-\[\#FFEDD5\] { border-color: var(--status-warning-border); }
+[data-theme] .bg-\[\#F5F3FF\] { background: var(--status-info-soft); }
+[data-theme] .text-\[\#6D28D9\] { color: var(--status-info); }
+[data-theme] .border-\[\#DDD6FE\] { border-color: var(--status-info-border); }
+[data-theme] .bg-\[\#F4F4F5\], [data-theme] .bg-\[\#F3F4F6\] { background: var(--surface-subtle); }
+[data-theme] .text-\[\#52525B\], [data-theme] .text-\[\#4B5563\] { color: var(--text-secondary); }
+[data-theme] .border-\[\#E4E4E7\], [data-theme] .border-\[\#E5E7EB\] { border-color: var(--border); }
+[data-theme] .text-\[\#1E40AF\] { color: var(--status-info); }
+[data-theme] .bg-\[\#FEE2E2\] { background: var(--status-danger-soft); }
+[data-theme] .hover\:bg-\[\#FEE2E2\]:hover, [data-theme] .active\:bg-\[\#FEE2E2\]:active { background: var(--status-danger-soft); }
+[data-theme] .bg-\[\#171714\] { background: var(--text-primary); }
+[data-theme] .hover\:bg-\[\#2A2926\]:hover, [data-theme] .hover\:bg-\[\#2C2C28\]:hover { background: var(--surface-subtle); }
+[data-theme] .active\:bg-black:active { background: var(--surface-subtle); }
+[data-theme] .text-white { color: var(--background); }
+
+/* Controls, forms, tables and the shared surfaces inherit the active palette. */
+[data-theme] input,
+[data-theme] select,
+[data-theme] textarea {
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+[data-theme] input::placeholder,
+[data-theme] textarea::placeholder { color: var(--text-muted); }
+[data-theme] option { background: var(--surface-raised); color: var(--text-primary); }
+[data-theme] table thead { background-color: var(--surface-subtle); color: var(--text-secondary); }
+[data-theme] table tbody tr:hover { background-color: var(--surface-subtle); }
+[data-theme] ::selection { background: var(--accent-soft); color: var(--text-primary); }
+
+.theme-logo-light { display: block; }
+.theme-logo-dark { display: none; }
+[data-theme="dark"] .theme-logo-light { display: none; }
+[data-theme="dark"] .theme-logo-dark { display: block; }
+.theme-choice:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }

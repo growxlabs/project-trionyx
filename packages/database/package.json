@@ -8,10 +8,15 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@trionyx/types": "workspace:*"
+    "@libsql/client": "^0.18.0",
+    "@supabase/supabase-js": "^2.117.2",
+    "@trionyx/types": "workspace:*",
+    "pg": "^8.23.0"
   },
   "devDependencies": {
     "@trionyx/config": "workspace:*",
+    "@types/node": "^20",
+    "@types/pg": "^8.23.1",
     "typescript": "^5"
   },
   "scripts": {
