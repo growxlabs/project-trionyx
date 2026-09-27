@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { SectionFrame } from '../frame';
 import styles from './GrapheneSection.module.css';
+import { SectionEyebrow } from '../ui/SectionEyebrow';
 
 interface ProductCardItem {
   id: string;
@@ -63,10 +64,7 @@ export function GrapheneSection() {
       <div className={styles.inner}>
         {/* Section Header */}
         <header className={styles.header}>
-          <p className={styles.eyebrow}>
-            <span className={styles.eyebrowLine} aria-hidden="true" />
-            SURFACE PROTECTION SUITE
-          </p>
+          <SectionEyebrow>SURFACE PROTECTION SUITE</SectionEyebrow>
           <h2 id="products-suite-heading" className={styles.heading}>
             Engineered protection, <em>across three matrices.</em>
           </h2>

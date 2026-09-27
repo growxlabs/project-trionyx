@@ -1,25 +1,23 @@
 .section {
   --story-ink: #242521;
-  padding: clamp(64px, 7vw, 104px) clamp(20px, 3.8vw, 60px) 64px;
+  padding: var(--section-space) clamp(20px, 3.8vw, 60px);
   background: #F7F6F0;
-  border-bottom: 1px solid rgba(23,23,20,.09);
+  border-bottom: 1px solid var(--section-divider);
   font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 .intro { display: flex; align-items: end; justify-content: space-between; gap: 40px; margin-bottom: 36px; }
-.eyebrow { display: flex; align-items: center; gap: 12px; margin: 0 0 22px; color: #68665f; font-size: 10px; font-weight: 600; letter-spacing: .18em; }
-.eyebrow span { width: 24px; height: 1px; background: #ed6327; }
-.intro h2 { margin: 0; color: var(--story-ink); font-size: clamp(38px, 4.4vw, 60px); font-weight: 500; letter-spacing: -.055em; line-height: 1.08; }
-.introText { max-width: 280px; margin: 0 0 3px; color: #77736b; font-size: 14px; line-height: 1.7; }
+.intro h2 { margin: 0; color: var(--story-ink); font-size: clamp(38px, 4.4vw, 60px); font-weight: var(--heading-weight); letter-spacing: -.055em; line-height: 1.08; }
+.introText { max-width: 280px; margin: 0 0 3px; color: var(--brand-body-gray); font-size: var(--body-small-size); line-height: var(--body-small-leading); }
 .gallery { display: flex; gap: 10px; height: clamp(500px, 43vw, 580px); }
 .card { --card-rule: rgba(255,255,255,.2); position: relative; flex: .8 1 0; min-width: 0; overflow: hidden; border-radius: 6px; isolation: isolate; color: #f5f2e9; transition: flex 720ms cubic-bezier(.22,.8,.22,1); }
 .card.expanded { flex: 6.5 1 0; }
 .road { background: #232722; }
-.thinking { background: #c64e26; }
-.materials { --card-rule: rgba(35,39,34,.2); background: #e3dfd4; color: #232722; }
+.thinking { background: var(--brand-orange); }
+.materials { --card-rule: rgba(35,39,34,.2); background: var(--surface-beige); color: #232722; }
 .people { background: #495247; }
 .art { position: absolute; top: 20px; right: 30px; width: 240px; height: 240px; pointer-events: none; opacity: 0; transition: opacity 350ms ease; }
 .expanded .art { opacity: 1; transition-delay: 260ms; }
-.art span { position: absolute; right: 0; top: 0; font: italic 200px/.9 Georgia, "Times New Roman", serif; letter-spacing: -.09em; color: transparent; -webkit-text-stroke: 1px var(--card-rule); }
+.art span { position: absolute; right: 0; top: 0; font: italic 200px/.9 var(--serif-accent); letter-spacing: -.09em; color: transparent; -webkit-text-stroke: 1px var(--card-rule); }
 .art::after { content: ''; position: absolute; width: 108px; height: 1px; right: 5px; bottom: 30px; background: var(--card-rule); transform: rotate(-35deg); }
 .trigger { position: absolute; inset: 0; z-index: 2; width: 100%; border: 0; padding: 0; background: transparent; color: inherit; cursor: pointer; text-align: left; }
 .trigger:focus-visible, .next:focus-visible { outline: 2px solid currentColor; outline-offset: -6px; }
@@ -35,17 +33,17 @@
 .expanded .content { opacity: 1; transition-delay: 320ms; }
 .chapterLabel { position: absolute; top: 29px; left: clamp(30px, 4vw, 56px); margin: 0 0 0 74px; font-size: 10px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; opacity: .7; }
 .copy { position: absolute; left: clamp(30px, 4vw, 56px); right: clamp(30px, 4vw, 56px); bottom: 102px; }
-.rule { display: block; width: 28px; height: 2px; margin-bottom: 24px; background: #ed6327; }
+.rule { display: block; width: var(--eyebrow-rule-width); height: var(--eyebrow-rule-height); margin-bottom: 24px; background: var(--brand-orange); }
 .thinking .rule { background: #f5e6d7; }
 .copy h3 { margin: 0 0 24px; font-size: clamp(36px, 4.1vw, 59px); font-weight: 450; letter-spacing: -.05em; line-height: 1.08; }
-.copy h3 em { display: block; font-family: Georgia, "Times New Roman", serif; font-size: 1.12em; font-weight: 400; letter-spacing: -.045em; }
-.copy p { max-width: 440px; margin: 0; font-size: 15px; line-height: 1.75; opacity: .76; }
+.copy h3 em { display: block; font-family: var(--serif-accent); font-size: 1.12em; font-weight: 400; letter-spacing: -.045em; }
+.copy p { max-width: 440px; margin: 0; font-size: var(--body-size); line-height: var(--body-leading); opacity: .85; }
 .note { position: absolute; bottom: 25px; left: clamp(30px, 4vw, 56px); right: clamp(30px, 4vw, 56px); display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-top: 19px; border-top: 1px solid var(--card-rule); }
-.note > span { font-size: 9px; font-weight: 500; letter-spacing: .15em; opacity: .66; }
+.note > span { font-size: 10px; font-weight: 500; letter-spacing: .15em; opacity: .82; }
 .next { display: flex; align-items: center; gap: 17px; min-height: 30px; border: 0; padding: 0; background: transparent; color: inherit; font: inherit; font-size: 11px; cursor: pointer; pointer-events: auto; white-space: nowrap; }
 .next span { font-size: 20px; transition: transform 180ms ease; }
 .next:hover span { transform: translateX(4px); }
-.footer { display: flex; justify-content: space-between; gap: 24px; margin-top: 22px; color: #878178; font-size: 9px; font-weight: 500; letter-spacing: .13em; }
+.footer { display: flex; justify-content: space-between; gap: 24px; margin-top: 22px; color: #68665F; font-size: 10px; font-weight: 500; letter-spacing: .13em; }
 @media (max-width: 999px) {
   .gallery { height: auto; flex-direction: column; gap: 10px; }
   .card, .card.expanded { flex: none; width: 100%; min-height: 72px; }
@@ -58,7 +56,7 @@
   .expanded .content { display: flex; flex-direction: column; padding: 122px 30px 24px; }
   .copy { position: relative; inset: auto; }
   .copy h3 { font-size: 42px; }
-  .copy p { max-width: 520px; font-size: 16px; }
+  .copy p { max-width: 520px; font-size: var(--body-size); }
   .art { top: 65px; right: 30px; width: 120px; height: 115px; }
   .expanded .art { opacity: .45; }
   .art span { font-size: 110px; }
@@ -70,11 +68,10 @@
   .footer span:nth-child(2) { display: none; }
 }
 @media (max-width: 600px) {
-  .section { padding: 56px 20px 46px; }
+  .section { padding: var(--section-space) 20px; }
   .intro { display: block; margin-bottom: 28px; }
   .intro h2 { font-size: clamp(35px, 9vw, 42px); }
-  .introText { margin-top: 16px; max-width: 310px; font-size: 15px; line-height: 1.6; }
-  .eyebrow { margin-bottom: 17px; font-size: 10px; }
+  .introText { margin-top: 16px; max-width: 310px; font-size: var(--body-small-size); line-height: var(--body-small-leading); }
   .card { border-radius: 8px; }
   .number, .expanded .number { left: 22px; font-size: 11px; }
   .closedLabel { left: 60px; font-size: 17px; }
@@ -84,7 +81,7 @@
   .art { top: 66px; right: 23px; }
   .rule { margin-bottom: 21px; }
   .copy h3 { font-size: clamp(30px, 8.7vw, 40px); margin-bottom: 23px; }
-  .copy p { font-size: 15px; line-height: 1.7; }
+  .copy p { font-size: var(--body-size); line-height: var(--body-leading); }
   .note { flex-wrap: wrap; gap: 8px 16px; margin-top: 27px; }
   .note > span { max-width: 150px; font-size: 9px; }
   .next { margin-left: auto; gap: 10px; font-size: 11px; }

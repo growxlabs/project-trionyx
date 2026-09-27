@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { Button } from '../ui/Button';
 import { ArrowRightIcon } from '../ui/Icons';
 import { SectionFrame, ContentGrid } from '../frame';
+import { SectionEyebrow } from '../ui/SectionEyebrow';
 
 export interface AboutSectionProps {
   onCtaClick?: () => void;
@@ -25,7 +26,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
       hasBottomBorder
       className="bg-[#F7F6F0] overflow-hidden"
     >
-      <ContentGrid className="md:grid-cols-12 pt-8 pb-14 sm:pt-16 sm:pb-20 md:py-20 lg:py-32 items-center gap-10 md:gap-10 lg:gap-16">
+      <ContentGrid className="md:grid-cols-12 py-[var(--section-space)] items-center gap-10 md:gap-10 lg:gap-16">
         {/* DESKTOP / TABLET VISUAL COLUMN (Hidden on mobile <768px, left on tablet/desktop) */}
         <div className="hidden md:flex md:col-span-5 relative w-full justify-start">
           <div className="relative w-full max-w-[460px] lg:max-w-none group pb-8 pr-6 sm:pr-10 lg:pr-12">
@@ -61,12 +62,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
           className="w-full md:col-span-7 flex flex-col justify-center md:pl-6 lg:pl-8 xl:pl-12"
         >
           {/* About Title */}
-          <span
-            style={{ fontFamily: '"Instrument Sans", sans-serif' }}
-            className="text-[11px] sm:text-[12px] font-medium tracking-[0.14em] uppercase text-[#68665F] mb-4 block"
-          >
-            ABOUT TRIONYX
-          </span>
+          <SectionEyebrow>ABOUT TRIONYX</SectionEyebrow>
 
           {/* Two Decades Heading — Styled with same font style & normal weight as Founded */}
           <h2
@@ -74,7 +70,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
               fontFamily: '"Instrument Sans", sans-serif',
               letterSpacing: '-0.025em',
             }}
-            className="text-[#171714] font-normal text-[28px] xs:text-[32px] sm:text-[36px] lg:text-[42px] leading-[1.18] max-w-[540px]"
+            className="section-heading text-[#171714] text-[28px] xs:text-[32px] sm:text-[36px] lg:text-[42px] leading-[1.18] max-w-[540px]"
           >
             Two decades in the automotive industry.
           </h2>
@@ -111,7 +107,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
           {/* Full Body Copy — Uniform #171714 text color matching the heading */}
           <div
             style={{ fontFamily: '"Instrument Sans", sans-serif' }}
-            className="mt-6 space-y-4 sm:space-y-5 text-[#171714] text-[16px] leading-[1.7] max-w-[480px] lg:max-w-[500px] font-normal"
+            className="body-copy mt-6 space-y-4 sm:space-y-5 max-w-[480px] lg:max-w-[500px] font-normal"
           >
             <p>
               Founded in 2006, Trionyx has spent nearly two decades working across the automotive products market, building experience around vehicle protection, care and related product categories.
@@ -122,7 +118,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
           </div>
 
           {/* Proof Line */}
-          <div className="mt-7 sm:mt-8 pt-6 border-t border-[rgba(23,23,20,0.08)] max-w-[480px] lg:max-w-[500px]">
+          <div className="mt-7 sm:mt-8 pt-6 border-t border-[var(--section-divider)] max-w-[480px] lg:max-w-[500px]">
             <span
               style={{ fontFamily: '"Instrument Sans", sans-serif' }}
               className="text-[12px] font-medium tracking-[0.16em] uppercase text-[#68665F]"

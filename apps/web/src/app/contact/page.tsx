@@ -6,6 +6,7 @@ import { ContactForm } from '@/components/contact';
 import { SiteFooter } from '@/components/footer/SiteFooter';
 import { PhoneIcon, MailIcon, MapPinIcon } from '@/components/ui/Icons';
 import { companyContact } from '@/data/companyContact';
+import { SectionEyebrow } from '@/components/ui/SectionEyebrow';
 
 export const metadata: Metadata = {
   title: 'Contact — Trionyx',
@@ -25,16 +26,14 @@ export default function ContactPage() {
         {/* Main Content */}
         <main className="flex-1 flex flex-col">
           <SectionFrame hasBottomBorder={false}>
-            <div className="px-5 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24">
+            <div className="px-5 sm:px-6 lg:px-8 py-[var(--section-space)]">
               {/* Page Header */}
               <div className="max-w-2xl mb-12 lg:mb-16">
-                <p className="text-[12px] font-mono font-semibold uppercase tracking-[0.15em] text-[#F26522] mb-4">
-                  CONTACT
-                </p>
-                <h1 className="text-[32px] sm:text-[40px] lg:text-[48px] font-semibold tracking-[-0.025em] leading-[1.1] text-[#171714] mb-4">
+                <SectionEyebrow>CONTACT</SectionEyebrow>
+                <h1 className="section-heading text-[32px] sm:text-[40px] lg:text-[48px] tracking-[-0.025em] leading-[1.1] text-[#171714] mb-4">
                   Talk to Trionyx.
                 </h1>
-                <p className="text-[16px] sm:text-[17px] text-[#68665F] leading-relaxed max-w-lg">
+                <p className="body-copy max-w-lg">
                   For product enquiries, dealer opportunities, distribution partnerships
                   or product support, send us your details.
                 </p>
@@ -44,7 +43,7 @@ export default function ContactPage() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
                 {/* Left: Form */}
                 <div className="lg:col-span-7 xl:col-span-8">
-                  <div className="bg-white border border-[rgba(23,23,20,0.07)] rounded-[8px] p-6 sm:p-8 relative overflow-hidden">
+                  <div className="bg-[#FCFBF7] border border-[var(--section-divider)] rounded-[8px] p-6 sm:p-8 relative overflow-hidden">
                     <ContactForm />
                   </div>
                 </div>

@@ -24,7 +24,7 @@
   --color-border-default: rgba(23, 23, 20, 0.07);
   --color-border-strong: rgba(23, 23, 20, 0.12);
 
-  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-sans: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
 
   --radius-xs: 2px;
@@ -54,7 +54,45 @@
   --brand-secondary: #ECE9E4;
   --brand-border: rgba(23, 23, 20, 0.07);
   --brand-body-gray: #68665F;
+  --section-space: clamp(56px, 5vw, 80px);
+  --section-divider: rgba(23, 23, 20, 0.07);
+  --heading-weight: 500;
+  --body-size: 16px;
+  --body-leading: 1.65;
+  --body-small-size: 14px;
+  --body-small-leading: 1.6;
+  --serif-accent: Georgia, "Times New Roman", serif;
+  --eyebrow-rule-width: 24px;
+  --eyebrow-rule-height: 1px;
+  --eyebrow-gap: 12px;
+  --eyebrow-size: 10px;
+  --eyebrow-weight: 600;
+  --eyebrow-tracking: 0.16em;
 }
+
+.section-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--eyebrow-gap);
+  margin: 0 0 24px;
+  color: var(--brand-body-gray);
+  font-family: var(--font-sans);
+  font-size: var(--eyebrow-size);
+  font-weight: var(--eyebrow-weight);
+  letter-spacing: var(--eyebrow-tracking);
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+.section-eyebrow-rule {
+  display: block;
+  flex: 0 0 var(--eyebrow-rule-width);
+  height: var(--eyebrow-rule-height);
+  background: var(--brand-orange);
+}
+.section-heading { font-family: var(--font-sans); font-weight: var(--heading-weight); }
+.serif-accent { font-family: var(--serif-accent); font-style: italic; font-weight: 400; }
+.body-copy { color: var(--brand-body-gray); font-size: var(--body-size); line-height: var(--body-leading); }
+.body-copy-small { color: var(--brand-body-gray); font-size: var(--body-small-size); line-height: var(--body-small-leading); }
 
 /* Warm tactile paper canvas (#F7F6F0) */
 html,

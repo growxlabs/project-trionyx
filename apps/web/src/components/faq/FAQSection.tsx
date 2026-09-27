@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { SectionFrame } from '@/components/frame';
 import styles from './FAQSection.module.css';
+import { SectionEyebrow } from '../ui/SectionEyebrow';
 
 const questions = [
   {
@@ -63,7 +64,7 @@ export function FAQSection() {
     <SectionFrame id="faq" className={styles.section} aria-labelledby="faq-heading">
       <div className={styles.layout}>
         <header className={styles.heading}>
-          <p className={styles.eyebrow}><span aria-hidden="true" /> FAQ</p>
+          <SectionEyebrow>FAQ</SectionEyebrow>
           <h2 id="faq-heading">Questions about Trionyx.</h2>
         </header>
 
@@ -85,7 +86,7 @@ export function FAQSection() {
                     onClick={() => setOpenIndex(isOpen ? null : index)}
                   >
                     <span>{question}</span>
-                    <span className={`${styles.icon} ${isOpen ? styles.iconOpen : ''}`} aria-hidden="true">+</span>
+                    <span className={`${styles.icon} ${isOpen ? styles.iconOpen : ''}`} aria-hidden="true">{isOpen ? '−' : '+'}</span>
                   </button>
                 </h3>
                 <div

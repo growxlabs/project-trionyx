@@ -17,7 +17,7 @@ function FooterColumn({
 }) {
   return (
     <nav aria-label={title} className={className}>
-      <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-[0.17em] text-[#8F8C83] sm:mb-4">
+      <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-[0.17em] text-[#B5B2A9] sm:mb-4">
         {title}
       </h2>
       <ul className="m-0 list-none p-0">
@@ -33,7 +33,7 @@ export function SiteFooter() {
       <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 gap-x-7 gap-y-9 px-5 py-12 sm:grid-cols-2 sm:gap-y-10 sm:px-6 sm:py-14 md:grid-cols-12 md:gap-x-8 lg:px-8 lg:py-16">
         <div className="col-span-1 sm:col-span-2 md:col-span-5">
           <Link href="/" aria-label="Trionyx home" className="inline-flex items-center rounded-[2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F26522]">
-            <TrionyxLogo variant="light" size="sm" priority={false} className="sm:h-10" />
+            <TrionyxLogo variant="light" size="md" priority={false} />
           </Link>
           <p className="mb-0 mt-4 max-w-[270px] text-[14px] leading-[1.65] text-[#B5B2A9]">
             Automotive protection, coating, care and related products.
@@ -62,11 +62,11 @@ export function SiteFooter() {
 
       <div className="border-t border-white/[0.12]">
         <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-3 px-5 py-5 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
-          <p className="m-0 text-[11px] leading-5 text-[#9C998F]">
+          <p className="m-0 text-[11px] leading-5 text-[#B5B2A9]">
             © {new Date().getFullYear()} Trionyx India Private Limited
           </p>
-          <p className="m-0 text-[11px] leading-5 text-[#8F8C83] md:text-right">
-            Technology &amp; Digital Partner <span className="max-sm:block">by GrowxLabs</span>
+          <p className="m-0 text-[11px] leading-5 text-[#B5B2A9] md:text-right">
+            Technology &amp; Digital Partner by GrowxLabs
           </p>
         </div>
       </div>

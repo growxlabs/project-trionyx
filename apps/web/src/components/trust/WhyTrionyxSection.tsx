@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { SectionFrame } from '../frame';
 import styles from './WhyTrionyxSection.module.css';
+import { SectionEyebrow } from '../ui/SectionEyebrow';
 
 const reasons = [
   { label: 'THE PORTFOLIO', title: 'Product Range', description: 'A growing portfolio across automotive protection, care and related categories.' },
@@ -13,7 +14,7 @@ export function WhyTrionyxSection() {
     <SectionFrame id="why-trionyx" className={styles.section} aria-labelledby="why-trionyx-heading">
       <div className={styles.inner}>
         <header className={styles.header}>
-          <p className={styles.eyebrow}><span aria-hidden="true" /> WHY TRIONYX</p>
+          <SectionEyebrow>WHY TRIONYX</SectionEyebrow>
           <h2 id="why-trionyx-heading">Built on experience.<br /><em>Chosen for what comes with it.</em></h2>
         </header>
 

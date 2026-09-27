@@ -23,7 +23,7 @@ export const SectionFrame: React.FC<SectionFrameProps> = ({
   return (
     <Component
       className={`relative w-full ${
-        hasBottomBorder ? 'border-b border-[rgba(23,23,20,0.07)]' : ''
+        hasBottomBorder ? 'border-b border-[var(--section-divider)]' : ''
       } ${className}`}
       {...props}
     >

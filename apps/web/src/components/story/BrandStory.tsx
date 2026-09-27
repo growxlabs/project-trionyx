@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import styles from './BrandStory.module.css';
+import { SectionEyebrow } from '../ui/SectionEyebrow';
 
 const chapters = [
   {
@@ -50,7 +51,7 @@ export function BrandStory() {
     <section id="trionyx-story" className={styles.section} aria-labelledby="story-heading">
       <div className={styles.intro}>
         <div>
-          <p className={styles.eyebrow}><span aria-hidden="true" /> THE TRIONYX STORY</p>
+          <SectionEyebrow>THE TRIONYX STORY</SectionEyebrow>
           <h2 id="story-heading">What drives us.</h2>
         </div>
         <p className={styles.introText}>Four perspectives on a more considered approach to automotive care.</p>
