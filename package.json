@@ -13,6 +13,7 @@
     "test": "tsx --test --test-concurrency=1 packages/auth/src/__tests__/*.test.ts"
   },
   "devDependencies": {
+    "next": "16.3.5",
     "tsx": "^4.23.15",
     "turbo": "^2.4.4",
     "typescript": "^5"
