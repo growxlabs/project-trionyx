@@ -10,6 +10,7 @@
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
     "internal-user:create": "tsx scripts/create-internal-user.ts",
+    "db:migrate-to-supabase": "tsx scripts/migrate-sqlite-to-supabase.ts",
     "test": "tsx --test --test-concurrency=1 packages/auth/src/__tests__/*.test.ts"
   },
   "devDependencies": {
