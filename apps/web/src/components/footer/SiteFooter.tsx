@@ -31,7 +31,7 @@ export function SiteFooter() {
   return (
     <footer id="site-footer" className="bg-[#171714] text-[#F5F4EE]">
       <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 gap-x-7 gap-y-9 px-5 py-12 sm:grid-cols-2 sm:gap-y-10 sm:px-6 sm:py-14 md:grid-cols-12 md:gap-x-8 lg:px-8 lg:py-16">
-        <div className="col-span-1 sm:col-span-2 md:col-span-5">
+        <div className="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-3">
           <Link href="/" aria-label="Trionyx home" className="inline-flex items-center rounded-[2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F26522]">
             <TrionyxLogo variant="light" size="md" priority={false} />
           </Link>
@@ -46,12 +46,19 @@ export function SiteFooter() {
           <li><Link href="/warranty" className={linkClass}>Warranty</Link></li>
         </FooterColumn>
 
+        <FooterColumn title="Legal" className="col-span-1 md:col-span-2 lg:col-span-3">
+          <li><Link href="/privacy" className={linkClass}>Privacy Policy</Link></li>
+          <li><Link href="/terms" className={linkClass}>Terms &amp; Conditions</Link></li>
+          <li><Link href="/cookies" className={linkClass}>Cookie Policy</Link></li>
+          <li><Link href="/warranty" className={linkClass}>Warranty</Link></li>
+        </FooterColumn>
+
         <FooterColumn title="Company" className="col-span-1 md:col-span-2">
           <li><Link href="/#about" className={linkClass}>About</Link></li>
           <li><Link href="/contact" className={linkClass}>Contact</Link></li>
         </FooterColumn>
 
-        <FooterColumn title="Contact" className="col-span-1 sm:col-span-2 md:col-span-3">
+        <FooterColumn title="Contact" className="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-2">
           <li><a href={companyContact.phoneHref} className={linkClass}>{companyContact.phone}</a></li>
           <li><a href={companyContact.emailHref} className={`${linkClass} break-all`}>{companyContact.email}</a></li>
           <li className="py-2 text-[14px] leading-6 text-[#C5C2B9]">
@@ -63,9 +70,20 @@ export function SiteFooter() {
 
       <div className="border-t border-white/[0.12]">
         <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-3 px-5 py-5 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
-          <p className="m-0 text-[11px] leading-5 text-[#B5B2A9]">
-            © {new Date().getFullYear()} Trionyx India Private Limited
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-5 text-[11px] leading-5 text-[#B5B2A9]">
+            <p className="m-0">
+              © {new Date().getFullYear()} Trionyx India Private Limited
+            </p>
+            <nav aria-label="Legal footer links" className="flex items-center gap-3 text-[#8C897E]">
+              <Link href="/privacy" className="hover:text-[#F5F4EE] transition-colors">Privacy</Link>
+              <span>·</span>
+              <Link href="/terms" className="hover:text-[#F5F4EE] transition-colors">Terms</Link>
+              <span>·</span>
+              <Link href="/cookies" className="hover:text-[#F5F4EE] transition-colors">Cookies</Link>
+              <span>·</span>
+              <Link href="/warranty" className="hover:text-[#F5F4EE] transition-colors">Warranty</Link>
+            </nav>
+          </div>
           <p className="m-0 text-[11px] leading-5 text-[#B5B2A9] md:text-right">
             Technology &amp; Digital Partner by GrowxLabs
           </p>
