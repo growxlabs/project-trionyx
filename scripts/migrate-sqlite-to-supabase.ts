@@ -1,11 +1,5 @@
 /**
  * TRIONYX: SQLite to Supabase PostgreSQL Migration Script
- *
- * Usage:
- *   pnpm exec tsx scripts/migrate-sqlite-to-supabase.ts --url "postgres://postgres.[ref]:[password]@...pooler.supabase.com:6543/postgres"
- *
- * Or set TARGET_DATABASE_URL in .env / shell:
- *   TARGET_DATABASE_URL="postgres://..." pnpm exec tsx scripts/migrate-sqlite-to-supabase.ts
  */
 
 import { createClient } from '@libsql/client';
@@ -14,7 +8,6 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { POSTGRES_TABLE_STATEMENTS } from '../packages/database/src/postgresSchema';
 
-// Parse command line arguments
 function getTargetUrl(): string {
   const argv = process.argv.slice(2);
   for (let i = 0; i < argv.length; i++) {
@@ -25,18 +18,16 @@ function getTargetUrl(): string {
   return process.env.TARGET_DATABASE_URL || process.env.DATABASE_URL || '';
 }
 
-// Ordered tables to respect foreign key constraints
+// Ordered strictly by foreign key dependencies
 const TABLES_TO_MIGRATE = [
+  'users',
   'product_categories',
-  'products',
-  'product_specifications',
-  'product_media',
   'inventory_locations',
   'distributors',
   'dealers',
-  'users',
-  'sessions',
-  'audit_logs',
+  'products',
+  'product_specifications',
+  'product_media',
   'serial_numbers',
   'serial_movements',
   'dealer_distributor_history',
@@ -47,6 +38,8 @@ const TABLES_TO_MIGRATE = [
   'dealer_request_messages',
   'contact_enquiries',
   'enquiry_notes',
+  'sessions',
+  'audit_logs',
 ];
 
 async function main() {
@@ -58,12 +51,9 @@ async function main() {
 
   if (!targetUrl || (!targetUrl.startsWith('postgres://') && !targetUrl.startsWith('postgresql://'))) {
     console.error('❌ Error: Please provide a valid Supabase PostgreSQL connection string.');
-    console.error('Example:');
-    console.error('  pnpm exec tsx scripts/migrate-sqlite-to-supabase.ts --url "postgres://postgres.[ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres"\n');
     process.exit(1);
   }
 
-  // 1. Connect to local SQLite
   const sqliteDbPath = path.resolve(process.cwd(), 'trionyx.db');
   if (!fs.existsSync(sqliteDbPath)) {
     console.error(`❌ Local SQLite file not found at: ${sqliteDbPath}`);
@@ -73,7 +63,6 @@ async function main() {
   console.log(`📂 Source SQLite Database: ${sqliteDbPath}`);
   const sqlite = createClient({ url: `file:${sqliteDbPath}` });
 
-  // 2. Connect to Supabase Postgres
   console.log(`🔗 Connecting to Supabase PostgreSQL...`);
   const isLocalhost = targetUrl.includes('localhost') || targetUrl.includes('127.0.0.1');
   const pool = new Pool({
@@ -86,7 +75,6 @@ async function main() {
   console.log('✅ Connected to Supabase successfully!\n');
 
   try {
-    // 3. Apply Schema & Migrations
     console.log('🏗️  Applying schema and creating tables in Supabase...');
     await pgClient.query(`
       CREATE TABLE IF NOT EXISTS _migrations (
@@ -101,12 +89,10 @@ async function main() {
     }
     console.log('✅ Supabase tables verified & ready.\n');
 
-    // 4. Stream data table by table
     console.log('🚀 Migrating table data from SQLite to Supabase...\n');
 
     for (const table of TABLES_TO_MIGRATE) {
       try {
-        // Check if table exists in SQLite
         const checkSqlite = await sqlite.execute({
           sql: "SELECT name FROM sqlite_master WHERE type='table' AND name = ?",
           args: [table],
@@ -117,7 +103,6 @@ async function main() {
           continue;
         }
 
-        // Fetch all rows from SQLite
         const sqliteRows = await sqlite.execute(`SELECT * FROM ${table}`);
         const rows = sqliteRows.rows;
 
@@ -128,11 +113,23 @@ async function main() {
 
         let insertedCount = 0;
 
-        for (const row of rows) {
+        for (const rawRow of rows) {
+          const row = { ...rawRow };
+
+          // Handle special column mappings between SQLite and Postgres
+          if (table === 'product_specifications') {
+            if ('label' in row && !('name' in row)) {
+              row.name = row.label;
+              delete row.label;
+            }
+            if (!('group_name' in row)) {
+              row.group_name = 'General';
+            }
+          }
+
           const keys = Object.keys(row);
           const values = Object.values(row);
 
-          // Build INSERT ... ON CONFLICT DO NOTHING
           const columns = keys.map((k) => `"${k}"`).join(', ');
           const placeholders = keys.map((_, idx) => `$${idx + 1}`).join(', ');
 
