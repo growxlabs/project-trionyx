@@ -27,14 +27,6 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  // 2. User with session token trying to access /login -> redirect to /overview
-  if (token && isLoginPage) {
-    const overviewUrl = new URL('/overview', request.url);
-    const response = NextResponse.redirect(overviewUrl);
-    response.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate');
-    return response;
-  }
-
   const response = NextResponse.next();
 
   // Prevent caching for all internal portal pages

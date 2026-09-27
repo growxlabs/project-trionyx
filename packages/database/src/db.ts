@@ -46,8 +46,12 @@ export class PostgresClientAdapter {
 
   constructor(connectionString: string) {
     const isLocalhost = connectionString.includes('localhost') || connectionString.includes('127.0.0.1');
+    // Strip sslmode parameter so pg driver does not override rejectUnauthorized: false with verify-full
+    const cleanedConnectionString = connectionString
+      .replace(/[?&]sslmode=[^&]+/gi, '')
+      .replace(/\?$/, '');
     this.pool = new Pool({
-      connectionString,
+      connectionString: cleanedConnectionString,
       ssl: isLocalhost ? false : { rejectUnauthorized: false },
       max: 10,
       idleTimeoutMillis: 30000,

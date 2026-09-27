@@ -21,6 +21,7 @@ export default async function OverviewPage() {
   try {
     sessionData = await requireDealerSession(token);
   } catch {
+    cookieStore.delete(DEALER_AUTH_CONFIG.cookieName);
     redirect('/login');
   }
 

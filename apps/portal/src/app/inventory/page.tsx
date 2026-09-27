@@ -22,6 +22,7 @@ export default async function InventoryPage() {
   try {
     authData = await requireInternalUser(token);
   } catch {
+    cookieStore.delete(AUTH_CONFIG.cookieName);
     redirect('/login');
   }
 

@@ -31,13 +31,7 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  // 2. Authenticated dealer trying to access /login or /activate -> redirect to /overview
-  if (token && (pathname === '/login' || pathname === '/activate')) {
-    const overviewUrl = new URL('/overview', request.url);
-    const response = NextResponse.redirect(overviewUrl);
-    response.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate');
-    return response;
-  }
+
 
   const response = NextResponse.next();
 

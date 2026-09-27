@@ -21,6 +21,7 @@ export default async function WarrantyPage() {
   try {
     authData = await requireInternalUser(token);
   } catch {
+    cookieStore.delete(AUTH_CONFIG.cookieName);
     redirect('/login');
   }
 

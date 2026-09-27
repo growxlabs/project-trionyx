@@ -17,6 +17,7 @@ export default async function OverviewPage() {
   try {
     authData = await requireInternalUser(token);
   } catch {
+    cookieStore.delete(AUTH_CONFIG.cookieName);
     redirect('/login');
   }
 
