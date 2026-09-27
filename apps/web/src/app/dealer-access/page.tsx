@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import DealerLoginForm from "./DealerLoginForm";
+import { redirect } from "next/navigation";
 import styles from "./dealer-access.module.css";
 
 export const metadata: Metadata = {
@@ -10,6 +10,19 @@ export const metadata: Metadata = {
 };
 
 export default function DealerAccessPage() {
+  const portalBase = process.env.DEALER_PORTAL_URL ??
+    (process.env.NODE_ENV === "development" ? "http://localhost:3001" : undefined);
+  let loginUrl: URL | undefined;
+
+  if (portalBase) {
+    try {
+      const candidate = new URL("/login", portalBase);
+      if (candidate.protocol === "https:" || candidate.protocol === "http:") loginUrl = candidate;
+    } catch {}
+  }
+
+  if (loginUrl) redirect(loginUrl.toString());
+
   return (
     <main className={styles.page}>
       <div className={styles.leftPanel}>
@@ -33,9 +46,10 @@ export default function DealerAccessPage() {
           <h1 id="dealer-access-title" className={styles.title}>
             Dealer Access
           </h1>
-          <p className={styles.intro}>Sign in to your dealer account.</p>
-          <section className={styles.formCard} aria-label="Dealer sign-in form">
-            <DealerLoginForm />
+          <p className={styles.intro}>The dealer portal is currently unavailable from this site.</p>
+          <section className={styles.formCard} aria-label="Dealer portal information">
+            <p>For account access, please contact your Trionyx distributor.</p>
+            <Link href="/contact" className={styles.contactLink}>Contact Trionyx →</Link>
           </section>
           <p className={styles.accessNote}>FOR AUTHORISED TRIONYX DEALERS <span>·</span> INDIA</p>
         </div>
