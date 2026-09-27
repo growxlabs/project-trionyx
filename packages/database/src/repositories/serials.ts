@@ -638,7 +638,7 @@ export const serialsRepository = {
       args.push(term, term, term, term);
     }
 
-    sql += ' GROUP BY p.id, l.id ORDER BY p.name ASC, l.name ASC';
+    sql += ' GROUP BY p.id, c.name, l.id, l.name, l.code ORDER BY p.name ASC, l.name ASC';
 
     const result = await client.execute({ sql, args });
 

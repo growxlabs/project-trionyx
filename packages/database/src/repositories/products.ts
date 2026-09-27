@@ -366,7 +366,7 @@ export const productsRepository = {
       args.push(term, term, term);
     }
 
-    sql += ' GROUP BY p.id ORDER BY p.name ASC';
+    sql += ' GROUP BY p.id, c.name ORDER BY p.name ASC';
 
     const result = await client.execute({ sql, args });
 
@@ -427,7 +427,7 @@ export const productsRepository = {
         JOIN product_categories c ON p.category_id = c.id
         LEFT JOIN serial_numbers s ON s.product_id = p.id
         WHERE p.id = ? AND p.status = 'ACTIVE' AND p.dealer_visibility = 1
-        GROUP BY p.id
+        GROUP BY p.id, c.name
         LIMIT 1
       `,
       args: [id],
