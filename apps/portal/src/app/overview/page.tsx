@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { requireInternalUser, AUTH_CONFIG } from '@trionyx/auth';
@@ -13,15 +14,6 @@ import {
   ensureDatabaseReady,
 } from '@trionyx/database';
 import { InternalShell } from '../../components/shell/InternalShell';
-import {
-  WorkspaceHeader,
-  OperationalSummaryStrip,
-  AttentionQueue,
-  ActivityLedger,
-  type AttentionItem,
-  type ActivityEntry,
-  type SummaryMetric,
-} from '../../components/workspace';
 
 export const dynamic = 'force-dynamic';
 
@@ -39,7 +31,7 @@ export default async function OverviewPage() {
   const { user } = authData;
   await ensureDatabaseReady();
 
-  // Fetch real authoritative data across all operational domains
+  // Authoritative operational queries across all ERP master tables
   const [
     dealersRes,
     productsRes,
@@ -54,129 +46,45 @@ export default async function OverviewPage() {
     serialsRepository.listProductInventorySummaries().catch(() => []),
     contactEnquiriesRepository.list({ limit: 500 }).catch(() => ({ items: [], total: 0 })),
     warrantiesRepository.list({ limit: 500 }).catch(() => ({ items: [], total: 0 })),
-    auditLogsRepository.list({ limit: 12 }),
+    auditLogsRepository.list({ limit: 14 }),
     usersRepository.listInternalUsers().catch(() => []),
   ]);
 
-  // Compute Dealer metrics
+  // Derived metrics
   const activeDealers = dealersRes.items.filter((d) => d.status === 'ACTIVE').length;
   const unassignedDealers = dealersRes.items.filter((d) => !d.distributorId).length;
 
-  // Compute Inventory metrics
   const availableUnits = inventorySummaries.reduce((sum, s) => sum + s.availableCount, 0);
   const outOfStockProducts = inventorySummaries.filter((s) => s.availableCount === 0);
-  const lowStockProducts = inventorySummaries.filter((s) => s.availableCount > 0 && s.availableCount <= 5);
 
-  // Compute Enquiry metrics
   const newEnquiries = enquiriesRes.items.filter((e) => e.status === 'NEW').length;
-
-  // Compute Warranty metrics
   const voidWarranties = warrantiesRes.items.filter((w) => w.status === 'VOID').length;
+  const totalWarranties = warrantiesRes.items.length;
 
-  // 1. Summary Strip Metrics (tightened, no filler secondary text)
-  const summaryMetrics: SummaryMetric[] = [
-    {
-      label: 'ACTIVE DEALERS',
-      value: activeDealers,
-      tone: 'default',
-    },
-    {
-      label: 'PRODUCTS',
-      value: productsRes.length,
-      tone: 'default',
-    },
-    {
-      label: 'AVAILABLE UNITS',
-      value: availableUnits,
-      tone: availableUnits > 0 ? 'positive' : 'alert',
-    },
-    {
-      label: 'NEW ENQUIRIES',
-      value: newEnquiries,
-      tone: newEnquiries > 0 ? 'warning' : 'default',
-    },
-  ];
-
-  // 2. Attention Required Queue
-  const attentionItems: AttentionItem[] = [];
-
-  if (outOfStockProducts.length > 0) {
-    attentionItems.push({
-      id: 'out-of-stock-alert',
-      priority: 'HIGH',
-      area: 'Inventory',
-      issue: `${outOfStockProducts.length} ${outOfStockProducts.length === 1 ? 'product is' : 'products are'} completely out of stock`,
-      actionLabel: 'Review →',
-      actionHref: '/inventory',
-    });
-  }
-
-  if (unassignedDealers > 0) {
-    attentionItems.push({
-      id: 'unassigned-dealers-alert',
-      priority: 'HIGH',
-      area: 'Dealers',
-      issue: `${unassignedDealers} ${unassignedDealers === 1 ? 'dealer lacks' : 'dealers lack'} an assigned wholesale distributor`,
-      actionLabel: 'Assign →',
-      actionHref: '/dealers',
-    });
-  }
-
-  if (newEnquiries > 0) {
-    attentionItems.push({
-      id: 'new-enquiries-alert',
-      priority: 'MEDIUM',
-      area: 'Enquiries',
-      issue: `${newEnquiries} new inbound ${newEnquiries === 1 ? 'enquiry requires' : 'enquiries require'} operator review`,
-      actionLabel: 'Review →',
-      actionHref: '/enquiries',
-    });
-  }
-
-  if (voidWarranties > 0) {
-    attentionItems.push({
-      id: 'void-warranties-alert',
-      priority: 'MEDIUM',
-      area: 'Warranty',
-      issue: `${voidWarranties} customer ${voidWarranties === 1 ? 'warranty is' : 'warranties are'} flagged as voided`,
-      actionLabel: 'Review →',
-      actionHref: '/warranty',
-    });
-  }
-
-  if (lowStockProducts.length > 0 && outOfStockProducts.length === 0) {
-    attentionItems.push({
-      id: 'low-stock-alert',
-      priority: 'LOW',
-      area: 'Inventory',
-      issue: `${lowStockProducts.length} ${lowStockProducts.length === 1 ? 'product has' : 'products have'} low inventory (≤ 5 units)`,
-      actionLabel: 'Check →',
-      actionHref: '/inventory',
-    });
-  }
-
-  // 3. Activity Ledger (Audit Events)
   const userMap = new Map(allUsers.map((u) => [u.id, u.name]));
-  const activities: ActivityEntry[] = auditLogs.map((log) => {
+
+  // Document journal stream
+  const activities = auditLogs.map((log) => {
     const dateObj = new Date(log.createdAt);
     const timeFormatted = dateObj.toLocaleTimeString('en-IN', {
       hour: '2-digit',
       minute: '2-digit',
+      second: '2-digit',
       hour12: false,
       timeZone: 'Asia/Kolkata',
     });
 
-    let recordLabel = 'System Event';
+    let recordLabel = 'SYS_EVENT';
     let recordHref: string | undefined = undefined;
 
     if (log.metadata) {
       try {
         const meta = JSON.parse(log.metadata);
-        if (meta.productName || meta.productCode) {
-          recordLabel = meta.productName || meta.productCode;
+        if (meta.productCode || meta.productName) {
+          recordLabel = meta.productCode || meta.productName;
           if (meta.productId) recordHref = `/products/${meta.productId}`;
-        } else if (meta.businessName || meta.dealerCode) {
-          recordLabel = meta.businessName || meta.dealerCode;
+        } else if (meta.dealerCode || meta.businessName) {
+          recordLabel = meta.dealerCode || meta.businessName;
           if (meta.dealerId) recordHref = `/dealers/${meta.dealerId}`;
         } else if (meta.enquiryCode) {
           recordLabel = meta.enquiryCode;
@@ -191,17 +99,12 @@ export default async function OverviewPage() {
       }
     }
 
-    const eventName = log.event
-      .replace(/_/g, ' ')
-      .toLowerCase()
-      .replace(/\b\w/g, (c) => c.toUpperCase());
-
-    const actor = log.userId ? userMap.get(log.userId) || 'Operator' : 'System';
+    const actor = log.userId ? userMap.get(log.userId) || 'OPERATOR' : 'SYSTEM';
 
     return {
       id: log.id,
       time: timeFormatted,
-      event: eventName,
+      event: log.event,
       record: recordLabel,
       recordHref,
       actor,
@@ -209,37 +112,419 @@ export default async function OverviewPage() {
   });
 
   const todayDateString = new Intl.DateTimeFormat('en-IN', {
-    day: 'numeric',
+    day: '2-digit',
     month: 'short',
     year: 'numeric',
     timeZone: 'Asia/Kolkata',
   }).format(new Date());
 
+  // NetSuite-style Reminders Portlet Items
+  const reminders = [
+    {
+      id: 'rem-stock-out',
+      count: outOfStockProducts.length,
+      label: 'Products Out of Stock',
+      detail: 'Safety stock breached in central storage',
+      severity: 'CRITICAL',
+      badgeColor: 'text-[var(--status-danger)] bg-[var(--status-danger-soft)] border-[var(--status-danger-border)]',
+      href: '/inventory',
+    },
+    {
+      id: 'rem-dealers-unassigned',
+      count: unassignedDealers,
+      label: 'Studios Missing Distributor Hub',
+      detail: 'Cannot receive routed inventory orders',
+      severity: 'ACTION',
+      badgeColor: 'text-[var(--status-warning)] bg-[var(--status-warning-soft)] border-[var(--status-warning-border)]',
+      href: '/dealers',
+    },
+    {
+      id: 'rem-enquiries-new',
+      count: newEnquiries,
+      label: 'Partner Applications Pending Triage',
+      detail: 'Commercial studio enquiries awaiting operator',
+      severity: 'PENDING',
+      badgeColor: 'text-[var(--accent)] bg-[var(--accent-soft)] border-[var(--accent-soft-border)]',
+      href: '/enquiries',
+    },
+    {
+      id: 'rem-warranties-void',
+      count: voidWarranties,
+      label: 'Voided Customer Warranties',
+      detail: 'Revoked serial bottle registrations',
+      severity: voidWarranties > 0 ? 'ALERT' : 'CLEARED',
+      badgeColor: voidWarranties > 0
+        ? 'text-[var(--status-danger)] bg-[var(--status-danger-soft)] border-[var(--status-danger-border)]'
+        : 'text-[var(--status-success)] bg-[var(--status-success-soft)] border-[var(--status-success-border)]',
+      href: '/warranty',
+    },
+  ];
+
   return (
     <InternalShell user={user}>
-      {/* 1. Simplified Single-Line Header */}
-      <WorkspaceHeader
-        title="Operations Overview"
-        meta={<span className="font-mono text-[11.5px] text-[var(--text-muted)]">{todayDateString} · IST (UTC+05:30)</span>}
-      />
+      <div className="space-y-3.5">
+        {/* 1. ERP WORK CENTER CONTEXT STRIP */}
+        <div className="border border-[var(--border)] bg-[var(--surface-raised)] rounded-[3px] px-3.5 py-2 flex flex-col md:flex-row md:items-center justify-between gap-2.5 text-[11px] font-mono">
+          <div className="flex flex-wrap items-center gap-3 text-[var(--text-secondary)]">
+            <span className="font-bold text-[var(--text-primary)] uppercase tracking-wider flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-[var(--status-success)] shadow-[0_0_6px_var(--status-success)] inline-block"></span>
+              TRIONYX ERP · WORK CENTER
+            </span>
+            <span className="text-[var(--border-strong)]">|</span>
+            <span>FACILITY: ALL LOCATIONS (DELHI CENTRAL + HUBS)</span>
+            <span className="text-[var(--border-strong)]">|</span>
+            <span>PERIOD: {todayDateString} · SHIFT: ACTIVE</span>
+          </div>
 
-      {/* 2. Tightened Integrated Operating Metrics Ribbon */}
-      <OperationalSummaryStrip metrics={summaryMetrics} />
+          <div className="flex items-center gap-2">
+            <span className="text-[10.5px] uppercase font-semibold text-[var(--text-muted)]">
+              WRITE ACCESS:
+            </span>
+            <span className="px-1.5 py-0.5 rounded-[2px] bg-[var(--surface-subtle)] border border-[var(--border)] font-bold text-[var(--text-primary)]">
+              {user.role}
+            </span>
+          </div>
+        </div>
 
-      {/* 3. Workspace Flow */}
-      <div className="space-y-4">
-        {/* Attention Required Queue */}
-        <AttentionQueue
-          items={attentionItems}
-          title="ATTENTION REQUIRED"
-          emptyMessage="All operations are currently running within normal thresholds."
-        />
+        {/* 2. DUAL-COLUMN ERP WORK CENTER DESK */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-3.5">
+          {/* ======================================================== */}
+          {/* LEFT COLUMN (4 COLS): REMINDERS + QUICK TRANSACTION LAUNCHPAD */}
+          {/* ======================================================== */}
+          <div className="xl:col-span-4 space-y-3.5">
+            {/* PORTLET 1: OPERATIONAL REMINDERS (NetSuite Core Pattern) */}
+            <div className="border border-[var(--border)] bg-[var(--surface-raised)] rounded-[3px] overflow-hidden">
+              <div className="bg-[var(--surface-subtle)] border-b border-[var(--border)] px-3 py-2 flex items-center justify-between">
+                <span className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-[var(--text-primary)] flex items-center gap-2">
+                  <svg className="w-3.5 h-3.5 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  OPERATIONAL REMINDERS
+                </span>
+                <span className="font-mono text-[10px] font-semibold px-1.5 py-0.2 rounded-[2px] bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--text-muted)]">
+                  {reminders.filter((r) => r.count > 0).length} EXCEPTIONS
+                </span>
+              </div>
 
-        {/* Today's Operations Ledger */}
-        <ActivityLedger
-          activities={activities}
-          title="TODAY'S OPERATIONS"
-        />
+              <div className="divide-y divide-[var(--border)]">
+                {reminders.map((rem) => (
+                  <Link
+                    key={rem.id}
+                    href={rem.href}
+                    className="p-3 flex items-start justify-between gap-3 hover:bg-[var(--surface-subtle)] transition-colors group block"
+                  >
+                    <div className="space-y-0.5">
+                      <div className="text-[12.5px] font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors">
+                        {rem.label}
+                      </div>
+                      <div className="text-[11px] text-[var(--text-muted)] leading-tight">
+                        {rem.detail}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className={`font-mono font-bold text-[13px] tabular-nums px-2 py-0.5 rounded-[2px] border ${rem.badgeColor}`}>
+                        {rem.count}
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* PORTLET 2: QUICK TRANSACTION LAUNCHPAD */}
+            <div className="border border-[var(--border)] bg-[var(--surface-raised)] rounded-[3px] overflow-hidden">
+              <div className="bg-[var(--surface-subtle)] border-b border-[var(--border)] px-3 py-2 flex items-center justify-between">
+                <span className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-[var(--text-primary)] flex items-center gap-2">
+                  <svg className="w-3.5 h-3.5 text-[var(--text-secondary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                  </svg>
+                  TRANSACTION LAUNCHPAD
+                </span>
+                <span className="font-mono text-[10px] text-[var(--text-muted)] uppercase">
+                  DIRECT ACTION
+                </span>
+              </div>
+
+              <div className="p-2.5 grid grid-cols-2 gap-2 text-[12px]">
+                <Link
+                  href="/inventory"
+                  className="px-2.5 py-2 rounded-[2px] border border-[var(--border)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-raised)] hover:border-[var(--accent)] text-[var(--text-primary)] font-medium transition-colors flex items-center gap-2"
+                >
+                  <span className="text-[var(--accent)] font-bold">+</span>
+                  <span>Receive Serials</span>
+                </Link>
+
+                <Link
+                  href="/dealers/new"
+                  className="px-2.5 py-2 rounded-[2px] border border-[var(--border)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-raised)] hover:border-[var(--accent)] text-[var(--text-primary)] font-medium transition-colors flex items-center gap-2"
+                >
+                  <span className="text-[var(--accent)] font-bold">+</span>
+                  <span>Onboard Studio</span>
+                </Link>
+
+                <Link
+                  href="/warranty"
+                  className="px-2.5 py-2 rounded-[2px] border border-[var(--border)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-raised)] hover:border-[var(--accent)] text-[var(--text-primary)] font-medium transition-colors flex items-center gap-2"
+                >
+                  <span className="text-[var(--status-success)] font-bold">✓</span>
+                  <span>Verify Warranty</span>
+                </Link>
+
+                <Link
+                  href="/distributors/new"
+                  className="px-2.5 py-2 rounded-[2px] border border-[var(--border)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-raised)] hover:border-[var(--accent)] text-[var(--text-primary)] font-medium transition-colors flex items-center gap-2"
+                >
+                  <span className="text-[var(--accent)] font-bold">+</span>
+                  <span>Add Dist. Hub</span>
+                </Link>
+
+                <Link
+                  href="/inventory/movements"
+                  className="px-2.5 py-2 rounded-[2px] border border-[var(--border)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-raised)] hover:border-[var(--accent)] text-[var(--text-primary)] font-medium transition-colors flex items-center gap-2"
+                >
+                  <span className="text-[var(--text-muted)] font-bold">→</span>
+                  <span>Stock Movements</span>
+                </Link>
+
+                <Link
+                  href="/enquiries"
+                  className="px-2.5 py-2 rounded-[2px] border border-[var(--border)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-raised)] hover:border-[var(--accent)] text-[var(--text-primary)] font-medium transition-colors flex items-center gap-2"
+                >
+                  <span className="text-[var(--status-warning)] font-bold">?</span>
+                  <span>Triage Enquiries</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* PORTLET 3: PHYSICAL WAREHOUSE CAPACITY SUMMARY */}
+            <div className="border border-[var(--border)] bg-[var(--surface-raised)] rounded-[3px] overflow-hidden">
+              <div className="bg-[var(--surface-subtle)] border-b border-[var(--border)] px-3 py-2 flex items-center justify-between">
+                <span className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-[var(--text-primary)]">
+                  PHYSICAL FACILITY POSITION
+                </span>
+                <span className="font-mono text-[10px] text-[var(--text-muted)]">
+                  RECONCILED
+                </span>
+              </div>
+              <div className="p-3 space-y-2 text-[12px]">
+                <div className="flex items-center justify-between">
+                  <span className="text-[var(--text-muted)]">Delhi Central Facility:</span>
+                  <span className="font-mono font-bold text-[var(--text-primary)]">{availableUnits} Units Available</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[var(--text-muted)]">Stockout Formulas:</span>
+                  <span className="font-mono font-bold text-[var(--status-danger)]">{outOfStockProducts.length} Breaches</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[var(--text-muted)]">Master Catalog SKUs:</span>
+                  <span className="font-mono font-bold text-[var(--text-primary)]">{productsRes.length} Formulas</span>
+                </div>
+                <div className="pt-2 border-t border-[var(--border)] flex items-center justify-between text-[11px]">
+                  <span className="text-[var(--text-muted)]">Physical Inventory Health:</span>
+                  <span className="font-semibold text-[var(--status-warning)]">REPLENISHMENT REQ.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ======================================================== */}
+          {/* RIGHT COLUMN (8 COLS): MASTER SCORECARD + DOCUMENT JOURNAL */}
+          {/* ======================================================== */}
+          <div className="xl:col-span-8 space-y-3.5">
+            {/* PORTLET 4: MASTER OPERATIONAL SCORECARD (ERP Tabular Scorecard) */}
+            <div className="border border-[var(--border)] bg-[var(--surface-raised)] rounded-[3px] overflow-hidden">
+              <div className="bg-[var(--surface-subtle)] border-b border-[var(--border)] px-3.5 py-2 flex items-center justify-between">
+                <span className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-[var(--text-primary)] flex items-center gap-2">
+                  <svg className="w-3.5 h-3.5 text-[var(--text-secondary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                    <line x1="3" y1="9" x2="21" y2="9" />
+                    <line x1="9" y1="21" x2="9" y2="9" />
+                  </svg>
+                  MASTER OPERATING SCORECARD
+                </span>
+                <span className="font-mono text-[10px] text-[var(--text-muted)]">
+                  LIVE BALANCE RECONCILIATION
+                </span>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-[12.5px]">
+                  <thead>
+                    <tr className="border-b border-[var(--border)] bg-[var(--surface-subtle)] text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                      <th className="py-2 px-3.5">Operational Entity / Domain</th>
+                      <th className="py-2 px-3.5 font-mono text-center w-28">Current Balance</th>
+                      <th className="py-2 px-3.5 text-center w-36">Operating Status</th>
+                      <th className="py-2 px-3.5 text-right w-36">Ledger Record</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[var(--border)]">
+                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[36px]">
+                      <td className="py-1 px-3.5 font-medium text-[var(--text-primary)]">
+                        Authorized Detailing Studios
+                        <span className="block text-[11px] text-[var(--text-muted)] font-normal">Active certified applicator network across India</span>
+                      </td>
+                      <td className="py-1 px-3.5 font-mono font-bold text-center text-[var(--text-primary)] text-[13px]">
+                        {activeDealers} <span className="text-[11px] font-normal text-[var(--text-muted)]">Studios</span>
+                      </td>
+                      <td className="py-1 px-3.5 text-center">
+                        <span className="inline-block px-2 py-0.5 rounded-[2px] font-mono text-[10.5px] font-semibold bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]">
+                          ACTIVE (NORMAL)
+                        </span>
+                      </td>
+                      <td className="py-1 px-3.5 text-right">
+                        <Link href="/dealers" className="text-[11.5px] font-semibold text-[var(--accent)] hover:underline">
+                          Studio Registry →
+                        </Link>
+                      </td>
+                    </tr>
+
+                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[36px]">
+                      <td className="py-1 px-3.5 font-medium text-[var(--text-primary)]">
+                        Physical Serial Inventory
+                        <span className="block text-[11px] text-[var(--text-muted)] font-normal">Discrete serialized chemical bottles available</span>
+                      </td>
+                      <td className="py-1 px-3.5 font-mono font-bold text-center text-[var(--status-danger)] text-[13px]">
+                        {availableUnits} <span className="text-[11px] font-normal text-[var(--text-muted)]">Bottles</span>
+                      </td>
+                      <td className="py-1 px-3.5 text-center">
+                        <span className="inline-block px-2 py-0.5 rounded-[2px] font-mono text-[10.5px] font-semibold bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]">
+                          CRITICAL LOW
+                        </span>
+                      </td>
+                      <td className="py-1 px-3.5 text-right">
+                        <Link href="/inventory" className="text-[11.5px] font-semibold text-[var(--accent)] hover:underline">
+                          Stock Ledger →
+                        </Link>
+                      </td>
+                    </tr>
+
+                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[36px]">
+                      <td className="py-1 px-3.5 font-medium text-[var(--text-primary)]">
+                        Registered Chemical Formulas
+                        <span className="block text-[11px] text-[var(--text-muted)] font-normal">Borophene, Graphene, and Nanotech coatings</span>
+                      </td>
+                      <td className="py-1 px-3.5 font-mono font-bold text-center text-[var(--text-primary)] text-[13px]">
+                        {productsRes.length} <span className="text-[11px] font-normal text-[var(--text-muted)]">Formulas</span>
+                      </td>
+                      <td className="py-1 px-3.5 text-center">
+                        <span className="inline-block px-2 py-0.5 rounded-[2px] font-mono text-[10.5px] font-semibold bg-[var(--surface-subtle)] text-[var(--text-secondary)] border border-[var(--border)]">
+                          CATALOG STABLE
+                        </span>
+                      </td>
+                      <td className="py-1 px-3.5 text-right">
+                        <Link href="/products" className="text-[11.5px] font-semibold text-[var(--accent)] hover:underline">
+                          Product Master →
+                        </Link>
+                      </td>
+                    </tr>
+
+                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[36px]">
+                      <td className="py-1 px-3.5 font-medium text-[var(--text-primary)]">
+                        Inbound Partner Enquiries
+                        <span className="block text-[11px] text-[var(--text-muted)] font-normal">Dealership and territory franchise applications</span>
+                      </td>
+                      <td className="py-1 px-3.5 font-mono font-bold text-center text-[var(--status-warning)] text-[13px]">
+                        {newEnquiries} <span className="text-[11px] font-normal text-[var(--text-muted)]">Pending</span>
+                      </td>
+                      <td className="py-1 px-3.5 text-center">
+                        <span className="inline-block px-2 py-0.5 rounded-[2px] font-mono text-[10.5px] font-semibold bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]">
+                          REQUIRES TRIAGE
+                        </span>
+                      </td>
+                      <td className="py-1 px-3.5 text-right">
+                        <Link href="/enquiries" className="text-[11.5px] font-semibold text-[var(--accent)] hover:underline">
+                          Open Queue →
+                        </Link>
+                      </td>
+                    </tr>
+
+                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[36px]">
+                      <td className="py-1 px-3.5 font-medium text-[var(--text-primary)]">
+                        Warranty Policies Under Coverage
+                        <span className="block text-[11px] text-[var(--text-muted)] font-normal">Active customer vehicle ceramic & borophene warranties</span>
+                      </td>
+                      <td className="py-1 px-3.5 font-mono font-bold text-center text-[var(--text-primary)] text-[13px]">
+                        {totalWarranties} <span className="text-[11px] font-normal text-[var(--text-muted)]">Registered</span>
+                      </td>
+                      <td className="py-1 px-3.5 text-center">
+                        <span className="inline-block px-2 py-0.5 rounded-[2px] font-mono text-[10.5px] font-semibold bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]">
+                          AUDITED
+                        </span>
+                      </td>
+                      <td className="py-1 px-3.5 text-right">
+                        <Link href="/warranty" className="text-[11.5px] font-semibold text-[var(--accent)] hover:underline">
+                          Warranty Book →
+                        </Link>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* PORTLET 5: TRANSACTION AUDIT JOURNAL (ERP System of Record) */}
+            <div className="border border-[var(--border)] bg-[var(--surface-raised)] rounded-[3px] overflow-hidden">
+              <div className="bg-[var(--surface-subtle)] border-b border-[var(--border)] px-3.5 py-2 flex items-center justify-between">
+                <span className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-[var(--text-primary)] flex items-center gap-2">
+                  <svg className="w-3.5 h-3.5 text-[var(--text-secondary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                    <polyline points="10 9 9 9 8 9" />
+                  </svg>
+                  TRANSACTION AUDIT JOURNAL · DOCUMENT FLOW
+                </span>
+                <span className="font-mono text-[10px] text-[var(--text-muted)]">
+                  APPEND-ONLY LEDGER
+                </span>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-[12px]">
+                  <thead>
+                    <tr className="border-b border-[var(--border)] bg-[var(--surface-subtle)] text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                      <th className="py-1.5 px-3.5 w-24">Timestamp</th>
+                      <th className="py-1.5 px-3.5 w-52">Transaction Type</th>
+                      <th className="py-1.5 px-3.5">Document / Record Ref</th>
+                      <th className="py-1.5 px-3.5 w-36">Operator</th>
+                      <th className="py-1.5 px-3.5 text-right w-24">Posting</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[var(--border)] font-normal">
+                    {activities.map((act) => (
+                      <tr key={act.id} className="hover:bg-[var(--surface-subtle)] transition-colors h-[32px]">
+                        <td className="py-1 px-3.5 font-mono text-[11px] text-[var(--text-muted)] whitespace-nowrap">
+                          {act.time}
+                        </td>
+                        <td className="py-1 px-3.5 font-semibold text-[var(--text-primary)] text-[11.5px] truncate">
+                          {act.event}
+                        </td>
+                        <td className="py-1 px-3.5 text-[var(--text-secondary)]">
+                          {act.recordHref ? (
+                            <Link href={act.recordHref} className="font-mono text-[11px] text-[var(--text-primary)] hover:text-[var(--accent)] hover:underline">
+                              {act.record}
+                            </Link>
+                          ) : (
+                            <span className="font-mono text-[11px] text-[var(--text-secondary)]">{act.record}</span>
+                          )}
+                        </td>
+                        <td className="py-1 px-3.5 text-[var(--text-muted)] text-[11px] truncate">
+                          {act.actor}
+                        </td>
+                        <td className="py-1 px-3.5 text-right">
+                          <span className="font-mono text-[9.5px] font-bold px-1.5 py-0.5 rounded-[2px] bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--text-secondary)]">
+                            POSTED
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </InternalShell>
   );
