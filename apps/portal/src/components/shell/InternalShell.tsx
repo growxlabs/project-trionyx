@@ -20,11 +20,11 @@ export function InternalShell({ user, children }: InternalShellProps) {
         {/* Mobile Header + Slide-out Navigation (hidden on desktop) */}
         <MobileNavigation user={user} />
 
-        {/* Desktop Topbar — #22221E charcoal surface */}
+        {/* Desktop Topbar — #171714 unified canopy */}
         <Topbar user={user} />
 
-        {/* Workbench Canvas — with curved top-left corner meeting the charcoal shell */}
-        <div className="flex-1 flex flex-col bg-[var(--background)] lg:rounded-tl-[8px] overflow-hidden min-h-0">
+        {/* Workbench Canvas — nested with refined 16px curved corner meeting the unified dark canopy */}
+        <div className="flex-1 flex flex-col bg-[var(--background)] lg:rounded-tl-[16px] border-t border-l border-[var(--border)] overflow-hidden min-h-0">
           {/* Main Content Area */}
           <main className="flex-1 px-4 py-4 sm:px-6 sm:py-5 lg:px-7 lg:py-5 w-full">
             <div className="w-full">

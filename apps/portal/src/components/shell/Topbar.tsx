@@ -8,7 +8,7 @@ interface TopbarProps {
 
 export function Topbar({ user }: TopbarProps) {
   return (
-    <header className="hidden lg:flex items-center justify-between h-11 px-5 bg-[#22221E] border-b border-[rgba(255,255,255,0.08)] sticky top-0 z-30 select-none">
+    <header className="hidden lg:flex items-center justify-between h-11 px-5 bg-[#171714] sticky top-0 z-30 select-none">
       {/* Left: App Label + System Telemetry */}
       <div className="flex items-center gap-3 text-[11px] font-mono text-[#A9A59C]">
         <span className="font-bold text-[12px] tracking-[0.14em] text-[#F7F6F0] uppercase">TRIONYX</span>
