@@ -16,6 +16,7 @@ import {
   VerifiedShieldIcon,
   OperationalLedgerIcon,
   ControlSlidersIcon,
+  TrionyxOpsMarkAnimated,
 } from './OperationsIcons';
 
 interface SidebarProps {
@@ -146,19 +147,9 @@ export function Sidebar({ user }: SidebarProps) {
           className="flex flex-col items-center gap-1 focus:outline-none group"
           title="Trionyx Operations Portal"
         >
-          {/* Engineered Hexagonal X Emblem */}
-          <div className="w-10 h-10 rounded-[4px] bg-[#22221E] border border-[rgba(255,255,255,0.08)] flex items-center justify-center transition-colors">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              className="w-5 h-5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polygon points="12 2 20 6.8 20 17.2 12 22 4 17.2 4 6.8" stroke="#A9A59C" strokeWidth="1.5" />
-              <line x1="8" y1="8" x2="16" y2="16" stroke="#F26522" strokeWidth="2" />
-              <line x1="16" y1="8" x2="8" y2="16" stroke="#F7F6F0" strokeWidth="2" />
-            </svg>
+          {/* Engineered Hexagonal Trionyx Operations Emblem */}
+          <div className="w-10 h-10 rounded-[4px] bg-[#22221E] border border-[rgba(255,255,255,0.08)] group-hover:border-[#A9A59C]/40 group-hover:bg-[#252520] flex items-center justify-center transition-colors">
+            <TrionyxOpsMarkAnimated size={24} className="w-[22px] h-[22px]" />
           </div>
           <span className="font-mono text-[9px] font-medium tracking-[0.12em] text-[#A9A59C] px-1 py-0.2 rounded-[2px] bg-[#22221E] border border-[rgba(255,255,255,0.06)]">
             OPS

@@ -464,3 +464,10 @@ export const NetworkHubIcon = ConnectedNodesIcon;
 export const VerificationShieldIcon = VerifiedShieldIcon;
 export const RecordsLedgerIcon = OperationalLedgerIcon;
 export const CalibrationTuningIcon = ControlSlidersIcon;
+
+/* ========================================================================== */
+/* 5. MASTER OPS EMBLEM EXPORTS                                               */
+/* ========================================================================== */
+
+export { TrionyxOpsMark, TrionyxOpsMarkAnimated } from '@trionyx/ui';
+export type { TrionyxOpsMarkProps } from '@trionyx/ui';
