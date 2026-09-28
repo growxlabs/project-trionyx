@@ -85,20 +85,20 @@ export function DealerDetailView({
     switch (status) {
       case 'ACTIVE':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded text-[11.5px] font-semibold bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]">
-            ACTIVE
+          <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]">
+            Active
           </span>
         );
       case 'INACTIVE':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded text-[11.5px] font-semibold bg-[var(--surface-subtle)] text-[var(--text-secondary)] border border-[var(--border)]">
-            INACTIVE
+          <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--surface-subtle)] text-[var(--text-secondary)] border border-[var(--border)]">
+            Inactive
           </span>
         );
       case 'SUSPENDED':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded text-[11.5px] font-semibold bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]">
-            SUSPENDED
+          <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]">
+            Suspended
           </span>
         );
     }
@@ -108,26 +108,26 @@ export function DealerDetailView({
     switch (status) {
       case 'OPEN':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-[var(--status-info-soft)] text-[var(--status-info)] border border-[var(--status-info-border)]">
-            OPEN
+          <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--status-info-soft)] text-[var(--status-info)] border border-[var(--status-info-border)]">
+            Open
           </span>
         );
       case 'IN_PROGRESS':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]">
-            IN PROGRESS
+          <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]">
+            In Progress
           </span>
         );
       case 'RESOLVED':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]">
-            RESOLVED
+          <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]">
+            Resolved
           </span>
         );
       case 'CLOSED':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-[var(--surface-subtle)] text-[var(--text-secondary)] border border-[var(--border)]">
-            CLOSED
+          <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--surface-subtle)] text-[var(--text-secondary)] border border-[var(--border)]">
+            Closed
           </span>
         );
     }
@@ -136,13 +136,13 @@ export function DealerDetailView({
   const getPriorityBadge = (priority: DealerRequestPriority) => {
     switch (priority) {
       case 'URGENT':
-        return <span className="text-[11px] font-semibold text-[var(--status-danger)]">URGENT</span>;
+        return <span className="text-[11px] font-medium text-[var(--status-danger)]">Urgent</span>;
       case 'HIGH':
-        return <span className="text-[11px] font-semibold text-[var(--status-warning)]">HIGH</span>;
+        return <span className="text-[11px] font-medium text-[var(--status-warning)]">High</span>;
       case 'MEDIUM':
-        return <span className="text-[11px] font-medium text-[var(--status-warning)]">MEDIUM</span>;
+        return <span className="text-[11px] font-medium text-[var(--status-warning)]">Medium</span>;
       case 'LOW':
-        return <span className="text-[11px] font-medium text-[var(--text-secondary)]">LOW</span>;
+        return <span className="text-[11px] font-medium text-[var(--text-secondary)]">Low</span>;
     }
   };
 
@@ -349,7 +349,7 @@ export function DealerDetailView({
   return (
     <div className="space-y-6">
       {/* Header Card */}
-      <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded p-5 sm:p-6 shadow-sm">
+      <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-5 sm:p-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
@@ -358,15 +358,15 @@ export function DealerDetailView({
               </span>
               {getStatusBadge(dealer.status)}
             </div>
-            <h1 className="text-[22px] sm:text-[26px] font-bold text-[var(--text-primary)] m-0">
+            <h1 className="text-[20px] font-semibold text-[var(--text-primary)] m-0">
               {dealer.businessName}
             </h1>
             {dealer.legalName && (
-              <p className="text-[13px] text-[var(--text-secondary)] mt-0.5 m-0 font-medium">
+              <p className="text-[13px] text-[var(--text-secondary)] mt-0.5 m-0 font-normal">
                 {dealer.legalName}
               </p>
             )}
-            <p className="text-[12.5px] text-[var(--text-muted)] mt-1 m-0">
+            <p className="text-[12px] text-[var(--text-muted)] mt-1 m-0">
               {dealer.city}, {dealer.state} • Contact: {dealer.contactPerson} ({dealer.phone})
             </p>
           </div>
@@ -374,7 +374,7 @@ export function DealerDetailView({
           <div className="flex flex-wrap items-center gap-2 shrink-0">
             <button
               onClick={() => setIsRequestModalOpen(true)}
-              className="px-3.5 py-1.5 rounded text-[13px] font-medium bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-foreground)] transition shadow-sm"
+              className="px-3.5 py-1.5 rounded-[4px] text-[13px] font-semibold bg-[var(--accent)] hover:opacity-90 text-white transition shadow-xs cursor-pointer"
             >
               + Log Request
             </button>
@@ -385,7 +385,7 @@ export function DealerDetailView({
                   setNewDistributorId(dealer.distributorId || '');
                   setIsReassignModalOpen(true);
                 }}
-                className="px-3.5 py-1.5 rounded text-[13px] font-medium border border-[var(--border)] bg-[var(--surface-raised)] text-[var(--text-primary)] hover:bg-[var(--background)] transition shadow-sm"
+                className="px-3.5 py-1.5 rounded-[4px] text-[13px] font-medium border border-[var(--border)] bg-[var(--surface-raised)] text-[var(--text-primary)] hover:bg-[var(--surface-subtle)] transition shadow-xs cursor-pointer"
               >
                 Reassign Distributor
               </button>
@@ -395,13 +395,13 @@ export function DealerDetailView({
               <>
                 <button
                   onClick={() => setIsStatusModalOpen(true)}
-                  className="px-3.5 py-1.5 rounded text-[13px] font-medium border border-[var(--border)] bg-[var(--surface-raised)] text-[var(--text-primary)] hover:bg-[var(--background)] transition shadow-sm"
+                  className="px-3.5 py-1.5 rounded-[4px] text-[13px] font-medium border border-[var(--border)] bg-[var(--surface-raised)] text-[var(--text-primary)] hover:bg-[var(--surface-subtle)] transition shadow-xs cursor-pointer"
                 >
                   Change Status
                 </button>
                 <Link
                   href={`/dealers/${dealer.id}/edit`}
-                  className="px-3.5 py-1.5 rounded text-[13px] font-medium border border-[var(--border)] bg-[var(--surface-raised)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--background)] transition shadow-sm"
+                  className="px-3.5 py-1.5 rounded-[4px] text-[13px] font-medium border border-[var(--border)] bg-[var(--surface-raised)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)] transition shadow-xs"
                 >
                   Edit Dealer
                 </Link>
@@ -411,20 +411,20 @@ export function DealerDetailView({
         </div>
 
         {/* Distributor Association Banner */}
-        <div className="mt-5 p-3.5 rounded bg-[var(--surface)] border border-[var(--border)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="mt-5 p-3.5 rounded-[4px] bg-[var(--surface-subtle)] border border-[var(--border)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-secondary)] block">
+            <span className="text-[12px] font-medium text-[var(--text-secondary)] block">
               Assigned Regional Distributor
             </span>
             {dealer.distributor ? (
               <div className="flex items-center gap-2 mt-0.5">
                 <Link
                   href={`/distributors/${dealer.distributor.id}`}
-                  className="font-semibold text-[14px] text-[var(--text-primary)] hover:text-[var(--accent-text)]"
+                  className="font-medium text-[14px] text-[var(--text-primary)] hover:text-[var(--accent)]"
                 >
                   {dealer.distributor.businessName}
                 </Link>
-                <span className="font-mono text-[11px] text-[var(--text-secondary)]">
+                <span className="font-mono text-[12px] text-[var(--text-secondary)]">
                   ({dealer.distributor.distributorCode})
                 </span>
                 <span className="text-[12px] text-[var(--text-muted)]">
@@ -622,9 +622,9 @@ export function DealerDetailView({
                 No distributor transitions recorded for this dealer.
               </div>
             ) : (
-              <table className="w-full text-left border-collapse text-[13px]">
+              <table className="w-full text-left border-collapse text-[14px]">
                 <thead>
-                  <tr className="bg-[var(--surface)] border-b border-[var(--border)] text-[var(--text-secondary)] font-semibold">
+                  <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
                     <th className="py-2.5 px-4">Date & Time</th>
                     <th className="py-2.5 px-4">Previous Distributor</th>
                     <th className="py-2.5 px-4">New Distributor</th>
@@ -632,10 +632,10 @@ export function DealerDetailView({
                     <th className="py-2.5 px-4">Changed By</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[var(--border)]">
+                <tbody className="divide-y divide-[var(--border)]/60">
                   {history.map((h) => (
-                    <tr key={h.id} className="hover:bg-[var(--surface)] transition">
-                      <td className="py-3 px-4 text-[var(--text-secondary)] whitespace-nowrap font-mono text-[12px]">
+                    <tr key={h.id} className="hover:bg-[var(--surface-subtle)] transition">
+                      <td className="py-2.5 px-4 text-[var(--text-muted)] whitespace-nowrap text-[12px]">
                         {new Date(h.changedAt).toLocaleString()}
                       </td>
                       <td className="py-3 px-4 font-medium text-[var(--text-primary)]">
@@ -863,9 +863,9 @@ export function DealerDetailView({
                 </p>
               </div>
             ) : (
-              <table className="w-full text-left border-collapse">
+              <table className="w-full text-left border-collapse text-[14px]">
                 <thead>
-                  <tr className="bg-[var(--surface)] border-b border-[var(--border)] text-[11.5px] font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
+                  <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
                     <th className="py-2.5 px-4">User</th>
                     <th className="py-2.5 px-4">Email</th>
                     <th className="py-2.5 px-4">Status</th>
@@ -874,16 +874,16 @@ export function DealerDetailView({
                     {canManage && <th className="py-2.5 px-4 text-right">Actions</th>}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[var(--border)] text-[13px]">
+                <tbody className="divide-y divide-[var(--border)]/60">
                   {portalUsers.map((u) => {
                     const isLocked = u.lockedUntil && new Date(u.lockedUntil).getTime() > Date.now();
                     return (
-                      <tr key={u.id} className="hover:bg-[var(--surface)] transition">
-                        <td className="py-3 px-4 font-semibold text-[var(--text-primary)]">{u.name}</td>
-                        <td className="py-3 px-4 font-mono text-[12px] text-[var(--text-secondary)]">{u.email}</td>
-                        <td className="py-3 px-4">
+                      <tr key={u.id} className="hover:bg-[var(--surface-subtle)] transition">
+                        <td className="py-2.5 px-4 font-medium text-[var(--text-primary)]">{u.name}</td>
+                        <td className="py-2.5 px-4 text-[13px] text-[var(--text-secondary)]">{u.email}</td>
+                        <td className="py-2.5 px-4">
                           <span
-                            className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold ${
+                            className={`inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium ${
                               u.status === 'ACTIVE'
                                 ? 'bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]'
                                 : u.status === 'INVITED'
@@ -891,12 +891,12 @@ export function DealerDetailView({
                                 : 'bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]'
                             }`}
                           >
-                            {u.status}
+                            {u.status === 'ACTIVE' ? 'Active' : u.status === 'INVITED' ? 'Invited' : 'Disabled'}
                           </span>
                         </td>
-                        <td className="py-3 px-4 text-[12px]">
+                        <td className="py-2.5 px-4 text-[12px]">
                           {isLocked ? (
-                            <span className="text-[var(--status-danger)] font-bold">Locked Out (5 failed attempts)</span>
+                            <span className="text-[var(--status-danger)] font-medium">Locked Out (5 failed attempts)</span>
                           ) : u.failedLoginCount > 0 ? (
                             <span className="text-[var(--status-warning)]">{u.failedLoginCount} failed attempts</span>
                           ) : (

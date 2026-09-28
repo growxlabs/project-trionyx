@@ -41,13 +41,13 @@ export default async function EditDistributorPage({
   return (
     <InternalShell user={user}>
       <div className="mb-6 pb-4 border-b border-[var(--border)]">
-        <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-[var(--accent-text)] block mb-1">
+        <span className="font-mono text-[12px] font-medium text-[var(--text-secondary)] block mb-1">
           {distributor.distributorCode}
         </span>
-        <h1 className="text-[26px] sm:text-[30px] font-semibold text-[var(--text-primary)] tracking-[-0.03em] m-0">
+        <h1 className="text-[20px] font-semibold text-[var(--text-primary)] tracking-tight m-0">
           Edit {distributor.businessName}
         </h1>
-        <p className="text-[13.5px] text-[var(--text-secondary)] mt-1 m-0">
+        <p className="text-[13px] text-[var(--text-secondary)] mt-1 m-0">
           Modify contact details, territorial assignments, and operating status.
         </p>
       </div>

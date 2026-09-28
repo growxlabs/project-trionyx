@@ -262,20 +262,20 @@ export function Sidebar({ user }: SidebarProps) {
           title="Trionyx Operations Portal"
         >
           {/* Engineered Hexagonal X Emblem */}
-          <div className="w-10 h-10 rounded-[4px] bg-[#22221E] border border-[rgba(255,255,255,0.06)] flex items-center justify-center text-[#F26522] group-hover:border-[rgba(242,101,34,0.4)] transition-colors">
+          <div className="w-10 h-10 rounded-[4px] bg-[#22221E] border border-[rgba(255,255,255,0.08)] flex items-center justify-center transition-colors">
             <svg
               viewBox="0 0 24 24"
               fill="none"
-              className="w-5 h-5 text-[#F26522]"
+              className="w-5 h-5"
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <polygon points="12 2 20 6.8 20 17.2 12 22 4 17.2 4 6.8" stroke="currentColor" strokeWidth="1.5" />
-              <line x1="8" y1="8" x2="16" y2="16" stroke="#FFFFFF" strokeWidth="2" />
-              <line x1="16" y1="8" x2="8" y2="16" stroke="currentColor" strokeWidth="2" />
+              <polygon points="12 2 20 6.8 20 17.2 12 22 4 17.2 4 6.8" stroke="#A9A59C" strokeWidth="1.5" />
+              <line x1="8" y1="8" x2="16" y2="16" stroke="#F26522" strokeWidth="2" />
+              <line x1="16" y1="8" x2="8" y2="16" stroke="#F7F6F0" strokeWidth="2" />
             </svg>
           </div>
-          <span className="font-mono text-[9px] font-bold tracking-[0.14em] uppercase text-[#A9A59C] px-1 py-0.2 rounded-[2px] bg-[#22221E] border border-[rgba(255,255,255,0.06)]">
+          <span className="font-mono text-[9px] font-medium tracking-[0.12em] text-[#A9A59C] px-1 py-0.2 rounded-[2px] bg-[#22221E] border border-[rgba(255,255,255,0.06)]">
             OPS
           </span>
         </Link>
@@ -368,12 +368,12 @@ export function Sidebar({ user }: SidebarProps) {
             <div
               role="dialog"
               aria-label="Account Menu"
-              className="absolute left-[calc(100%+12px)] bottom-0 w-64 bg-[#22221E] border border-[rgba(255,255,255,0.1)] rounded-[4px] shadow-2xl z-50 overflow-hidden divide-y divide-[rgba(255,255,255,0.08)] text-[12px]"
+              className="absolute left-[calc(100%+12px)] bottom-0 w-64 bg-[var(--menu-bg)] border border-[var(--menu-border)] rounded-[4px] shadow-2xl z-50 overflow-hidden divide-y divide-[var(--menu-divider)] text-[12px] text-[var(--menu-text-primary)]"
             >
               <div className="px-3.5 py-3">
-                <div className="font-semibold text-[#F7F6F0] truncate">{user.name}</div>
-                <div className="text-[11px] text-[#A9A59C] truncate mt-0.5">{user.email}</div>
-                <div className="mt-2 inline-block font-mono text-[9.5px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-[2px] bg-[#2D2C27] border border-[rgba(255,255,255,0.08)] text-[#F7F6F0]">
+                <div className="font-semibold text-[var(--menu-text-primary)] truncate">{user.name}</div>
+                <div className="text-[11px] text-[var(--menu-text-secondary)] truncate mt-0.5">{user.email}</div>
+                <div className="mt-2 inline-block font-mono text-[9.5px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-[2px] bg-[var(--context-strip-badge-bg)] border border-[var(--context-strip-badge-border)] text-[var(--context-strip-badge-text)]">
                   {roleLabel}
                 </div>
               </div>
@@ -383,7 +383,7 @@ export function Sidebar({ user }: SidebarProps) {
                   type="button"
                   onClick={handleSignOut}
                   disabled={isSigningOut}
-                  className="w-full text-left px-2.5 py-1.5 rounded-[2px] text-[#EF4444] hover:bg-[rgba(239,68,68,0.1)] transition-colors flex items-center justify-between"
+                  className="w-full text-left px-2.5 py-1.5 rounded-[2px] text-[var(--menu-signout-text)] hover:bg-[var(--menu-signout-hover-bg)] transition-colors flex items-center justify-between"
                 >
                   <span>{isSigningOut ? 'Signing out...' : 'Sign Out'}</span>
                   <span className="font-mono text-[10px]">→</span>

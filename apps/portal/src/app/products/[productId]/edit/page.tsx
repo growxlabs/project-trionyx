@@ -59,18 +59,18 @@ export default async function EditProductPage({
             Back to {product.name}
           </Link>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="font-mono text-[11px] font-bold tracking-wider text-[var(--accent-text)] bg-[var(--accent-soft)] border border-[var(--accent-soft-border)] px-2 py-0.5 rounded">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="font-mono text-[12px] font-medium text-[var(--text-secondary)] bg-[var(--surface-subtle)] border border-[var(--border)] px-2 py-0.5 rounded-[2px]">
             {product.productCode}
           </span>
-          <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-[var(--text-secondary)]">
-            EDIT PRODUCT CONFIGURATION
+          <span className="text-[12px] font-medium text-[var(--text-muted)]">
+            Edit Product Configuration
           </span>
         </div>
-        <h1 className="text-[26px] sm:text-[30px] font-semibold text-[var(--text-primary)] tracking-[-0.03em] mt-1 m-0">
+        <h1 className="text-[20px] font-semibold text-[var(--text-primary)] tracking-tight mt-1 m-0">
           Edit {product.name}
         </h1>
-        <p className="text-[13.5px] text-[var(--text-secondary)] mt-1 m-0">
+        <p className="text-[13px] text-[var(--text-secondary)] mt-1 m-0">
           Update product descriptions, active status, public visibility, and technical specifications.
         </p>
       </div>

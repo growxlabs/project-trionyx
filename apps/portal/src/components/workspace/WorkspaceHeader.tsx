@@ -19,7 +19,7 @@ export function WorkspaceHeader({
     <header className={`mb-4 pb-2.5 border-b border-[var(--border)] ${className}`}>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <h1 className="text-[17px] font-semibold text-[var(--text-primary)] tracking-[-0.01em] leading-none m-0">
+          <h1 className="text-[20px] font-semibold text-[var(--text-primary)] tracking-[-0.01em] leading-none m-0">
             {title}
           </h1>
           {meta && (

@@ -23,7 +23,7 @@ export function OperationalSummaryStrip({
   return (
     <section aria-label={title || 'Operating metrics'} className={`mb-4 ${className}`}>
       {title && (
-        <h2 className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-1.5 m-0">
+        <h2 className="text-[14px] font-semibold text-[var(--text-primary)] mb-1.5 m-0">
           {title}
         </h2>
       )}
@@ -43,15 +43,15 @@ export function OperationalSummaryStrip({
 
           return (
             <div key={idx} className="px-3.5 py-2.5 flex items-baseline justify-between gap-3">
-              <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--text-muted)] truncate">
+              <span className="text-[12px] font-medium text-[var(--text-secondary)] truncate">
                 {m.label}
               </span>
               <div className="flex items-baseline gap-1.5 shrink-0">
-                <span className={`text-[17px] font-mono font-bold tabular-nums tracking-tight leading-none ${toneClass}`}>
+                <span className={`text-[20px] font-semibold font-sans tabular-nums tracking-tight leading-none ${toneClass}`}>
                   {val}
                 </span>
                 {m.detail && (
-                  <span className="text-[10.5px] text-[var(--text-muted)] font-normal">
+                  <span className="text-[12px] text-[var(--text-secondary)] font-normal">
                     {m.detail}
                   </span>
                 )}

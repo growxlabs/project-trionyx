@@ -88,7 +88,7 @@ export function MovementsTable({ initialMovements, locations }: MovementsTablePr
               setLookupSerial(undefined);
               setShowLookupModal(true);
             }}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[12.5px] font-semibold transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[13px] font-medium transition-colors cursor-pointer"
           >
             <svg className="w-4 h-4 text-[var(--accent-text)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="11" cy="11" r="8" />
@@ -96,14 +96,14 @@ export function MovementsTable({ initialMovements, locations }: MovementsTablePr
             </svg>
             Lookup Serial
           </button>
-          <span className="inline-flex items-center px-3 py-1.5 rounded bg-[var(--background)] border border-[var(--border)] text-[12px] font-medium text-[var(--text-secondary)]">
+          <span className="text-[13px] font-normal text-[var(--text-secondary)]">
             {filteredMovements.length} transaction{filteredMovements.length === 1 ? '' : 's'}
           </span>
         </div>
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] p-4 shadow-[0_1px_2px_rgba(23,23,20,0.02)] flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
         {/* Search */}
         <div className="relative flex-1">
           <svg
@@ -121,7 +121,7 @@ export function MovementsTable({ initialMovements, locations }: MovementsTablePr
             placeholder="Search by serial number (TRX...), product, reference, or reason..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
+            className="w-full pl-9 pr-4 py-2 rounded-[4px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
           />
         </div>
 
@@ -130,19 +130,19 @@ export function MovementsTable({ initialMovements, locations }: MovementsTablePr
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value as SerialMovementType | 'ALL')}
-            className="px-3 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
+            className="px-3 py-2 rounded-[4px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
           >
             <option value="ALL">All Types</option>
-            <option value="RECEIVED">RECEIVED (Initial Stock)</option>
-            <option value="TRANSFERRED">TRANSFERRED (Inter-Facility)</option>
-            <option value="ADJUSTED">ADJUSTED (Status / Audit)</option>
+            <option value="RECEIVED">Received</option>
+            <option value="TRANSFERRED">Transferred</option>
+            <option value="ADJUSTED">Adjusted</option>
           </select>
 
           {/* Location Filter */}
           <select
             value={selectedLocation}
             onChange={(e) => setSelectedLocation(e.target.value)}
-            className="px-3 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
+            className="px-3 py-2 rounded-[4px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
           >
             <option value="ALL">All Facilities</option>
             {locations.map((loc) => (
@@ -155,41 +155,41 @@ export function MovementsTable({ initialMovements, locations }: MovementsTablePr
       </div>
 
       {/* Ledger Table */}
-      <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] overflow-hidden shadow-[0_1px_3px_rgba(23,23,20,0.03)]">
+      <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
         {filteredMovements.length === 0 ? (
           <div className="p-12 text-center text-[var(--text-muted)]">
             <p className="text-[14px] font-medium text-[var(--text-primary)] mb-1">No movement entries match criteria</p>
-            <p className="text-[12.5px] m-0">Try changing your search term or movement type filter.</p>
+            <p className="text-[13px] text-[var(--text-secondary)] m-0">Try changing your search term or movement type filter.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-[13px]">
+            <table className="w-full text-left border-collapse text-[14px]">
               <thead>
-                <tr className="bg-[var(--background)] border-b border-[var(--border)] text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">
-                  <th className="py-3 px-4">Timestamp</th>
-                  <th className="py-3 px-4">Type</th>
-                  <th className="py-3 px-4">Serial Number</th>
-                  <th className="py-3 px-4">Product</th>
-                  <th className="py-3 px-4">Route / Location</th>
-                  <th className="py-3 px-4">Reason / Reference</th>
-                  <th className="py-3 px-4">Operator</th>
+                <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                  <th className="py-2.5 px-4 w-36">Timestamp</th>
+                  <th className="py-2.5 px-4 w-28">Type</th>
+                  <th className="py-2.5 px-4 w-40">Serial Number</th>
+                  <th className="py-2.5 px-4">Product</th>
+                  <th className="py-2.5 px-4">Route / Location</th>
+                  <th className="py-2.5 px-4">Reason / Reference</th>
+                  <th className="py-2.5 px-4 w-32">Operator</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--border)]">
+              <tbody className="divide-y divide-[var(--border)]/60">
                 {filteredMovements.map((m) => (
-                  <tr key={m.id} className="hover:bg-[var(--surface)] transition-colors">
-                    <td className="py-3.5 px-4 text-[var(--text-secondary)] whitespace-nowrap text-[12px]">
+                  <tr key={m.id} className="hover:bg-[var(--surface-subtle)] transition-colors">
+                    <td className="py-2.5 px-4 text-[var(--text-muted)] whitespace-nowrap text-[12px]">
                       {new Date(m.createdAt).toLocaleString(undefined, {
                         dateStyle: 'short',
                         timeStyle: 'short',
                       })}
                     </td>
-                    <td className="py-3.5 px-4">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold ${typeBadge(m.type)}`}>
-                        {m.type}
+                    <td className="py-2.5 px-4">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium capitalize ${typeBadge(m.type)}`}>
+                        {m.type.toLowerCase()}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-2.5 px-4">
                       <button
                         type="button"
                         onClick={() => {
@@ -198,40 +198,40 @@ export function MovementsTable({ initialMovements, locations }: MovementsTablePr
                             setShowLookupModal(true);
                           }
                         }}
-                        className="font-mono font-bold text-[var(--text-primary)] hover:text-[var(--accent-text)] transition-colors cursor-pointer"
+                        className="font-mono font-medium text-[12px] text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors cursor-pointer"
                       >
                         {m.serialNumber || '—'}
                       </button>
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-2.5 px-4">
                       <Link
                         href={`/products/${m.productId}`}
-                        className="font-medium text-[var(--text-primary)] hover:text-[var(--accent-text)] transition-colors block"
+                        className="font-medium text-[14px] text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors block"
                       >
                         {m.productName || 'Product'}
                       </Link>
-                      <span className="font-mono text-[11px] text-[var(--text-muted)]">
+                      <span className="font-mono text-[12px] text-[var(--text-muted)]">
                         {m.productCode || '—'}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-[var(--text-primary)]">
+                    <td className="py-2.5 px-4 text-[13px] text-[var(--text-primary)]">
                       {m.fromLocationName ? (
                         <span>
-                          {m.fromLocationName} → <strong>{m.toLocationName || 'Facility'}</strong>
+                          {m.fromLocationName} → <strong className="font-semibold">{m.toLocationName || 'Facility'}</strong>
                         </span>
                       ) : (
-                        <span>Received into <strong>{m.toLocationName || 'Facility'}</strong></span>
+                        <span>Received into <strong className="font-semibold">{m.toLocationName || 'Facility'}</strong></span>
                       )}
                     </td>
-                    <td className="py-3.5 px-4 text-[var(--text-secondary)] max-w-[220px]">
+                    <td className="py-2.5 px-4 text-[var(--text-secondary)] max-w-[220px]">
                       {m.reference && (
-                        <span className="font-semibold block text-[var(--text-primary)] text-[12px] truncate">
+                        <span className="font-mono font-medium block text-[var(--text-primary)] text-[12px] truncate">
                           {m.reference}
                         </span>
                       )}
-                      <span className="text-[12px] block truncate">{m.reason || '—'}</span>
+                      <span className="text-[12px] text-[var(--text-muted)] block truncate">{m.reason || '—'}</span>
                     </td>
-                    <td className="py-3.5 px-4 text-[var(--text-secondary)] text-[12px] whitespace-nowrap">
+                    <td className="py-2.5 px-4 text-[var(--text-secondary)] text-[13px] whitespace-nowrap">
                       {m.actorName || 'Operator'}
                     </td>
                   </tr>

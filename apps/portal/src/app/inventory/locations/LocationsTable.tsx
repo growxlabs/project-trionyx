@@ -122,50 +122,50 @@ export function LocationsTable({ locations: initialLocations, user }: LocationsT
       </div>
 
       {/* Locations Table */}
-      <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] overflow-hidden shadow-[0_1px_3px_rgba(23,23,20,0.03)]">
+      <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-[13px]">
+          <table className="w-full text-left border-collapse text-[14px]">
             <thead>
-              <tr className="bg-[var(--background)] border-b border-[var(--border)] text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">
-                <th className="py-3 px-4">Code</th>
-                <th className="py-3 px-4">Facility Name</th>
-                <th className="py-3 px-4 text-center">Status</th>
-                <th className="py-3 px-4 text-right">Products</th>
-                <th className="py-3 px-4 text-right">Available Units</th>
-                <th className="py-3 px-4 text-right">Total Serials</th>
-                <th className="py-3 px-4">Registered On</th>
+              <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                <th className="py-2.5 px-4 w-36">Location Code</th>
+                <th className="py-2.5 px-4">Facility Name</th>
+                <th className="py-2.5 px-4 text-center w-28">Status</th>
+                <th className="py-2.5 px-4 text-right w-28">Products</th>
+                <th className="py-2.5 px-4 text-right w-32">Available Units</th>
+                <th className="py-2.5 px-4 text-right w-28">Total Serials</th>
+                <th className="py-2.5 px-4 w-32">Registered On</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[var(--border)]">
+            <tbody className="divide-y divide-[var(--border)]/60">
               {locations.map((loc) => (
-                <tr key={loc.id} className="hover:bg-[var(--surface)] transition-colors">
-                  <td className="py-3.5 px-4 font-mono font-bold text-[var(--accent-text)]">
+                <tr key={loc.id} className="hover:bg-[var(--surface-subtle)] transition-colors">
+                  <td className="py-2.5 px-4 font-mono font-medium text-[12px] text-[var(--text-primary)]">
                     {loc.code}
                   </td>
-                  <td className="py-3.5 px-4 font-medium text-[var(--text-primary)]">
+                  <td className="py-2.5 px-4 font-medium text-[14px] text-[var(--text-primary)]">
                     {loc.name}
                   </td>
-                  <td className="py-3.5 px-4 text-center">
+                  <td className="py-2.5 px-4 text-center">
                     <span
-                      className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold ${
+                      className={`inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium ${
                         loc.status === 'ACTIVE'
                           ? 'bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]'
                           : 'bg-[var(--surface-subtle)] text-[var(--text-secondary)] border border-[var(--border)]'
                       }`}
                     >
-                      {loc.status}
+                      {loc.status === 'ACTIVE' ? 'Active' : 'Inactive'}
                     </span>
                   </td>
-                  <td className="py-3.5 px-4 text-right font-mono text-[var(--text-secondary)]">
-                    {loc.productCount} Products
+                  <td className="py-2.5 px-4 text-right text-[13px] text-[var(--text-secondary)]">
+                    {loc.productCount} products
                   </td>
-                  <td className="py-3.5 px-4 text-right font-mono font-bold text-[var(--status-success)]">
+                  <td className="py-2.5 px-4 text-right font-sans font-medium text-[13px] text-[var(--text-primary)]">
                     {loc.availableUnits} units
                   </td>
-                  <td className="py-3.5 px-4 text-right font-mono text-[var(--text-secondary)]">
+                  <td className="py-2.5 px-4 text-right font-sans text-[13px] text-[var(--text-secondary)]">
                     {loc.totalSerials}
                   </td>
-                  <td className="py-3.5 px-4 text-[var(--text-muted)] text-[12px]">
+                  <td className="py-2.5 px-4 text-[var(--text-muted)] text-[12px]">
                     {new Date(loc.createdAt).toLocaleDateString(undefined, {
                       year: 'numeric',
                       month: 'short',
@@ -193,7 +193,7 @@ export function LocationsTable({ locations: initialLocations, user }: LocationsT
           )}
 
           <div>
-            <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1">
+            <label className="block text-[12px] font-medium text-[var(--text-secondary)] mb-1">
               Location Code (e.g. LOC-NORTH) *
             </label>
             <input
@@ -202,15 +202,15 @@ export function LocationsTable({ locations: initialLocations, user }: LocationsT
               value={code}
               onChange={(e) => setCode(e.target.value.toUpperCase())}
               placeholder="LOC-NORTH"
-              className="w-full px-3.5 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] font-mono text-[13.5px] uppercase focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
+              className="w-full px-3.5 py-2 rounded-[4px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] font-mono text-[12px] uppercase focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
             />
-            <p className="text-[11.5px] text-[var(--text-muted)] mt-1 m-0">
+            <p className="text-[12px] text-[var(--text-muted)] mt-1 m-0">
               Unique identifier used across physical labels and stock movements.
             </p>
           </div>
 
           <div>
-            <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1">
+            <label className="block text-[12px] font-medium text-[var(--text-secondary)] mb-1">
               Facility Name *
             </label>
             <input
@@ -219,18 +219,18 @@ export function LocationsTable({ locations: initialLocations, user }: LocationsT
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. North Regional Distribution Depot"
-              className="w-full px-3.5 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13.5px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
+              className="w-full px-3.5 py-2 rounded-[4px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
             />
           </div>
 
           <div>
-            <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1">
+            <label className="block text-[12px] font-medium text-[var(--text-secondary)] mb-1">
               Operational Status *
             </label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value as 'ACTIVE' | 'INACTIVE')}
-              className="w-full px-3 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
+              className="w-full px-3 py-2 rounded-[4px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
             >
               <option value="ACTIVE">Active (Accepts receipts & transfers)</option>
               <option value="INACTIVE">Inactive (Decommissioned)</option>

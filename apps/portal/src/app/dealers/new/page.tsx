@@ -32,13 +32,13 @@ export default async function NewDealerPage() {
   return (
     <InternalShell user={user}>
       <div className="mb-6 pb-4 border-b border-[var(--border)]">
-        <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-[var(--accent-text)] block mb-1">
-          NETWORK OPERATIONS
+        <span className="text-[12px] font-medium text-[var(--text-muted)] block mb-1">
+          Network Operations
         </span>
-        <h1 className="text-[26px] sm:text-[30px] font-semibold text-[var(--text-primary)] tracking-[-0.03em] m-0">
+        <h1 className="text-[20px] font-semibold text-[var(--text-primary)] tracking-tight m-0">
           Register New Dealer
         </h1>
-        <p className="text-[13.5px] text-[var(--text-secondary)] mt-1 m-0">
+        <p className="text-[13px] text-[var(--text-secondary)] mt-1 m-0">
           Onboard an automotive detailing studio or certified dealer workshop to the Trionyx network.
         </p>
       </div>

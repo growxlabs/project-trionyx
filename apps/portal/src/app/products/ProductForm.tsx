@@ -178,14 +178,14 @@ export function ProductForm({ categories: initialCategories, initialData, isEdit
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Section 1: Basic Identity */}
-        <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] p-6 shadow-[0_1px_3px_rgba(23,23,20,0.03)] space-y-5">
-          <h2 className="text-[16px] font-semibold text-[var(--text-primary)] pb-3 border-b border-[var(--border)] m-0">
+        <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-6 shadow-[0_1px_3px_rgba(23,23,20,0.03)] space-y-5">
+          <h2 className="text-[14px] font-semibold text-[var(--text-primary)] pb-3 border-b border-[var(--border)] m-0">
             Product Identity
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
-              <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1.5">
+              <label className="block text-[12px] font-medium text-[var(--text-secondary)] mb-1.5">
                 Product Name *
               </label>
               <input
@@ -194,12 +194,12 @@ export function ProductForm({ categories: initialCategories, initialData, isEdit
                 value={name}
                 onChange={(e) => handleNameChange(e.target.value)}
                 placeholder="e.g. Graphene Matrix Coating"
-                className="w-full px-3.5 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13.5px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
+                className="w-full px-3.5 py-2 rounded-[4px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13.5px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
               />
             </div>
 
             <div>
-              <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1.5">
+              <label className="block text-[12px] font-medium text-[var(--text-secondary)] mb-1.5">
                 Slug (URL identifier) *
               </label>
               <input
@@ -208,7 +208,7 @@ export function ProductForm({ categories: initialCategories, initialData, isEdit
                 value={slug}
                 onChange={(e) => setSlug(e.target.value.toLowerCase())}
                 placeholder="e.g. graphene-matrix-coating"
-                className="w-full px-3.5 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13.5px] font-mono focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
+                className="w-full px-3.5 py-2 rounded-[4px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13.5px] font-mono text-[12px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
               />
             </div>
           </div>
@@ -216,13 +216,13 @@ export function ProductForm({ categories: initialCategories, initialData, isEdit
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
+                <label className="text-[12px] font-medium text-[var(--text-secondary)]">
                   Category *
                 </label>
                 <button
                   type="button"
                   onClick={() => setShowCategoryModal(true)}
-                  className="text-[11.5px] font-semibold text-[var(--accent-text)] hover:underline cursor-pointer"
+                  className="text-[12px] font-medium text-[var(--accent)] hover:underline cursor-pointer"
                 >
                   + New Category
                 </button>
@@ -230,7 +230,7 @@ export function ProductForm({ categories: initialCategories, initialData, isEdit
               <select
                 value={categoryId}
                 onChange={(e) => setCategoryId(e.target.value)}
-                className="w-full px-3 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] font-medium focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
+                className="w-full px-3 py-2 rounded-[4px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] font-medium focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
               >
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -241,13 +241,13 @@ export function ProductForm({ categories: initialCategories, initialData, isEdit
             </div>
 
             <div>
-              <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1.5">
+              <label className="block text-[12px] font-medium text-[var(--text-secondary)] mb-1.5">
                 Status
               </label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as 'DRAFT' | 'ACTIVE' | 'INACTIVE' | 'ARCHIVED')}
-                className="w-full px-3 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] font-medium focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
+                className="w-full px-3 py-2 rounded-[4px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] font-medium focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
               >
                 <option value="DRAFT">Draft</option>
                 <option value="ACTIVE">Active</option>
@@ -257,13 +257,13 @@ export function ProductForm({ categories: initialCategories, initialData, isEdit
             </div>
 
             <div>
-              <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1.5">
+              <label className="block text-[12px] font-medium text-[var(--text-secondary)] mb-1.5">
                 Public Visibility
               </label>
               <select
                 value={publicVisibility}
                 onChange={(e) => setPublicVisibility(e.target.value as 'PRIVATE' | 'PUBLIC')}
-                className="w-full px-3 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] font-medium focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
+                className="w-full px-3 py-2 rounded-[4px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] font-medium focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
               >
                 <option value="PRIVATE">Private (Internal Only)</option>
                 <option value="PUBLIC">Public (Visible on Website)</option>
@@ -272,7 +272,7 @@ export function ProductForm({ categories: initialCategories, initialData, isEdit
           </div>
 
           <div>
-            <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1.5">
+            <label className="block text-[12px] font-medium text-[var(--text-secondary)] mb-1.5">
               Short Description (One-line summary)
             </label>
             <input
@@ -280,12 +280,12 @@ export function ProductForm({ categories: initialCategories, initialData, isEdit
               value={shortDescription}
               onChange={(e) => setShortDescription(e.target.value)}
               placeholder="e.g. 10H Hardness ceramic-graphene matrix engineered for harsh climatic conditions."
-              className="w-full px-3.5 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
+              className="w-full px-3.5 py-2 rounded-[4px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
             />
           </div>
 
           <div>
-            <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1.5">
+            <label className="block text-[12px] font-medium text-[var(--text-secondary)] mb-1.5">
               Detailed Description
             </label>
             <textarea
@@ -293,16 +293,16 @@ export function ProductForm({ categories: initialCategories, initialData, isEdit
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Comprehensive product specifications, application directions, and warranty parameters..."
-              className="w-full px-3.5 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] resize-y"
+              className="w-full px-3.5 py-2 rounded-[4px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] resize-y"
             />
           </div>
         </div>
 
         {/* Section 2: Product Specifications */}
-        <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] p-6 shadow-[0_1px_3px_rgba(23,23,20,0.03)] space-y-4">
+        <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-6 shadow-[0_1px_3px_rgba(23,23,20,0.03)] space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
             <div>
-              <h2 className="text-[16px] font-semibold text-[var(--text-primary)] m-0">
+              <h2 className="text-[14px] font-semibold text-[var(--text-primary)] m-0">
                 Product Specifications
               </h2>
               <p className="text-[12px] text-[var(--text-secondary)] mt-0.5 m-0">

@@ -292,20 +292,20 @@ export function ProductDetailView({
             </Link>
           </div>
           <div className="flex items-center gap-2.5 flex-wrap">
-            <span className="font-mono text-[12px] font-bold tracking-wider text-[var(--accent-text)] bg-[var(--accent-soft)] border border-[var(--accent-soft-border)] px-2 py-0.5 rounded">
+            <span className="font-mono text-[12px] font-medium text-[var(--accent-text)] bg-[var(--accent-soft)] border border-[var(--accent-soft-border)] px-2 py-0.5 rounded-[2px]">
               {product.productCode}
             </span>
-            <h1 className="text-[26px] sm:text-[30px] font-semibold text-[var(--text-primary)] tracking-[-0.03em] m-0">
+            <h1 className="text-[20px] font-semibold text-[var(--text-primary)] m-0">
               {product.name}
             </h1>
             {category && (
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[var(--background)] border border-[var(--border)] text-[var(--text-primary)]">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--background)] border border-[var(--border)] text-[var(--text-primary)]">
                 {category.name}
               </span>
             )}
             {/* Status Badge */}
             <span
-              className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider ${
+              className={`inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium ${
                 product.status === 'ACTIVE'
                   ? 'bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]'
                   : product.status === 'DRAFT'
@@ -315,17 +315,17 @@ export function ProductDetailView({
                   : 'bg-[var(--surface-subtle)] text-[var(--text-secondary)] border border-[var(--border)]'
               }`}
             >
-              {product.status}
+              {product.status === 'ACTIVE' ? 'Active' : product.status === 'DRAFT' ? 'Draft' : product.status === 'INACTIVE' ? 'Inactive' : 'Archived'}
             </span>
             {/* Visibility Badge */}
             <span
-              className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium ${
+              className={`inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium ${
                 product.publicVisibility === 'PUBLIC'
                   ? 'bg-[var(--status-info-soft)] text-[var(--status-info)] border border-[var(--status-info-border)]'
                   : 'bg-[var(--background)] text-[var(--text-secondary)] border border-[var(--border)]'
               }`}
             >
-              {product.publicVisibility}
+              {product.publicVisibility === 'PUBLIC' ? 'Public' : 'Internal'}
             </span>
           </div>
         </div>
@@ -599,47 +599,47 @@ export function ProductDetailView({
               No serial numbers match the selected criteria.
             </div>
           ) : (
-            <div className="overflow-x-auto border border-[var(--border)] rounded-[6px]">
-              <table className="w-full text-left border-collapse text-[13px]">
+            <div className="overflow-x-auto border border-[var(--border)] rounded-[4px]">
+              <table className="w-full text-left border-collapse text-[14px]">
                 <thead>
-                  <tr className="bg-[var(--background)] border-b border-[var(--border)] text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">
-                    <th className="py-3 px-4">Serial Number</th>
-                    <th className="py-3 px-4">Current Location</th>
-                    <th className="py-3 px-4 text-center">Status</th>
-                    <th className="py-3 px-4">Received On</th>
-                    <th className="py-3 px-4 text-right">Actions</th>
+                  <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                    <th className="py-2.5 px-4 w-40">Serial Number</th>
+                    <th className="py-2.5 px-4">Current Location</th>
+                    <th className="py-2.5 px-4 text-center w-28">Status</th>
+                    <th className="py-2.5 px-4 w-32">Received On</th>
+                    <th className="py-2.5 px-4 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[var(--border)]">
+                <tbody className="divide-y divide-[var(--border)]/60">
                   {filteredSerials.map((s) => (
-                    <tr key={s.id} className="hover:bg-[var(--surface)] transition-colors">
-                      <td className="py-3.5 px-4 font-mono font-bold text-[var(--text-primary)]">
+                    <tr key={s.id} className="hover:bg-[var(--surface-subtle)] transition-colors">
+                      <td className="py-2.5 px-4 font-mono font-medium text-[12px] text-[var(--text-primary)]">
                         {s.serialNumber}
                       </td>
-                      <td className="py-3.5 px-4">
-                        <span className="font-semibold text-[var(--text-primary)] block">{s.location?.name}</span>
-                        <span className="font-mono text-[11px] text-[var(--text-muted)]">{s.location?.code}</span>
+                      <td className="py-2.5 px-4">
+                        <span className="font-medium text-[14px] text-[var(--text-primary)] block">{s.location?.name}</span>
+                        <span className="font-mono text-[12px] text-[var(--text-muted)]">{s.location?.code}</span>
                       </td>
-                      <td className="py-3.5 px-4 text-center">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase ${statusBadge(s.status)}`}>
-                          {s.status}
+                      <td className="py-2.5 px-4 text-center">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium capitalize ${statusBadge(s.status)}`}>
+                          {s.status.toLowerCase()}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 text-[var(--text-secondary)] text-[12px] whitespace-nowrap">
+                      <td className="py-2.5 px-4 text-[var(--text-muted)] text-[12px] whitespace-nowrap">
                         {new Date(s.receivedAt).toLocaleDateString(undefined, {
                           year: 'numeric',
                           month: 'short',
                           day: 'numeric',
                         })}
                       </td>
-                      <td className="py-3.5 px-4 text-right space-x-2">
+                      <td className="py-2.5 px-4 text-right space-x-2">
                         <button
                           type="button"
                           onClick={() => {
                             setLookupInitialSerial(s.serialNumber);
                             setShowLookupModal(true);
                           }}
-                          className="inline-flex items-center px-2.5 py-1 rounded border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[11.5px] font-semibold transition-colors cursor-pointer"
+                          className="text-[13px] font-medium text-[var(--accent)] hover:underline cursor-pointer"
                         >
                           History
                         </button>
@@ -825,30 +825,30 @@ export function ProductDetailView({
               No stock movements recorded for this product yet.
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse text-[13px]">
+            <div className="overflow-x-auto border border-[var(--border)] rounded-[4px]">
+              <table className="w-full text-left border-collapse text-[14px]">
                 <thead>
-                  <tr className="bg-[var(--background)] border-b border-[var(--border)] text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">
-                    <th className="py-3 px-4">Timestamp</th>
-                    <th className="py-3 px-4">Type</th>
-                    <th className="py-3 px-4">Serial Number</th>
-                    <th className="py-3 px-4">Movement Route</th>
-                    <th className="py-3 px-4">Reason / Reference</th>
-                    <th className="py-3 px-4">Operator</th>
+                  <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                    <th className="py-2.5 px-4 w-36">Timestamp</th>
+                    <th className="py-2.5 px-4 w-28">Type</th>
+                    <th className="py-2.5 px-4 w-40">Serial Number</th>
+                    <th className="py-2.5 px-4">Movement Route</th>
+                    <th className="py-2.5 px-4">Reason / Reference</th>
+                    <th className="py-2.5 px-4 w-32">Operator</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[var(--border)]">
+                <tbody className="divide-y divide-[var(--border)]/60">
                   {movements.map((m) => (
-                    <tr key={m.id} className="hover:bg-[var(--surface)] transition-colors">
-                      <td className="py-3.5 px-4 text-[var(--text-secondary)] whitespace-nowrap text-[12px]">
+                    <tr key={m.id} className="hover:bg-[var(--surface-subtle)] transition-colors">
+                      <td className="py-2.5 px-4 text-[var(--text-muted)] whitespace-nowrap text-[12px]">
                         {new Date(m.createdAt).toLocaleString(undefined, {
                           dateStyle: 'short',
                           timeStyle: 'short',
                         })}
                       </td>
-                      <td className="py-3.5 px-4">
+                      <td className="py-2.5 px-4">
                         <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold ${
+                          className={`inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium capitalize ${
                             m.type === 'RECEIVED'
                               ? 'bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]'
                               : m.type === 'TRANSFERRED'
@@ -856,13 +856,13 @@ export function ProductDetailView({
                               : 'bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]'
                           }`}
                         >
-                          {m.type}
+                          {m.type.toLowerCase()}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 font-mono font-bold text-[var(--text-primary)]">
+                      <td className="py-2.5 px-4 font-mono font-medium text-[12px] text-[var(--text-primary)]">
                         {m.serialNumber || '—'}
                       </td>
-                      <td className="py-3.5 px-4 text-[var(--text-primary)]">
+                      <td className="py-2.5 px-4 text-[13px] text-[var(--text-primary)]">
                         {m.fromLocationName ? (
                           <span>
                             {m.fromLocationName} → <strong>{m.toLocationName || 'Facility'}</strong>

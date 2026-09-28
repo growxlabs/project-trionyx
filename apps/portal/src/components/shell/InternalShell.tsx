@@ -2,7 +2,6 @@ import React from 'react';
 import type { SafeUser } from '@trionyx/types';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
-import { ContextStrip } from './ContextStrip';
 import { MobileNavigation } from './MobileNavigation';
 
 interface InternalShellProps {
@@ -21,14 +20,11 @@ export function InternalShell({ user, children }: InternalShellProps) {
         {/* Mobile Header + Slide-out Navigation (hidden on desktop) */}
         <MobileNavigation user={user} />
 
-        {/* Desktop Topbar — exact same #171714 surface as rail (seamless L-frame) */}
+        {/* Desktop Topbar — #22221E charcoal surface */}
         <Topbar user={user} />
 
-        {/* Light Workbench Canvas — with curved top-left corner meeting the #171714 L-frame */}
-        <div className="flex-1 flex flex-col bg-[var(--background)] lg:rounded-tl-[10px] overflow-hidden min-h-0">
-          {/* Secondary Context Strip */}
-          <ContextStrip user={user} />
-
+        {/* Workbench Canvas — with curved top-left corner meeting the charcoal shell */}
+        <div className="flex-1 flex flex-col bg-[var(--background)] lg:rounded-tl-[8px] overflow-hidden min-h-0">
           {/* Main Content Area */}
           <main className="flex-1 px-4 py-4 sm:px-6 sm:py-5 lg:px-7 lg:py-5 w-full">
             <div className="w-full">

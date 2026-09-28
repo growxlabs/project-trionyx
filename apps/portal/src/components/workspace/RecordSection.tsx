@@ -16,7 +16,7 @@ export function RecordSection({
   return (
     <section className={`pt-6 border-t border-[var(--border)] ${className}`}>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)] m-0">
+        <h2 className="text-[14px] font-semibold text-[var(--text-primary)] m-0">
           {title}
         </h2>
         {action && <div>{action}</div>}

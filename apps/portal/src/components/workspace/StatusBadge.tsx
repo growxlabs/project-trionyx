@@ -39,7 +39,8 @@ export function StatusBadge({
   className = '',
 }: StatusBadgeProps) {
   const norm = String(status).toUpperCase().trim();
-  const displayLabel = label || norm.replace(/_/g, ' ');
+  const raw = norm.replace(/_/g, ' ');
+  const displayLabel = label || (raw.charAt(0).toUpperCase() + raw.slice(1).toLowerCase());
 
   let style = 'bg-[var(--surface-subtle)] text-[var(--text-secondary)] border-[var(--border)]';
 
@@ -61,12 +62,12 @@ export function StatusBadge({
   }
 
   const sizeClass = size === 'sm' 
-    ? 'text-[10px] px-2 py-0.5' 
-    : 'text-[11px] px-2.5 py-1';
+    ? 'text-[11px] px-2 py-0.5' 
+    : 'text-[12px] px-2.5 py-1';
 
   return (
     <span
-      className={`inline-flex items-center font-semibold uppercase tracking-[0.1em] rounded-[3px] border ${sizeClass} ${style} ${className}`}
+      className={`inline-flex items-center font-medium rounded-[2px] border ${sizeClass} ${style} ${className}`}
     >
       {displayLabel}
     </span>

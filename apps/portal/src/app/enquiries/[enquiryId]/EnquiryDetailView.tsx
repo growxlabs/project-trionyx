@@ -136,20 +136,20 @@ export function EnquiryDetailView({
     switch (status) {
       case 'NEW':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded text-[11.5px] font-semibold bg-[var(--status-info-soft)] text-[var(--status-info)] border border-[var(--status-info-border)]">
-            NEW
+          <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--status-info-soft)] text-[var(--status-info)] border border-[var(--status-info-border)]">
+            New
           </span>
         );
       case 'IN_PROGRESS':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded text-[11.5px] font-semibold bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]">
-            IN PROGRESS
+          <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]">
+            In Progress
           </span>
         );
       case 'CLOSED':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded text-[11.5px] font-semibold bg-[var(--surface-subtle)] text-[var(--text-secondary)] border border-[var(--border)]">
-            CLOSED
+          <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--surface-subtle)] text-[var(--text-secondary)] border border-[var(--border)]">
+            Closed
           </span>
         );
     }
@@ -221,23 +221,23 @@ export function EnquiryDetailView({
       )}
 
       {/* Main Header Card */}
-      <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded p-5 sm:p-6 shadow-sm">
+      <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-5 sm:p-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-2.5 mb-1.5">
-              <span className="font-mono text-[14px] font-bold text-[var(--text-primary)]">
+              <span className="font-mono text-[12px] font-medium text-[var(--text-primary)]">
                 {enquiry.enquiryCode}
               </span>
               {getStatusBadge(enquiry.status)}
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[var(--background)] border border-[var(--border)] text-[var(--text-secondary)]">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--background)] border border-[var(--border)] text-[var(--text-secondary)]">
                 {TYPE_LABELS[enquiry.type] || enquiry.type}
               </span>
             </div>
-            <h1 className="text-[22px] sm:text-[26px] font-bold text-[var(--text-primary)] m-0">
+            <h1 className="text-[20px] font-semibold text-[var(--text-primary)] m-0">
               {enquiry.companyName || enquiry.fullName}
             </h1>
             {enquiry.companyName && (
-              <p className="text-[13px] text-[var(--text-secondary)] mt-0.5 m-0 font-medium">
+              <p className="text-[13px] text-[var(--text-secondary)] mt-0.5 m-0 font-normal">
                 Contact: {enquiry.fullName}
               </p>
             )}
@@ -256,11 +256,11 @@ export function EnquiryDetailView({
                   value={enquiry.status}
                   onChange={(e) => handleStatusChange(e.target.value as ContactEnquiryStatus)}
                   disabled={isUpdatingStatus}
-                  className="px-2.5 py-1.5 text-[12.5px] bg-[var(--background)] border border-[var(--border)] rounded focus:outline-none focus:ring-1 focus:ring-[var(--focus-ring)] text-[var(--text-primary)] font-semibold"
+                  className="px-2.5 py-1.5 text-[13px] bg-[var(--background)] border border-[var(--border)] rounded-[4px] focus:outline-none focus:ring-1 focus:ring-[var(--focus-ring)] text-[var(--text-primary)] font-medium"
                 >
-                  <option value="NEW">NEW</option>
-                  <option value="IN_PROGRESS">IN PROGRESS</option>
-                  <option value="CLOSED">CLOSED</option>
+                  <option value="NEW">New</option>
+                  <option value="IN_PROGRESS">In Progress</option>
+                  <option value="CLOSED">Closed</option>
                 </select>
               </div>
 
@@ -271,7 +271,7 @@ export function EnquiryDetailView({
                   value={enquiry.assignedTo || 'UNASSIGNED'}
                   onChange={(e) => handleAssignChange(e.target.value)}
                   disabled={isAssigning}
-                  className="px-2.5 py-1.5 text-[12.5px] bg-[var(--background)] border border-[var(--border)] rounded focus:outline-none focus:ring-1 focus:ring-[var(--focus-ring)] text-[var(--text-primary)] font-medium max-w-[160px] truncate"
+                  className="px-2.5 py-1.5 text-[13px] bg-[var(--background)] border border-[var(--border)] rounded-[4px] focus:outline-none focus:ring-1 focus:ring-[var(--focus-ring)] text-[var(--text-primary)] font-medium max-w-[160px] truncate"
                 >
                   <option value="UNASSIGNED">Unassigned</option>
                   {internalUsers.map((u) => (
@@ -298,20 +298,20 @@ export function EnquiryDetailView({
         {/* Left Column (2 cols wide on desktop): Contact, Business, Product, Message */}
         <div className="lg:col-span-2 space-y-6">
           {/* Contact Details */}
-          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded p-5 shadow-sm space-y-3">
-            <h3 className="text-[13px] font-bold tracking-wider uppercase text-[var(--text-muted)] m-0">
+          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-5 shadow-sm space-y-3">
+            <h3 className="text-[14px] font-semibold text-[var(--text-primary)] m-0">
               Contact Information
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-[13px]">
               <div>
-                <span className="text-[var(--text-muted)] block text-[11.5px]">Full Name</span>
-                <span className="font-semibold text-[var(--text-primary)]">{enquiry.fullName}</span>
+                <span className="text-[var(--text-muted)] block text-[12px]">Full Name</span>
+                <span className="font-medium text-[14px] text-[var(--text-primary)]">{enquiry.fullName}</span>
               </div>
               <div>
-                <span className="text-[var(--text-muted)] block text-[11.5px]">Phone</span>
+                <span className="text-[var(--text-muted)] block text-[12px]">Phone</span>
                 <a
                   href={`tel:${enquiry.phone}`}
-                  className="font-mono font-semibold text-[var(--accent-text)] hover:underline inline-flex items-center gap-1.5"
+                  className="font-medium text-[14px] text-[var(--accent)] hover:underline inline-flex items-center gap-1.5"
                 >
                   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
@@ -321,10 +321,10 @@ export function EnquiryDetailView({
               </div>
               {enquiry.email && (
                 <div className="sm:col-span-2">
-                  <span className="text-[var(--text-muted)] block text-[11.5px]">Email Address</span>
+                  <span className="text-[var(--text-muted)] block text-[12px]">Email Address</span>
                   <a
                     href={`mailto:${enquiry.email}`}
-                    className="font-mono text-[var(--accent-text)] hover:underline inline-flex items-center gap-1.5"
+                    className="text-[14px] text-[var(--accent)] hover:underline inline-flex items-center gap-1.5"
                   >
                     <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
@@ -338,55 +338,55 @@ export function EnquiryDetailView({
           </div>
 
           {/* Location */}
-          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded p-5 shadow-sm space-y-3">
-            <h3 className="text-[13px] font-bold tracking-wider uppercase text-[var(--text-muted)] m-0">
+          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-5 shadow-sm space-y-3">
+            <h3 className="text-[14px] font-semibold text-[var(--text-primary)] m-0">
               Location
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-[13px]">
               <div>
-                <span className="text-[var(--text-muted)] block text-[11.5px]">City</span>
-                <span className="font-semibold text-[var(--text-primary)]">{enquiry.city}</span>
+                <span className="text-[var(--text-muted)] block text-[12px]">City</span>
+                <span className="font-medium text-[14px] text-[var(--text-primary)]">{enquiry.city || '—'}</span>
               </div>
               <div>
-                <span className="text-[var(--text-muted)] block text-[11.5px]">State</span>
-                <span className="font-semibold text-[var(--text-primary)]">{enquiry.state}</span>
+                <span className="text-[var(--text-muted)] block text-[12px]">State</span>
+                <span className="font-medium text-[14px] text-[var(--text-primary)]">{enquiry.state || '—'}</span>
               </div>
               <div>
-                <span className="text-[var(--text-muted)] block text-[11.5px]">Pincode</span>
-                <span className="font-mono font-semibold text-[var(--text-primary)]">{enquiry.pincode}</span>
+                <span className="text-[var(--text-muted)] block text-[12px]">Pincode</span>
+                <span className="font-mono text-[12px] font-medium text-[var(--text-primary)]">{enquiry.pincode || '—'}</span>
               </div>
             </div>
           </div>
 
           {/* Business Details (Hide if empty) */}
           {hasBusinessInfo && (
-            <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded p-5 shadow-sm space-y-3">
-              <h3 className="text-[13px] font-bold tracking-wider uppercase text-[var(--text-muted)] m-0">
+            <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-5 shadow-sm space-y-3">
+              <h3 className="text-[14px] font-semibold text-[var(--text-primary)] m-0">
                 Business Details
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-[13px]">
                 {enquiry.companyName && (
                   <div>
-                    <span className="text-[var(--text-muted)] block text-[11.5px]">Company / Studio Name</span>
-                    <span className="font-semibold text-[var(--text-primary)]">{enquiry.companyName}</span>
+                    <span className="text-[var(--text-muted)] block text-[12px]">Company / Studio Name</span>
+                    <span className="font-medium text-[14px] text-[var(--text-primary)]">{enquiry.companyName}</span>
                   </div>
                 )}
                 {enquiry.businessType && (
                   <div>
-                    <span className="text-[var(--text-muted)] block text-[11.5px]">Business Type</span>
-                    <span className="font-medium text-[var(--text-primary)]">{enquiry.businessType}</span>
+                    <span className="text-[var(--text-muted)] block text-[12px]">Business Type</span>
+                    <span className="font-medium text-[14px] text-[var(--text-primary)]">{enquiry.businessType}</span>
                   </div>
                 )}
                 {enquiry.businessAddress && (
                   <div className="sm:col-span-2">
-                    <span className="text-[var(--text-muted)] block text-[11.5px]">Business Address</span>
-                    <span className="text-[var(--text-primary)] leading-relaxed">{enquiry.businessAddress}</span>
+                    <span className="text-[var(--text-muted)] block text-[12px]">Business Address</span>
+                    <span className="text-[var(--text-primary)] leading-relaxed text-[13px]">{enquiry.businessAddress}</span>
                   </div>
                 )}
                 {enquiry.territory && (
                   <div className="sm:col-span-2">
-                    <span className="text-[var(--text-muted)] block text-[11.5px]">Requested Territory / Area</span>
-                    <span className="font-medium text-[var(--text-primary)]">{enquiry.territory}</span>
+                    <span className="text-[var(--text-muted)] block text-[12px]">Requested Territory / Area</span>
+                    <span className="font-medium text-[14px] text-[var(--text-primary)]">{enquiry.territory}</span>
                   </div>
                 )}
               </div>
@@ -395,21 +395,21 @@ export function EnquiryDetailView({
 
           {/* Product Info (Hide if empty) */}
           {hasProductInfo && (
-            <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded p-5 shadow-sm space-y-3">
-              <h3 className="text-[13px] font-bold tracking-wider uppercase text-[var(--text-muted)] m-0">
+            <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-5 shadow-sm space-y-3">
+              <h3 className="text-[14px] font-semibold text-[var(--text-primary)] m-0">
                 Product Details
               </h3>
               <div className="space-y-3 text-[13px]">
                 {enquiry.productName && (
                   <div>
-                    <span className="text-[var(--text-muted)] block text-[11.5px]">Product</span>
-                    <span className="font-semibold text-[var(--text-primary)]">{enquiry.productName}</span>
+                    <span className="text-[var(--text-muted)] block text-[12px]">Product</span>
+                    <span className="font-medium text-[14px] text-[var(--text-primary)]">{enquiry.productName}</span>
                   </div>
                 )}
                 {enquiry.purchaseDealerDetails && (
                   <div>
-                    <span className="text-[var(--text-muted)] block text-[11.5px]">Purchase / Dealer Details</span>
-                    <span className="text-[var(--text-primary)] leading-relaxed">{enquiry.purchaseDealerDetails}</span>
+                    <span className="text-[var(--text-muted)] block text-[12px]">Purchase / Dealer Details</span>
+                    <span className="text-[var(--text-primary)] leading-relaxed text-[13px]">{enquiry.purchaseDealerDetails}</span>
                   </div>
                 )}
               </div>
@@ -417,11 +417,11 @@ export function EnquiryDetailView({
           )}
 
           {/* Message / Issue Description */}
-          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded p-5 shadow-sm space-y-3">
-            <h3 className="text-[13px] font-bold tracking-wider uppercase text-[var(--text-muted)] m-0">
+          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-5 shadow-sm space-y-3">
+            <h3 className="text-[14px] font-semibold text-[var(--text-primary)] m-0">
               {enquiry.type === 'PRODUCT_SUPPORT' ? 'Issue Description' : 'Message'}
             </h3>
-            <div className="p-4 rounded bg-[var(--background)] border border-[var(--border)] text-[13.5px] text-[var(--text-primary)] whitespace-pre-wrap leading-relaxed">
+            <div className="p-4 rounded-[4px] bg-[var(--background)] border border-[var(--border)] text-[13.5px] text-[var(--text-primary)] whitespace-pre-wrap leading-relaxed">
               {enquiry.message || <span className="text-[var(--text-muted)] italic">No message provided</span>}
             </div>
           </div>
@@ -430,18 +430,18 @@ export function EnquiryDetailView({
         {/* Right Column: Assignment + Internal Notes */}
         <div className="space-y-6">
           {/* Assignment Card */}
-          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded p-5 shadow-sm space-y-3">
-            <h3 className="text-[13px] font-bold tracking-wider uppercase text-[var(--text-muted)] m-0">
+          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-5 shadow-sm space-y-3">
+            <h3 className="text-[14px] font-semibold text-[var(--text-primary)] m-0">
               Assignment
             </h3>
             <div className="text-[13px]">
-              <span className="text-[var(--text-muted)] block text-[11.5px]">Assigned Operator</span>
+              <span className="text-[var(--text-muted)] block text-[12px]">Assigned Operator</span>
               {enquiry.assignedUserName ? (
                 <div className="flex items-center gap-2 mt-1">
-                  <div className="w-7 h-7 rounded-full bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-center font-bold text-[11px] text-[var(--text-primary)]">
+                  <div className="w-7 h-7 rounded-full bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-center font-semibold text-[11px] text-[var(--text-primary)]">
                     {enquiry.assignedUserName.charAt(0).toUpperCase()}
                   </div>
-                  <span className="font-semibold text-[var(--text-primary)]">{enquiry.assignedUserName}</span>
+                  <span className="font-medium text-[14px] text-[var(--text-primary)]">{enquiry.assignedUserName}</span>
                 </div>
               ) : (
                 <span className="text-[var(--text-muted)] italic block mt-1">Unassigned</span>
@@ -450,12 +450,12 @@ export function EnquiryDetailView({
 
             {canManage && (
               <div className="pt-2 border-t border-[var(--border)]">
-                <label className="text-[11.5px] text-[var(--text-muted)] block mb-1.5">Change Assignee</label>
+                <label className="text-[12px] text-[var(--text-muted)] block mb-1.5">Change Assignee</label>
                 <select
                   value={enquiry.assignedTo || 'UNASSIGNED'}
                   onChange={(e) => handleAssignChange(e.target.value)}
                   disabled={isAssigning}
-                  className="w-full px-3 py-1.5 text-[12.5px] bg-[var(--background)] border border-[var(--border)] rounded focus:outline-none focus:ring-1 focus:ring-[var(--focus-ring)] text-[var(--text-primary)] font-medium"
+                  className="w-full px-3 py-1.5 text-[13px] bg-[var(--background)] border border-[var(--border)] rounded-[4px] focus:outline-none focus:ring-1 focus:ring-[var(--focus-ring)] text-[var(--text-primary)] font-medium"
                 >
                   <option value="UNASSIGNED">Unassigned</option>
                   {internalUsers.map((u) => (
@@ -469,12 +469,12 @@ export function EnquiryDetailView({
           </div>
 
           {/* Internal Notes Card */}
-          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded p-5 shadow-sm space-y-4">
+          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-5 shadow-sm space-y-4">
             <div>
-              <h3 className="text-[13px] font-bold tracking-wider uppercase text-[var(--text-muted)] m-0">
+              <h3 className="text-[14px] font-semibold text-[var(--text-primary)] m-0">
                 Internal Notes ({notes.length})
               </h3>
-              <p className="text-[11.5px] text-[var(--text-secondary)] mt-0.5 m-0">
+              <p className="text-[12px] text-[var(--text-secondary)] mt-0.5 m-0">
                 Notes are confidential and visible only to authorized team members.
               </p>
             </div>
@@ -487,7 +487,7 @@ export function EnquiryDetailView({
                   placeholder="Add an internal note or progress update..."
                   value={newNoteBody}
                   onChange={(e) => setNewNoteBody(e.target.value)}
-                  className="w-full px-3 py-2 text-[13px] bg-[var(--background)] border border-[var(--border)] rounded focus:outline-none focus:ring-1 focus:ring-[var(--focus-ring)] text-[var(--text-primary)] resize-none placeholder:text-[var(--text-muted)]"
+                  className="w-full px-3 py-2 text-[13px] bg-[var(--background)] border border-[var(--border)] rounded-[4px] focus:outline-none focus:ring-1 focus:ring-[var(--focus-ring)] text-[var(--text-primary)] resize-none placeholder:text-[var(--text-muted)]"
                 />
                 {noteError && (
                   <p className="text-[12px] text-[var(--status-danger)]">{noteError}</p>
@@ -496,7 +496,7 @@ export function EnquiryDetailView({
                   <button
                     type="submit"
                     disabled={isAddingNote || !newNoteBody.trim()}
-                    className="px-3.5 py-1.5 rounded bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-foreground)] text-[12.5px] font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   >
                     {isAddingNote ? 'Adding...' : 'Add Note'}
                   </button>

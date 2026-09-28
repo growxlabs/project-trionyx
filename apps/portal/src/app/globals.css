@@ -119,15 +119,29 @@ body {
 [data-theme] .text-\[\#1E40AF\] { color: var(--status-info); }
 [data-theme] .bg-\[\#FEE2E2\] { background: var(--status-danger-soft); }
 [data-theme] .hover\:bg-\[\#FEE2E2\]:hover, [data-theme] .active\:bg-\[\#FEE2E2\]:active { background: var(--status-danger-soft); }
-[data-theme] .bg-\[\#171714\] { background: var(--text-primary); }
-[data-theme] .hover\:bg-\[\#2A2926\]:hover, [data-theme] .hover\:bg-\[\#2C2C28\]:hover { background: var(--surface-subtle); }
-[data-theme] .active\:bg-black:active { background: var(--surface-subtle); }
-[data-theme] .text-white { color: var(--background); }
+
+/* Protect shell header inputs from global form theme overrides */
+header input.header-search-input {
+  background-color: #2D2C27 !important;
+  color: #F7F6F0 !important;
+  border-color: rgba(255, 255, 255, 0.10) !important;
+}
+header input.header-search-input::placeholder {
+  color: #A9A59C !important;
+}
+header input.header-search-input:focus {
+  border-color: #F26522 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 1px #F26522 !important;
+}
 
 /* Controls, forms, tables and the shared surfaces inherit the active palette. */
-[data-theme] input,
-[data-theme] select,
-[data-theme] textarea {
+[data-theme] main input,
+[data-theme] main select,
+[data-theme] main textarea,
+[data-theme] [role="dialog"] input:not(.header-search-input),
+[data-theme] [role="dialog"] select,
+[data-theme] [role="dialog"] textarea {
   color: var(--text-primary);
   border-color: var(--border-strong);
 }

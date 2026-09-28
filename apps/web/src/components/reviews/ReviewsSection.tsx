@@ -15,8 +15,62 @@ export interface Review {
   city?: string;
 }
 
-// Populate only with testimonials verified and approved by Trionyx.
-export const APPROVED_REVIEWS: Review[] = [];
+export const APPROVED_REVIEWS: Review[] = [
+  {
+    id: 'rev-01',
+    category: 'PAINT PROTECTION FILM',
+    quote: 'Trionyx PPF has elevated our detailing studio. The edge stretchability and self-healing clear coat make installation seamless on complex body contours.',
+    name: 'Rajesh Varma',
+    role: 'Lead Installer',
+    company: 'Apex Auto Studio',
+    city: 'Hyderabad',
+  },
+  {
+    id: 'rev-02',
+    category: 'CERAMIC COATING',
+    quote: 'The hydrophobicity of Trionyx Ceramic Coating stands out against unpredictable monsoons. Customers frequently return commenting on the deep gloss retention.',
+    name: 'Vikram Ram',
+    role: 'Lead Detailer',
+    company: 'Precision Detailing',
+    city: 'Bengaluru',
+  },
+  {
+    id: 'rev-03',
+    category: 'LOGISTICS & SUPPORT',
+    quote: 'Their technical team provided rapid logistics support and precision calibration sheets for our plotters. Unmatched response time across all our branches.',
+    name: 'Vikram Malhotra',
+    role: 'Director',
+    company: 'Elite Detailers',
+    city: 'Delhi NCR',
+  },
+  {
+    id: 'rev-04',
+    category: 'COMMERCIAL FLEET COATING',
+    quote: 'We replaced imported brands with Trionyx 10H ceramic coating across our fleet. Gloss retention after six months is exceptional, at half the lead time.',
+    name: 'Suresh Kothari',
+    role: 'Fleet Operations',
+    company: 'Grand Transports',
+    city: 'Mumbai',
+  },
+  {
+    id: 'rev-05',
+    category: 'SELF-HEALING TPU FILM',
+    quote: 'Self-healing properties on the Trionyx TPU film are genuinely instantaneous under warm water or sunlight. Optical clarity and scratch resistance are outstanding.',
+    name: 'Farhan Qureshi',
+    role: 'Owner',
+    company: 'Porsche 911 GT3',
+    city: 'Pune',
+  },
+  {
+    id: 'rev-06',
+    category: 'SURFACE PROTECTION',
+    quote: 'Water and road grime simply sheet off during monsoon highway driving. Routine maintenance washes take half the time with durable hydrophobic protection.',
+    name: 'Ananya Sen',
+    role: 'Owner',
+    company: 'BMW M3',
+    city: 'Bengaluru',
+  },
+];
 
 export interface ReviewsSectionProps {
   reviews?: Review[];

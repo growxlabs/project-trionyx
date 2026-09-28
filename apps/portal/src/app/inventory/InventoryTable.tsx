@@ -14,6 +14,7 @@ import type {
 } from '@trionyx/types';
 import { Modal } from '../../components/ui/Modal';
 import { SerialNumberLookupModal } from '../../components/inventory/SerialNumberLookupModal';
+import { ReceiveStockModal } from '../../components/inventory/ReceiveStockModal';
 import {
   WorkspaceHeader,
   OperationalSummaryStrip,
@@ -31,6 +32,8 @@ interface InventoryTableProps {
   user: SafeUser;
 }
 
+export type InventoryWorkspaceTab = 'registry' | 'exceptions' | 'movements';
+
 export function InventoryTable({
   initialSummaries,
   locations,
@@ -40,6 +43,7 @@ export function InventoryTable({
   user,
 }: InventoryTableProps) {
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState<InventoryWorkspaceTab>('registry');
 
   // Filters
   const [search, setSearch] = useState('');
@@ -153,49 +157,6 @@ export function InventoryTable({
     setAdjustReason('Physical inspection variance / damaged packaging');
     setAdjustNotes('');
     setModalMode('ADJUST');
-  };
-
-  const handleReceiveSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formProductId || !formLocationId) {
-      setModalError('Please specify product and facility location.');
-      return;
-    }
-    if (parsedSerials.length === 0) {
-      setModalError('Please enter at least one serial number to receive.');
-      return;
-    }
-
-    setIsSubmitting(true);
-    setModalError(null);
-
-    try {
-      const res = await fetch('/api/v1/internal/inventory/receive', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          productId: formProductId,
-          locationId: formLocationId,
-          serialNumbers: parsedSerials,
-          reference: formReference.trim() || undefined,
-          notes: formNotes.trim() || undefined,
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok || data.error) {
-        setModalError(data.error?.message || data.error || 'Failed to receive serial numbers.');
-        setIsSubmitting(false);
-        return;
-      }
-
-      setModalMode(null);
-      router.refresh();
-    } catch {
-      setModalError('Network error while processing stock receipt.');
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   const handleTransferSubmit = async (e: React.FormEvent) => {
@@ -316,22 +277,22 @@ export function InventoryTable({
 
   const physicalPositionMetrics: SummaryMetric[] = [
     {
-      label: 'AVAILABLE UNITS',
+      label: 'Available Units',
       value: totalAvailable,
       tone: totalAvailable > 0 ? 'positive' : 'alert',
     },
     {
-      label: 'OUT OF STOCK',
+      label: 'Out of Stock',
       value: zeroStockCount,
       tone: zeroStockCount > 0 ? 'alert' : 'default',
     },
     {
-      label: 'LOCATIONS',
+      label: 'Facilities',
       value: activeLocationsCount,
       tone: 'default',
     },
     {
-      label: 'TOTAL TRACKED',
+      label: 'Total Tracked',
       value: totalTracked,
       tone: 'default',
     },
@@ -347,9 +308,14 @@ export function InventoryTable({
             <button
               type="button"
               onClick={() => openReceiveModal()}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity cursor-pointer shadow-xs"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity cursor-pointer shadow-xs"
             >
-              + Receive Serials
+              <svg className="w-4 h-4 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                <polyline points="3.29 7 12 12 20.71 7" />
+                <line x1="12" y1="22" x2="12" y2="12" />
+              </svg>
+              <span>Receive Serials</span>
             </button>
           )
         }
@@ -360,11 +326,16 @@ export function InventoryTable({
         <button
           type="button"
           onClick={() => setShowLookupModal(true)}
-          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[12.5px] font-medium transition-colors cursor-pointer"
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-[4px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[12.5px] font-medium transition-colors cursor-pointer"
         >
-          <svg className="w-3.5 h-3.5 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+            <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+            <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+            <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+            <line x1="7" y1="7" x2="7" y2="17" />
+            <line x1="12" y1="7" x2="12" y2="17" />
+            <line x1="17" y1="7" x2="17" y2="17" />
           </svg>
           <span>Lookup Serial</span>
         </button>
@@ -373,9 +344,15 @@ export function InventoryTable({
           <button
             type="button"
             onClick={() => openTransferModal()}
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[12.5px] font-medium transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-[4px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[12.5px] font-medium transition-colors cursor-pointer"
           >
-            Transfer
+            <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <polyline points="17 1 21 5 17 9" />
+              <path d="M3 5h18" />
+              <polyline points="7 23 3 19 7 15" />
+              <path d="M21 19H3" />
+            </svg>
+            <span>Transfer</span>
           </button>
         )}
 
@@ -383,24 +360,43 @@ export function InventoryTable({
           <button
             type="button"
             onClick={() => openAdjustModal()}
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[12.5px] font-medium transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-[4px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[12.5px] font-medium transition-colors cursor-pointer"
           >
-            Adjust
+            <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <line x1="4" y1="21" x2="4" y2="14" />
+              <line x1="4" y1="10" x2="4" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12" y2="3" />
+              <line x1="20" y1="21" x2="20" y2="16" />
+              <line x1="20" y1="12" x2="20" y2="3" />
+              <line x1="1" y1="14" x2="7" y2="14" />
+              <line x1="9" y1="8" x2="15" y2="8" />
+              <line x1="17" y1="16" x2="23" y2="16" />
+            </svg>
+            <span>Adjust</span>
           </button>
         )}
 
         <Link
           href="/inventory/movements"
-          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-[12.5px] font-medium transition-colors"
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-[4px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[12.5px] font-medium transition-colors"
         >
-          Movements
+          <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" />
+            <polyline points="12 7 12 12 15 15" />
+          </svg>
+          <span>Movements</span>
         </Link>
 
         <Link
           href="/inventory/locations"
-          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-[12.5px] font-medium transition-colors"
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-[4px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[12.5px] font-medium transition-colors"
         >
-          Locations
+          <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+          <span>Locations</span>
         </Link>
       </div>
 
@@ -409,412 +405,468 @@ export function InventoryTable({
         metrics={physicalPositionMetrics}
       />
 
-      {/* 3. Stock Exceptions */}
-      {stockExceptions.length > 0 && (
-        <section aria-labelledby="stock-exceptions-heading">
-          <div className="flex items-baseline justify-between mb-2.5">
-            <h2 id="stock-exceptions-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] m-0">
-              STOCK EXCEPTIONS ({stockExceptions.length})
-            </h2>
-          </div>
+      {/* 3. In-Page Navigation & Workspace Stage */}
+      <div className="flex flex-col lg:flex-row gap-5 items-start w-full">
+        {/* ======================================================== */}
+        {/* LEFT IN-PAGE NAVIGATION (Operational Index)             */}
+        {/* ======================================================== */}
+        <aside className="w-full lg:w-64 shrink-0 bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-3 space-y-3">
+          <div>
+            <div className="px-2 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+              Workspace Views
+            </div>
 
-          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse text-[13px]">
-                <thead>
-                  <tr className="border-b border-[var(--border)] bg-[var(--surface-subtle)] text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[var(--text-muted)]">
-                    <th className="py-2.5 px-4">Product</th>
-                    <th className="py-2.5 px-4">Location</th>
-                    <th className="py-2.5 px-4 w-28">State</th>
-                    <th className="py-2.5 px-4 text-right w-28">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--border)]">
-                  {stockExceptions.map((ex) => (
-                    <tr key={ex.id} className="hover:bg-[var(--surface-subtle)] transition-colors">
-                      <td className="py-2.5 px-4 font-medium text-[var(--text-primary)]">
-                        {ex.productName}
-                        <span className="block text-[11px] font-mono text-[var(--text-muted)]">{ex.productCode}</span>
-                      </td>
-                      <td className="py-2.5 px-4 text-[var(--text-secondary)]">
-                        {ex.locationName}
-                      </td>
-                      <td className="py-2.5 px-4">
-                        <StatusBadge status={ex.state === 'OUT' ? 'OUT_OF_STOCK' : 'LOW'} label={ex.state === 'OUT' ? 'OUT' : 'LOW'} />
-                      </td>
-                      <td className="py-2.5 px-4 text-right">
-                        {canMutate ? (
-                          <button
-                            type="button"
-                            onClick={() => openReceiveModal(ex.productId, ex.locationId || undefined)}
-                            className="text-[12px] font-semibold text-[var(--accent)] hover:underline cursor-pointer"
-                          >
-                            Receive →
-                          </button>
-                        ) : (
-                          <span className="text-[12px] text-[var(--text-muted)]">—</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="space-y-1">
+              {/* 1. Inventory Registry */}
+              <button
+                type="button"
+                onClick={() => setActiveTab('registry')}
+                className={`w-full text-left px-3 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
+                  activeTab === 'registry'
+                    ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--accent)]'
+                    : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
+                }`}
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <line x1="3" y1="9" x2="21" y2="9" />
+                    <line x1="9" y1="9" x2="9" y2="21" />
+                  </svg>
+                  <span className="truncate">Inventory Registry</span>
+                </div>
+                <span className="text-[11px] font-medium px-1.5 py-0.5 rounded-[2px] bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--text-secondary)] tabular-nums">
+                  {initialSummaries.length}
+                </span>
+              </button>
+
+              {/* 2. Stock Exceptions */}
+              <button
+                type="button"
+                onClick={() => setActiveTab('exceptions')}
+                className={`w-full text-left px-3 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
+                  activeTab === 'exceptions'
+                    ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--status-danger)]'
+                    : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
+                }`}
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <svg className="w-4 h-4 text-[var(--status-danger)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                    <line x1="12" y1="9" x2="12" y2="13" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" strokeWidth="2.5" />
+                  </svg>
+                  <span className="truncate">Stock Exceptions</span>
+                </div>
+                <span
+                  className={`text-[11px] font-medium px-1.5 py-0.5 rounded-[2px] tabular-nums ${
+                    stockExceptions.length > 0
+                      ? 'bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]'
+                      : 'bg-[var(--surface-subtle)] text-[var(--text-muted)] border border-[var(--border)]'
+                  }`}
+                >
+                  {stockExceptions.length}
+                </span>
+              </button>
+
+              {/* 3. Recent Movements */}
+              <button
+                type="button"
+                onClick={() => setActiveTab('movements')}
+                className={`w-full text-left px-3 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
+                  activeTab === 'movements'
+                    ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--accent)]'
+                    : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
+                }`}
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9" />
+                    <polyline points="12 7 12 12 15 15" />
+                  </svg>
+                  <span className="truncate">Recent Movements</span>
+                </div>
+                <span className="text-[11px] font-medium px-1.5 py-0.5 rounded-[2px] bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--text-secondary)] tabular-nums">
+                  {movements.length}
+                </span>
+              </button>
             </div>
           </div>
-        </section>
-      )}
 
-      {/* 4. Recent Movements Ledger */}
-      {movements.length > 0 && (
-        <section aria-labelledby="movements-heading">
-          <div className="flex items-baseline justify-between mb-2.5">
-            <h2 id="movements-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] m-0">
-              RECENT MOVEMENTS
-            </h2>
-            <Link href="/inventory/movements" className="text-[12px] font-semibold text-[var(--accent)] hover:underline">
-              View full ledger →
-            </Link>
-          </div>
-
-          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse text-[13px]">
-                <thead>
-                  <tr className="border-b border-[var(--border)] bg-[var(--surface-subtle)] text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[var(--text-muted)]">
-                    <th className="py-2.5 px-4 w-20">Time</th>
-                    <th className="py-2.5 px-4 w-36">Serial</th>
-                    <th className="py-2.5 px-4">Product</th>
-                    <th className="py-2.5 px-4">From</th>
-                    <th className="py-2.5 px-4">To</th>
-                    <th className="py-2.5 px-4 text-right w-28">Type</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--border)]">
-                  {movements.map((m) => {
-                    const timeStr = new Date(m.createdAt).toLocaleTimeString('en-IN', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      hour12: false,
-                      timeZone: 'Asia/Kolkata',
-                    });
-                    return (
-                      <tr key={m.id} className="hover:bg-[var(--surface-subtle)] transition-colors">
-                        <td className="py-2.5 px-4 font-mono text-[11.5px] text-[var(--text-muted)] whitespace-nowrap">
-                          {timeStr}
-                        </td>
-                        <td className="py-2.5 px-4 font-mono text-[12px] font-semibold text-[var(--text-primary)]">
-                          {m.serialNumber}
-                        </td>
-                        <td className="py-2.5 px-4 text-[var(--text-secondary)] font-medium">
-                          {m.productName}
-                        </td>
-                        <td className="py-2.5 px-4 text-[var(--text-muted)]">
-                          {m.fromLocationName || 'External Origin'}
-                        </td>
-                        <td className="py-2.5 px-4 text-[var(--text-secondary)]">
-                          {m.toLocationName || 'External Destination'}
-                        </td>
-                        <td className="py-2.5 px-4 text-right">
-                          <StatusBadge status={m.type} />
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+          {/* Quick Summary Counts inside subnav */}
+          <div className="pt-3 border-t border-[var(--border)] text-[12px] space-y-1.5 text-[var(--text-secondary)]">
+            <div className="flex items-center justify-between">
+              <span>Available Units</span>
+              <span className="font-semibold text-[var(--status-success)] tabular-nums">{totalAvailable}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Depleted Breaches</span>
+              <span className={`font-semibold tabular-nums ${zeroStockCount > 0 ? 'text-[var(--status-danger)]' : 'text-[var(--text-primary)]'}`}>
+                {zeroStockCount}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Active Facilities</span>
+              <span className="font-semibold text-[var(--text-primary)] tabular-nums">{activeLocationsCount}</span>
             </div>
           </div>
-        </section>
-      )}
+        </aside>
 
-      {/* 5. Inventory Registry Section */}
-      <section aria-labelledby="registry-heading">
-        <h2 id="registry-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-3">
-          INVENTORY REGISTRY
-        </h2>
+        {/* ======================================================== */}
+        {/* RIGHT FOCUSED WORKSPACE STAGE                            */}
+        {/* ======================================================== */}
+        <main className="flex-1 w-full min-w-0">
+          {/* TAB 1: INVENTORY REGISTRY */}
+          {activeTab === 'registry' && (
+            <section aria-labelledby="registry-heading" className="space-y-3">
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <line x1="3" y1="9" x2="21" y2="9" />
+                  <line x1="9" y1="9" x2="9" y2="21" />
+                </svg>
+                <h2 id="registry-heading" className="text-[14px] font-semibold text-[var(--text-primary)] m-0">
+                  Inventory Registry
+                </h2>
+                <span className="text-[12px] font-normal text-[var(--text-secondary)]">
+                  ({filteredSummaries.length} of {initialSummaries.length} positions)
+                </span>
+              </div>
 
-        {/* Compact Registry Toolbar */}
-        <RegistryToolbar
-          searchValue={search}
-          onSearchChange={setSearch}
-          searchPlaceholder="Search product, code, or facility..."
-          totalCount={initialSummaries.length}
-          filteredCount={filteredSummaries.length}
-          unitLabel="positions"
-          filters={[
-            {
-              id: 'location',
-              label: 'Facility',
-              value: selectedLocation,
-              onChange: setSelectedLocation,
-              options: [
-                { label: 'All Facilities', value: 'ALL' },
-                ...locations.map((loc) => ({ label: `${loc.name} (${loc.code})`, value: loc.id })),
-              ],
-            },
-            {
-              id: 'category',
-              label: 'Category',
-              value: selectedCategory,
-              onChange: setSelectedCategory,
-              options: [
-                { label: 'All Categories', value: 'ALL' },
-                ...categories.map((c) => ({ label: c.name, value: c.id })),
-              ],
-            },
-            {
-              id: 'availability',
-              label: 'Stock Level',
-              value: selectedAvailability,
-              onChange: (v) => setSelectedAvailability(v as 'ALL' | 'IN_STOCK' | 'OUT_OF_STOCK'),
-              options: [
-                { label: 'All Stock Levels', value: 'ALL' },
-                { label: 'In Stock (> 0)', value: 'IN_STOCK' },
-                { label: 'Zero Stock', value: 'OUT_OF_STOCK' },
-              ],
-            },
-          ]}
-        />
+              {/* Compact Registry Toolbar */}
+              <RegistryToolbar
+                searchValue={search}
+                onSearchChange={setSearch}
+                searchPlaceholder="Search product, code, or facility..."
+                totalCount={initialSummaries.length}
+                filteredCount={filteredSummaries.length}
+                unitLabel="positions"
+                filters={[
+                  {
+                    id: 'location',
+                    label: 'Facility',
+                    value: selectedLocation,
+                    onChange: setSelectedLocation,
+                    options: [
+                      { label: 'All Facilities', value: 'ALL' },
+                      ...locations.map((loc) => ({ label: `${loc.name} (${loc.code})`, value: loc.id })),
+                    ],
+                  },
+                  {
+                    id: 'category',
+                    label: 'Category',
+                    value: selectedCategory,
+                    onChange: setSelectedCategory,
+                    options: [
+                      { label: 'All Categories', value: 'ALL' },
+                      ...categories.map((c) => ({ label: c.name, value: c.id })),
+                    ],
+                  },
+                  {
+                    id: 'availability',
+                    label: 'Stock Level',
+                    value: selectedAvailability,
+                    onChange: (v) => setSelectedAvailability(v as 'ALL' | 'IN_STOCK' | 'OUT_OF_STOCK'),
+                    options: [
+                      { label: 'All Stock Levels', value: 'ALL' },
+                      { label: 'In Stock (> 0)', value: 'IN_STOCK' },
+                      { label: 'Zero Stock', value: 'OUT_OF_STOCK' },
+                    ],
+                  },
+                ]}
+              />
 
-      {/* Main Table */}
-      <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] overflow-hidden shadow-[0_1px_3px_rgba(23,23,20,0.03)]">
-        {filteredSummaries.length === 0 ? (
-          <div className="p-12 text-center text-[var(--text-muted)]">
-            <p className="text-[14px] font-medium text-[var(--text-primary)] mb-1">No inventory positions found</p>
-            <p className="text-[12.5px] m-0">
-              Try adjusting your search criteria or receive initial physical serial numbers.
-            </p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-[13px]">
-              <thead>
-                <tr className="bg-[var(--background)] border-b border-[var(--border)] text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">
-                  <th className="py-3 px-4">Product</th>
-                  <th className="py-3 px-4">Facility / Location</th>
-                  <th className="py-3 px-4 text-right font-bold">Available Serials</th>
-                  <th className="py-3 px-4 text-right">Total Tracked</th>
-                  <th className="py-3 px-4 text-center">Status</th>
-                  <th className="py-3 px-4">Last Movement</th>
-                  {canMutate && <th className="py-3 px-4 text-right">Actions</th>}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--border)]">
-                {filteredSummaries.map((item, idx) => (
-                  <tr key={`${item.productId}-${item.locationId || idx}`} className="hover:bg-[var(--surface)] transition-colors">
-                    {/* Product */}
-                    <td className="py-3.5 px-4">
-                      <Link
-                        href={`/products/${item.productId}`}
-                        className="font-semibold text-[var(--text-primary)] hover:text-[var(--accent-text)] transition-colors block"
-                      >
-                        {item.productName}
-                      </Link>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className="font-mono text-[11.5px] font-bold text-[var(--accent-text)]">
-                          {item.productCode}
-                        </span>
-                        {item.categoryName && (
-                          <>
-                            <span className="text-[11.5px] text-[var(--text-muted)]">•</span>
-                            <span className="text-[11.5px] text-[var(--text-secondary)]">{item.categoryName}</span>
-                          </>
-                        )}
-                      </div>
-                    </td>
+              {/* Main Table */}
+              <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
+                {filteredSummaries.length === 0 ? (
+                  <div className="p-12 text-center text-[var(--text-secondary)]">
+                    <p className="text-[14px] font-medium text-[var(--text-primary)] mb-1">No inventory positions found</p>
+                    <p className="text-[13px] m-0">
+                      Try adjusting your search criteria or receive initial physical serial numbers.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                          <th className="py-2.5 px-4">Product</th>
+                          <th className="py-2.5 px-4">Facility / Location</th>
+                          <th className="py-2.5 px-4 text-right">Available Serials</th>
+                          <th className="py-2.5 px-4 text-right">Total Tracked</th>
+                          <th className="py-2.5 px-4 text-center">Status</th>
+                          <th className="py-2.5 px-4">Last Movement</th>
+                          {canMutate && <th className="py-2.5 px-4 text-right">Actions</th>}
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[var(--border)]">
+                        {filteredSummaries.map((item, idx) => (
+                          <tr key={`${item.productId}-${item.locationId || idx}`} className="hover:bg-[var(--surface-subtle)] transition-colors h-[44px]">
+                            {/* Product */}
+                            <td className="py-2.5 px-4">
+                              <Link
+                                href={`/products/${item.productId}`}
+                                className="text-[14px] font-medium text-[var(--text-primary)] hover:text-[var(--accent)] block"
+                              >
+                                {item.productName}
+                              </Link>
+                              <div className="flex items-center gap-1.5 mt-0.5">
+                                <span className="font-mono text-[12px] text-[var(--text-secondary)]">
+                                  {item.productCode}
+                                </span>
+                                {item.categoryName && (
+                                  <>
+                                    <span className="text-[12px] text-[var(--text-muted)]">•</span>
+                                    <span className="text-[12px] text-[var(--text-secondary)]">{item.categoryName}</span>
+                                  </>
+                                )}
+                              </div>
+                            </td>
 
-                    {/* Location */}
-                    <td className="py-3.5 px-4">
-                      <span className="font-medium text-[var(--text-primary)] block">{item.locationName}</span>
-                      <span className="font-mono text-[11px] text-[var(--text-muted)]">{item.locationCode}</span>
-                    </td>
+                            {/* Location */}
+                            <td className="py-2.5 px-4">
+                              <span className="text-[14px] font-normal text-[var(--text-primary)] block">{item.locationName}</span>
+                              <span className="font-mono text-[12px] text-[var(--text-secondary)]">{item.locationCode}</span>
+                            </td>
 
-                    {/* Available Serials */}
-                    <td className="py-3.5 px-4 text-right font-mono font-bold text-[14px]">
-                      <span className={item.availableCount > 0 ? 'text-[var(--status-success)]' : 'text-[var(--status-danger)]'}>
-                        {item.availableCount}
-                      </span>
-                    </td>
+                            {/* Available Serials */}
+                            <td className="py-2.5 px-4 text-right font-sans font-semibold text-[14px]">
+                              <span className={item.availableCount > 0 ? 'text-[var(--status-success)]' : 'text-[var(--status-danger)]'}>
+                                {item.availableCount}
+                              </span>
+                            </td>
 
-                    {/* Total Serials */}
-                    <td className="py-3.5 px-4 text-right font-mono text-[var(--text-secondary)]">
-                      {item.totalCount}
-                    </td>
+                            {/* Total Serials */}
+                            <td className="py-2.5 px-4 text-right font-sans text-[14px] text-[var(--text-secondary)]">
+                              {item.totalCount}
+                            </td>
 
-                    {/* Product Status */}
-                    <td className="py-3.5 px-4 text-center">
-                      <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider ${
-                          item.status === 'ACTIVE'
-                            ? 'bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]'
-                            : 'bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]'
-                        }`}
-                      >
-                        {item.status}
-                      </span>
-                    </td>
+                            {/* Product Status */}
+                            <td className="py-2.5 px-4 text-center">
+                              <StatusBadge status={item.status} />
+                            </td>
 
-                    {/* Last Movement */}
-                    <td className="py-3.5 px-4 text-[var(--text-muted)] text-[12px] whitespace-nowrap">
-                      {new Date(item.lastUpdated).toLocaleDateString(undefined, {
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                    </td>
+                            {/* Last Movement */}
+                            <td className="py-2.5 px-4 text-[var(--text-secondary)] text-[12px] whitespace-nowrap">
+                              {new Date(item.lastUpdated).toLocaleDateString(undefined, {
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </td>
 
-                    {/* Actions */}
-                    {canMutate && (
-                      <td className="py-3.5 px-4 text-right space-x-1.5 whitespace-nowrap">
-                        <button
-                          type="button"
-                          onClick={() => openReceiveModal(item.productId, item.locationId)}
-                          className="px-2 py-1 rounded bg-[var(--background)] hover:bg-[var(--surface-subtle)] text-[11.5px] font-semibold text-[var(--status-success)] cursor-pointer"
-                        >
-                          + In
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => openTransferModal(item.locationId)}
-                          className="px-2 py-1 rounded bg-[var(--background)] hover:bg-[var(--surface-subtle)] text-[11.5px] font-medium text-[var(--text-primary)] cursor-pointer"
-                        >
-                          Transfer
-                        </button>
-                        <Link
-                          href={`/products/${item.productId}`}
-                          className="px-2 py-1 rounded bg-[var(--background)] hover:bg-[var(--surface-subtle)] text-[11.5px] font-medium text-[var(--text-primary)]"
-                        >
-                          View
-                        </Link>
-                      </td>
-                    )}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+                            {/* Actions */}
+                            {canMutate && (
+                              <td className="py-3.5 px-4 text-right space-x-1.5 whitespace-nowrap">
+                                <button
+                                  type="button"
+                                  onClick={() => openReceiveModal(item.productId, item.locationId)}
+                                  className="px-2 py-1 rounded bg-[var(--background)] hover:bg-[var(--surface-subtle)] text-[11.5px] font-semibold text-[var(--status-success)] cursor-pointer"
+                                >
+                                  + In
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => openTransferModal(item.locationId)}
+                                  className="px-2 py-1 rounded bg-[var(--background)] hover:bg-[var(--surface-subtle)] text-[11.5px] font-medium text-[var(--text-primary)] cursor-pointer"
+                                >
+                                  Transfer
+                                </button>
+                                <Link
+                                  href={`/products/${item.productId}`}
+                                  className="px-2 py-1 rounded bg-[var(--background)] hover:bg-[var(--surface-subtle)] text-[11.5px] font-medium text-[var(--text-primary)]"
+                                >
+                                  View
+                                </Link>
+                              </td>
+                            )}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+
+          {/* TAB 2: STOCK EXCEPTIONS */}
+          {activeTab === 'exceptions' && (
+            <section aria-labelledby="stock-exceptions-heading" className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-4 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+                <div className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-[var(--status-danger)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                    <line x1="12" y1="9" x2="12" y2="13" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" strokeWidth="2.5" />
+                  </svg>
+                  <h2 id="stock-exceptions-heading" className="text-[14px] font-semibold text-[var(--status-danger)] m-0">
+                    Stock Exceptions ({stockExceptions.length})
+                  </h2>
+                </div>
+                {canMutate && (
+                  <button
+                    type="button"
+                    onClick={() => openReceiveModal()}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium rounded-[3px] bg-[var(--accent)] text-white hover:opacity-90 transition-opacity shadow-xs cursor-pointer"
+                  >
+                    <svg className="w-3.5 h-3.5 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                      <polyline points="3.29 7 12 12 20.71 7" />
+                      <line x1="12" y1="22" x2="12" y2="12" />
+                    </svg>
+                    <span>Receive Serials</span>
+                  </button>
+                )}
+              </div>
+
+              {stockExceptions.length === 0 ? (
+                <div className="py-8 text-center text-[var(--text-secondary)] text-[13px]">
+                  No inventory exceptions recorded. All positions meet safety threshold levels.
+                </div>
+              ) : (
+                <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                          <th className="py-2.5 px-4">Product</th>
+                          <th className="py-2.5 px-4">Location</th>
+                          <th className="py-2.5 px-4 w-28">State</th>
+                          <th className="py-2.5 px-4 text-right w-28">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[var(--border)]">
+                        {stockExceptions.map((ex) => (
+                          <tr key={ex.id} className="hover:bg-[var(--surface-subtle)] transition-colors h-[40px]">
+                            <td className="py-2.5 px-4 text-[14px] font-medium text-[var(--text-primary)]">
+                              {ex.productName}
+                              <span className="block text-[12px] font-mono text-[var(--text-secondary)]">{ex.productCode}</span>
+                            </td>
+                            <td className="py-2.5 px-4 text-[14px] font-normal text-[var(--text-secondary)]">
+                              {ex.locationName}
+                            </td>
+                            <td className="py-2.5 px-4">
+                              <StatusBadge status={ex.state === 'OUT' ? 'OUT_OF_STOCK' : 'LOW'} label={ex.state === 'OUT' ? 'Out' : 'Low'} />
+                            </td>
+                            <td className="py-2.5 px-4 text-right">
+                              {canMutate ? (
+                                <button
+                                  type="button"
+                                  onClick={() => openReceiveModal(ex.productId, ex.locationId || undefined)}
+                                  className="text-[13px] font-medium text-[var(--accent)] hover:underline cursor-pointer"
+                                >
+                                  Receive →
+                                </button>
+                              ) : (
+                                <span className="text-[13px] text-[var(--text-secondary)]">—</span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* TAB 3: RECENT MOVEMENTS */}
+          {activeTab === 'movements' && (
+            <section aria-labelledby="movements-heading" className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-4 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+                <div className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9" />
+                    <polyline points="12 7 12 12 15 15" />
+                  </svg>
+                  <h2 id="movements-heading" className="text-[14px] font-semibold text-[var(--text-primary)] m-0">
+                    Recent Movements ({movements.length})
+                  </h2>
+                </div>
+                <Link href="/inventory/movements" className="text-[13px] font-medium text-[var(--accent)] hover:underline">
+                  View full ledger →
+                </Link>
+              </div>
+
+              {movements.length === 0 ? (
+                <div className="py-8 text-center text-[var(--text-secondary)] text-[13px]">
+                  No physical serial movements logged yet.
+                </div>
+              ) : (
+                <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                          <th className="py-2.5 px-4 w-20">Time</th>
+                          <th className="py-2.5 px-4 w-36">Serial</th>
+                          <th className="py-2.5 px-4">Product</th>
+                          <th className="py-2.5 px-4">From</th>
+                          <th className="py-2.5 px-4">To</th>
+                          <th className="py-2.5 px-4 text-right w-28">Type</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[var(--border)]">
+                        {movements.map((m) => {
+                          const timeStr = new Date(m.createdAt).toLocaleTimeString('en-IN', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false,
+                            timeZone: 'Asia/Kolkata',
+                          });
+                          return (
+                            <tr key={m.id} className="hover:bg-[var(--surface-subtle)] transition-colors h-[40px]">
+                              <td className="py-2 px-4 font-mono text-[12px] text-[var(--text-secondary)] whitespace-nowrap">
+                                {timeStr}
+                              </td>
+                              <td className="py-2 px-4 font-mono text-[12px] text-[var(--text-primary)]">
+                                {m.serialNumber}
+                              </td>
+                              <td className="py-2 px-4 text-[14px] text-[var(--text-primary)] font-medium">
+                                {m.productName}
+                              </td>
+                              <td className="py-2 px-4 text-[13px] text-[var(--text-secondary)]">
+                                {m.fromLocationName || 'External Origin'}
+                              </td>
+                              <td className="py-2 px-4 text-[13px] text-[var(--text-secondary)]">
+                                {m.toLocationName || 'External Destination'}
+                              </td>
+                              <td className="py-2 px-4 text-right">
+                                <StatusBadge status={m.type} />
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </section>
+          )}
+        </main>
       </div>
-      </section>
 
       {/* ========================================================================= */}
       {/* RECEIVE SERIAL NUMBERS MODAL                                              */}
       {/* ========================================================================= */}
-      <Modal
-        isOpen={modalMode === 'RECEIVE'}
-        onClose={() => setModalMode(null)}
-        title="Receive Serial Number Units"
-      >
-        <form onSubmit={handleReceiveSubmit} className="space-y-4">
-          {modalError && (
-            <div className="p-3 rounded bg-[var(--status-danger-soft)] border border-[var(--status-danger-border)] text-[var(--status-danger)] text-[13px]">
-              {modalError}
-            </div>
-          )}
-
-          <div>
-            <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1">
-              Target Product *
-            </label>
-            <select
-              value={formProductId}
-              onChange={(e) => setFormProductId(e.target.value)}
-              className="w-full px-3 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] font-medium focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
-            >
-              {products.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name} ({p.productCode})
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1">
-              Receiving Facility / Location *
-            </label>
-            <select
-              value={formLocationId}
-              onChange={(e) => setFormLocationId(e.target.value)}
-              className="w-full px-3 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] font-medium focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
-            >
-              {locations.map((loc) => (
-                <option key={loc.id} value={loc.id}>
-                  {loc.name} ({loc.code})
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
-                Serial Numbers (Batch Input) *
-              </label>
-              <span className="text-[11.5px] font-mono font-bold text-[var(--status-success)] bg-[var(--status-success-soft)] border border-[var(--status-success-border)] px-2 py-0.5 rounded">
-                {parsedSerials.length} unit{parsedSerials.length === 1 ? '' : 's'} detected
-              </span>
-            </div>
-            <textarea
-              rows={4}
-              required
-              value={formSerialsText}
-              onChange={(e) => setFormSerialsText(e.target.value)}
-              placeholder="Paste or scan serial numbers (separated by lines or commas):&#10;TRX10001&#10;TRX10002&#10;TRX10003"
-              className="w-full px-3 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] font-mono text-[12.5px] uppercase focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] resize-y"
-            />
-            <p className="text-[11.5px] text-[var(--text-muted)] mt-1 m-0">
-              Each serial number must be distinct. Collisions with existing stock will be rejected.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1">
-                Reference / PO / Batch
-              </label>
-              <input
-                type="text"
-                value={formReference}
-                onChange={(e) => setFormReference(e.target.value)}
-                placeholder="e.g. PO-88401, BATCH-G2"
-                className="w-full px-3 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
-              />
-            </div>
-
-            <div>
-              <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1">
-                Operator Notes
-              </label>
-              <input
-                type="text"
-                value={formNotes}
-                onChange={(e) => setFormNotes(e.target.value)}
-                placeholder="e.g. Ingested from production line"
-                className="w-full px-3 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[var(--border)]">
-            <button
-              type="button"
-              onClick={() => setModalMode(null)}
-              className="px-4 py-2 rounded-[6px] border border-[var(--border)] hover:bg-[var(--background)] text-[var(--text-primary)] text-[13px] font-medium cursor-pointer"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting || parsedSerials.length === 0}
-              className="px-4 py-2 rounded-[6px] bg-[var(--status-success)] hover:bg-[var(--status-success)] disabled:opacity-50 text-[var(--background)] text-[13px] font-semibold transition-colors cursor-pointer"
-            >
-              {isSubmitting ? 'Recording...' : `Confirm Receipt (${parsedSerials.length} Serials)`}
-            </button>
-          </div>
-        </form>
-      </Modal>
+      {modalMode === 'RECEIVE' && (
+        <ReceiveStockModal
+          isOpen={true}
+          onClose={() => setModalMode(null)}
+          products={products}
+          locations={locations}
+          initialProductId={formProductId}
+          initialLocationId={formLocationId}
+          onSuccess={() => {
+            setModalMode(null);
+            router.refresh();
+          }}
+        />
+      )}
 
       {/* ========================================================================= */}
       {/* TRANSFER SERIAL NUMBERS MODAL                                             */}
@@ -833,7 +885,7 @@ export function InventoryTable({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1">
+              <label className="block text-[12px] font-semibold text-[var(--text-secondary)] mb-1">
                 Source Location *
               </label>
               <select
@@ -850,7 +902,7 @@ export function InventoryTable({
             </div>
 
             <div>
-              <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1">
+              <label className="block text-[12px] font-semibold text-[var(--text-secondary)] mb-1">
                 Destination Location *
               </label>
               <select
@@ -869,7 +921,7 @@ export function InventoryTable({
 
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
+              <label className="block text-[12px] font-semibold text-[var(--text-secondary)]">
                 Serial Numbers to Move *
               </label>
               <span className="text-[11.5px] font-mono font-bold text-[var(--status-info)] bg-[var(--status-info-soft)] border border-[var(--status-info-border)] px-2 py-0.5 rounded">
@@ -888,7 +940,7 @@ export function InventoryTable({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1">
+              <label className="block text-[12px] font-semibold text-[var(--text-secondary)] mb-1">
                 Dispatch Reference / Waybill
               </label>
               <input
@@ -901,7 +953,7 @@ export function InventoryTable({
             </div>
 
             <div>
-              <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1">
+              <label className="block text-[12px] font-semibold text-[var(--text-secondary)] mb-1">
                 Transfer Notes
               </label>
               <input
@@ -949,7 +1001,7 @@ export function InventoryTable({
           )}
 
           <div>
-            <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1">
+            <label className="block text-[12px] font-semibold text-[var(--text-secondary)] mb-1">
               Serial Number *
             </label>
             <input
@@ -963,7 +1015,7 @@ export function InventoryTable({
           </div>
 
           <div>
-            <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1">
+            <label className="block text-[12px] font-semibold text-[var(--text-secondary)] mb-1">
               New Status *
             </label>
             <select
@@ -977,7 +1029,7 @@ export function InventoryTable({
           </div>
 
           <div>
-            <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1">
+            <label className="block text-[12px] font-semibold text-[var(--text-secondary)] mb-1">
               Mandatory Audit Reason *
             </label>
             <input
@@ -991,7 +1043,7 @@ export function InventoryTable({
           </div>
 
           <div>
-            <label className="block text-[12px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-1">
+            <label className="block text-[12px] font-semibold text-[var(--text-secondary)] mb-1">
               Notes (Optional)
             </label>
             <input

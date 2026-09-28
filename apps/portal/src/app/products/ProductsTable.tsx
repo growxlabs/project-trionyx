@@ -19,8 +19,11 @@ interface ProductsTableProps {
   user: SafeUser;
 }
 
+export type ProductWorkspaceTab = 'registry' | 'attention' | 'families';
+
 export function ProductsTable({ initialProducts, categories, user }: ProductsTableProps) {
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState<ProductWorkspaceTab>('registry');
   const [products, setProducts] = useState(initialProducts);
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
@@ -36,11 +39,6 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
 
   // Derived metrics
   const activeCount = useMemo(() => products.filter((p) => p.status === 'ACTIVE').length, [products]);
-  const draftOrInactiveCount = useMemo(() => products.filter((p) => p.status !== 'ACTIVE').length, [products]);
-  const totalAvailableStock = useMemo(
-    () => products.reduce((acc, p) => acc + (p.availableUnits ?? 0), 0),
-    [products]
-  );
   const publicCount = useMemo(() => products.filter((p) => p.publicVisibility === 'PUBLIC').length, [products]);
 
   // Out of stock or low stock items (< 5 units)
@@ -66,16 +64,6 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
     });
   }, [categories, products]);
 
-  // Product Families pagination (4 per page to prevent excessive vertical height on mobile & compact row on desktop)
-  const [familyPage, setFamilyPage] = useState(1);
-  const FAMILY_PAGE_SIZE = 4;
-  const totalFamilyPages = Math.max(1, Math.ceil(categoryStats.length / FAMILY_PAGE_SIZE));
-  const currentFamilyPage = Math.min(familyPage, totalFamilyPages);
-
-  const paginatedFamilies = useMemo(() => {
-    const start = (currentFamilyPage - 1) * FAMILY_PAGE_SIZE;
-    return categoryStats.slice(start, start + FAMILY_PAGE_SIZE);
-  }, [categoryStats, currentFamilyPage]);
 
   // Filter products locally for instant response
   const filteredProducts = useMemo(() => {
@@ -125,350 +113,510 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
       {/* 1. Header: Products with count and action */}
       <WorkspaceHeader
         title="Products"
-        meta={<span className="font-mono text-[13px] text-[var(--text-muted)]">{products.length} products</span>}
+        meta={<span className="text-[13px] font-normal text-[var(--text-secondary)]">{products.length} products</span>}
         action={
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setShowLookupModal(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[13px] font-semibold transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-[4px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[13px] font-medium transition-colors cursor-pointer"
             >
-              <svg className="w-3.5 h-3.5 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+                <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+                <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+                <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+                <line x1="7" y1="7" x2="7" y2="17" />
+                <line x1="12" y1="7" x2="12" y2="17" />
+                <line x1="17" y1="7" x2="17" y2="17" />
               </svg>
               <span>Lookup Serial</span>
             </button>
             {canWrite && (
               <Link
                 href="/products/new"
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity shadow-xs"
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity shadow-xs"
               >
-                + New Product
+                <svg className="w-4 h-4 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                <span>New Product</span>
               </Link>
             )}
           </div>
         }
       />
 
-      {/* 2. Product Families */}
-      {categoryStats.length > 0 && (
-        <section aria-labelledby="product-families-heading" className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <h2 id="product-families-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] m-0">
-                PRODUCT FAMILIES
-              </h2>
-              <span className="font-mono text-[10px] text-[var(--text-muted)]">
-                ({categoryStats.length})
-              </span>
+      {/* 2. In-Page Navigation & Workspace Stage */}
+      <div className="flex flex-col lg:flex-row gap-5 items-start w-full">
+        {/* ======================================================== */}
+        {/* LEFT IN-PAGE NAVIGATION (Operational Index)             */}
+        {/* ======================================================== */}
+        <aside className="w-full lg:w-64 shrink-0 bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-3 space-y-3">
+          <div>
+            <div className="px-2 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+              Workspace Views
             </div>
 
-            {totalFamilyPages > 1 && (
-              <div className="flex items-center gap-2.5">
-                <span className="font-mono text-[11px] text-[var(--text-secondary)]">
-                  {currentFamilyPage} / {totalFamilyPages}
-                </span>
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => setFamilyPage((p) => Math.max(1, p - 1))}
-                    disabled={currentFamilyPage === 1}
-                    className="w-7 h-7 flex items-center justify-center rounded-[3px] border border-[var(--border)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-raised)] disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
-                    aria-label="Previous families"
-                    title="Previous page"
-                  >
-                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="15 18 9 12 15 6" />
-                    </svg>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setFamilyPage((p) => Math.min(totalFamilyPages, p + 1))}
-                    disabled={currentFamilyPage === totalFamilyPages}
-                    className="w-7 h-7 flex items-center justify-center rounded-[3px] border border-[var(--border)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-raised)] disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
-                    aria-label="Next families"
-                    title="Next page"
-                  >
-                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="9 18 15 12 9 6" />
-                    </svg>
-                  </button>
+            <div className="space-y-1">
+              {/* 1. Product Registry */}
+              <button
+                type="button"
+                onClick={() => setActiveTab('registry')}
+                className={`w-full text-left px-3 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
+                  activeTab === 'registry'
+                    ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--accent)]'
+                    : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
+                }`}
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <line x1="3" y1="9" x2="21" y2="9" />
+                    <line x1="9" y1="9" x2="9" y2="21" />
+                  </svg>
+                  <span className="truncate">Product Registry</span>
                 </div>
-              </div>
-            )}
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {paginatedFamilies.map((cat) => {
-              const isSelected = selectedCategory === cat.id;
-              return (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => setSelectedCategory(isSelected ? 'ALL' : cat.id)}
-                  className={`p-3 rounded-[4px] border text-left transition-colors cursor-pointer ${
-                    isSelected
-                      ? 'border-[var(--accent)] bg-[var(--surface-subtle)] ring-1 ring-[var(--accent)]'
-                      : 'border-[var(--border)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-raised)]'
+                <span className="text-[11px] font-medium px-1.5 py-0.5 rounded-[2px] bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--text-secondary)] tabular-nums">
+                  {products.length}
+                </span>
+              </button>
+
+              {/* 2. Needs Attention */}
+              <button
+                type="button"
+                onClick={() => setActiveTab('attention')}
+                className={`w-full text-left px-3 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
+                  activeTab === 'attention'
+                    ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--status-danger)]'
+                    : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
+                }`}
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <svg className="w-4 h-4 text-[var(--status-danger)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                    <line x1="12" y1="9" x2="12" y2="13" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" strokeWidth="2.5" />
+                  </svg>
+                  <span className="truncate">Needs Attention</span>
+                </div>
+                <span
+                  className={`text-[11px] font-medium px-1.5 py-0.5 rounded-[2px] tabular-nums ${
+                    stockAttentionItems.length > 0
+                      ? 'bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]'
+                      : 'bg-[var(--surface-subtle)] text-[var(--text-muted)] border border-[var(--border)]'
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-1">
-                    <span className="font-semibold text-[13px] text-[var(--text-primary)]">
-                      {cat.name}
-                    </span>
-                    <span className="font-mono text-[11px] px-1.5 py-0.5 rounded bg-[var(--background)] border border-[var(--border)] text-[var(--text-secondary)]">
-                      {cat.formulaCount}
-                    </span>
-                  </div>
-                  <div className="mt-2 flex items-center justify-between text-[11.5px]">
-                    <span className="text-[var(--text-muted)]">Stock:</span>
-                    <span className={`font-mono font-semibold ${cat.totalUnits === 0 ? 'text-[var(--status-danger)]' : 'text-[var(--status-success)]'}`}>
-                      {cat.totalUnits} units
-                    </span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </section>
-      )}
+                  {stockAttentionItems.length}
+                </span>
+              </button>
 
-      {/* 3. Needs Attention */}
-      {stockAttentionItems.length > 0 && (
-        <section aria-labelledby="stock-attention-heading" className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-4">
-          <div className="flex items-baseline justify-between mb-3">
-            <h2 id="stock-attention-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--status-danger)] m-0">
-              NEEDS ATTENTION ({stockAttentionItems.length})
-            </h2>
-          </div>
-
-          <div className="divide-y divide-[var(--border)] border border-[var(--border)] rounded-[4px] bg-[var(--surface-subtle)]">
-            {stockAttentionItems.slice(0, 3).map((p) => (
-              <div key={p.id} className="p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[13px]">
-                <div className="flex items-center gap-3">
-                  <span className="font-mono text-[11.5px] text-[var(--text-muted)]">{p.productCode}</span>
-                  <Link href={`/products/${p.id}`} className="font-semibold text-[var(--text-primary)] hover:text-[var(--accent)]">
-                    {p.name}
-                  </Link>
-                  <span className="text-[12px] text-[var(--text-secondary)]">· {p.categoryName || 'General'}</span>
+              {/* 3. Product Families */}
+              <button
+                type="button"
+                onClick={() => setActiveTab('families')}
+                className={`w-full text-left px-3 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
+                  activeTab === 'families'
+                    ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--accent)]'
+                    : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
+                }`}
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                    <polyline points="2 17 12 22 22 17" />
+                    <polyline points="2 12 12 17 22 12" />
+                  </svg>
+                  <span className="truncate">Product Families</span>
                 </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  <span className={`font-mono text-[12px] font-bold px-2 py-0.5 rounded ${
-                    (p.availableUnits ?? 0) === 0
-                      ? 'bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]'
-                      : 'bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]'
-                  }`}>
-                    {p.availableUnits ?? 0} Available
+                <span className="text-[11px] font-medium px-1.5 py-0.5 rounded-[2px] bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--text-secondary)] tabular-nums">
+                  {categoryStats.length}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Quick Summary Counts */}
+          <div className="pt-3 border-t border-[var(--border)] text-[12px] space-y-1.5 text-[var(--text-secondary)]">
+            <div className="flex items-center justify-between">
+              <span>Active SKUs</span>
+              <span className="font-semibold text-[var(--text-primary)] tabular-nums">{activeCount}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Public Listed</span>
+              <span className="font-semibold text-[var(--text-primary)] tabular-nums">{publicCount}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Total Categories</span>
+              <span className="font-semibold text-[var(--text-primary)] tabular-nums">{categoryStats.length}</span>
+            </div>
+          </div>
+        </aside>
+
+        {/* ======================================================== */}
+        {/* RIGHT FOCUSED WORKSPACE STAGE                            */}
+        {/* ======================================================== */}
+        <main className="flex-1 w-full min-w-0">
+          {/* TAB 1: PRODUCT REGISTRY */}
+          {activeTab === 'registry' && (
+            <section aria-labelledby="product-registry-heading" className="space-y-3">
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <line x1="3" y1="9" x2="21" y2="9" />
+                  <line x1="9" y1="9" x2="9" y2="21" />
+                </svg>
+                <h2 id="product-registry-heading" className="text-[14px] font-semibold text-[var(--text-primary)] m-0">
+                  Product Registry
+                </h2>
+                {selectedCategory !== 'ALL' && (
+                  <span className="text-[12px] font-normal text-[var(--text-secondary)]">
+                    · Filtered by {categories.find((c) => c.id === selectedCategory)?.name || 'Category'}
                   </span>
-                  <Link
-                    href="/inventory"
-                    className="text-[12px] font-semibold text-[var(--accent)] hover:underline"
-                  >
-                    Receive Stock →
-                  </Link>
-                </div>
+                )}
               </div>
-            ))}
-          </div>
-        </section>
-      )}
 
-      {/* 4. Product Registry */}
-      <section aria-labelledby="product-registry-heading">
-        <h2 id="product-registry-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-3">
-          PRODUCT REGISTRY
-        </h2>
+              {/* Compact Registry Toolbar */}
+              <RegistryToolbar
+                searchValue={search}
+                onSearchChange={setSearch}
+                searchPlaceholder="Search product name, code (TRX-PROD-...), or slug..."
+                totalCount={products.length}
+                filteredCount={filteredProducts.length}
+                unitLabel="products"
+                filters={[
+                  {
+                    id: 'category',
+                    label: 'Category',
+                    value: selectedCategory,
+                    onChange: setSelectedCategory,
+                    options: [
+                      { label: 'All Categories', value: 'ALL' },
+                      ...categories.map((c) => ({ label: c.name, value: c.id })),
+                    ],
+                  },
+                  {
+                    id: 'status',
+                    label: 'Status',
+                    value: selectedStatus,
+                    onChange: setSelectedStatus,
+                    options: [
+                      { label: 'All Statuses', value: 'ALL' },
+                      { label: `Active (${activeCount})`, value: 'ACTIVE' },
+                      { label: 'Draft', value: 'DRAFT' },
+                      { label: 'Inactive', value: 'INACTIVE' },
+                      { label: 'Archived', value: 'ARCHIVED' },
+                    ],
+                  },
+                  {
+                    id: 'visibility',
+                    label: 'Visibility',
+                    value: selectedVisibility,
+                    onChange: setSelectedVisibility,
+                    options: [
+                      { label: 'All Visibility', value: 'ALL' },
+                      { label: `Public (${publicCount})`, value: 'PUBLIC' },
+                      { label: 'Private (Internal)', value: 'PRIVATE' },
+                    ],
+                  },
+                ]}
+              />
 
-        {/* Compact Registry Toolbar */}
-        <RegistryToolbar
-          searchValue={search}
-          onSearchChange={setSearch}
-          searchPlaceholder="Search product name, code (TRX-PROD-...), or slug..."
-          totalCount={products.length}
-          filteredCount={filteredProducts.length}
-          unitLabel="products"
-          filters={[
-            {
-              id: 'category',
-              label: 'Category',
-              value: selectedCategory,
-              onChange: setSelectedCategory,
-              options: [
-                { label: 'All Categories', value: 'ALL' },
-                ...categories.map((c) => ({ label: c.name, value: c.id })),
-              ],
-            },
-            {
-              id: 'status',
-              label: 'Status',
-              value: selectedStatus,
-              onChange: setSelectedStatus,
-              options: [
-                { label: 'All Statuses', value: 'ALL' },
-                { label: `Active (${activeCount})`, value: 'ACTIVE' },
-                { label: 'Draft', value: 'DRAFT' },
-                { label: 'Inactive', value: 'INACTIVE' },
-                { label: 'Archived', value: 'ARCHIVED' },
-              ],
-            },
-            {
-              id: 'visibility',
-              label: 'Visibility',
-              value: selectedVisibility,
-              onChange: setSelectedVisibility,
-              options: [
-                { label: 'All Visibility', value: 'ALL' },
-                { label: `Public (${publicCount})`, value: 'PUBLIC' },
-                { label: 'Private (Internal)', value: 'PRIVATE' },
-              ],
-            },
-          ]}
-        />
+              {/* Working Table */}
+              <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
+                {filteredProducts.length === 0 ? (
+                  <EmptyOperationalState
+                    title="No products match current filters"
+                    description={
+                      search || selectedCategory !== 'ALL' || selectedStatus !== 'ALL' || selectedVisibility !== 'ALL'
+                        ? 'Try clearing the search or filter controls to view all catalog items.'
+                        : 'No products have been registered in the database yet.'
+                    }
+                    action={
+                      search || selectedCategory !== 'ALL' || selectedStatus !== 'ALL' || selectedVisibility !== 'ALL' ? (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSearch('');
+                            setSelectedCategory('ALL');
+                            setSelectedStatus('ALL');
+                            setSelectedVisibility('ALL');
+                          }}
+                          className="text-[12px] font-semibold text-[var(--accent)] hover:underline cursor-pointer"
+                        >
+                          Reset all filters
+                        </button>
+                      ) : undefined
+                    }
+                  />
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                          <th className="py-2.5 px-4 w-32">Product Code</th>
+                          <th className="py-2.5 px-4">Formula / Name</th>
+                          <th className="py-2.5 px-4">Category</th>
+                          <th className="py-2.5 px-4 text-center w-28">Available Stock</th>
+                          <th className="py-2.5 px-4 w-28">Dealer Access</th>
+                          <th className="py-2.5 px-4 w-24">Visibility</th>
+                          <th className="py-2.5 px-4 w-24">Status</th>
+                          <th className="py-2.5 px-4 text-right w-32">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[var(--border)]">
+                        {filteredProducts.map((p) => {
+                          const units = p.availableUnits ?? 0;
+                          return (
+                            <tr key={p.id} className="hover:bg-[var(--surface-subtle)] transition-colors h-[42px]">
+                              <td className="py-2.5 px-4 font-mono text-[12px] text-[var(--text-secondary)]">
+                                <Link href={`/products/${p.id}`} className="hover:text-[var(--accent)] hover:underline">
+                                  {p.productCode}
+                                </Link>
+                              </td>
+                              <td className="py-2.5 px-4">
+                                <Link
+                                  href={`/products/${p.id}`}
+                                  className="text-[14px] font-medium text-[var(--text-primary)] hover:text-[var(--accent)] block"
+                                >
+                                  {p.name}
+                                </Link>
+                                {p.shortDescription && (
+                                  <span className="text-[12px] text-[var(--text-secondary)] line-clamp-1">
+                                    {p.shortDescription}
+                                  </span>
+                                )}
+                              </td>
+                              <td className="py-2.5 px-4 text-[var(--text-secondary)]">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--text-secondary)]">
+                                  {p.categoryName || 'General'}
+                                </span>
+                              </td>
+                              <td className="py-2.5 px-4 text-center">
+                                <span
+                                  className={`inline-flex items-center px-2 py-0.5 rounded text-[12px] font-medium ${
+                                    units === 0
+                                      ? 'bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]'
+                                      : units < 5
+                                      ? 'bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]'
+                                      : 'bg-[var(--surface-subtle)] text-[var(--status-success)] border border-[var(--border)]'
+                                  }`}
+                                >
+                                  {units} {units === 1 ? 'unit' : 'units'}
+                                </span>
+                              </td>
+                              <td className="py-2.5 px-4">
+                                <span
+                                  className={`inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium ${
+                                    p.dealerVisibility
+                                      ? 'bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]'
+                                      : 'bg-[var(--surface-subtle)] text-[var(--text-muted)] border border-[var(--border)]'
+                                  }`}
+                                >
+                                  {p.dealerVisibility ? 'Available' : 'Restricted'}
+                                </span>
+                              </td>
+                              <td className="py-2.5 px-4">
+                                <span
+                                  className={`inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium capitalize ${
+                                    p.publicVisibility === 'PUBLIC'
+                                      ? 'bg-[var(--status-info-soft)] text-[var(--status-info)] border border-[var(--status-info-border)]'
+                                      : 'bg-[var(--surface-subtle)] text-[var(--text-muted)] border border-[var(--border)]'
+                                  }`}
+                                >
+                                  {p.publicVisibility.toLowerCase()}
+                                </span>
+                              </td>
+                              <td className="py-2.5 px-4">
+                                <StatusBadge status={p.status} />
+                              </td>
+                              <td className="py-2.5 px-4 text-right">
+                                <div className="inline-flex items-center gap-2.5">
+                                  <Link
+                                    href={`/products/${p.id}`}
+                                    className="text-[13px] font-medium text-[var(--accent)] hover:underline"
+                                  >
+                                    View →
+                                  </Link>
+                                  {canWrite && p.status !== 'ARCHIVED' && (
+                                    <>
+                                      <Link
+                                        href={`/products/${p.id}/edit`}
+                                        className="inline-flex items-center gap-1 text-[13px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:underline"
+                                      >
+                                        <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                        </svg>
+                                        <span>Edit</span>
+                                      </Link>
+                                      <button
+                                        type="button"
+                                        onClick={() => setArchiveTarget(p)}
+                                        className="text-[13px] text-[var(--status-danger)] hover:underline cursor-pointer"
+                                      >
+                                        Archive
+                                      </button>
+                                    </>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
 
-        {/* Working Table */}
-        <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
-          {filteredProducts.length === 0 ? (
-            <EmptyOperationalState
-              title="No products match current filters"
-              description={
-                search || selectedCategory !== 'ALL' || selectedStatus !== 'ALL' || selectedVisibility !== 'ALL'
-                  ? 'Try clearing the search or filter controls to view all catalog items.'
-                  : 'No products have been registered in the database yet.'
-              }
-              action={
-                search || selectedCategory !== 'ALL' || selectedStatus !== 'ALL' || selectedVisibility !== 'ALL' ? (
+          {/* TAB 2: NEEDS ATTENTION */}
+          {activeTab === 'attention' && (
+            <section aria-labelledby="stock-attention-heading" className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-4 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+                <div className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-[var(--status-danger)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                    <line x1="12" y1="9" x2="12" y2="13" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" strokeWidth="2.5" />
+                  </svg>
+                  <h2 id="stock-attention-heading" className="text-[14px] font-semibold text-[var(--status-danger)] m-0">
+                    Needs Attention ({stockAttentionItems.length})
+                  </h2>
+                </div>
+                <Link
+                  href="/inventory"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium rounded-[3px] bg-[var(--accent)] text-white hover:opacity-90 transition-opacity shadow-xs"
+                >
+                  <svg className="w-3.5 h-3.5 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                    <polyline points="3.29 7 12 12 20.71 7" />
+                    <line x1="12" y1="22" x2="12" y2="12" />
+                  </svg>
+                  <span>Receive Serials</span>
+                </Link>
+              </div>
+
+              {stockAttentionItems.length === 0 ? (
+                <div className="py-8 text-center text-[var(--text-secondary)] text-[13px]">
+                  All active catalog formulas meet minimum inventory safety levels (5+ units).
+                </div>
+              ) : (
+                <div className="divide-y divide-[var(--border)] border border-[var(--border)] rounded-[4px] bg-[var(--surface-subtle)]">
+                  {stockAttentionItems.map((p) => (
+                    <div key={p.id} className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[13px] hover:bg-[var(--surface-raised)] transition-colors">
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono text-[12px] text-[var(--text-secondary)]">{p.productCode}</span>
+                        <Link href={`/products/${p.id}`} className="text-[14px] font-medium text-[var(--text-primary)] hover:text-[var(--accent)]">
+                          {p.name}
+                        </Link>
+                        <span className="text-[13px] text-[var(--text-secondary)]">· {p.categoryName || 'General'}</span>
+                      </div>
+                      <div className="flex items-center gap-3 shrink-0">
+                        <span
+                          className={`text-[12px] font-medium px-2 py-0.5 rounded ${
+                            (p.availableUnits ?? 0) === 0
+                              ? 'bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]'
+                              : 'bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]'
+                          }`}
+                        >
+                          {p.availableUnits ?? 0} available
+                        </span>
+                        <Link
+                          href="/inventory"
+                          className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[var(--accent)] hover:underline"
+                        >
+                          <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                            <polyline points="3.29 7 12 12 20.71 7" />
+                            <line x1="12" y1="22" x2="12" y2="12" />
+                          </svg>
+                          <span>Receive Stock →</span>
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* TAB 3: PRODUCT FAMILIES */}
+          {activeTab === 'families' && (
+            <section aria-labelledby="product-families-heading" className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-4 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+                <div className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                    <polyline points="2 17 12 22 22 17" />
+                    <polyline points="2 12 12 17 22 12" />
+                  </svg>
+                  <h2 id="product-families-heading" className="text-[14px] font-semibold text-[var(--text-primary)] m-0">
+                    Product Families ({categoryStats.length})
+                  </h2>
+                </div>
+                {selectedCategory !== 'ALL' && (
                   <button
                     type="button"
-                    onClick={() => {
-                      setSearch('');
-                      setSelectedCategory('ALL');
-                      setSelectedStatus('ALL');
-                      setSelectedVisibility('ALL');
-                    }}
-                    className="text-[12px] font-semibold text-[var(--accent)] hover:underline cursor-pointer"
+                    onClick={() => setSelectedCategory('ALL')}
+                    className="text-[12px] font-medium text-[var(--accent)] hover:underline cursor-pointer"
                   >
-                    Reset all filters
+                    Clear Filter ({categories.find((c) => c.id === selectedCategory)?.name})
                   </button>
-                ) : undefined
-              }
-            />
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse text-[13px]">
-                <thead>
-                  <tr className="border-b border-[var(--border)] bg-[var(--surface-subtle)] text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[var(--text-muted)]">
-                    <th className="py-2.5 px-4 w-32">Product Code</th>
-                    <th className="py-2.5 px-4">Formula / Name</th>
-                    <th className="py-2.5 px-4">Category</th>
-                    <th className="py-2.5 px-4 text-center w-28">Available Stock</th>
-                    <th className="py-2.5 px-4 w-28">Dealer Access</th>
-                    <th className="py-2.5 px-4 w-24">Visibility</th>
-                    <th className="py-2.5 px-4 w-24">Status</th>
-                    <th className="py-2.5 px-4 text-right w-32">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--border)]">
-                  {filteredProducts.map((p) => {
-                    const units = p.availableUnits ?? 0;
-                    return (
-                      <tr key={p.id} className="hover:bg-[var(--surface-subtle)] transition-colors">
-                        <td className="py-2.5 px-4 font-mono font-semibold text-[12px] text-[var(--text-primary)]">
-                          <Link href={`/products/${p.id}`} className="hover:text-[var(--accent)] hover:underline">
-                            {p.productCode}
-                          </Link>
-                        </td>
-                        <td className="py-2.5 px-4">
-                          <Link
-                            href={`/products/${p.id}`}
-                            className="font-medium text-[var(--text-primary)] hover:text-[var(--accent)] block"
-                          >
-                            {p.name}
-                          </Link>
-                          {p.shortDescription && (
-                            <span className="text-[11.5px] text-[var(--text-muted)] line-clamp-1">
-                              {p.shortDescription}
-                            </span>
-                          )}
-                        </td>
-                        <td className="py-2.5 px-4 text-[var(--text-secondary)]">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--text-secondary)]">
-                            {p.categoryName || 'General'}
-                          </span>
-                        </td>
-                        <td className="py-2.5 px-4 text-center">
-                          <span
-                            className={`inline-flex items-center px-2 py-0.5 rounded font-mono text-[11.5px] font-bold ${
-                              units === 0
-                                ? 'bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]'
-                                : units < 5
-                                ? 'bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]'
-                                : 'bg-[var(--surface-subtle)] text-[var(--status-success)] border border-[var(--border)]'
-                            }`}
-                          >
-                            {units} {units === 1 ? 'Unit' : 'Units'}
-                          </span>
-                        </td>
-                        <td className="py-2.5 px-4 text-[12px]">
-                          <span
-                            className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10.5px] font-semibold ${
-                              p.dealerVisibility
-                                ? 'bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]'
-                                : 'bg-[var(--surface-subtle)] text-[var(--text-muted)] border border-[var(--border)]'
-                            }`}
-                          >
-                            {p.dealerVisibility ? 'Available' : 'Restricted'}
-                          </span>
-                        </td>
-                        <td className="py-2.5 px-4">
-                          <span
-                            className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10.5px] font-semibold uppercase tracking-wider ${
-                              p.publicVisibility === 'PUBLIC'
-                                ? 'bg-[var(--status-info-soft)] text-[var(--status-info)] border border-[var(--status-info-border)]'
-                                : 'bg-[var(--surface-subtle)] text-[var(--text-muted)] border border-[var(--border)]'
-                            }`}
-                          >
-                            {p.publicVisibility}
-                          </span>
-                        </td>
-                        <td className="py-2.5 px-4">
-                          <StatusBadge status={p.status} />
-                        </td>
-                        <td className="py-2.5 px-4 text-right">
-                          <div className="inline-flex items-center gap-2">
-                            <Link
-                              href={`/products/${p.id}`}
-                              className="text-[12px] font-semibold text-[var(--accent)] hover:underline"
-                            >
-                              View →
-                            </Link>
-                            {canWrite && p.status !== 'ARCHIVED' && (
-                              <>
-                                <Link
-                                  href={`/products/${p.id}/edit`}
-                                  className="text-[12px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:underline"
-                                >
-                                  Edit
-                                </Link>
-                                <button
-                                  type="button"
-                                  onClick={() => setArchiveTarget(p)}
-                                  className="text-[12px] text-[var(--status-danger)] hover:underline cursor-pointer"
-                                >
-                                  Archive
-                                </button>
-                              </>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                )}
+              </div>
+
+              <p className="text-[13px] text-[var(--text-secondary)] m-0">
+                Select any product family below to filter the master registry.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {categoryStats.map((cat) => {
+                  const isSelected = selectedCategory === cat.id;
+                  return (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedCategory(isSelected ? 'ALL' : cat.id);
+                        setActiveTab('registry');
+                      }}
+                      className={`p-3.5 rounded-[4px] border text-left transition-colors cursor-pointer ${
+                        isSelected
+                          ? 'border-[var(--accent)] bg-[var(--surface-subtle)] ring-1 ring-[var(--accent)]'
+                          : 'border-[var(--border)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-raised)]'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <span className="font-semibold text-[14px] text-[var(--text-primary)]">
+                          {cat.name}
+                        </span>
+                        <span className="text-[11px] font-medium px-1.5 py-0.5 rounded bg-[var(--background)] border border-[var(--border)] text-[var(--text-secondary)]">
+                          {cat.formulaCount} formulas
+                        </span>
+                      </div>
+                      <div className="mt-3 flex items-center justify-between text-[12px]">
+                        <span className="text-[var(--text-secondary)]">Available Stock:</span>
+                        <span className={`font-semibold ${cat.totalUnits === 0 ? 'text-[var(--status-danger)]' : 'text-[var(--status-success)]'}`}>
+                          {cat.totalUnits} units
+                        </span>
+                      </div>
+                      <div className="mt-2.5 pt-2 border-t border-[var(--border)]/60 text-right">
+                        <span className="text-[12px] font-medium text-[var(--accent)]">
+                          Filter in Registry →
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
           )}
-        </div>
-      </section>
+        </main>
+      </div>
 
       {/* Confirmation Dialog for Product Archival */}
       <ConfirmDialog

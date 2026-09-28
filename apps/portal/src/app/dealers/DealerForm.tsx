@@ -104,7 +104,7 @@ export function DealerForm({ initialData, distributors, isEditing = false }: Dea
 
       {/* Section 1: Business Identification */}
       <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded p-5 space-y-4 shadow-sm">
-        <h2 className="text-[15px] font-semibold text-[var(--text-primary)] border-b border-[var(--border)] pb-2">
+        <h2 className="text-[14px] font-semibold text-[var(--text-primary)] border-b border-[var(--border)] pb-2">
           Studio / Dealer Identity
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -187,7 +187,7 @@ export function DealerForm({ initialData, distributors, isEditing = false }: Dea
 
       {/* Section 2: Contact Information */}
       <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded p-5 space-y-4 shadow-sm">
-        <h2 className="text-[15px] font-semibold text-[var(--text-primary)] border-b border-[var(--border)] pb-2">
+        <h2 className="text-[14px] font-semibold text-[var(--text-primary)] border-b border-[var(--border)] pb-2">
           Contact Details
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -246,7 +246,7 @@ export function DealerForm({ initialData, distributors, isEditing = false }: Dea
 
       {/* Section 3: Studio / Workshop Address */}
       <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded p-5 space-y-4 shadow-sm">
-        <h2 className="text-[15px] font-semibold text-[var(--text-primary)] border-b border-[var(--border)] pb-2">
+        <h2 className="text-[14px] font-semibold text-[var(--text-primary)] border-b border-[var(--border)] pb-2">
           Workshop & Studio Address
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -329,7 +329,7 @@ export function DealerForm({ initialData, distributors, isEditing = false }: Dea
 
       {/* Section 4: Operational Notes */}
       <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded p-5 space-y-4 shadow-sm">
-        <h2 className="text-[15px] font-semibold text-[var(--text-primary)] border-b border-[var(--border)] pb-2">
+        <h2 className="text-[14px] font-semibold text-[var(--text-primary)] border-b border-[var(--border)] pb-2">
           Studio Specifications & Notes
         </h2>
         <div>

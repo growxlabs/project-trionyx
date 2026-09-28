@@ -99,7 +99,7 @@ export function DistributorForm({ initialData, isEditing = false }: DistributorF
 
       {/* Section 1: Business Identity */}
       <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded p-5 space-y-4 shadow-sm">
-        <h2 className="text-[15px] font-semibold text-[var(--text-primary)] border-b border-[var(--border)] pb-2">
+        <h2 className="text-[14px] font-semibold text-[var(--text-primary)] border-b border-[var(--border)] pb-2">
           Business Identification
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -171,7 +171,7 @@ export function DistributorForm({ initialData, isEditing = false }: DistributorF
 
       {/* Section 2: Contact Information */}
       <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded p-5 space-y-4 shadow-sm">
-        <h2 className="text-[15px] font-semibold text-[var(--text-primary)] border-b border-[var(--border)] pb-2">
+        <h2 className="text-[14px] font-semibold text-[var(--text-primary)] border-b border-[var(--border)] pb-2">
           Contact Details
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -230,7 +230,7 @@ export function DistributorForm({ initialData, isEditing = false }: DistributorF
 
       {/* Section 3: Physical Address */}
       <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded p-5 space-y-4 shadow-sm">
-        <h2 className="text-[15px] font-semibold text-[var(--text-primary)] border-b border-[var(--border)] pb-2">
+        <h2 className="text-[14px] font-semibold text-[var(--text-primary)] border-b border-[var(--border)] pb-2">
           Location & Facility Address
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

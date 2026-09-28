@@ -41,13 +41,26 @@ export function RegistryToolbar({
       {/* Search & Filters */}
       <div className="flex flex-wrap items-center gap-2 flex-1">
         {onSearchChange !== undefined && (
-          <div className="relative min-w-[200px] max-w-xs flex-1">
+          <div className="relative min-w-[200px] max-w-xs flex-1 flex items-center">
+            <svg
+              className="w-4 h-4 absolute left-2.5 text-[var(--text-muted)] pointer-events-none shrink-0"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.75"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
             <input
               type="text"
               value={searchValue || ''}
               onChange={(e) => onSearchChange(e.target.value)}
               placeholder={searchPlaceholder}
-              className="w-full px-3 py-1.5 rounded-[4px] border border-[var(--border-strong)] bg-[var(--surface-raised)] text-[13px] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)]"
+              className="w-full pl-8 pr-3 py-1.5 rounded-[4px] border border-[var(--border-strong)] bg-[var(--surface-raised)] text-[13px] font-normal text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)]"
             />
           </div>
         )}
@@ -58,7 +71,7 @@ export function RegistryToolbar({
               value={f.value}
               onChange={(e) => f.onChange(e.target.value)}
               aria-label={f.label}
-              className="px-2.5 py-1.5 rounded-[4px] border border-[var(--border-strong)] bg-[var(--surface-raised)] text-[12.5px] font-medium text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] cursor-pointer"
+              className="px-2.5 py-1.5 rounded-[4px] border border-[var(--border-strong)] bg-[var(--surface-raised)] text-[13px] font-medium text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] cursor-pointer"
             >
               {f.options.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -74,7 +87,7 @@ export function RegistryToolbar({
 
       {/* Counts / Metainfo */}
       {(totalCount !== undefined || filteredCount !== undefined) && (
-        <div className="text-[12px] text-[var(--text-muted)] font-mono shrink-0">
+        <div className="text-[13px] text-[var(--text-secondary)] font-normal shrink-0">
           {filteredCount !== undefined && totalCount !== undefined && filteredCount !== totalCount ? (
             <span>Showing {filteredCount} of {totalCount} {unitLabel}</span>
           ) : (

@@ -15,6 +15,8 @@ import {
 } from '@trionyx/database';
 import { InternalShell } from '../../components/shell/InternalShell';
 
+import { OverviewCockpit } from './OverviewCockpit';
+
 export const dynamic = 'force-dynamic';
 
 export default async function OverviewPage() {
@@ -52,12 +54,40 @@ export default async function OverviewPage() {
 
   // Derived metrics
   const activeDealers = dealersRes.items.filter((d) => d.status === 'ACTIVE').length;
-  const unassignedDealers = dealersRes.items.filter((d) => !d.distributorId).length;
+  const unassignedDealers = dealersRes.items
+    .filter((d) => !d.distributorId)
+    .map((d) => ({
+      id: d.id,
+      dealerCode: d.dealerCode,
+      businessName: d.businessName,
+      city: d.city,
+      state: d.state,
+      status: d.status,
+    }));
 
   const availableUnits = inventorySummaries.reduce((sum, s) => sum + s.availableCount, 0);
-  const outOfStockProducts = inventorySummaries.filter((s) => s.availableCount === 0);
+  const outOfStockProducts = inventorySummaries
+    .filter((s) => s.availableCount === 0)
+    .map((s) => ({
+      productId: s.productId,
+      productCode: s.productCode,
+      productName: s.productName,
+      categoryName: s.categoryName,
+      availableCount: s.availableCount,
+    }));
 
-  const newEnquiries = enquiriesRes.items.filter((e) => e.status === 'NEW').length;
+  const newEnquiriesList = enquiriesRes.items
+    .filter((e) => e.status === 'NEW')
+    .map((e) => ({
+      id: e.id,
+      enquiryCode: e.enquiryCode,
+      fullName: e.fullName,
+      companyName: e.companyName,
+      type: e.type,
+      city: e.city,
+      createdAt: e.createdAt,
+    }));
+
   const voidWarranties = warrantiesRes.items.filter((w) => w.status === 'VOID').length;
   const totalWarranties = warrantiesRes.items.length;
 
@@ -111,302 +141,70 @@ export default async function OverviewPage() {
     };
   });
 
-  const todayDateString = new Intl.DateTimeFormat('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'Asia/Kolkata',
-  }).format(new Date());
-
-  // NetSuite-style Reminders Portlet Items
-  const reminders = [
+  const scorecardRows = [
     {
-      id: 'rem-stock-out',
-      count: outOfStockProducts.length,
-      label: 'Products Out of Stock',
-      severity: 'CRITICAL',
-      badgeColor: 'text-[var(--status-danger)] bg-[var(--status-danger-soft)] border-[var(--status-danger-border)]',
-      href: '/inventory',
-    },
-    {
-      id: 'rem-dealers-unassigned',
-      count: unassignedDealers,
-      label: 'Studios Missing Distributor Hub',
-      severity: 'ACTION',
-      badgeColor: 'text-[var(--status-warning)] bg-[var(--status-warning-soft)] border-[var(--status-warning-border)]',
+      label: 'Authorized Detailing Studios',
+      balance: activeDealers,
+      unit: 'studios',
+      status: 'Normal',
+      statusType: 'success' as const,
       href: '/dealers',
+      linkText: 'Studio Registry →',
     },
     {
-      id: 'rem-enquiries-new',
-      count: newEnquiries,
-      label: 'Partner Applications Pending Triage',
-      severity: 'PENDING',
-      badgeColor: 'text-[var(--accent)] bg-[var(--accent-soft)] border-[var(--accent-soft-border)]',
+      label: 'Physical Serial Inventory',
+      balance: availableUnits,
+      unit: 'bottles',
+      status: 'Critical low',
+      statusType: 'danger' as const,
+      href: '/inventory',
+      linkText: 'Stock Ledger →',
+    },
+    {
+      label: 'Registered Chemical Formulas',
+      balance: productsRes.length,
+      unit: 'formulas',
+      status: 'Stable',
+      statusType: 'neutral' as const,
+      href: '/products',
+      linkText: 'Product Master →',
+    },
+    {
+      label: 'Inbound Partner Enquiries',
+      balance: newEnquiriesList.length,
+      unit: 'pending',
+      status: 'Requires triage',
+      statusType: 'warning' as const,
       href: '/enquiries',
+      linkText: 'Open Queue →',
     },
     {
-      id: 'rem-warranties-void',
-      count: voidWarranties,
-      label: 'Voided Customer Warranties',
-      severity: voidWarranties > 0 ? 'ALERT' : 'CLEARED',
-      badgeColor: voidWarranties > 0
-        ? 'text-[var(--status-danger)] bg-[var(--status-danger-soft)] border-[var(--status-danger-border)]'
-        : 'text-[var(--status-success)] bg-[var(--status-success-soft)] border-[var(--status-success-border)]',
+      label: 'Warranty Policies Under Coverage',
+      balance: totalWarranties,
+      unit: 'registered',
+      status: 'Audited',
+      statusType: 'success' as const,
       href: '/warranty',
+      linkText: 'Warranty Book →',
     },
   ];
 
+  const facilityStats = {
+    availableUnits,
+    outOfStockCount: outOfStockProducts.length,
+    catalogSkus: productsRes.length,
+  };
+
   return (
     <InternalShell user={user}>
-      <div>
-        {/* DUAL-COLUMN ERP WORK CENTER DESK */}
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-3.5">
-          {/* ======================================================== */}
-          {/* LEFT COLUMN (4 COLS): REMINDERS + QUICK TRANSACTION LAUNCHPAD */}
-          {/* ======================================================== */}
-          <div className="xl:col-span-4 space-y-3.5">
-            {/* PORTLET 1: OPERATIONAL REMINDERS (NetSuite Core Pattern) */}
-            <div className="border border-[var(--border)] bg-[var(--surface-raised)] rounded-[3px] overflow-hidden">
-              <div className="bg-[var(--surface-subtle)] border-b border-[var(--border)] px-3 py-2 flex items-center justify-between">
-                <span className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-[var(--text-primary)]">
-                  OPERATIONAL REMINDERS
-                </span>
-                <span className="font-mono text-[10px] font-semibold px-1.5 py-0.2 rounded-[2px] bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--text-muted)]">
-                  {reminders.filter((r) => r.count > 0).length} EXCEPTIONS
-                </span>
-              </div>
-
-              <div className="p-1 space-y-0.5">
-                {reminders.map((rem) => (
-                  <Link
-                    key={rem.id}
-                    href={rem.href}
-                    className="px-2.5 py-2 flex items-center justify-between gap-3 hover:bg-[var(--surface-subtle)] rounded-[2px] transition-colors group"
-                  >
-                    <span className="text-[12.5px] font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors">
-                      {rem.label}
-                    </span>
-                    <span className={`font-mono font-bold text-[12.5px] tabular-nums px-2 py-0.5 rounded-[2px] border ${rem.badgeColor}`}>
-                      {rem.count}
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* PORTLET 2: PHYSICAL WAREHOUSE CAPACITY SUMMARY */}
-            <div className="border border-[var(--border)] bg-[var(--surface-raised)] rounded-[3px] overflow-hidden">
-              <div className="bg-[var(--surface-subtle)] border-b border-[var(--border)] px-3 py-2 flex items-center justify-between">
-                <span className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-[var(--text-primary)]">
-                  PHYSICAL FACILITY POSITION
-                </span>
-                <span className="font-mono text-[10px] text-[var(--text-muted)]">
-                  RECONCILED
-                </span>
-              </div>
-              <div className="p-3 space-y-2 text-[12px]">
-                <div className="flex items-center justify-between">
-                  <span className="text-[var(--text-muted)]">Delhi Central Facility:</span>
-                  <span className="font-mono font-bold text-[var(--text-primary)]">{availableUnits} Units Available</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[var(--text-muted)]">Stockout Formulas:</span>
-                  <span className="font-mono font-bold text-[var(--status-danger)]">{outOfStockProducts.length} Breaches</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[var(--text-muted)]">Master Catalog SKUs:</span>
-                  <span className="font-mono font-bold text-[var(--text-primary)]">{productsRes.length} Formulas</span>
-                </div>
-                <div className="pt-2 border-t border-[var(--border)]/40 flex items-center justify-between text-[11px]">
-                  <span className="text-[var(--text-muted)]">Physical Inventory Health:</span>
-                  <span className="font-semibold text-[var(--status-warning)]">REPLENISHMENT REQ.</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* ======================================================== */}
-          {/* RIGHT COLUMN (8 COLS): MASTER SCORECARD + DOCUMENT JOURNAL */}
-          {/* ======================================================== */}
-          <div className="xl:col-span-8 space-y-3.5">
-            {/* PORTLET 4: MASTER OPERATIONAL SCORECARD (ERP Tabular Scorecard) */}
-            <div className="border border-[var(--border)] bg-[var(--surface-raised)] rounded-[3px] overflow-hidden">
-              <div className="bg-[var(--surface-subtle)] border-b border-[var(--border)] px-3.5 py-2 flex items-center justify-between">
-                <span className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-[var(--text-primary)]">
-                  MASTER OPERATING SCORECARD
-                </span>
-                <span className="font-mono text-[10px] text-[var(--text-muted)]">
-                  LIVE BALANCE RECONCILIATION
-                </span>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse text-[12.5px]">
-                  <thead>
-                    <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--text-muted)]">
-                      <th className="py-2 px-3.5">Operational Entity / Domain</th>
-                      <th className="py-2 px-3.5 font-mono text-center w-28">Current Balance</th>
-                      <th className="py-2 px-3.5 text-center w-36">Operating Status</th>
-                      <th className="py-2 px-3.5 text-right w-36">Ledger Record</th>
-                    </tr>
-                  </thead>
-                  <tbody className="font-normal">
-                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[36px]">
-                      <td className="py-2 px-3.5 font-medium text-[var(--text-primary)]">
-                        Authorized Detailing Studios
-                      </td>
-                      <td className="py-2 px-3.5 font-mono font-bold text-center text-[var(--text-primary)] text-[12.5px]">
-                        {activeDealers} <span className="text-[11px] font-normal text-[var(--text-muted)]">Studios</span>
-                      </td>
-                      <td className="py-2 px-3.5 text-center">
-                        <span className="inline-block px-2 py-0.5 rounded-[2px] font-mono text-[10.5px] font-semibold bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]">
-                          ACTIVE (NORMAL)
-                        </span>
-                      </td>
-                      <td className="py-2 px-3.5 text-right">
-                        <Link href="/dealers" className="text-[11.5px] font-semibold text-[var(--accent)] hover:underline">
-                          Studio Registry →
-                        </Link>
-                      </td>
-                    </tr>
-
-                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[36px]">
-                      <td className="py-2 px-3.5 font-medium text-[var(--text-primary)]">
-                        Physical Serial Inventory
-                      </td>
-                      <td className="py-2 px-3.5 font-mono font-bold text-center text-[var(--status-danger)] text-[12.5px]">
-                        {availableUnits} <span className="text-[11px] font-normal text-[var(--text-muted)]">Bottles</span>
-                      </td>
-                      <td className="py-2 px-3.5 text-center">
-                        <span className="inline-block px-2 py-0.5 rounded-[2px] font-mono text-[10.5px] font-semibold bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]">
-                          CRITICAL LOW
-                        </span>
-                      </td>
-                      <td className="py-2 px-3.5 text-right">
-                        <Link href="/inventory" className="text-[11.5px] font-semibold text-[var(--accent)] hover:underline">
-                          Stock Ledger →
-                        </Link>
-                      </td>
-                    </tr>
-
-                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[36px]">
-                      <td className="py-2 px-3.5 font-medium text-[var(--text-primary)]">
-                        Registered Chemical Formulas
-                      </td>
-                      <td className="py-2 px-3.5 font-mono font-bold text-center text-[var(--text-primary)] text-[12.5px]">
-                        {productsRes.length} <span className="text-[11px] font-normal text-[var(--text-muted)]">Formulas</span>
-                      </td>
-                      <td className="py-2 px-3.5 text-center">
-                        <span className="inline-block px-2 py-0.5 rounded-[2px] font-mono text-[10.5px] font-semibold bg-[var(--surface-subtle)] text-[var(--text-secondary)] border border-[var(--border)]">
-                          CATALOG STABLE
-                        </span>
-                      </td>
-                      <td className="py-2 px-3.5 text-right">
-                        <Link href="/products" className="text-[11.5px] font-semibold text-[var(--accent)] hover:underline">
-                          Product Master →
-                        </Link>
-                      </td>
-                    </tr>
-
-                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[36px]">
-                      <td className="py-2 px-3.5 font-medium text-[var(--text-primary)]">
-                        Inbound Partner Enquiries
-                      </td>
-                      <td className="py-2 px-3.5 font-mono font-bold text-center text-[var(--status-warning)] text-[12.5px]">
-                        {newEnquiries} <span className="text-[11px] font-normal text-[var(--text-muted)]">Pending</span>
-                      </td>
-                      <td className="py-2 px-3.5 text-center">
-                        <span className="inline-block px-2 py-0.5 rounded-[2px] font-mono text-[10.5px] font-semibold bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]">
-                          REQUIRES TRIAGE
-                        </span>
-                      </td>
-                      <td className="py-2 px-3.5 text-right">
-                        <Link href="/enquiries" className="text-[11.5px] font-semibold text-[var(--accent)] hover:underline">
-                          Open Queue →
-                        </Link>
-                      </td>
-                    </tr>
-
-                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[36px]">
-                      <td className="py-2 px-3.5 font-medium text-[var(--text-primary)]">
-                        Warranty Policies Under Coverage
-                      </td>
-                      <td className="py-2 px-3.5 font-mono font-bold text-center text-[var(--text-primary)] text-[12.5px]">
-                        {totalWarranties} <span className="text-[11px] font-normal text-[var(--text-muted)]">Registered</span>
-                      </td>
-                      <td className="py-2 px-3.5 text-center">
-                        <span className="inline-block px-2 py-0.5 rounded-[2px] font-mono text-[10.5px] font-semibold bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]">
-                          AUDITED
-                        </span>
-                      </td>
-                      <td className="py-2 px-3.5 text-right">
-                        <Link href="/warranty" className="text-[11.5px] font-semibold text-[var(--accent)] hover:underline">
-                          Warranty Book →
-                        </Link>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* PORTLET 5: TRANSACTION AUDIT JOURNAL (ERP System of Record) */}
-            <div className="border border-[var(--border)] bg-[var(--surface-raised)] rounded-[3px] overflow-hidden">
-              <div className="bg-[var(--surface-subtle)] border-b border-[var(--border)] px-3.5 py-2 flex items-center justify-between">
-                <span className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-[var(--text-primary)]">
-                  TRANSACTION AUDIT JOURNAL · DOCUMENT FLOW
-                </span>
-                <span className="font-mono text-[10px] text-[var(--text-muted)]">
-                  APPEND-ONLY LEDGER
-                </span>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse text-[12px]">
-                  <thead>
-                    <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--text-muted)]">
-                      <th className="py-1.5 px-3.5 w-24">Timestamp</th>
-                      <th className="py-1.5 px-3.5 w-52">Transaction Type</th>
-                      <th className="py-1.5 px-3.5">Document / Record Ref</th>
-                      <th className="py-1.5 px-3.5 w-36">Operator</th>
-                      <th className="py-1.5 px-3.5 text-right w-24">Posting</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-black/[0.04] dark:divide-white/[0.05] font-normal">
-                    {activities.map((act) => (
-                      <tr key={act.id} className="hover:bg-[var(--surface-subtle)] transition-colors h-[32px]">
-                        <td className="py-1 px-3.5 font-mono text-[11px] text-[var(--text-muted)] whitespace-nowrap">
-                          {act.time}
-                        </td>
-                        <td className="py-1 px-3.5 font-semibold text-[var(--text-primary)] text-[11.5px] truncate">
-                          {act.event}
-                        </td>
-                        <td className="py-1 px-3.5 text-[var(--text-secondary)]">
-                          {act.recordHref ? (
-                            <Link href={act.recordHref} className="font-mono text-[11px] text-[var(--text-primary)] hover:text-[var(--accent)] hover:underline">
-                              {act.record}
-                            </Link>
-                          ) : (
-                            <span className="font-mono text-[11px] text-[var(--text-secondary)]">{act.record}</span>
-                          )}
-                        </td>
-                        <td className="py-1 px-3.5 text-[var(--text-muted)] text-[11px] truncate">
-                          {act.actor}
-                        </td>
-                        <td className="py-1 px-3.5 text-right">
-                          <span className="font-mono text-[9.5px] font-bold px-1.5 py-0.5 rounded-[2px] bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--text-secondary)]">
-                            POSTED
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <OverviewCockpit
+        scorecardRows={scorecardRows}
+        activities={activities}
+        outOfStockProducts={outOfStockProducts}
+        unassignedDealers={unassignedDealers}
+        newEnquiriesList={newEnquiriesList}
+        facilityStats={facilityStats}
+      />
     </InternalShell>
   );
 }

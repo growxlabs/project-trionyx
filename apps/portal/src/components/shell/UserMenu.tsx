@@ -67,16 +67,28 @@ export function UserMenu({ user }: UserMenuProps) {
     router.refresh();
   };
 
+  const initials = user.name
+    ? user.name
+        .split(' ')
+        .map((p) => p[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase()
+    : 'OP';
+
   return (
     <div className="relative inline-block text-left" ref={menuRef}>
-      {/* Trigger Button: Sai Managing Director ▾ */}
+      {/* Trigger Button: User Avatar + Name + Chevron */}
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
-        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[4px] hover:bg-[#2D2C27] text-[13px] font-medium text-[#F7F6F0] transition-colors duration-150 cursor-pointer focus:outline-none focus:ring-1 focus:ring-[rgba(255,255,255,0.16)]"
+        className="flex items-center gap-2 px-2.5 py-1 rounded-[4px] hover:bg-[#2D2C27] text-[13px] font-medium text-[#F7F6F0] transition-colors duration-150 cursor-pointer focus:outline-none focus:ring-1 focus:ring-[rgba(255,255,255,0.16)]"
       >
+        <span className="w-5 h-5 rounded-full bg-[#2D2C27] border border-[rgba(255,255,255,0.12)] text-[10px] font-mono font-semibold text-[#F7F6F0] flex items-center justify-center shrink-0">
+          {initials}
+        </span>
         <span>{user.name}</span>
         <svg
           className={`w-3.5 h-3.5 text-[#A9A59C] transition-transform duration-150 ${
@@ -98,48 +110,51 @@ export function UserMenu({ user }: UserMenuProps) {
         <div
           role="dialog"
           aria-label="Account menu"
-          className="absolute right-0 mt-1.5 w-60 rounded-[6px] border border-[rgba(255,255,255,0.08)] bg-[#22221E] shadow-2xl py-1.5 z-50 focus:outline-none text-[#F7F6F0]"
+          className="absolute right-0 mt-1.5 w-60 rounded-[6px] border border-[var(--menu-border)] bg-[var(--menu-bg)] shadow-2xl py-1.5 z-50 focus:outline-none text-[var(--menu-text-primary)]"
         >
           {/* Operator Details */}
-          <div className="px-4 py-2 border-b border-[rgba(255,255,255,0.08)]">
-            <p className="text-[13px] font-semibold text-[#F7F6F0] truncate m-0">
+          <div className="px-4 py-2 border-b border-[var(--menu-divider)]">
+            <p className="text-[13px] font-semibold text-[var(--menu-text-primary)] truncate m-0">
               {user.name}
             </p>
-            <p className="text-[12px] text-[#A9A59C] mt-0.5 m-0">
+            <p className="text-[12px] text-[var(--menu-text-secondary)] mt-0.5 m-0">
               {roleLabel}
             </p>
           </div>
 
           {/* Theme Switcher */}
-          <fieldset className="border-0 m-0 px-3 py-2.5 border-b border-[rgba(255,255,255,0.08)]">
-            <legend className="px-1 text-[10.5px] font-semibold uppercase tracking-[0.1em] text-[#A9A59C]">
+          <fieldset className="border-0 m-0 px-3 py-2.5 border-b border-[var(--menu-divider)]">
+            <legend className="px-1 text-[10.5px] font-semibold uppercase tracking-[0.1em] text-[var(--menu-text-muted)]">
               Theme
             </legend>
-            <div className="mt-1.5 grid grid-cols-3 gap-1 rounded-[4px] bg-[#171714] p-0.5">
+            <div className="mt-1.5 grid grid-cols-3 gap-1 rounded-[4px] bg-[var(--menu-theme-track)] p-0.5">
               {([
                 ['light', 'Light'],
                 ['dark', 'Dark'],
                 ['system', 'System'],
-              ] as const).map(([value, label]) => (
-                <label
-                  key={value}
-                  className={`relative flex min-h-7 cursor-pointer items-center justify-center rounded-[3px] px-1 text-[11.5px] font-medium transition-colors ${
-                    preference === value
-                      ? 'bg-[#2D2C27] text-[#F7F6F0] font-semibold'
-                      : 'text-[#A9A59C] hover:text-[#F7F6F0]'
-                  }`}
-                >
-                  <input
-                    className="sr-only"
-                    type="radio"
-                    name="ops-theme"
-                    value={value}
-                    checked={preference === value}
-                    onChange={() => setPreference(value)}
-                  />
-                  {label}
-                </label>
-              ))}
+              ] as const).map(([value, label]) => {
+                const isActive = preference === value;
+                return (
+                  <label
+                    key={value}
+                    className={`relative flex min-h-7 cursor-pointer items-center justify-center rounded-[3px] px-1 text-[11.5px] font-medium transition-colors ${
+                      isActive
+                        ? 'bg-[var(--menu-theme-active-bg)] text-[var(--menu-theme-active-text)] font-semibold border border-[var(--menu-theme-active-border)] shadow-xs'
+                        : 'text-[var(--menu-theme-inactive-text)] hover:text-[var(--menu-theme-hover-text)]'
+                    }`}
+                  >
+                    <input
+                      className="sr-only"
+                      type="radio"
+                      name="ops-theme"
+                      value={value}
+                      checked={isActive}
+                      onChange={() => setPreference(value)}
+                    />
+                    {label}
+                  </label>
+                );
+              })}
             </div>
           </fieldset>
 
@@ -149,14 +164,14 @@ export function UserMenu({ user }: UserMenuProps) {
               type="button"
               onClick={handleSignOut}
               disabled={isSigningOut}
-              className="w-full flex items-center gap-2 px-3 py-1.5 rounded-[4px] text-[12.5px] font-medium text-[#EF4444] hover:bg-[rgba(239,68,68,0.1)] transition-colors duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center gap-2 px-3 py-1.5 rounded-[4px] text-[12.5px] font-medium text-[var(--menu-signout-text)] hover:bg-[var(--menu-signout-hover-bg)] transition-colors duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSigningOut ? (
                 <span>Signing out...</span>
               ) : (
                 <>
                   <svg
-                    className="w-3.5 h-3.5 text-[#EF4444]"
+                    className="w-3.5 h-3.5 text-current"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"

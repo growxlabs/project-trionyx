@@ -80,20 +80,20 @@ export function WarrantyDetailView({
   const statusBadge = () => {
     if (warranty.status === 'VOID') {
       return (
-        <span className="inline-flex items-center px-3 py-1 rounded-[4px] text-[12px] font-bold uppercase tracking-wider bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]">
           Voided
         </span>
       );
     }
     if (warranty.derivedStatus === 'EXPIRED') {
       return (
-        <span className="inline-flex items-center px-3 py-1 rounded-[4px] text-[12px] font-bold uppercase tracking-wider bg-[var(--surface-subtle)] text-[var(--text-muted)] border border-[var(--border)]">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--surface-subtle)] text-[var(--text-muted)] border border-[var(--border)]">
           Expired
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center px-3 py-1 rounded-[4px] text-[12px] font-bold uppercase tracking-wider bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]">
+      <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]">
         Active Warranty
       </span>
     );
@@ -116,7 +116,7 @@ export function WarrantyDetailView({
             </Link>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="font-mono text-[22px] font-bold text-[var(--text-primary)] tracking-wide m-0">
+            <h1 className="font-mono text-[20px] font-semibold text-[var(--text-primary)] m-0">
               {warranty.serialNumber}
             </h1>
             {statusBadge()}
@@ -305,41 +305,41 @@ export function WarrantyDetailView({
             No audit records found for this warranty.
           </div>
         ) : (
-          <div className="overflow-x-auto border border-[var(--border)] rounded-[6px]">
-            <table className="w-full text-left border-collapse text-[13px]">
+          <div className="overflow-x-auto border border-[var(--border)] rounded-[4px]">
+            <table className="w-full text-left border-collapse text-[14px]">
               <thead>
-                <tr className="bg-[var(--background)] border-b border-[var(--border)] text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">
-                  <th className="py-2.5 px-4">Timestamp</th>
-                  <th className="py-2.5 px-4">Event</th>
+                <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                  <th className="py-2.5 px-4 w-40">Timestamp</th>
+                  <th className="py-2.5 px-4 w-36">Event</th>
                   <th className="py-2.5 px-4">Operator / Actor</th>
                   <th className="py-2.5 px-4">Details / Notes</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--border)]">
+              <tbody className="divide-y divide-[var(--border)]/60">
                 {auditLogs.map((log) => (
-                  <tr key={log.id} className="hover:bg-[var(--surface)] transition-colors">
-                    <td className="py-3 px-4 text-[var(--text-secondary)] whitespace-nowrap text-[12px]">
+                  <tr key={log.id} className="hover:bg-[var(--surface-subtle)] transition-colors">
+                    <td className="py-2.5 px-4 text-[var(--text-muted)] whitespace-nowrap text-[12px]">
                       {new Date(log.createdAt).toLocaleString()}
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-2.5 px-4">
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider border ${
+                        className={`inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium border ${
                           log.event === 'WARRANTY_ACTIVATED'
                             ? 'bg-[var(--status-success-soft)] text-[var(--status-success)] border-[var(--status-success-border)]'
                             : 'bg-[var(--status-danger-soft)] text-[var(--status-danger)] border-[var(--status-danger-border)]'
                         }`}
                       >
-                        {log.event}
+                        {log.event === 'WARRANTY_ACTIVATED' ? 'Activated' : 'Voided'}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-[var(--text-primary)] font-medium">
+                    <td className="py-2.5 px-4 text-[var(--text-primary)] font-medium text-[14px]">
                       {log.metadata?.activatedByName || log.metadata?.voidedByName || 'Internal Staff'}
                     </td>
-                    <td className="py-3 px-4 text-[var(--text-secondary)] text-[12.5px]">
+                    <td className="py-2.5 px-4 text-[var(--text-secondary)] text-[13px]">
                       {log.metadata?.reason ? (
                         <span>Reason: <em>{log.metadata.reason}</em></span>
                       ) : (
-                        <span>Serial: <code className="font-mono font-semibold">{log.metadata?.serialNumber}</code></span>
+                        <span>Serial: <code className="font-mono text-[12px]">{log.metadata?.serialNumber}</code></span>
                       )}
                     </td>
                   </tr>

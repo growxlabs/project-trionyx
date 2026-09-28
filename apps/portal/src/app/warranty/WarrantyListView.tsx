@@ -196,20 +196,20 @@ export function WarrantyListView({
   const statusBadge = (w: Warranty) => {
     if (w.status === 'VOID') {
       return (
-        <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]">
           Void
         </span>
       );
     }
     if (w.derivedStatus === 'EXPIRED') {
       return (
-        <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-[var(--surface-subtle)] text-[var(--text-muted)] border border-[var(--border)]">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--surface-subtle)] text-[var(--text-muted)] border border-[var(--border)]">
           Expired
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]">
+      <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]">
         Active
       </span>
     );
@@ -275,10 +275,10 @@ export function WarrantyListView({
   }, [warranties]);
 
   const warrantyMetrics: SummaryMetric[] = [
-    { label: 'ACTIVE', value: activeCount, tone: 'positive' },
-    { label: 'EXPIRED', value: expiredCount, tone: 'default' },
-    { label: 'VOIDED', value: voidCount, tone: voidCount > 0 ? 'alert' : 'default' },
-    { label: 'TOTAL TRACKED', value: totalCount, tone: 'default' },
+    { label: 'Active Policies', value: activeCount, tone: 'positive' },
+    { label: 'Expired', value: expiredCount, tone: 'default' },
+    { label: 'Void Policies', value: voidCount, tone: voidCount > 0 ? 'alert' : 'default' },
+    { label: 'Total Tracked', value: totalCount, tone: 'default' },
   ];
 
   return (
@@ -288,7 +288,7 @@ export function WarrantyListView({
         title="Warranty"
         action={
           <div className="flex items-center gap-3">
-            <span className="text-[12.5px] font-mono text-[var(--text-muted)]">
+            <span className="text-[13px] font-normal text-[var(--text-secondary)]">
               {warranties.length} warranties
             </span>
             {canWrite && (
@@ -313,8 +313,8 @@ export function WarrantyListView({
 
       {/* 2. Check Serial Operational Tool */}
       <section aria-labelledby="check-serial-heading" className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-5">
-        <h2 id="check-serial-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-3 m-0">
-          CHECK SERIAL
+        <h2 id="check-serial-heading" className="text-[14px] font-semibold text-[var(--text-primary)] mb-3 m-0">
+          Check Serial
         </h2>
         <form onSubmit={handleQuickCheck} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 max-w-xl">
           <div className="relative flex-1">
@@ -329,7 +329,7 @@ export function WarrantyListView({
           <button
             type="submit"
             disabled={isCheckingQuick || !quickCheckSerial.trim()}
-            className="px-4 py-1.5 rounded-[4px] border border-[var(--border-strong)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[13px] font-semibold transition-colors cursor-pointer disabled:opacity-50 shrink-0"
+            className="px-4 py-1.5 rounded-[4px] border border-[var(--border-strong)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[13px] font-medium transition-colors cursor-pointer disabled:opacity-50 shrink-0"
           >
             {isCheckingQuick ? 'Checking...' : 'Check'}
           </button>
@@ -341,7 +341,7 @@ export function WarrantyListView({
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-mono font-semibold text-[var(--text-primary)]">
+                    <span className="font-mono text-[12px] font-medium text-[var(--text-primary)]">
                       {quickCheckResult.warranty.serialNumber}
                     </span>
                     <StatusBadge status={quickCheckResult.warranty.derivedStatus || quickCheckResult.warranty.status} />
@@ -352,7 +352,7 @@ export function WarrantyListView({
                 </div>
                 <Link
                   href={`/warranty/${quickCheckResult.warranty.id}`}
-                  className="text-[12px] font-semibold text-[var(--accent)] hover:underline shrink-0"
+                  className="text-[13px] font-medium text-[var(--accent)] hover:underline shrink-0"
                 >
                   View Record →
                 </Link>
@@ -360,7 +360,7 @@ export function WarrantyListView({
             ) : quickCheckResult.valid ? (
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <span className="font-semibold text-[var(--status-success)]">● Serial Verified</span>
+                  <span className="font-medium text-[var(--status-success)]">● Serial Verified</span>
                   <div className="text-[12px] text-[var(--text-secondary)] mt-0.5">
                     {quickCheckResult.productName} — {quickCheckResult.message}
                   </div>
@@ -373,7 +373,7 @@ export function WarrantyListView({
                       setIsModalOpen(true);
                       void handleValidateSerial();
                     }}
-                    className="text-[12px] font-semibold text-[var(--accent)] hover:underline cursor-pointer shrink-0"
+                    className="text-[13px] font-medium text-[var(--accent)] hover:underline cursor-pointer shrink-0"
                   >
                     Activate Warranty Now →
                   </button>
@@ -397,16 +397,16 @@ export function WarrantyListView({
       {recentActivations.length > 0 && (
         <section aria-labelledby="recent-activations-heading">
           <div className="flex items-baseline justify-between mb-2.5">
-            <h2 id="recent-activations-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] m-0">
-              RECENT ACTIVATIONS
+            <h2 id="recent-activations-heading" className="text-[14px] font-semibold text-[var(--text-primary)] m-0">
+              Recent Activations
             </h2>
           </div>
 
           <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse text-[13px]">
+              <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-[var(--border)] bg-[var(--surface-subtle)] text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                  <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
                     <th className="py-2.5 px-4 w-44">Serial</th>
                     <th className="py-2.5 px-4">Product</th>
                     <th className="py-2.5 px-4">Dealer / Channel</th>
@@ -417,19 +417,19 @@ export function WarrantyListView({
                 </thead>
                 <tbody className="divide-y divide-[var(--border)]">
                   {recentActivations.map((w) => (
-                    <tr key={w.id} className="hover:bg-[var(--surface-subtle)] transition-colors">
-                      <td className="py-2.5 px-4 font-mono font-semibold text-[12px] text-[var(--text-primary)]">
+                    <tr key={w.id} className="hover:bg-[var(--surface-subtle)] transition-colors h-[40px]">
+                      <td className="py-2.5 px-4 font-mono text-[12px] text-[var(--text-primary)]">
                         <Link href={`/warranty/${w.id}`} className="hover:text-[var(--accent)] hover:underline">
                           {w.serialNumber}
                         </Link>
                       </td>
-                      <td className="py-2.5 px-4 text-[var(--text-primary)] font-medium">
+                      <td className="py-2.5 px-4 text-[14px] text-[var(--text-primary)] font-medium">
                         {w.productName}
                       </td>
-                      <td className="py-2.5 px-4 text-[var(--text-secondary)]">
+                      <td className="py-2.5 px-4 text-[13px] text-[var(--text-secondary)]">
                         {w.dealerName || 'Direct Head Office'}
                       </td>
-                      <td className="py-2.5 px-4 text-[12px] text-[var(--text-muted)] whitespace-nowrap">
+                      <td className="py-2.5 px-4 text-[12px] text-[var(--text-secondary)] whitespace-nowrap">
                         {w.installationDate}
                       </td>
                       <td className="py-2.5 px-4 text-[12px] text-[var(--text-secondary)] whitespace-nowrap">
@@ -449,8 +449,8 @@ export function WarrantyListView({
 
       {/* 5. Warranty Registry Section */}
       <section aria-labelledby="warranty-registry-heading">
-        <h2 id="warranty-registry-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-3">
-          WARRANTY REGISTRY
+        <h2 id="warranty-registry-heading" className="text-[14px] font-semibold text-[var(--text-primary)] mb-3">
+          Warranty Registry
         </h2>
 
         {/* Compact Registry Toolbar */}
@@ -499,7 +499,7 @@ export function WarrantyListView({
         />
 
       {/* Warranties Table */}
-      <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] overflow-hidden shadow-[0_1px_3px_rgba(23,23,20,0.03)]">
+      <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
         {filteredWarranties.length === 0 ? (
           <div className="p-12 text-center space-y-3">
             <div className="w-12 h-12 mx-auto rounded-full bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-center text-[var(--text-muted)]">
@@ -511,7 +511,7 @@ export function WarrantyListView({
               <h3 className="text-[14px] font-semibold text-[var(--text-primary)] m-0">
                 No warranty registrations found
               </h3>
-              <p className="text-[12.5px] text-[var(--text-secondary)] mt-1 m-0">
+              <p className="text-[13px] text-[var(--text-secondary)] mt-1 m-0">
                 {search || statusFilter !== 'ALL' || productFilter !== 'ALL' || dealerFilter !== 'ALL'
                   ? 'No records match the active search filters.'
                   : 'No warranty records have been activated yet.'}
@@ -520,66 +520,66 @@ export function WarrantyListView({
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-[13px]">
+            <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-[var(--background)] border-b border-[var(--border)] text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)]">
-                  <th className="py-3 px-4">Serial Number</th>
-                  <th className="py-3 px-4">Product</th>
-                  <th className="py-3 px-4">Channel / Dealer</th>
-                  <th className="py-3 px-4">Installed</th>
-                  <th className="py-3 px-4">Valid Until</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4 text-right">Action</th>
+                <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                  <th className="py-2.5 px-4">Serial Number</th>
+                  <th className="py-2.5 px-4">Product</th>
+                  <th className="py-2.5 px-4">Channel / Dealer</th>
+                  <th className="py-2.5 px-4">Installed</th>
+                  <th className="py-2.5 px-4">Valid Until</th>
+                  <th className="py-2.5 px-4">Status</th>
+                  <th className="py-2.5 px-4 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border)]">
                 {filteredWarranties.map((w) => (
-                  <tr key={w.id} className="hover:bg-[var(--surface)] transition-colors">
-                    <td className="py-3.5 px-4 font-mono font-bold text-[var(--accent-text)]">
-                      <Link href={`/warranty/${w.id}`} className="hover:underline">
+                  <tr key={w.id} className="hover:bg-[var(--surface-subtle)] transition-colors h-[42px]">
+                    <td className="py-2.5 px-4 font-mono text-[12px] text-[var(--text-primary)]">
+                      <Link href={`/warranty/${w.id}`} className="hover:text-[var(--accent)] hover:underline">
                         {w.serialNumber}
                       </Link>
                     </td>
 
-                    <td className="py-3.5 px-4">
-                      <div className="font-medium text-[var(--text-primary)]">
+                    <td className="py-2.5 px-4">
+                      <div className="text-[14px] font-medium text-[var(--text-primary)]">
                         {w.productName || 'Unknown Product'}
                       </div>
                       {w.productCode && (
-                        <span className="font-mono text-[11px] text-[var(--text-muted)]">
+                        <span className="font-mono text-[12px] text-[var(--text-secondary)]">
                           {w.productCode}
                         </span>
                       )}
                     </td>
 
-                    <td className="py-3.5 px-4">
+                    <td className="py-2.5 px-4">
                       {w.dealerName ? (
-                        <span className="text-[var(--text-primary)] font-medium">
+                        <span className="text-[14px] text-[var(--text-primary)] font-normal">
                           {w.dealerName}
                         </span>
                       ) : (
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold bg-[var(--surface-subtle)] text-[var(--text-secondary)] border border-[var(--border)]">
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium bg-[var(--surface-subtle)] text-[var(--text-secondary)] border border-[var(--border)]">
                           Internal Direct
                         </span>
                       )}
                     </td>
 
-                    <td className="py-3.5 px-4 text-[var(--text-secondary)] whitespace-nowrap text-[12.5px]">
+                    <td className="py-2.5 px-4 text-[var(--text-secondary)] whitespace-nowrap text-[12px]">
                       {w.installationDate}
                     </td>
 
-                    <td className="py-3.5 px-4 text-[var(--text-secondary)] whitespace-nowrap text-[12.5px]">
+                    <td className="py-2.5 px-4 text-[var(--text-secondary)] whitespace-nowrap text-[12px]">
                       {w.warrantyEndDate}
                     </td>
 
-                    <td className="py-3.5 px-4">
+                    <td className="py-2.5 px-4">
                       {statusBadge(w)}
                     </td>
 
-                    <td className="py-3.5 px-4 text-right">
+                    <td className="py-2.5 px-4 text-right">
                       <Link
                         href={`/warranty/${w.id}`}
-                        className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--accent-text)] hover:underline"
+                        className="inline-flex items-center gap-1 text-[13px] font-medium text-[var(--accent)] hover:underline"
                       >
                         Details →
                       </Link>

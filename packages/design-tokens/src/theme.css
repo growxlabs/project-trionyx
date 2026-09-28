@@ -45,6 +45,32 @@
   --status-info: #1D4ED8;
   --status-info-soft: #EFF6FF;
   --status-info-border: #BFDBFE;
+
+  /* Context Strip Theme Tokens (Light Mode) */
+  --context-strip-bg: #F1F3F6;
+  --context-strip-text-primary: #171714;
+  --context-strip-text-secondary: #68665F;
+  --context-strip-divider: #D8DCE3;
+  --context-strip-border: #D8DCE3;
+  --context-strip-badge-bg: #FFFFFF;
+  --context-strip-badge-border: #D8DCE3;
+  --context-strip-badge-text: #171714;
+
+  /* Account Dropdown Menu Tokens (Light Mode) */
+  --menu-bg: #FFFFFF;
+  --menu-border: #E5E3DB;
+  --menu-divider: #E5E3DB;
+  --menu-text-primary: #171714;
+  --menu-text-secondary: #68665F;
+  --menu-text-muted: #8C8980;
+  --menu-theme-track: #EBEEF2;
+  --menu-theme-active-bg: #FFFFFF;
+  --menu-theme-active-text: #171714;
+  --menu-theme-active-border: #D8DCE3;
+  --menu-theme-inactive-text: #68665F;
+  --menu-theme-hover-text: #171714;
+  --menu-signout-text: #DC2626;
+  --menu-signout-hover-bg: #FEF2F2;
 }
 
 [data-theme="dark"] {
@@ -91,6 +117,32 @@
   --status-info: #94BFFF;
   --status-info-soft: rgba(49, 99, 184, 0.20);
   --status-info-border: rgba(116, 161, 237, 0.34);
+
+  /* Context Strip Theme Tokens (Dark Mode) */
+  --context-strip-bg: #292824;
+  --context-strip-text-primary: #F7F6F0;
+  --context-strip-text-secondary: #A9A59C;
+  --context-strip-divider: rgba(255, 255, 255, 0.12);
+  --context-strip-border: rgba(255, 255, 255, 0.08);
+  --context-strip-badge-bg: #2D2C27;
+  --context-strip-badge-border: rgba(255, 255, 255, 0.08);
+  --context-strip-badge-text: #F7F6F0;
+
+  /* Account Dropdown Menu Tokens (Dark Mode) */
+  --menu-bg: #22221E;
+  --menu-border: rgba(255, 255, 255, 0.08);
+  --menu-divider: rgba(255, 255, 255, 0.08);
+  --menu-text-primary: #F7F6F0;
+  --menu-text-secondary: #A9A59C;
+  --menu-text-muted: #858178;
+  --menu-theme-track: #171714;
+  --menu-theme-active-bg: #2D2C27;
+  --menu-theme-active-text: #F7F6F0;
+  --menu-theme-active-border: rgba(255, 255, 255, 0.12);
+  --menu-theme-inactive-text: #A9A59C;
+  --menu-theme-hover-text: #F7F6F0;
+  --menu-signout-text: #EF4444;
+  --menu-signout-hover-bg: rgba(239, 68, 68, 0.1);
 }
 
 /* Compatibility aliases for older portal utilities as screens adopt the
@@ -166,3 +218,38 @@
   background-color: #F4F3EE;
   border-color: rgba(17, 24, 39, 0.2);
 }
+
+/* Danger action: Semantic red, only for destructive operations */
+.btn-danger {
+  background-color: #FEF2F2;
+  color: #B42318;
+  border: 1px solid #FECACA;
+  border-radius: 3px;
+  font-weight: 500;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+.btn-danger:hover {
+  background-color: #FEE2E2;
+}
+
+[data-theme="dark"] .btn-neutral,
+[data-theme="dark"] .btn-secondary {
+  background-color: #1D1D19;
+  color: #F5F3EC;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+[data-theme="dark"] .btn-neutral:hover,
+[data-theme="dark"] .btn-secondary:hover {
+  background-color: #272722;
+  border-color: rgba(255, 255, 255, 0.20);
+}
+
+[data-theme="dark"] .btn-danger {
+  background-color: rgba(177, 52, 42, 0.18);
+  color: #F2A09A;
+  border: 1px solid rgba(230, 111, 101, 0.34);
+}
+[data-theme="dark"] .btn-danger:hover {
+  background-color: rgba(177, 52, 42, 0.28);
+}
+
