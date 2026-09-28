@@ -68,135 +68,124 @@ export function NewRequestForm({
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-2xl space-y-6 text-[#171714]">
       <div>
         <Link
           href="/requests"
-          className="inline-flex items-center text-[12.5px] font-semibold text-[#68665F] hover:text-[#171714] transition-colors mb-2"
+          className="text-[12.5px] font-semibold text-[#68665F] hover:text-[#171714] inline-flex items-center gap-1 transition-colors mb-2"
         >
           ← Back to My Requests
         </Link>
-        <h1 className="text-[24px] font-bold text-[#171714] tracking-tight">
-          Raise New Request
+        <h1 className="text-[26px] font-semibold tracking-[-0.03em] m-0">
+          New Request
         </h1>
-        <p className="text-[13.5px] text-[#68665F] mt-1">
-          Submit an inquiry, stock allocation request, or technical query directly to the Trionyx operations desk.
+        <p className="text-[13.5px] text-[#68665F] mt-1 m-0">
+          Submit an inquiry, stock allocation question, or technical query directly to your operations desk.
         </p>
       </div>
 
-      <div className="bg-[#FCFBF7] border border-[#171714]/10 rounded-lg p-6 shadow-[0_2px_8px_rgba(23,23,20,0.02)]">
-        {error && (
-          <div className="mb-6 p-4 rounded bg-[#FEF2F2] border border-[#FECACA] text-[13px] text-[#B91C1C]">
-            {error}
-          </div>
-        )}
+      {error && (
+        <div className="p-3.5 rounded-[4px] bg-[#FEF2F2] border border-[#FECACA] text-[13px] text-[#B91C1C]">
+          {error}
+        </div>
+      )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[12.5px] font-bold uppercase tracking-wider text-[#68665F] mb-1.5">
-                Request Type <span className="text-[#DC2626]">*</span>
-              </label>
-              <select
-                value={type}
-                onChange={(e) => setType(e.target.value as DealerRequestType)}
-                className="w-full px-3 py-2 rounded border border-[#171714]/20 bg-white text-[13.5px] text-[#171714] focus:outline-none focus:border-[#F26522]"
-                required
-              >
-                <option value="PRODUCT_ENQUIRY">Product Enquiry</option>
-                <option value="AVAILABILITY">Stock / Allocation Request</option>
-                <option value="GENERAL_SUPPORT">Technical / General Support</option>
-                <option value="OTHER">Other Query</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-[12.5px] font-bold uppercase tracking-wider text-[#68665F] mb-1.5">
-                Priority
-              </label>
-              <select
-                value={priority}
-                onChange={(e) => setPriority(e.target.value as DealerRequestPriority)}
-                className="w-full px-3 py-2 rounded border border-[#171714]/20 bg-white text-[13.5px] text-[#171714] focus:outline-none focus:border-[#F26522]"
-              >
-                <option value="LOW">Low (Routine)</option>
-                <option value="MEDIUM">Medium (Standard)</option>
-                <option value="HIGH">High (Urgent customer need)</option>
-                <option value="URGENT">Urgent (Critical requirement)</option>
-              </select>
-            </div>
-          </div>
-
+      <form onSubmit={handleSubmit} className="border-t border-[#171714]/10 pt-5 space-y-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-[12.5px] font-bold uppercase tracking-wider text-[#68665F] mb-1.5">
-              Related Product <span className="text-[#68665F] font-normal lowercase">(optional)</span>
+            <label className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] mb-1.5">
+              Request Type *
             </label>
             <select
-              value={productId}
-              onChange={(e) => setProductId(e.target.value)}
-              className="w-full px-3 py-2 rounded border border-[#171714]/20 bg-white text-[13.5px] text-[#171714] focus:outline-none focus:border-[#F26522]"
+              value={type}
+              onChange={(e) => setType(e.target.value as DealerRequestType)}
+              className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/15 bg-white text-[13.5px] text-[#171714] focus:outline-none focus:border-[#F26522]"
+              required
             >
-              <option value="">None / General Inquiry</option>
-              {products.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name} ({p.code})
-                </option>
-              ))}
+              <option value="PRODUCT_ENQUIRY">Product Enquiry</option>
+              <option value="AVAILABILITY">Stock Availability</option>
+              <option value="GENERAL_SUPPORT">General Support</option>
+              <option value="OTHER">Other Query</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-[12.5px] font-bold uppercase tracking-wider text-[#68665F] mb-1.5">
-              Subject <span className="text-[#DC2626]">*</span>
+            <label className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] mb-1.5">
+              Priority
             </label>
-            <input
-              type="text"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              placeholder="Brief summary of your request"
-              className="w-full px-3 py-2 rounded border border-[#171714]/20 bg-white text-[13.5px] text-[#171714] placeholder-[#68665F]/50 focus:outline-none focus:border-[#F26522]"
-              required
-              minLength={3}
-              maxLength={200}
-            />
-          </div>
-
-          <div>
-            <label className="block text-[12.5px] font-bold uppercase tracking-wider text-[#68665F] mb-1.5">
-              Description <span className="text-[#DC2626]">*</span>
-            </label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={5}
-              placeholder="Provide complete details, quantities required, vehicle application, or specific query..."
-              className="w-full px-3 py-2 rounded border border-[#171714]/20 bg-white text-[13.5px] text-[#171714] placeholder-[#68665F]/50 focus:outline-none focus:border-[#F26522]"
-              required
-              minLength={5}
-              maxLength={2000}
-            />
-            <span className="block text-[11px] text-[#68665F] text-right mt-1">
-              {description.length} / 2000 characters
-            </span>
-          </div>
-
-          <div className="pt-4 border-t border-[#171714]/08 flex items-center justify-end gap-3">
-            <Link
-              href="/requests"
-              className="px-4 py-2 rounded border border-[#171714]/20 text-[13.5px] font-semibold text-[#171714] hover:bg-[#171714]/05 transition-colors"
+            <select
+              value={priority}
+              onChange={(e) => setPriority(e.target.value as DealerRequestPriority)}
+              className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/15 bg-white text-[13.5px] text-[#171714] focus:outline-none focus:border-[#F26522]"
             >
-              Cancel
-            </Link>
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-5 py-2 rounded bg-[#F26522] hover:bg-[#D9531E] text-white text-[13.5px] font-semibold shadow-[0_2px_8px_rgba(242,101,34,0.25)] disabled:opacity-50 transition-all"
-            >
-              {loading ? 'Submitting...' : 'Submit Request'}
-            </button>
+              <option value="LOW">Low</option>
+              <option value="MEDIUM">Medium</option>
+              <option value="HIGH">High</option>
+              <option value="URGENT">Urgent</option>
+            </select>
           </div>
-        </form>
-      </div>
+        </div>
+
+        <div>
+          <label className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] mb-1.5">
+            Product <span className="font-normal lowercase text-[#68665F]/80">(optional)</span>
+          </label>
+          <select
+            value={productId}
+            onChange={(e) => setProductId(e.target.value)}
+            className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/15 bg-white text-[13.5px] text-[#171714] focus:outline-none focus:border-[#F26522]"
+          >
+            <option value="">None / General Inquiry</option>
+            {products.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name} ({p.code})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] mb-1.5">
+            Subject *
+          </label>
+          <input
+            type="text"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            placeholder="Brief summary of your request"
+            className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/15 bg-white text-[13.5px] text-[#171714] placeholder-[#68665F]/50 focus:outline-none focus:border-[#F26522]"
+            required
+            minLength={3}
+            maxLength={200}
+          />
+        </div>
+
+        <div>
+          <label className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] mb-1.5">
+            Message *
+          </label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Provide specific details, quantity requirements, or application questions..."
+            rows={5}
+            className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/15 bg-white text-[13.5px] text-[#171714] placeholder-[#68665F]/50 focus:outline-none focus:border-[#F26522]"
+            required
+            minLength={5}
+            maxLength={2000}
+          />
+        </div>
+
+        <div className="pt-2">
+          <button
+            type="submit"
+            disabled={loading}
+            className="px-5 py-2.5 rounded-[4px] bg-[#F26522] hover:opacity-90 disabled:opacity-50 text-white text-[13.5px] font-semibold transition-opacity cursor-pointer shadow-xs"
+          >
+            {loading ? 'Submitting...' : 'Submit Request'}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

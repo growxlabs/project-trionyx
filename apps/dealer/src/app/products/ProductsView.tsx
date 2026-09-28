@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import type { DealerProduct } from '@trionyx/types';
 
@@ -14,99 +14,193 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
 
-  const filteredProducts = products.filter((p) => {
-    if (selectedCategory !== 'ALL' && p.categoryId !== selectedCategory) return false;
+  const filteredProducts = useMemo(() => {
+    return products.filter((p) => {
+      if (selectedCategory !== 'ALL' && p.categoryId !== selectedCategory) return false;
 
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      const matchName = p.name.toLowerCase().includes(q);
-      const matchCode = p.productCode.toLowerCase().includes(q);
-      const matchCategory = p.categoryName?.toLowerCase().includes(q);
-      const matchDesc = p.shortDescription?.toLowerCase().includes(q);
-      return matchName || matchCode || matchCategory || matchDesc;
-    }
+      if (search.trim()) {
+        const q = search.toLowerCase();
+        const matchName = p.name.toLowerCase().includes(q);
+        const matchCode = p.productCode.toLowerCase().includes(q);
+        const matchCategory = p.categoryName?.toLowerCase().includes(q);
+        const matchDesc = p.shortDescription?.toLowerCase().includes(q);
+        return matchName || matchCode || matchCategory || matchDesc;
+      }
 
-    return true;
-  });
+      return true;
+    });
+  }, [products, search, selectedCategory]);
 
   return (
-    <div className="space-y-6">
-      <div className="bg-[#FCFBF7] border border-[#171714]/10 rounded-lg p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-[24px] font-bold text-[#171714] tracking-tight mt-0.5">
-              Products
-            </h1>
-            <p className="text-[13.5px] text-[#68665F] mt-1">
-              Find product details and application information.
-            </p>
-          </div>
-          <div className="flex items-center gap-2 text-[12.5px] font-medium text-[#68665F]">
-            <span>{filteredProducts.length} of {products.length} products</span>
-          </div>
-        </div>
-
-        <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search name, code or category"
-              aria-label="Search products"
-              className="w-full px-3 py-2 rounded border border-[#171714]/20 bg-white text-[13.5px] text-[#171714] placeholder-[#68665F]/50 focus:outline-none focus:border-[#F26522]"
-            />
-          </div>
-          <div>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-3 py-2 rounded border border-[#171714]/20 bg-white text-[13.5px] text-[#171714] focus:outline-none focus:border-[#F26522]"
-            >
-              <option value="ALL">All categories</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+    <div className="space-y-8 text-[#171714]">
+      {/* 1. Header */}
+      <div>
+        <h1 className="text-[26px] sm:text-[30px] font-semibold tracking-[-0.03em] m-0">
+          Products
+        </h1>
+        <p className="mt-1 text-[13.5px] text-[#68665F] m-0">
+          Trionyx products available to your dealership.
+        </p>
       </div>
 
-      {filteredProducts.length > 0 ? (
-        <div className="bg-[#FCFBF7] border border-[#171714]/10 rounded-lg px-5">
-          {filteredProducts.map((p) => (
-            <div key={p.id} className="grid gap-3 border-b border-[#171714]/10 py-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
-              <div className="min-w-0">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-[#68665F]">{p.categoryName || 'General'} · {p.productCode}</p>
-                <h2 className="mt-1 text-[17px] font-semibold text-[#171714]">
-                  <Link href={`/products/${p.id}`} className="hover:text-[#F26522] hover:underline">{p.name}</Link>
-                </h2>
-                {(p.shortDescription || p.description) && (
-                  <p className="mt-1 max-w-2xl text-[13px] leading-relaxed text-[#68665F] line-clamp-2">{p.shortDescription || p.description}</p>
-                )}
-              </div>
-              <Link href={`/products/${p.id}`} className="text-[13px] font-semibold text-[#F26522] hover:underline">View product →</Link>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="border-y border-[#171714]/10 py-8">
-          <p className="text-[14px] text-[#68665F]">{products.length === 0 ? 'No products are listed yet.' : 'No products match this search.'}</p>
-          {(search || selectedCategory !== 'ALL') && (
+      {/* 2. Product Families (Section 6) */}
+      {categories.length > 0 && (
+        <section aria-labelledby="product-families-heading" className="border-t border-[#171714]/10 pt-5 space-y-3">
+          <h2 id="product-families-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] m-0">
+            PRODUCT FAMILIES
+          </h2>
+          <div className="flex flex-wrap gap-2">
             <button
-              onClick={() => {
-                setSearch('');
-                setSelectedCategory('ALL');
-              }}
-              className="mt-3 text-[12.5px] font-semibold text-[#F26522] hover:underline"
+              type="button"
+              onClick={() => setSelectedCategory('ALL')}
+              className={`px-3 py-1 rounded-[4px] text-[12.5px] font-medium border transition-colors cursor-pointer ${
+                selectedCategory === 'ALL'
+                  ? 'bg-[#171714] text-white border-[#171714]'
+                  : 'bg-white text-[#171714] border-[#171714]/15 hover:border-[#171714]/30'
+              }`}
             >
-              Clear filters
+              All Families
             </button>
-          )}
-        </div>
+            {categories.map((c) => {
+              const isSelected = selectedCategory === c.id;
+              return (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => setSelectedCategory(isSelected ? 'ALL' : c.id)}
+                  className={`px-3 py-1 rounded-[4px] text-[12.5px] font-medium border transition-colors cursor-pointer ${
+                    isSelected
+                      ? 'bg-[#171714] text-white border-[#171714]'
+                      : 'bg-white text-[#171714] border-[#171714]/15 hover:border-[#171714]/30'
+                  }`}
+                >
+                  {c.name}
+                </button>
+              );
+            })}
+          </div>
+        </section>
       )}
+
+      {/* 3. Search & Filter Bar */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 border-y border-[#171714]/10 py-3.5">
+        <div className="relative flex-1 max-w-md">
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search products..."
+            aria-label="Search products"
+            className="w-full px-3 py-1.5 rounded-[4px] border border-[#171714]/15 bg-white text-[13px] text-[#171714] placeholder-[#68665F]/60 focus:border-[#F26522] focus:outline-none"
+          />
+        </div>
+        <div className="w-full sm:w-56">
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            aria-label="Filter by category"
+            className="w-full px-3 py-1.5 rounded-[4px] border border-[#171714]/15 bg-white text-[13px] text-[#171714] focus:border-[#F26522] focus:outline-none"
+          >
+            <option value="ALL">All Categories</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        {(search || selectedCategory !== 'ALL') && (
+          <button
+            type="button"
+            onClick={() => {
+              setSearch('');
+              setSelectedCategory('ALL');
+            }}
+            className="text-[12px] text-[#F26522] hover:underline self-center cursor-pointer"
+          >
+            Clear filters
+          </button>
+        )}
+      </div>
+
+      {/* 4. Editorial Products List */}
+      <section aria-labelledby="products-list-heading">
+        <div className="flex items-baseline justify-between border-b border-[#171714]/10 pb-2.5">
+          <h2 id="products-list-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] m-0">
+            PRODUCTS ({filteredProducts.length})
+          </h2>
+        </div>
+
+        {filteredProducts.length > 0 ? (
+          <div className="divide-y divide-[#171714]/10">
+            {filteredProducts.map((p) => {
+              const availabilityLabel =
+                p.availability === 'AVAILABLE'
+                  ? 'Available'
+                  : p.availability === 'LIMITED'
+                  ? 'Limited'
+                  : 'Unavailable';
+
+              const availabilityColor =
+                p.availability === 'AVAILABLE'
+                  ? 'text-[#065F46]'
+                  : p.availability === 'LIMITED'
+                  ? 'text-[#D97706]'
+                  : 'text-[#DC2626]';
+
+              return (
+                <div key={p.id} className="py-5 space-y-2 text-[13px]">
+                  <div className="text-[11px] font-semibold uppercase tracking-wider text-[#68665F]">
+                    {p.categoryName || 'GENERAL'} / COATING
+                  </div>
+
+                  <div>
+                    <Link
+                      href={`/products/${p.id}`}
+                      className="text-[16px] font-semibold text-[#171714] hover:text-[#F26522] block leading-snug"
+                    >
+                      {p.name}
+                    </Link>
+                    {p.shortDescription && (
+                      <p className="mt-1 text-[13px] text-[#68665F] max-w-2xl leading-relaxed m-0">
+                        {p.shortDescription}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="text-[12.5px]">
+                    <span className="text-[#68665F]">Availability: </span>
+                    <span className={`font-semibold ${availabilityColor}`}>{availabilityLabel}</span>
+                  </div>
+
+                  <div className="flex items-center gap-4 pt-1">
+                    <Link
+                      href={`/products/${p.id}`}
+                      className="text-[12.5px] font-semibold text-[#171714] hover:text-[#F26522] hover:underline"
+                    >
+                      View product →
+                    </Link>
+                    <Link
+                      href={`/requests/new?productId=${p.id}&type=AVAILABILITY&subject=Stock+Check:+${encodeURIComponent(
+                        p.name
+                      )}`}
+                      className="text-[12.5px] font-semibold text-[#F26522] hover:underline"
+                    >
+                      Ask about stock →
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="py-8 text-[13px] text-[#68665F]">
+            {search || selectedCategory !== 'ALL'
+              ? 'No products match your search or filter.'
+              : 'No products are currently available for this dealership.'}
+          </div>
+        )}
+      </section>
     </div>
   );
 }

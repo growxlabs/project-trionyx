@@ -39,55 +39,48 @@ export function DealerShell({ user, dealer, children }: DealerShellProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F5EE] flex flex-col md:flex-row text-[#171714]">
+    <div className="min-h-screen bg-[#F7F6F0] flex flex-col md:flex-row text-[#171714]">
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex flex-col w-64 bg-[#FCFBF7] border-r border-[#171714]/10 h-screen sticky top-0 select-none">
         {/* Brand Header */}
-        <div className="p-6 border-b border-[#171714]/08">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded bg-[#171714] flex items-center justify-center text-white font-bold text-sm tracking-wider">
-              TRX
-            </div>
-            <div>
-              <span className="text-[13px] font-bold tracking-[0.14em] uppercase text-[#171714] block leading-none">
-                TRIONYX
-              </span>
-              <span className="text-[11px] font-semibold text-[#F26522] tracking-wider uppercase block mt-1">
-                Dealer Portal
-              </span>
-            </div>
+        <div className="p-6 border-b border-[#171714]/10">
+          <div className="text-[14px] font-bold tracking-[0.14em] uppercase text-[#171714] leading-tight">
+            TRIONYX
+          </div>
+          <div className="text-[11px] font-semibold text-[#F26522] tracking-[0.12em] uppercase mt-1">
+            DEALER PORTAL
           </div>
         </div>
 
-        {/* Dealer Identity Badge */}
-        <div className="px-6 py-4 bg-[#EFECE3]/50 border-b border-[#171714]/08">
-          <div className="text-[12px] font-bold text-[#171714] truncate" title={dealer.businessName}>
+        {/* Dealer Identity Block */}
+        <div className="px-6 py-4 border-b border-[#171714]/10">
+          <div className="text-[13.5px] font-bold text-[#171714] truncate" title={dealer.businessName}>
             {dealer.businessName}
           </div>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-[10.5px] font-mono text-[#68665F] font-semibold">{dealer.dealerCode}</span>
-            <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[9.5px] font-bold bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]">
-              ACTIVE
+            <span className="text-[11px] font-mono text-[#68665F] font-semibold">{dealer.dealerCode}</span>
+            <span className="inline-flex items-center px-1.5 py-0.2 rounded-[2px] text-[9.5px] font-bold uppercase tracking-wider bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]">
+              {dealer.status || 'ACTIVE'}
             </span>
           </div>
         </div>
 
         {/* Navigation Links */}
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+        <nav className="flex-1 py-3 space-y-0.5 overflow-y-auto">
           {navItems.map((item) => {
             const isActive = pathname === item.href || (item.href !== '/overview' && pathname.startsWith(item.href));
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded text-[13.5px] font-medium transition-colors ${
+                className={`flex items-center gap-3 px-6 py-2.5 text-[13.5px] transition-colors border-l-2 ${
                   isActive
-                    ? 'bg-[#171714] text-white shadow-sm'
-                    : 'text-[#68665F] hover:text-[#171714] hover:bg-[#EFECE3]'
+                    ? 'border-[#F26522] bg-[#171714]/05 text-[#171714] font-semibold'
+                    : 'border-transparent text-[#68665F] hover:text-[#171714] hover:bg-[#171714]/03 font-medium'
                 }`}
               >
-                <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d={item.icon} />
+                <svg className="w-4 h-4 shrink-0 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={item.icon} />
                 </svg>
                 <span>{item.label}</span>
               </Link>
@@ -96,44 +89,32 @@ export function DealerShell({ user, dealer, children }: DealerShellProps) {
         </nav>
 
         {/* User Footer & Sign Out */}
-        <div className="p-4 border-t border-[#171714]/08 bg-[#FCFBF7]">
-          <div className="flex items-center justify-between gap-2">
-            <div className="min-w-0 flex-1">
-              <p className="text-[12.5px] font-semibold text-[#171714] truncate">{user.name}</p>
-              <p className="text-[11px] text-[#68665F] truncate">{user.email}</p>
-            </div>
-            <button
-              onClick={handleSignOut}
-              disabled={isSigningOut}
-              title="Sign Out"
-              className="p-1.5 rounded hover:bg-[#EFECE3] text-[#68665F] hover:text-[#D9362B] transition-colors"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-            </button>
-          </div>
+        <div className="p-6 border-t border-[#171714]/10 bg-[#FCFBF7]">
+          <div className="text-[11px] text-[#68665F]">Signed in as</div>
+          <div className="text-[13px] font-semibold text-[#171714] truncate mt-0.5">{user.name}</div>
+          <button
+            onClick={handleSignOut}
+            disabled={isSigningOut}
+            className="text-[12px] font-medium text-[#F26522] hover:underline mt-2 inline-block cursor-pointer disabled:opacity-50"
+          >
+            {isSigningOut ? 'Signing out...' : 'Sign out'}
+          </button>
         </div>
       </aside>
 
       {/* Mobile Header */}
       <header className="md:hidden flex items-center justify-between p-4 bg-[#FCFBF7] border-b border-[#171714]/10 sticky top-0 z-40">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded bg-[#171714] flex items-center justify-center text-white font-bold text-xs">
-            TRX
-          </div>
-          <div>
-            <span className="text-[12px] font-bold tracking-widest uppercase text-[#171714]">
-              TRIONYX
-            </span>
-            <span className="text-[10px] font-semibold text-[#F26522] block leading-none">
-              Dealer Portal
-            </span>
-          </div>
+        <div>
+          <span className="text-[13px] font-bold tracking-widest uppercase text-[#171714]">
+            TRIONYX
+          </span>
+          <span className="text-[10.5px] font-semibold text-[#F26522] block leading-none mt-0.5">
+            DEALER PORTAL
+          </span>
         </div>
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="p-2 rounded border border-[#171714]/15 bg-[#FCFBF7] text-[#171714]"
+          className="p-2 rounded border border-[#171714]/15 bg-[#FCFBF7] text-[#171714] cursor-pointer"
           aria-label="Toggle navigation menu"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -148,10 +129,15 @@ export function DealerShell({ user, dealer, children }: DealerShellProps) {
 
       {/* Mobile Drawer */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-[#FCFBF7] border-b border-[#171714]/10 p-4 space-y-2 sticky top-[61px] z-30 shadow-lg">
+        <div className="md:hidden bg-[#FCFBF7] border-b border-[#171714]/10 p-4 space-y-2 sticky top-[57px] z-30 shadow-lg">
           <div className="pb-3 mb-2 border-b border-[#171714]/10">
             <p className="text-[13px] font-bold text-[#171714]">{dealer.businessName}</p>
-            <p className="text-[11px] font-mono text-[#68665F]">{dealer.dealerCode}</p>
+            <div className="flex items-center gap-2 mt-0.5">
+              <span className="text-[11px] font-mono text-[#68665F]">{dealer.dealerCode}</span>
+              <span className="text-[9.5px] font-bold uppercase text-[#065F46] bg-[#ECFDF5] border border-[#A7F3D0] px-1 rounded">
+                {dealer.status || 'ACTIVE'}
+              </span>
+            </div>
           </div>
           {navItems.map((item) => {
             const isActive = pathname === item.href || (item.href !== '/overview' && pathname.startsWith(item.href));
@@ -160,8 +146,10 @@ export function DealerShell({ user, dealer, children }: DealerShellProps) {
                 key={item.href}
                 href={item.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2 rounded text-[14px] font-medium ${
-                  isActive ? 'bg-[#171714] text-white' : 'text-[#68665F] hover:bg-[#EFECE3]'
+                className={`flex items-center gap-3 px-3 py-2 text-[13.5px] border-l-2 ${
+                  isActive
+                    ? 'border-[#F26522] bg-[#171714]/05 text-[#171714] font-semibold'
+                    : 'border-transparent text-[#68665F] font-medium'
                 }`}
               >
                 <span>{item.label}</span>
@@ -169,19 +157,22 @@ export function DealerShell({ user, dealer, children }: DealerShellProps) {
             );
           })}
           <div className="pt-3 border-t border-[#171714]/10 flex items-center justify-between">
-            <span className="text-[12px] text-[#68665F]">{user.name}</span>
+            <div>
+              <span className="text-[10.5px] text-[#68665F] block">Signed in as</span>
+              <span className="text-[12px] font-semibold text-[#171714]">{user.name}</span>
+            </div>
             <button
               onClick={handleSignOut}
-              className="text-[12px] font-semibold text-[#D9362B] px-2 py-1 rounded bg-[#FEF2F2] border border-[#FECACA]"
+              className="text-[12px] font-medium text-[#F26522] hover:underline cursor-pointer"
             >
-              Sign Out
+              Sign out
             </button>
           </div>
         </div>
       )}
 
       {/* Main Content Area */}
-      <main className="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full">
+      <main className="flex-1 p-4 md:p-8 max-w-5xl mx-auto w-full">
         {children}
       </main>
     </div>
