@@ -252,7 +252,7 @@ export function Sidebar({ user }: SidebarProps) {
   return (
     <aside
       aria-label="Navigation Rail"
-      className="hidden lg:flex w-[72px] shrink-0 bg-[#161616] border-r border-[rgba(255,255,255,0.08)] min-h-screen h-screen sticky top-0 flex-col items-center justify-between pt-4 pb-4 select-none z-40"
+      className="hidden lg:flex w-[72px] shrink-0 bg-[#161616] min-h-screen h-screen sticky top-0 flex-col items-center justify-between pt-4 pb-4 select-none z-40"
     >
       {/* 1. TOP SECTION: Compact Trionyx Geometric Mark + Mode Badge */}
       <div className="flex flex-col items-center gap-1.5">
