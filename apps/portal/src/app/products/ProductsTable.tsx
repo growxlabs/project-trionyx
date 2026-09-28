@@ -1,11 +1,19 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { Product, ProductCategory, SafeUser } from '@trionyx/types';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { SerialNumberLookupModal } from '../../components/inventory/SerialNumberLookupModal';
+import {
+  WorkspaceHeader,
+  OperationalSummaryStrip,
+  StatusBadge,
+  RegistryToolbar,
+  EmptyOperationalState,
+  type SummaryMetric,
+} from '../../components/workspace';
 
 interface ProductsTableProps {
   initialProducts: (Product & { categoryName?: string; availableUnits?: number })[];
@@ -16,7 +24,7 @@ interface ProductsTableProps {
 export function ProductsTable({ initialProducts, categories, user }: ProductsTableProps) {
   const router = useRouter();
   const [products, setProducts] = useState(initialProducts);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
   const [selectedVisibility, setSelectedVisibility] = useState<string>('ALL');
@@ -28,20 +36,55 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
 
   const canWrite = user.role === 'MANAGING_DIRECTOR' || user.role === 'ADMIN';
 
+  // Derived metrics
+  const activeCount = useMemo(() => products.filter((p) => p.status === 'ACTIVE').length, [products]);
+  const draftOrInactiveCount = useMemo(() => products.filter((p) => p.status !== 'ACTIVE').length, [products]);
+  const totalAvailableStock = useMemo(
+    () => products.reduce((acc, p) => acc + (p.availableUnits ?? 0), 0),
+    [products]
+  );
+  const publicCount = useMemo(() => products.filter((p) => p.publicVisibility === 'PUBLIC').length, [products]);
+
+  // Out of stock or low stock items (< 5 units)
+  const stockAttentionItems = useMemo(
+    () =>
+      products
+        .filter((p) => p.status === 'ACTIVE' && (p.availableUnits ?? 0) < 5)
+        .sort((a, b) => (a.availableUnits ?? 0) - (b.availableUnits ?? 0)),
+    [products]
+  );
+
+  // Category family statistics
+  const categoryStats = useMemo(() => {
+    return categories.map((cat) => {
+      const catProducts = products.filter((p) => p.categoryId === cat.id);
+      const units = catProducts.reduce((acc, p) => acc + (p.availableUnits ?? 0), 0);
+      return {
+        id: cat.id,
+        name: cat.name,
+        formulaCount: catProducts.length,
+        totalUnits: units,
+      };
+    });
+  }, [categories, products]);
+
   // Filter products locally for instant response
-  const filtered = products.filter((p) => {
-    if (selectedCategory !== 'ALL' && p.categoryId !== selectedCategory) return false;
-    if (selectedStatus !== 'ALL' && p.status !== selectedStatus) return false;
-    if (selectedVisibility !== 'ALL' && p.publicVisibility !== selectedVisibility) return false;
-    if (searchTerm.trim()) {
-      const term = searchTerm.toLowerCase();
-      const matchName = p.name.toLowerCase().includes(term);
-      const matchCode = p.productCode.toLowerCase().includes(term);
-      const matchSlug = p.slug.toLowerCase().includes(term);
-      if (!matchName && !matchCode && !matchSlug) return false;
-    }
-    return true;
-  });
+  const filteredProducts = useMemo(() => {
+    return products.filter((p) => {
+      if (selectedCategory !== 'ALL' && p.categoryId !== selectedCategory) return false;
+      if (selectedStatus !== 'ALL' && p.status !== selectedStatus) return false;
+      if (selectedVisibility !== 'ALL' && p.publicVisibility !== selectedVisibility) return false;
+      if (search.trim()) {
+        const term = search.toLowerCase();
+        const matchName = p.name.toLowerCase().includes(term);
+        const matchCode = p.productCode.toLowerCase().includes(term);
+        const matchSlug = p.slug.toLowerCase().includes(term);
+        const matchDesc = p.shortDescription ? p.shortDescription.toLowerCase().includes(term) : false;
+        if (!matchName && !matchCode && !matchSlug && !matchDesc) return false;
+      }
+      return true;
+    });
+  }, [products, search, selectedCategory, selectedStatus, selectedVisibility]);
 
   const handleArchiveConfirm = async () => {
     if (!archiveTarget || isArchiving) return;
@@ -68,251 +111,341 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
     }
   };
 
-  const statusBadge = (status: string) => {
-    switch (status) {
-      case 'ACTIVE':
-        return 'bg-[var(--status-success-soft)] text-[var(--status-success)] border-[var(--status-success-border)]';
-      case 'DRAFT':
-        return 'bg-[var(--status-warning-soft)] text-[var(--status-warning)] border-[var(--status-warning-border)]';
-      case 'INACTIVE':
-        return 'bg-[var(--surface-subtle)] text-[var(--text-muted)] border-[var(--border)]';
-      case 'ARCHIVED':
-        return 'bg-[var(--status-danger-soft)] text-[var(--status-danger)] border-[var(--status-danger-border)]';
-      default:
-        return 'bg-[var(--surface-subtle)] text-[var(--text-primary)] border-[var(--border)]';
-    }
-  };
+  const summaryMetrics: SummaryMetric[] = [
+    { label: 'ACTIVE FORMULAS', value: activeCount, detail: 'In catalog circulation', tone: 'positive' },
+    { label: 'IN STOCK (TOTAL)', value: totalAvailableStock, detail: 'Discrete serials ready', tone: 'default' },
+    { label: 'PUBLIC MARKET', value: publicCount, detail: 'Visible to public web', tone: 'default' },
+    {
+      label: 'DRAFT / INACTIVE',
+      value: draftOrInactiveCount,
+      detail: draftOrInactiveCount > 0 ? 'Not in live circulation' : 'All active',
+      tone: draftOrInactiveCount > 0 ? 'alert' : 'default',
+    },
+  ];
 
   return (
-    <div>
-      {/* Action & Filter Bar */}
-      <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] p-4 sm:p-5 mb-6 shadow-[0_1px_3px_rgba(23,23,20,0.03)] space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          {/* Search Input */}
-          <div className="relative flex-1 max-w-md">
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[var(--text-muted)]">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
-            </span>
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search product name, code (TRX-PROD-...), or slug..."
-              className="w-full pl-9 pr-4 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] text-[13px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
-            />
-          </div>
-
-          <div className="flex items-center gap-2.5 shrink-0">
-            {/* Direct Serial Number Lookup trigger */}
+    <div className="space-y-8">
+      {/* 1. Header with Primary Action & Serial Lookup Tool */}
+      <WorkspaceHeader
+        eyebrow="PRODUCT CATALOG"
+        title="Product Catalog & Specifications"
+        description="Canonical registry of Trionyx automotive surface protection formulas, warranty durations, and physical serial inventory."
+        action={
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setShowLookupModal(true)}
-              className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[13px] font-semibold transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[13px] font-semibold transition-colors cursor-pointer"
             >
-              <svg className="w-4 h-4 text-[var(--accent-text)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg className="w-3.5 h-3.5 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="11" cy="11" r="8" />
                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
               <span>Lookup Serial</span>
             </button>
-
-            {/* New Product Action (MD & Admin only) */}
             {canWrite && (
               <Link
                 href="/products/new"
-                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-[6px] bg-[var(--text-primary)] hover:bg-[var(--surface-subtle)] active:bg-[var(--surface-subtle)] text-[var(--background)] text-[13px] font-semibold transition-colors cursor-pointer shrink-0"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity shadow-xs"
               >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                <span>New Product</span>
+                + New Product
               </Link>
             )}
           </div>
-        </div>
+        }
+      />
 
-        {/* Filter Row */}
-        <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-[var(--border)] text-[12.5px]">
-          {/* Category Filter */}
-          <div className="flex items-center gap-1.5">
-            <span className="text-[var(--text-secondary)] font-medium">Category:</span>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-2.5 py-1.5 rounded-[4px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] font-medium text-[12.5px] focus:outline-none focus:ring-1 focus:ring-[var(--focus-ring)]"
-            >
-              <option value="ALL">All Categories</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+      {/* 2. Operational Summary Strip */}
+      <OperationalSummaryStrip
+        title="CATALOG & INVENTORY POSITION"
+        metrics={summaryMetrics}
+      />
+
+      {/* 3. Product Family Breakdown */}
+      {categoryStats.length > 0 && (
+        <section aria-labelledby="product-families-heading" className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-4">
+          <div className="flex items-baseline justify-between mb-3">
+            <h2 id="product-families-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] m-0">
+              FORMULA FAMILIES & READY STOCK
+            </h2>
+            <span className="text-[11px] text-[var(--text-muted)] font-mono">
+              Technology Lines
+            </span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {categoryStats.map((cat) => {
+              const isSelected = selectedCategory === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setSelectedCategory(isSelected ? 'ALL' : cat.id)}
+                  className={`p-3 rounded-[4px] border text-left transition-colors cursor-pointer ${
+                    isSelected
+                      ? 'border-[var(--accent)] bg-[var(--surface-subtle)] ring-1 ring-[var(--accent)]'
+                      : 'border-[var(--border)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-raised)]'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-1">
+                    <span className="font-semibold text-[13px] text-[var(--text-primary)]">
+                      {cat.name}
+                    </span>
+                    <span className="font-mono text-[11px] px-1.5 py-0.5 rounded bg-[var(--background)] border border-[var(--border)] text-[var(--text-secondary)]">
+                      {cat.formulaCount} {cat.formulaCount === 1 ? 'item' : 'items'}
+                    </span>
+                  </div>
+                  <div className="mt-2 flex items-center justify-between text-[11.5px]">
+                    <span className="text-[var(--text-muted)]">Warehouse Stock:</span>
+                    <span className={`font-mono font-semibold ${cat.totalUnits === 0 ? 'text-[var(--status-danger)]' : 'text-[var(--status-success)]'}`}>
+                      {cat.totalUnits} units
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* 4. Stock Bottlenecks / Low Stock Warning */}
+      {stockAttentionItems.length > 0 && (
+        <section aria-labelledby="stock-attention-heading" className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-4">
+          <div className="flex items-baseline justify-between mb-3">
+            <h2 id="stock-attention-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--status-warning)] m-0">
+              LOW INVENTORY / STOCK ATTENTION ({stockAttentionItems.length})
+            </h2>
+            <span className="text-[11.5px] text-[var(--text-muted)]">
+              Formulas below threshold (&lt;5 units) requiring batch receiving or production allocation.
+            </span>
           </div>
 
-          {/* Status Filter */}
-          <div className="flex items-center gap-1.5">
-            <span className="text-[var(--text-secondary)] font-medium">Status:</span>
-            <select
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              className="px-2.5 py-1.5 rounded-[4px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] font-medium text-[12.5px] focus:outline-none focus:ring-1 focus:ring-[var(--focus-ring)]"
-            >
-              <option value="ALL">All Statuses</option>
-              <option value="DRAFT">Draft</option>
-              <option value="ACTIVE">Active</option>
-              <option value="INACTIVE">Inactive</option>
-              <option value="ARCHIVED">Archived</option>
-            </select>
+          <div className="divide-y divide-[var(--border)] border border-[var(--border)] rounded-[4px] bg-[var(--surface-subtle)]">
+            {stockAttentionItems.slice(0, 3).map((p) => (
+              <div key={p.id} className="p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[13px]">
+                <div className="flex items-center gap-3">
+                  <span className="font-mono text-[11.5px] text-[var(--text-muted)]">{p.productCode}</span>
+                  <Link href={`/products/${p.id}`} className="font-semibold text-[var(--text-primary)] hover:text-[var(--accent)]">
+                    {p.name}
+                  </Link>
+                  <span className="text-[12px] text-[var(--text-secondary)]">· {p.categoryName || 'General'}</span>
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  <span className={`font-mono text-[12px] font-bold px-2 py-0.5 rounded ${
+                    (p.availableUnits ?? 0) === 0
+                      ? 'bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]'
+                      : 'bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]'
+                  }`}>
+                    {p.availableUnits ?? 0} Available
+                  </span>
+                  <Link
+                    href="/inventory"
+                    className="text-[12px] font-semibold text-[var(--accent)] hover:underline"
+                  >
+                    Receive Stock →
+                  </Link>
+                </div>
+              </div>
+            ))}
           </div>
+        </section>
+      )}
 
-          {/* Visibility Filter */}
-          <div className="flex items-center gap-1.5">
-            <span className="text-[var(--text-secondary)] font-medium">Visibility:</span>
-            <select
-              value={selectedVisibility}
-              onChange={(e) => setSelectedVisibility(e.target.value)}
-              className="px-2.5 py-1.5 rounded-[4px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] font-medium text-[12.5px] focus:outline-none focus:ring-1 focus:ring-[var(--focus-ring)]"
-            >
-              <option value="ALL">All Visibility</option>
-              <option value="PUBLIC">Public</option>
-              <option value="PRIVATE">Private</option>
-            </select>
-          </div>
+      {/* 5. Product Registry */}
+      <section aria-labelledby="product-registry-heading">
+        <h2 id="product-registry-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-3">
+          PRODUCT REGISTRY
+        </h2>
 
-          {(searchTerm || selectedCategory !== 'ALL' || selectedStatus !== 'ALL' || selectedVisibility !== 'ALL') && (
-            <button
-              type="button"
-              onClick={() => {
-                setSearchTerm('');
-                setSelectedCategory('ALL');
-                setSelectedStatus('ALL');
-                setSelectedVisibility('ALL');
-              }}
-              className="text-[12px] text-[var(--accent-text)] hover:underline font-semibold ml-auto"
-            >
-              Clear filters
-            </button>
+        {/* Compact Registry Toolbar */}
+        <RegistryToolbar
+          searchValue={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search product name, code (TRX-PROD-...), or slug..."
+          totalCount={products.length}
+          filteredCount={filteredProducts.length}
+          unitLabel="products"
+          filters={[
+            {
+              id: 'category',
+              label: 'Category',
+              value: selectedCategory,
+              onChange: setSelectedCategory,
+              options: [
+                { label: 'All Categories', value: 'ALL' },
+                ...categories.map((c) => ({ label: c.name, value: c.id })),
+              ],
+            },
+            {
+              id: 'status',
+              label: 'Status',
+              value: selectedStatus,
+              onChange: setSelectedStatus,
+              options: [
+                { label: 'All Statuses', value: 'ALL' },
+                { label: `Active (${activeCount})`, value: 'ACTIVE' },
+                { label: 'Draft', value: 'DRAFT' },
+                { label: 'Inactive', value: 'INACTIVE' },
+                { label: 'Archived', value: 'ARCHIVED' },
+              ],
+            },
+            {
+              id: 'visibility',
+              label: 'Visibility',
+              value: selectedVisibility,
+              onChange: setSelectedVisibility,
+              options: [
+                { label: 'All Visibility', value: 'ALL' },
+                { label: `Public (${publicCount})`, value: 'PUBLIC' },
+                { label: 'Private (Internal)', value: 'PRIVATE' },
+              ],
+            },
+          ]}
+        />
+
+        {/* Working Table */}
+        <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
+          {filteredProducts.length === 0 ? (
+            <EmptyOperationalState
+              title="No products match current filters"
+              description={
+                search || selectedCategory !== 'ALL' || selectedStatus !== 'ALL' || selectedVisibility !== 'ALL'
+                  ? 'Try clearing the search or filter controls to view all catalog items.'
+                  : 'No products have been registered in the database yet.'
+              }
+              action={
+                search || selectedCategory !== 'ALL' || selectedStatus !== 'ALL' || selectedVisibility !== 'ALL' ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearch('');
+                      setSelectedCategory('ALL');
+                      setSelectedStatus('ALL');
+                      setSelectedVisibility('ALL');
+                    }}
+                    className="text-[12px] font-semibold text-[var(--accent)] hover:underline cursor-pointer"
+                  >
+                    Reset all filters
+                  </button>
+                ) : undefined
+              }
+            />
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse text-[13px]">
+                <thead>
+                  <tr className="border-b border-[var(--border)] bg-[var(--surface-subtle)] text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                    <th className="py-2.5 px-4 w-32">Product Code</th>
+                    <th className="py-2.5 px-4">Formula / Name</th>
+                    <th className="py-2.5 px-4">Category</th>
+                    <th className="py-2.5 px-4 text-center w-28">Available Stock</th>
+                    <th className="py-2.5 px-4 w-28">Dealer Access</th>
+                    <th className="py-2.5 px-4 w-24">Visibility</th>
+                    <th className="py-2.5 px-4 w-24">Status</th>
+                    <th className="py-2.5 px-4 text-right w-32">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--border)]">
+                  {filteredProducts.map((p) => {
+                    const units = p.availableUnits ?? 0;
+                    return (
+                      <tr key={p.id} className="hover:bg-[var(--surface-subtle)] transition-colors">
+                        <td className="py-2.5 px-4 font-mono font-semibold text-[12px] text-[var(--text-primary)]">
+                          <Link href={`/products/${p.id}`} className="hover:text-[var(--accent)] hover:underline">
+                            {p.productCode}
+                          </Link>
+                        </td>
+                        <td className="py-2.5 px-4">
+                          <Link
+                            href={`/products/${p.id}`}
+                            className="font-medium text-[var(--text-primary)] hover:text-[var(--accent)] block"
+                          >
+                            {p.name}
+                          </Link>
+                          {p.shortDescription && (
+                            <span className="text-[11.5px] text-[var(--text-muted)] line-clamp-1">
+                              {p.shortDescription}
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-2.5 px-4 text-[var(--text-secondary)]">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--text-secondary)]">
+                            {p.categoryName || 'General'}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-4 text-center">
+                          <span
+                            className={`inline-flex items-center px-2 py-0.5 rounded font-mono text-[11.5px] font-bold ${
+                              units === 0
+                                ? 'bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]'
+                                : units < 5
+                                ? 'bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]'
+                                : 'bg-[var(--surface-subtle)] text-[var(--status-success)] border border-[var(--border)]'
+                            }`}
+                          >
+                            {units} {units === 1 ? 'Unit' : 'Units'}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-4 text-[12px]">
+                          <span
+                            className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10.5px] font-semibold ${
+                              p.dealerVisibility
+                                ? 'bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]'
+                                : 'bg-[var(--surface-subtle)] text-[var(--text-muted)] border border-[var(--border)]'
+                            }`}
+                          >
+                            {p.dealerVisibility ? 'Available' : 'Restricted'}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-4">
+                          <span
+                            className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10.5px] font-semibold uppercase tracking-wider ${
+                              p.publicVisibility === 'PUBLIC'
+                                ? 'bg-[var(--status-info-soft)] text-[var(--status-info)] border border-[var(--status-info-border)]'
+                                : 'bg-[var(--surface-subtle)] text-[var(--text-muted)] border border-[var(--border)]'
+                            }`}
+                          >
+                            {p.publicVisibility}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-4">
+                          <StatusBadge status={p.status} />
+                        </td>
+                        <td className="py-2.5 px-4 text-right">
+                          <div className="inline-flex items-center gap-2">
+                            <Link
+                              href={`/products/${p.id}`}
+                              className="text-[12px] font-semibold text-[var(--accent)] hover:underline"
+                            >
+                              View →
+                            </Link>
+                            {canWrite && p.status !== 'ARCHIVED' && (
+                              <>
+                                <Link
+                                  href={`/products/${p.id}/edit`}
+                                  className="text-[12px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:underline"
+                                >
+                                  Edit
+                                </Link>
+                                <button
+                                  type="button"
+                                  onClick={() => setArchiveTarget(p)}
+                                  className="text-[12px] text-[var(--status-danger)] hover:underline cursor-pointer"
+                                >
+                                  Archive
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
-      </div>
-
-      {/* Operational Products Table */}
-      <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] overflow-hidden shadow-[0_1px_3px_rgba(23,23,20,0.03)]">
-        {filtered.length === 0 ? (
-          <div className="py-16 px-4 text-center flex flex-col items-center justify-center">
-            <div className="w-12 h-12 rounded-full bg-[var(--background)] border border-[var(--border)] flex items-center justify-center text-[var(--text-muted)] mb-3">
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
-                <line x1="7" y1="7" x2="7.01" y2="7" />
-              </svg>
-            </div>
-            <h4 className="text-[15px] font-semibold text-[var(--text-primary)] m-0">
-              No products found
-            </h4>
-            <p className="text-[13px] text-[var(--text-secondary)] mt-1 m-0 max-w-sm">
-              {products.length === 0
-                ? 'No products have been added yet. Use "New Product" to register your first catalog item.'
-                : 'No products match your active search and filter criteria.'}
-            </p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-[var(--border)] bg-[var(--surface)] text-[11px] font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
-                  <th className="py-3 px-4 sm:px-6">Product</th>
-                  <th className="py-3 px-4">Product Code</th>
-                  <th className="py-3 px-4">Category</th>
-                  <th className="py-3 px-4">Available Units</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4">Visibility</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--border)] text-[13px]">
-                {filtered.map((product) => (
-                  <tr key={product.id} className="hover:bg-[var(--background)] transition-colors">
-                    <td className="py-3.5 px-4 sm:px-6">
-                      <Link
-                        href={`/products/${product.id}`}
-                        className="font-semibold text-[var(--text-primary)] hover:text-[var(--accent-text)] transition-colors block leading-snug"
-                      >
-                        {product.name}
-                      </Link>
-                      {product.shortDescription && (
-                        <p className="text-[12px] text-[var(--text-secondary)] mt-0.5 m-0 line-clamp-1">
-                          {product.shortDescription}
-                        </p>
-                      )}
-                    </td>
-                    <td className="py-3.5 px-4 font-mono text-[12px] text-[var(--text-primary)]">
-                      {product.productCode}
-                    </td>
-                    <td className="py-3.5 px-4 text-[var(--text-secondary)]">
-                      {product.categoryName || '—'}
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded bg-[var(--background)] border border-[var(--border)] text-[11px] font-mono font-bold text-[var(--text-primary)]">
-                        {product.availableUnits ?? 0} Unit{product.availableUnits === 1 ? '' : 's'}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-[4px] border text-[11px] font-semibold uppercase tracking-wider ${statusBadge(
-                          product.status
-                        )}`}
-                      >
-                        {product.status}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-[4px] border text-[11px] font-semibold uppercase tracking-wider ${
-                          product.publicVisibility === 'PUBLIC'
-                            ? 'bg-[var(--status-info-soft)] text-[var(--status-info)] border-[var(--status-info-border)]'
-                            : 'bg-[var(--surface-subtle)] text-[var(--text-muted)] border-[var(--border)]'
-                        }`}
-                      >
-                        {product.publicVisibility}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-4 text-right space-x-2">
-                      <Link
-                        href={`/products/${product.id}`}
-                        className="inline-flex items-center px-2.5 py-1 rounded-[4px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[12px] font-semibold transition-colors"
-                      >
-                        View
-                      </Link>
-                      {canWrite && product.status !== 'ARCHIVED' && (
-                        <>
-                          <Link
-                            href={`/products/${product.id}/edit`}
-                            className="inline-flex items-center px-2.5 py-1 rounded-[4px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[12px] font-semibold transition-colors"
-                          >
-                            Edit
-                          </Link>
-                          <button
-                            type="button"
-                            onClick={() => setArchiveTarget(product)}
-                            className="inline-flex items-center px-2.5 py-1 rounded-[4px] border border-[var(--status-danger-border)] bg-[var(--status-danger-soft)] hover:bg-[var(--status-danger-soft)] text-[var(--status-danger)] text-[12px] font-semibold transition-colors cursor-pointer"
-                          >
-                            Archive
-                          </button>
-                        </>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+      </section>
 
       {/* Confirmation Dialog for Product Archival */}
       <ConfirmDialog

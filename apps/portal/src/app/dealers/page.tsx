@@ -41,31 +41,9 @@ export default async function DealersPage() {
 
   return (
     <InternalShell user={user}>
-      {/* Page Header */}
-      <div className="mb-6 pb-4 border-b border-[var(--border)]">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-[var(--accent-text)] block mb-1">
-              NETWORK OPERATIONS
-            </span>
-            <h1 className="text-[26px] sm:text-[30px] font-semibold text-[var(--text-primary)] tracking-[-0.03em] m-0">
-              Dealers
-            </h1>
-            <p className="text-[13.5px] text-[var(--text-secondary)] mt-1 m-0">
-              Automotive detailing studios, certified service workshops, and authorized dealers.
-            </p>
-          </div>
-          <div>
-            <span className="inline-flex items-center px-3 py-1 rounded bg-[var(--background)] border border-[var(--border)] text-[12px] font-medium text-[var(--text-secondary)]">
-              {dealersRes.total} registered dealer{dealersRes.total === 1 ? '' : 's'}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Table & Filters */}
       <DealersTable
         initialDealers={dealersRes.items}
+        totalCount={dealersRes.total}
         distributors={distributorsList}
         user={user}
       />

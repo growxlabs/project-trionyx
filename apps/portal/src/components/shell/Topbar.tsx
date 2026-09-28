@@ -10,37 +10,26 @@ interface TopbarProps {
 export function Topbar({ user }: TopbarProps) {
   const roleLabel = formatRoleLabel(user.role);
 
-  const roleBadgeStyles: Record<string, string> = {
-    DISTRIBUTOR: 'bg-[var(--status-info-soft)] text-[var(--status-info)] border-[var(--status-info-border)]',
-    MANAGING_DIRECTOR: 'bg-[var(--status-warning-soft)] text-[var(--status-warning)] border-[var(--status-warning-border)]',
-    ADMIN: 'bg-[var(--status-info-soft)] text-[var(--status-info)] border-[var(--status-info-border)]',
-    STAFF: 'bg-[var(--surface-subtle)] text-[var(--text-secondary)] border-[var(--border)]',
-  };
-
-  const badgeClass =
-    roleBadgeStyles[user.role] || 'bg-[var(--surface-subtle)] text-[var(--text-primary)] border-[var(--border)]';
 
   return (
     <header className="hidden lg:flex items-center justify-between h-16 px-8 border-b border-[var(--border)] bg-[var(--surface-raised)] sticky top-0 z-30 select-none">
-      {/* Page Context */}
+      {/* Shell Title */}
       <div className="flex items-center gap-3">
-        <h1 className="text-[18px] font-semibold text-[var(--text-primary)] tracking-[-0.02em] m-0">
-          Overview
-        </h1>
-        <div className="h-4 w-[1px] bg-[var(--border)]" />
-        <span className="text-[12px] font-medium text-[var(--text-secondary)]">
-          Operations Portal
+        <span className="text-[12px] font-bold tracking-[0.16em] uppercase text-[var(--text-secondary)]">
+          TRIONYX OPERATIONS
         </span>
       </div>
 
-      {/* Operator Status & Actions */}
+      {/* Operator Area */}
       <div className="flex items-center gap-4">
-        {/* Role Badge */}
-        <span
-          className={`inline-flex items-center px-2.5 py-1 rounded-[4px] border text-[11px] font-semibold uppercase tracking-wider ${badgeClass}`}
-        >
-          {roleLabel}
-        </span>
+        <div className="text-right hidden sm:block">
+          <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[var(--text-muted)]">
+            {roleLabel}
+          </div>
+          <div className="text-[13px] font-medium text-[var(--text-primary)]">
+            {user.name}
+          </div>
+        </div>
 
         {/* User Dropdown Menu */}
         <UserMenu user={user} />

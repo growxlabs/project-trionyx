@@ -10,15 +10,24 @@ import type {
   Product,
   SafeUser,
   SerialStatus,
+  SerialMovementWithDetails,
 } from '@trionyx/types';
 import { Modal } from '../../components/ui/Modal';
 import { SerialNumberLookupModal } from '../../components/inventory/SerialNumberLookupModal';
+import {
+  WorkspaceHeader,
+  OperationalSummaryStrip,
+  StatusBadge,
+  RegistryToolbar,
+  type SummaryMetric,
+} from '../../components/workspace';
 
 interface InventoryTableProps {
   initialSummaries: ProductInventorySummary[];
   locations: InventoryLocation[];
   categories: ProductCategory[];
   products: Product[];
+  movements?: SerialMovementWithDetails[];
   user: SafeUser;
 }
 
@@ -27,6 +36,7 @@ export function InventoryTable({
   locations,
   categories,
   products,
+  movements = [],
   user,
 }: InventoryTableProps) {
   const router = useRouter();
@@ -287,196 +297,293 @@ export function InventoryTable({
     }
   };
 
+  // Identify stock exceptions
+  const stockExceptions = useMemo(() => {
+    return initialSummaries
+      .filter((it) => it.availableCount <= 5)
+      .slice(0, 5)
+      .map((it) => ({
+        id: `${it.productId}-${it.locationId || 'no-loc'}`,
+        productName: it.productName,
+        productCode: it.productCode,
+        locationName: it.locationName || 'No facility recorded',
+        state: it.availableCount === 0 ? 'OUT' : 'LOW',
+        available: it.availableCount,
+        productId: it.productId,
+        locationId: it.locationId,
+      }));
+  }, [initialSummaries]);
+
+  const physicalPositionMetrics: SummaryMetric[] = [
+    {
+      label: 'AVAILABLE UNITS',
+      value: totalAvailable,
+      detail: 'Ready for dispatch',
+      tone: totalAvailable > 0 ? 'positive' : 'alert',
+    },
+    {
+      label: 'OUT OF STOCK',
+      value: zeroStockCount,
+      detail: 'Positions at zero',
+      tone: zeroStockCount > 0 ? 'alert' : 'default',
+    },
+    {
+      label: 'LOCATIONS',
+      value: activeLocationsCount,
+      detail: 'Active hubs',
+      tone: 'default',
+    },
+    {
+      label: 'TOTAL TRACKED',
+      value: totalTracked,
+      detail: 'Historical serials',
+      tone: 'default',
+    },
+  ];
+
   return (
-    <div className="space-y-6">
-      {/* Top Operations Header & Actions */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-[var(--border)]">
-        <div>
-          <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-[var(--accent-text)] block mb-1">
-            DISTRIBUTION LOGISTICS
-          </span>
-          <h1 className="text-[26px] sm:text-[30px] font-semibold text-[var(--text-primary)] tracking-[-0.03em] m-0">
-            Serial Number Inventory
-          </h1>
-          <p className="text-[13.5px] text-[var(--text-secondary)] mt-1 m-0">
-            Real-time physical inventory tracked by discrete serial numbers across distribution hubs.
-          </p>
-        </div>
+    <div className="space-y-8">
+      {/* 1. Header with Operational Actions */}
+      <WorkspaceHeader
+        eyebrow="PHYSICAL INVENTORY"
+        title="Serial Number Inventory"
+        description="Physical inventory tracked by discrete serial numbers across regional warehouses and distribution hubs."
+        action={
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={() => setShowLookupModal(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-[var(--border-strong)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[13px] font-medium transition-colors cursor-pointer"
+            >
+              <svg className="w-3.5 h-3.5 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              Lookup Serial
+            </button>
 
-        {/* Action Buttons & Links */}
-        <div className="flex items-center gap-2.5 flex-wrap">
-          {/* Quick Lookup Button */}
-          <button
-            type="button"
-            onClick={() => setShowLookupModal(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[13px] font-semibold transition-colors cursor-pointer"
-          >
-            <svg className="w-4 h-4 text-[var(--accent-text)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            Lookup Serial
-          </button>
-
-          <Link
-            href="/inventory/movements"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-[6px] border border-[var(--border)] hover:bg-[var(--background)] text-[var(--text-primary)] text-[13px] font-medium transition-colors"
-          >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
-            Movements Ledger
-          </Link>
-
-          <Link
-            href="/inventory/locations"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-[6px] border border-[var(--border)] hover:bg-[var(--background)] text-[var(--text-primary)] text-[13px] font-medium transition-colors"
-          >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            Locations
-          </Link>
-
-          {canMutate && (
-            <div className="flex items-center gap-2">
+            {canMutate && (
               <button
                 type="button"
                 onClick={() => openReceiveModal()}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[6px] bg-[var(--status-success)] hover:bg-[var(--status-success)] text-[var(--background)] text-[13px] font-semibold transition-colors shadow-sm cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity cursor-pointer shadow-xs"
               >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                </svg>
-                Receive Serials
+                + Receive Serials
               </button>
+            )}
 
+            {canMutate && (
               <button
                 type="button"
                 onClick={() => openTransferModal()}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-[6px] border border-[var(--border)] hover:bg-[var(--background)] text-[var(--text-primary)] text-[13px] font-medium transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-[var(--border-strong)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[13px] font-medium transition-colors cursor-pointer"
               >
                 Transfer
               </button>
+            )}
 
+            {canMutate && (
               <button
                 type="button"
                 onClick={() => openAdjustModal()}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-[6px] border border-[var(--border)] hover:bg-[var(--background)] text-[var(--text-primary)] text-[13px] font-medium transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-[var(--border-strong)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[13px] font-medium transition-colors cursor-pointer"
               >
                 Adjust
               </button>
+            )}
+
+            <Link
+              href="/inventory/movements"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-[var(--border-strong)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-[13px] font-medium transition-colors"
+            >
+              Movements Ledger
+            </Link>
+
+            <Link
+              href="/inventory/locations"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-[var(--border-strong)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-[13px] font-medium transition-colors"
+            >
+              Locations
+            </Link>
+          </div>
+        }
+      />
+
+      {/* 2. Current Physical Position Strip */}
+      <OperationalSummaryStrip
+        title="CURRENT PHYSICAL POSITION"
+        metrics={physicalPositionMetrics}
+      />
+
+      {/* 3. Stock Exceptions */}
+      {stockExceptions.length > 0 && (
+        <section aria-labelledby="stock-exceptions-heading">
+          <div className="flex items-baseline justify-between mb-2.5">
+            <h2 id="stock-exceptions-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] m-0">
+              STOCK EXCEPTIONS
+            </h2>
+            <span className="text-[11px] text-[var(--text-muted)] font-mono">
+              {stockExceptions.length} critical {stockExceptions.length === 1 ? 'item' : 'items'}
+            </span>
+          </div>
+
+          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse text-[13px]">
+                <thead>
+                  <tr className="border-b border-[var(--border)] bg-[var(--surface-subtle)] text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                    <th className="py-2.5 px-4">Product</th>
+                    <th className="py-2.5 px-4">Location</th>
+                    <th className="py-2.5 px-4 w-28">State</th>
+                    <th className="py-2.5 px-4 text-right w-28">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--border)]">
+                  {stockExceptions.map((ex) => (
+                    <tr key={ex.id} className="hover:bg-[var(--surface-subtle)] transition-colors">
+                      <td className="py-2.5 px-4 font-medium text-[var(--text-primary)]">
+                        {ex.productName}
+                        <span className="block text-[11px] font-mono text-[var(--text-muted)]">{ex.productCode}</span>
+                      </td>
+                      <td className="py-2.5 px-4 text-[var(--text-secondary)]">
+                        {ex.locationName}
+                      </td>
+                      <td className="py-2.5 px-4">
+                        <StatusBadge status={ex.state === 'OUT' ? 'OUT_OF_STOCK' : 'LOW'} label={ex.state === 'OUT' ? 'OUT' : 'LOW'} />
+                      </td>
+                      <td className="py-2.5 px-4 text-right">
+                        {canMutate ? (
+                          <button
+                            type="button"
+                            onClick={() => openReceiveModal(ex.productId, ex.locationId || undefined)}
+                            className="text-[12px] font-semibold text-[var(--accent)] hover:underline cursor-pointer"
+                          >
+                            Receive →
+                          </button>
+                        ) : (
+                          <span className="text-[12px] text-[var(--text-muted)]">—</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          )}
-        </div>
-      </div>
-
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] p-4 shadow-[0_1px_2px_rgba(23,23,20,0.02)]">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--status-success)] block mb-1">
-            Available Physical Units
-          </span>
-          <div className="flex items-baseline gap-2">
-            <span className="text-[24px] font-bold text-[var(--status-success)] tracking-tight">{totalAvailable}</span>
-            <span className="text-[11.5px] text-[var(--text-muted)]">({totalTracked} total tracked)</span>
           </div>
-        </div>
+        </section>
+      )}
 
-        <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] p-4 shadow-[0_1px_2px_rgba(23,23,20,0.02)]">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-secondary)] block mb-1">
-            Allocated Positions
-          </span>
-          <span className="text-[24px] font-bold text-[var(--text-primary)] tracking-tight">
-            {initialSummaries.length}
-          </span>
-        </div>
-
-        <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] p-4 shadow-[0_1px_2px_rgba(23,23,20,0.02)]">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--status-danger)] block mb-1">
-            Zero Stock Positions
-          </span>
-          <div className="flex items-baseline gap-2">
-            <span className="text-[24px] font-bold text-[var(--status-danger)] tracking-tight">{zeroStockCount}</span>
-            <span className="text-[11.5px] text-[var(--text-muted)]">out of stock</span>
+      {/* 4. Recent Movements Ledger */}
+      {movements.length > 0 && (
+        <section aria-labelledby="movements-heading">
+          <div className="flex items-baseline justify-between mb-2.5">
+            <h2 id="movements-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] m-0">
+              RECENT MOVEMENTS
+            </h2>
+            <Link href="/inventory/movements" className="text-[12px] font-semibold text-[var(--accent)] hover:underline">
+              View full ledger →
+            </Link>
           </div>
-        </div>
 
-        <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] p-4 shadow-[0_1px_2px_rgba(23,23,20,0.02)]">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-secondary)] block mb-1">
-            Active Facilities
-          </span>
-          <span className="text-[24px] font-bold text-[var(--text-primary)] tracking-tight">
-            {activeLocationsCount}
-          </span>
-        </div>
-      </div>
+          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse text-[13px]">
+                <thead>
+                  <tr className="border-b border-[var(--border)] bg-[var(--surface-subtle)] text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                    <th className="py-2.5 px-4 w-20">Time</th>
+                    <th className="py-2.5 px-4 w-36">Serial</th>
+                    <th className="py-2.5 px-4">Product</th>
+                    <th className="py-2.5 px-4">From</th>
+                    <th className="py-2.5 px-4">To</th>
+                    <th className="py-2.5 px-4 text-right w-28">Type</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--border)]">
+                  {movements.map((m) => {
+                    const timeStr = new Date(m.createdAt).toLocaleTimeString('en-IN', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: false,
+                      timeZone: 'Asia/Kolkata',
+                    });
+                    return (
+                      <tr key={m.id} className="hover:bg-[var(--surface-subtle)] transition-colors">
+                        <td className="py-2.5 px-4 font-mono text-[11.5px] text-[var(--text-muted)] whitespace-nowrap">
+                          {timeStr}
+                        </td>
+                        <td className="py-2.5 px-4 font-mono text-[12px] font-semibold text-[var(--text-primary)]">
+                          {m.serialNumber}
+                        </td>
+                        <td className="py-2.5 px-4 text-[var(--text-secondary)] font-medium">
+                          {m.productName}
+                        </td>
+                        <td className="py-2.5 px-4 text-[var(--text-muted)]">
+                          {m.fromLocationName || 'External Origin'}
+                        </td>
+                        <td className="py-2.5 px-4 text-[var(--text-secondary)]">
+                          {m.toLocationName || 'External Destination'}
+                        </td>
+                        <td className="py-2.5 px-4 text-right">
+                          <StatusBadge status={m.type} />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      )}
 
-      {/* Filters Bar */}
-      <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] p-4 shadow-[0_1px_2px_rgba(23,23,20,0.02)] flex flex-col md:flex-row md:items-center justify-between gap-3">
-        {/* Search */}
-        <div className="relative flex-1">
-          <svg
-            className="w-4 h-4 text-[var(--text-muted)] absolute left-3.5 top-1/2 -translate-y-1/2"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          <input
-            type="text"
-            placeholder="Search by product name, product code (TRX-PROD-...), or facility..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
-          />
-        </div>
+      {/* 5. Inventory Registry Section */}
+      <section aria-labelledby="registry-heading">
+        <h2 id="registry-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-3">
+          INVENTORY REGISTRY
+        </h2>
 
-        <div className="flex items-center gap-2.5 flex-wrap">
-          {/* Location filter */}
-          <select
-            value={selectedLocation}
-            onChange={(e) => setSelectedLocation(e.target.value)}
-            className="px-3 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
-          >
-            <option value="ALL">All Facilities</option>
-            {locations.map((loc) => (
-              <option key={loc.id} value={loc.id}>
-                {loc.name} ({loc.code})
-              </option>
-            ))}
-          </select>
-
-          {/* Category filter */}
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-3 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
-          >
-            <option value="ALL">All Categories</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-
-          {/* Availability filter */}
-          <select
-            value={selectedAvailability}
-            onChange={(e) => setSelectedAvailability(e.target.value as 'ALL' | 'IN_STOCK' | 'OUT_OF_STOCK')}
-            className="px-3 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
-          >
-            <option value="ALL">All Stock Levels</option>
-            <option value="IN_STOCK">In Stock (Available &gt; 0)</option>
-            <option value="OUT_OF_STOCK">Zero Stock</option>
-          </select>
-        </div>
-      </div>
+        {/* Compact Registry Toolbar */}
+        <RegistryToolbar
+          searchValue={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search product, code, or facility..."
+          totalCount={initialSummaries.length}
+          filteredCount={filteredSummaries.length}
+          unitLabel="positions"
+          filters={[
+            {
+              id: 'location',
+              label: 'Facility',
+              value: selectedLocation,
+              onChange: setSelectedLocation,
+              options: [
+                { label: 'All Facilities', value: 'ALL' },
+                ...locations.map((loc) => ({ label: `${loc.name} (${loc.code})`, value: loc.id })),
+              ],
+            },
+            {
+              id: 'category',
+              label: 'Category',
+              value: selectedCategory,
+              onChange: setSelectedCategory,
+              options: [
+                { label: 'All Categories', value: 'ALL' },
+                ...categories.map((c) => ({ label: c.name, value: c.id })),
+              ],
+            },
+            {
+              id: 'availability',
+              label: 'Stock Level',
+              value: selectedAvailability,
+              onChange: (v) => setSelectedAvailability(v as 'ALL' | 'IN_STOCK' | 'OUT_OF_STOCK'),
+              options: [
+                { label: 'All Stock Levels', value: 'ALL' },
+                { label: 'In Stock (> 0)', value: 'IN_STOCK' },
+                { label: 'Zero Stock', value: 'OUT_OF_STOCK' },
+              ],
+            },
+          ]}
+        />
 
       {/* Main Table */}
       <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] overflow-hidden shadow-[0_1px_3px_rgba(23,23,20,0.03)]">
@@ -598,6 +705,7 @@ export function InventoryTable({
           </div>
         )}
       </div>
+      </section>
 
       {/* ========================================================================= */}
       {/* RECEIVE SERIAL NUMBERS MODAL                                              */}

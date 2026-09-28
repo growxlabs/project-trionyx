@@ -1,10 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { Warranty, SafeUser, Dealer, Product } from '@trionyx/types';
 import { Modal } from '../../components/ui/Modal';
+import {
+  WorkspaceHeader,
+  OperationalSummaryStrip,
+  StatusBadge,
+  RegistryToolbar,
+  EmptyOperationalState,
+  type SummaryMetric,
+} from '../../components/workspace';
 
 interface WarrantyListViewProps {
   initialWarranties: Warranty[];
@@ -27,6 +35,17 @@ export function WarrantyListView({
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'ACTIVE' | 'EXPIRED' | 'VOID'>('ALL');
   const [productFilter, setProductFilter] = useState<string>('ALL');
   const [dealerFilter, setDealerFilter] = useState<string>('ALL');
+
+  // Quick Serial Check State
+  const [quickCheckSerial, setQuickCheckSerial] = useState('');
+  const [quickCheckResult, setQuickCheckResult] = useState<{
+    found: boolean;
+    warranty?: Warranty;
+    valid?: boolean;
+    productName?: string | null;
+    message?: string;
+  } | null>(null);
+  const [isCheckingQuick, setIsCheckingQuick] = useState(false);
 
   // Activation Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -196,138 +215,289 @@ export function WarrantyListView({
     );
   };
 
+  const handleQuickCheck = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const clean = quickCheckSerial.trim().toUpperCase();
+    if (!clean) return;
+    setIsCheckingQuick(true);
+    setQuickCheckResult(null);
+
+    // First check if already registered
+    const existing = warranties.find((w) => w.serialNumber.toUpperCase() === clean);
+    if (existing) {
+      setQuickCheckResult({
+        found: true,
+        warranty: existing,
+        valid: true,
+        productName: existing.productName,
+      });
+      setIsCheckingQuick(false);
+      return;
+    }
+
+    // Otherwise check via validate-serial API
+    try {
+      const res = await fetch('/api/v1/internal/warranties/validate-serial', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ serialNumber: clean }),
+      });
+      const json = await res.json();
+      if (json.data?.valid) {
+        setQuickCheckResult({
+          found: false,
+          valid: true,
+          productName: json.data.productName,
+          message: 'Serial verified in inventory — ready for warranty activation.',
+        });
+      } else {
+        setQuickCheckResult({
+          found: false,
+          valid: false,
+          message: json.data?.error || json.error?.message || 'Serial number not recognized.',
+        });
+      }
+    } catch {
+      setQuickCheckResult({
+        found: false,
+        valid: false,
+        message: 'Network verification failed.',
+      });
+    } finally {
+      setIsCheckingQuick(false);
+    }
+  };
+
+  const recentActivations = useMemo(() => {
+    return [...warranties]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 4);
+  }, [warranties]);
+
+  const warrantyMetrics: SummaryMetric[] = [
+    { label: 'ACTIVE', value: activeCount, detail: 'Under valid term', tone: 'positive' },
+    { label: 'EXPIRED', value: expiredCount, detail: 'Coverage concluded', tone: 'default' },
+    { label: 'VOIDED', value: voidCount, detail: 'Revoked', tone: voidCount > 0 ? 'alert' : 'default' },
+    { label: 'TOTAL TRACKED', value: totalCount, detail: 'All activations', tone: 'default' },
+  ];
+
   return (
-    <div className="space-y-6">
-      {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--border)]">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-[20px] font-bold text-[var(--text-primary)] m-0">
-              Warranty Operations
-            </h1>
-            <span className="font-mono text-[11px] font-bold tracking-wider px-2 py-0.5 rounded bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--text-secondary)]">
-              {totalCount} REGISTRATIONS
-            </span>
-          </div>
-          <p className="text-[13px] text-[var(--text-secondary)] mt-1 m-0">
-            Centralized registry of activated product warranties, installation milestones, and lifecycle statuses.
-          </p>
-        </div>
+    <div className="space-y-8">
+      {/* 1. Header with Primary Action */}
+      <WorkspaceHeader
+        eyebrow="WARRANTY OPERATIONS"
+        title="Warranty Operations"
+        description="Serial-based warranty registration, activation verification, and coverage lifecycle tracking."
+        action={
+          canWrite && (
+            <button
+              type="button"
+              onClick={() => {
+                setSerialNumber('');
+                setSelectedDealerId('');
+                setValidatedData(null);
+                setFormError(null);
+                setFormSuccess(null);
+                setIsModalOpen(true);
+              }}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity cursor-pointer shadow-xs"
+            >
+              + Activate Warranty
+            </button>
+          )
+        }
+      />
 
-        {canWrite && (
-          <button
-            type="button"
-            onClick={() => {
-              setSerialNumber('');
-              setSelectedDealerId('');
-              setValidatedData(null);
-              setFormError(null);
-              setFormSuccess(null);
-              setIsModalOpen(true);
-            }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-[6px] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-foreground)] text-[13px] font-semibold transition-colors shadow-sm self-start sm:self-auto cursor-pointer"
-          >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
-            Activate Warranty
-          </button>
-        )}
-      </div>
-
-      {/* KPI Summary Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] p-4 shadow-[0_1px_2px_rgba(23,23,20,0.02)]">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)] block mb-1">
-            Total Registered
-          </span>
-          <span className="text-[24px] font-bold text-[var(--text-primary)] tracking-tight">
-            {totalCount}
-          </span>
-        </div>
-
-        <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] p-4 shadow-[0_1px_2px_rgba(23,23,20,0.02)]">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--status-success)] block mb-1">
-            Active Warranties
-          </span>
-          <span className="text-[24px] font-bold text-[var(--status-success)] tracking-tight">
-            {activeCount}
-          </span>
-        </div>
-
-        <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] p-4 shadow-[0_1px_2px_rgba(23,23,20,0.02)]">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)] block mb-1">
-            Expired
-          </span>
-          <span className="text-[24px] font-bold text-[var(--text-secondary)] tracking-tight">
-            {expiredCount}
-          </span>
-        </div>
-
-        <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] p-4 shadow-[0_1px_2px_rgba(23,23,20,0.02)]">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--status-danger)] block mb-1">
-            Voided
-          </span>
-          <span className="text-[24px] font-bold text-[var(--status-danger)] tracking-tight">
-            {voidCount}
-          </span>
-        </div>
-      </div>
-
-      {/* Search and Filters */}
-      <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] p-4 shadow-[0_1px_2px_rgba(23,23,20,0.02)] space-y-3">
-        <div className="flex flex-col sm:flex-row items-center gap-3">
-          <div className="relative flex-1 w-full">
+      {/* 2. Check Serial Operational Tool */}
+      <section aria-labelledby="check-serial-heading" className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-5">
+        <h2 id="check-serial-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-3 m-0">
+          CHECK SERIAL
+        </h2>
+        <form onSubmit={handleQuickCheck} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 max-w-xl">
+          <div className="relative flex-1">
             <input
               type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search serial number, product name, code, or dealer..."
-              className="w-full px-3.5 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
+              placeholder="Enter discrete serial number (e.g. TRX-BR-2609-000001)..."
+              value={quickCheckSerial}
+              onChange={(e) => setQuickCheckSerial(e.target.value.toUpperCase())}
+              className="w-full px-3 py-1.5 rounded-[4px] border border-[var(--border-strong)] bg-[var(--background)] font-mono text-[13px] text-[var(--text-primary)] placeholder:font-sans placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)] uppercase"
             />
           </div>
+          <button
+            type="submit"
+            disabled={isCheckingQuick || !quickCheckSerial.trim()}
+            className="px-4 py-1.5 rounded-[4px] border border-[var(--border-strong)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[13px] font-semibold transition-colors cursor-pointer disabled:opacity-50 shrink-0"
+          >
+            {isCheckingQuick ? 'Checking...' : 'Check'}
+          </button>
+        </form>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as any)}
-              className="px-3 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[12.5px] font-medium focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
-            >
-              <option value="ALL">All Statuses</option>
-              <option value="ACTIVE">Active ({activeCount})</option>
-              <option value="EXPIRED">Expired ({expiredCount})</option>
-              <option value="VOID">Void ({voidCount})</option>
-            </select>
-
-            <select
-              value={productFilter}
-              onChange={(e) => setProductFilter(e.target.value)}
-              className="px-3 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[12.5px] font-medium focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] max-w-[200px]"
-            >
-              <option value="ALL">All Products</option>
-              {products.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.productCode} — {p.name}
-                </option>
-              ))}
-            </select>
-
-            <select
-              value={dealerFilter}
-              onChange={(e) => setDealerFilter(e.target.value)}
-              className="px-3 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[12.5px] font-medium focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] max-w-[200px]"
-            >
-              <option value="ALL">All Channels</option>
-              <option value="INTERNAL">Internal Direct Only</option>
-              {dealers.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.businessName} ({d.city})
-                </option>
-              ))}
-            </select>
+        {quickCheckResult && (
+          <div className="mt-4 p-3.5 rounded-[4px] bg-[var(--surface-subtle)] border border-[var(--border)] text-[13px]">
+            {quickCheckResult.found && quickCheckResult.warranty ? (
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono font-semibold text-[var(--text-primary)]">
+                      {quickCheckResult.warranty.serialNumber}
+                    </span>
+                    <StatusBadge status={quickCheckResult.warranty.derivedStatus || quickCheckResult.warranty.status} />
+                  </div>
+                  <div className="text-[12px] text-[var(--text-secondary)] mt-1">
+                    {quickCheckResult.warranty.productName} · Installed {quickCheckResult.warranty.installationDate} · Valid until {quickCheckResult.warranty.warrantyEndDate}
+                  </div>
+                </div>
+                <Link
+                  href={`/warranty/${quickCheckResult.warranty.id}`}
+                  className="text-[12px] font-semibold text-[var(--accent)] hover:underline shrink-0"
+                >
+                  View Record →
+                </Link>
+              </div>
+            ) : quickCheckResult.valid ? (
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <span className="font-semibold text-[var(--status-success)]">● Serial Verified</span>
+                  <div className="text-[12px] text-[var(--text-secondary)] mt-0.5">
+                    {quickCheckResult.productName} — {quickCheckResult.message}
+                  </div>
+                </div>
+                {canWrite && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSerialNumber(quickCheckSerial);
+                      setIsModalOpen(true);
+                      void handleValidateSerial();
+                    }}
+                    className="text-[12px] font-semibold text-[var(--accent)] hover:underline cursor-pointer shrink-0"
+                  >
+                    Activate Warranty Now →
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="text-[var(--status-danger)]">
+                ✕ {quickCheckResult.message}
+              </div>
+            )}
           </div>
-        </div>
-      </div>
+        )}
+      </section>
+
+      {/* 3. Current Warranty State Strip */}
+      <OperationalSummaryStrip
+        title="CURRENT WARRANTY STATE"
+        metrics={warrantyMetrics}
+      />
+
+      {/* 4. Recent Activations */}
+      {recentActivations.length > 0 && (
+        <section aria-labelledby="recent-activations-heading">
+          <div className="flex items-baseline justify-between mb-2.5">
+            <h2 id="recent-activations-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] m-0">
+              RECENT ACTIVATIONS
+            </h2>
+            <span className="text-[11px] text-[var(--text-muted)] font-mono">
+              Latest registrations
+            </span>
+          </div>
+
+          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse text-[13px]">
+                <thead>
+                  <tr className="border-b border-[var(--border)] bg-[var(--surface-subtle)] text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                    <th className="py-2.5 px-4 w-44">Serial</th>
+                    <th className="py-2.5 px-4">Product</th>
+                    <th className="py-2.5 px-4">Dealer / Channel</th>
+                    <th className="py-2.5 px-4 w-32">Activated</th>
+                    <th className="py-2.5 px-4 w-32">Valid Until</th>
+                    <th className="py-2.5 px-4 text-right w-24">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--border)]">
+                  {recentActivations.map((w) => (
+                    <tr key={w.id} className="hover:bg-[var(--surface-subtle)] transition-colors">
+                      <td className="py-2.5 px-4 font-mono font-semibold text-[12px] text-[var(--text-primary)]">
+                        <Link href={`/warranty/${w.id}`} className="hover:text-[var(--accent)] hover:underline">
+                          {w.serialNumber}
+                        </Link>
+                      </td>
+                      <td className="py-2.5 px-4 text-[var(--text-primary)] font-medium">
+                        {w.productName}
+                      </td>
+                      <td className="py-2.5 px-4 text-[var(--text-secondary)]">
+                        {w.dealerName || 'Direct Head Office'}
+                      </td>
+                      <td className="py-2.5 px-4 text-[12px] text-[var(--text-muted)] whitespace-nowrap">
+                        {w.installationDate}
+                      </td>
+                      <td className="py-2.5 px-4 text-[12px] text-[var(--text-secondary)] whitespace-nowrap">
+                        {w.warrantyEndDate}
+                      </td>
+                      <td className="py-2.5 px-4 text-right">
+                        <StatusBadge status={w.derivedStatus || w.status} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 5. Warranty Registry Section */}
+      <section aria-labelledby="warranty-registry-heading">
+        <h2 id="warranty-registry-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-3">
+          WARRANTY REGISTRY
+        </h2>
+
+        {/* Compact Registry Toolbar */}
+        <RegistryToolbar
+          searchValue={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search serial, product name, code, or dealer..."
+          totalCount={warranties.length}
+          filteredCount={filteredWarranties.length}
+          unitLabel="warranties"
+          filters={[
+            {
+              id: 'status',
+              label: 'Status',
+              value: statusFilter,
+              onChange: (v) => setStatusFilter(v as any),
+              options: [
+                { label: 'All Statuses', value: 'ALL' },
+                { label: `Active (${activeCount})`, value: 'ACTIVE' },
+                { label: `Expired (${expiredCount})`, value: 'EXPIRED' },
+                { label: `Void (${voidCount})`, value: 'VOID' },
+              ],
+            },
+            {
+              id: 'product',
+              label: 'Product',
+              value: productFilter,
+              onChange: setProductFilter,
+              options: [
+                { label: 'All Products', value: 'ALL' },
+                ...products.map((p) => ({ label: `${p.productCode} — ${p.name}`, value: p.id })),
+              ],
+            },
+            {
+              id: 'dealer',
+              label: 'Channel',
+              value: dealerFilter,
+              onChange: setDealerFilter,
+              options: [
+                { label: 'All Channels', value: 'ALL' },
+                { label: 'Direct Head Office', value: 'INTERNAL' },
+                ...dealers.map((d) => ({ label: `${d.businessName} (${d.city})`, value: d.id })),
+              ],
+            },
+          ]}
+        />
 
       {/* Warranties Table */}
       <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] overflow-hidden shadow-[0_1px_3px_rgba(23,23,20,0.03)]">
@@ -422,6 +592,7 @@ export function WarrantyListView({
           </div>
         )}
       </div>
+      </section>
 
       {/* Internal Activation Modal */}
       <Modal

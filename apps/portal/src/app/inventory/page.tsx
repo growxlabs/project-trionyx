@@ -7,6 +7,7 @@ import {
   locationsRepository,
   categoriesRepository,
   productsRepository,
+  serialMovementsRepository,
   ensureDatabaseReady,
 } from '@trionyx/database';
 import { InternalShell } from '../../components/shell/InternalShell';
@@ -22,7 +23,6 @@ export default async function InventoryPage() {
   try {
     authData = await requireInternalUser(token);
   } catch {
-    cookieStore.delete(AUTH_CONFIG.cookieName);
     redirect('/login');
   }
 
@@ -30,11 +30,12 @@ export default async function InventoryPage() {
 
   await ensureDatabaseReady();
 
-  const [summaries, locations, categories, products] = await Promise.all([
+  const [summaries, locations, categories, products, movements] = await Promise.all([
     serialsRepository.listProductInventorySummaries(),
     locationsRepository.list(),
     categoriesRepository.list({ status: 'ACTIVE' }),
     productsRepository.list({ limit: 500 }),
+    serialMovementsRepository.listWithDetails({ limit: 8 }).catch(() => []),
   ]);
 
   return (
@@ -44,6 +45,7 @@ export default async function InventoryPage() {
         locations={locations}
         categories={categories}
         products={products}
+        movements={movements}
         user={user}
       />
     </InternalShell>
