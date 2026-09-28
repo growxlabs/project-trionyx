@@ -124,7 +124,6 @@ export default async function OverviewPage() {
       id: 'rem-stock-out',
       count: outOfStockProducts.length,
       label: 'Products Out of Stock',
-      detail: 'Safety stock breached in central storage',
       severity: 'CRITICAL',
       badgeColor: 'text-[var(--status-danger)] bg-[var(--status-danger-soft)] border-[var(--status-danger-border)]',
       href: '/inventory',
@@ -133,7 +132,6 @@ export default async function OverviewPage() {
       id: 'rem-dealers-unassigned',
       count: unassignedDealers,
       label: 'Studios Missing Distributor Hub',
-      detail: 'Cannot receive routed inventory orders',
       severity: 'ACTION',
       badgeColor: 'text-[var(--status-warning)] bg-[var(--status-warning-soft)] border-[var(--status-warning-border)]',
       href: '/dealers',
@@ -142,7 +140,6 @@ export default async function OverviewPage() {
       id: 'rem-enquiries-new',
       count: newEnquiries,
       label: 'Partner Applications Pending Triage',
-      detail: 'Commercial studio enquiries awaiting operator',
       severity: 'PENDING',
       badgeColor: 'text-[var(--accent)] bg-[var(--accent-soft)] border-[var(--accent-soft-border)]',
       href: '/enquiries',
@@ -151,7 +148,6 @@ export default async function OverviewPage() {
       id: 'rem-warranties-void',
       count: voidWarranties,
       label: 'Voided Customer Warranties',
-      detail: 'Revoked serial bottle registrations',
       severity: voidWarranties > 0 ? 'ALERT' : 'CLEARED',
       badgeColor: voidWarranties > 0
         ? 'text-[var(--status-danger)] bg-[var(--status-danger-soft)] border-[var(--status-danger-border)]'
@@ -188,21 +184,14 @@ export default async function OverviewPage() {
                   <Link
                     key={rem.id}
                     href={rem.href}
-                    className="p-3 flex items-start justify-between gap-3 hover:bg-[var(--surface-subtle)] transition-colors group block"
+                    className="px-3 py-2 flex items-center justify-between gap-3 hover:bg-[var(--surface-subtle)] transition-colors group"
                   >
-                    <div className="space-y-0.5">
-                      <div className="text-[12.5px] font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors">
-                        {rem.label}
-                      </div>
-                      <div className="text-[11px] text-[var(--text-muted)] leading-tight">
-                        {rem.detail}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className={`font-mono font-bold text-[13px] tabular-nums px-2 py-0.5 rounded-[2px] border ${rem.badgeColor}`}>
-                        {rem.count}
-                      </span>
-                    </div>
+                    <span className="text-[12.5px] font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors">
+                      {rem.label}
+                    </span>
+                    <span className={`font-mono font-bold text-[12.5px] tabular-nums px-2 py-0.5 rounded-[2px] border ${rem.badgeColor}`}>
+                      {rem.count}
+                    </span>
                   </Link>
                 ))}
               </div>
@@ -335,100 +324,95 @@ export default async function OverviewPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[var(--border)]">
-                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[36px]">
-                      <td className="py-1 px-3.5 font-medium text-[var(--text-primary)]">
+                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[34px]">
+                      <td className="py-1.5 px-3.5 font-medium text-[var(--text-primary)]">
                         Authorized Detailing Studios
-                        <span className="block text-[11px] text-[var(--text-muted)] font-normal">Active certified applicator network across India</span>
                       </td>
-                      <td className="py-1 px-3.5 font-mono font-bold text-center text-[var(--text-primary)] text-[13px]">
+                      <td className="py-1.5 px-3.5 font-mono font-bold text-center text-[var(--text-primary)] text-[12.5px]">
                         {activeDealers} <span className="text-[11px] font-normal text-[var(--text-muted)]">Studios</span>
                       </td>
-                      <td className="py-1 px-3.5 text-center">
+                      <td className="py-1.5 px-3.5 text-center">
                         <span className="inline-block px-2 py-0.5 rounded-[2px] font-mono text-[10.5px] font-semibold bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]">
                           ACTIVE (NORMAL)
                         </span>
                       </td>
-                      <td className="py-1 px-3.5 text-right">
+                      <td className="py-1.5 px-3.5 text-right">
                         <Link href="/dealers" className="text-[11.5px] font-semibold text-[var(--accent)] hover:underline">
                           Studio Registry →
                         </Link>
                       </td>
                     </tr>
 
-                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[36px]">
-                      <td className="py-1 px-3.5 font-medium text-[var(--text-primary)]">
+                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[34px]">
+                      <td className="py-1.5 px-3.5 font-medium text-[var(--text-primary)]">
                         Physical Serial Inventory
-                        <span className="block text-[11px] text-[var(--text-muted)] font-normal">Discrete serialized chemical bottles available</span>
                       </td>
-                      <td className="py-1 px-3.5 font-mono font-bold text-center text-[var(--status-danger)] text-[13px]">
+                      <td className="py-1.5 px-3.5 font-mono font-bold text-center text-[var(--status-danger)] text-[12.5px]">
                         {availableUnits} <span className="text-[11px] font-normal text-[var(--text-muted)]">Bottles</span>
                       </td>
-                      <td className="py-1 px-3.5 text-center">
+                      <td className="py-1.5 px-3.5 text-center">
                         <span className="inline-block px-2 py-0.5 rounded-[2px] font-mono text-[10.5px] font-semibold bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]">
                           CRITICAL LOW
                         </span>
                       </td>
-                      <td className="py-1 px-3.5 text-right">
+                      <td className="py-1.5 px-3.5 text-right">
                         <Link href="/inventory" className="text-[11.5px] font-semibold text-[var(--accent)] hover:underline">
                           Stock Ledger →
                         </Link>
                       </td>
                     </tr>
 
-                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[36px]">
-                      <td className="py-1 px-3.5 font-medium text-[var(--text-primary)]">
+                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[34px]">
+                      <td className="py-1.5 px-3.5 font-medium text-[var(--text-primary)]">
                         Registered Chemical Formulas
-                        <span className="block text-[11px] text-[var(--text-muted)] font-normal">Borophene, Graphene, and Nanotech coatings</span>
                       </td>
-                      <td className="py-1 px-3.5 font-mono font-bold text-center text-[var(--text-primary)] text-[13px]">
+                      <td className="py-1.5 px-3.5 font-mono font-bold text-center text-[var(--text-primary)] text-[12.5px]">
                         {productsRes.length} <span className="text-[11px] font-normal text-[var(--text-muted)]">Formulas</span>
                       </td>
-                      <td className="py-1 px-3.5 text-center">
+                      <td className="py-1.5 px-3.5 text-center">
                         <span className="inline-block px-2 py-0.5 rounded-[2px] font-mono text-[10.5px] font-semibold bg-[var(--surface-subtle)] text-[var(--text-secondary)] border border-[var(--border)]">
                           CATALOG STABLE
                         </span>
                       </td>
-                      <td className="py-1 px-3.5 text-right">
+                      <td className="py-1.5 px-3.5 text-right">
                         <Link href="/products" className="text-[11.5px] font-semibold text-[var(--accent)] hover:underline">
                           Product Master →
                         </Link>
                       </td>
                     </tr>
 
-                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[36px]">
-                      <td className="py-1 px-3.5 font-medium text-[var(--text-primary)]">
+                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[34px]">
+                      <td className="py-1.5 px-3.5 font-medium text-[var(--text-primary)]">
                         Inbound Partner Enquiries
-                        <span className="block text-[11px] text-[var(--text-muted)] font-normal">Dealership and territory franchise applications</span>
                       </td>
-                      <td className="py-1 px-3.5 font-mono font-bold text-center text-[var(--status-warning)] text-[13px]">
+                      <td className="py-1.5 px-3.5 font-mono font-bold text-center text-[var(--status-warning)] text-[12.5px]">
                         {newEnquiries} <span className="text-[11px] font-normal text-[var(--text-muted)]">Pending</span>
                       </td>
-                      <td className="py-1 px-3.5 text-center">
+                      <td className="py-1.5 px-3.5 text-center">
                         <span className="inline-block px-2 py-0.5 rounded-[2px] font-mono text-[10.5px] font-semibold bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]">
                           REQUIRES TRIAGE
                         </span>
                       </td>
-                      <td className="py-1 px-3.5 text-right">
+                      <td className="py-1.5 px-3.5 text-right">
                         <Link href="/enquiries" className="text-[11.5px] font-semibold text-[var(--accent)] hover:underline">
                           Open Queue →
                         </Link>
                       </td>
                     </tr>
 
-                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[36px]">
-                      <td className="py-1 px-3.5 font-medium text-[var(--text-primary)]">
+                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[34px]">
+                      <td className="py-1.5 px-3.5 font-medium text-[var(--text-primary)]">
                         Warranty Policies Under Coverage
-                        <span className="block text-[11px] text-[var(--text-muted)] font-normal">Active customer vehicle ceramic & borophene warranties</span>
                       </td>
-                      <td className="py-1 px-3.5 font-mono font-bold text-center text-[var(--text-primary)] text-[13px]">
+                      <td className="py-1.5 px-3.5 font-mono font-bold text-center text-[var(--text-primary)] text-[12.5px]">
                         {totalWarranties} <span className="text-[11px] font-normal text-[var(--text-muted)]">Registered</span>
                       </td>
-                      <td className="py-1 px-3.5 text-center">
+                      <td className="py-1.5 px-3.5 text-center">
                         <span className="inline-block px-2 py-0.5 rounded-[2px] font-mono text-[10.5px] font-semibold bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]">
                           AUDITED
                         </span>
                       </td>
-                      <td className="py-1 px-3.5 text-right">
+                      <td className="py-1.5 px-3.5 text-right">
                         <Link href="/warranty" className="text-[11.5px] font-semibold text-[var(--accent)] hover:underline">
                           Warranty Book →
                         </Link>
