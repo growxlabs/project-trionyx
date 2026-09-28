@@ -208,15 +208,15 @@ export default async function OverviewPage() {
               <div className="p-2.5 grid grid-cols-2 gap-2 text-[12px]">
                 <Link
                   href="/inventory"
-                  className="px-2.5 py-2 rounded-[2px] border border-[var(--border)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-raised)] hover:border-[var(--accent)] text-[var(--text-primary)] font-medium transition-colors flex items-center gap-2"
+                  className="btn-primary px-2.5 py-2 text-[12px] flex items-center gap-2"
                 >
-                  <span className="font-mono text-[10px] text-[var(--text-muted)] font-bold">[RCV]</span>
+                  <span className="font-mono text-[10px] font-bold text-white/90">[RCV]</span>
                   <span>Receive Serials</span>
                 </Link>
 
                 <Link
                   href="/dealers/new"
-                  className="px-2.5 py-2 rounded-[2px] border border-[var(--border)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-raised)] hover:border-[var(--accent)] text-[var(--text-primary)] font-medium transition-colors flex items-center gap-2"
+                  className="btn-secondary px-2.5 py-2 text-[12px] flex items-center gap-2"
                 >
                   <span className="font-mono text-[10px] text-[var(--text-muted)] font-bold">[ONB]</span>
                   <span>Onboard Studio</span>
@@ -224,7 +224,7 @@ export default async function OverviewPage() {
 
                 <Link
                   href="/warranty"
-                  className="px-2.5 py-2 rounded-[2px] border border-[var(--border)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-raised)] hover:border-[var(--accent)] text-[var(--text-primary)] font-medium transition-colors flex items-center gap-2"
+                  className="btn-secondary px-2.5 py-2 text-[12px] flex items-center gap-2"
                 >
                   <span className="font-mono text-[10px] text-[var(--text-muted)] font-bold">[VRF]</span>
                   <span>Verify Warranty</span>
@@ -232,7 +232,7 @@ export default async function OverviewPage() {
 
                 <Link
                   href="/distributors/new"
-                  className="px-2.5 py-2 rounded-[2px] border border-[var(--border)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-raised)] hover:border-[var(--accent)] text-[var(--text-primary)] font-medium transition-colors flex items-center gap-2"
+                  className="btn-secondary px-2.5 py-2 text-[12px] flex items-center gap-2"
                 >
                   <span className="font-mono text-[10px] text-[var(--text-muted)] font-bold">[HUB]</span>
                   <span>Add Dist. Hub</span>
@@ -240,7 +240,7 @@ export default async function OverviewPage() {
 
                 <Link
                   href="/inventory/movements"
-                  className="px-2.5 py-2 rounded-[2px] border border-[var(--border)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-raised)] hover:border-[var(--accent)] text-[var(--text-primary)] font-medium transition-colors flex items-center gap-2"
+                  className="btn-secondary px-2.5 py-2 text-[12px] flex items-center gap-2"
                 >
                   <span className="font-mono text-[10px] text-[var(--text-muted)] font-bold">[MOV]</span>
                   <span>Stock Movements</span>
@@ -248,7 +248,7 @@ export default async function OverviewPage() {
 
                 <Link
                   href="/enquiries"
-                  className="px-2.5 py-2 rounded-[2px] border border-[var(--border)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-raised)] hover:border-[var(--accent)] text-[var(--text-primary)] font-medium transition-colors flex items-center gap-2"
+                  className="btn-secondary px-2.5 py-2 text-[12px] flex items-center gap-2"
                 >
                   <span className="font-mono text-[10px] text-[var(--text-muted)] font-bold">[TRG]</span>
                   <span>Triage Enquiries</span>
