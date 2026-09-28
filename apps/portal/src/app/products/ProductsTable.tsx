@@ -66,6 +66,17 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
     });
   }, [categories, products]);
 
+  // Product Families pagination (4 per page to prevent excessive vertical height on mobile & compact row on desktop)
+  const [familyPage, setFamilyPage] = useState(1);
+  const FAMILY_PAGE_SIZE = 4;
+  const totalFamilyPages = Math.max(1, Math.ceil(categoryStats.length / FAMILY_PAGE_SIZE));
+  const currentFamilyPage = Math.min(familyPage, totalFamilyPages);
+
+  const paginatedFamilies = useMemo(() => {
+    const start = (currentFamilyPage - 1) * FAMILY_PAGE_SIZE;
+    return categoryStats.slice(start, start + FAMILY_PAGE_SIZE);
+  }, [categoryStats, currentFamilyPage]);
+
   // Filter products locally for instant response
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
@@ -143,13 +154,52 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
       {/* 2. Product Families */}
       {categoryStats.length > 0 && (
         <section aria-labelledby="product-families-heading" className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-4">
-          <div className="flex items-baseline justify-between mb-3">
-            <h2 id="product-families-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] m-0">
-              PRODUCT FAMILIES
-            </h2>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <h2 id="product-families-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] m-0">
+                PRODUCT FAMILIES
+              </h2>
+              <span className="font-mono text-[10px] text-[var(--text-muted)]">
+                ({categoryStats.length})
+              </span>
+            </div>
+
+            {totalFamilyPages > 1 && (
+              <div className="flex items-center gap-2.5">
+                <span className="font-mono text-[11px] text-[var(--text-secondary)]">
+                  {currentFamilyPage} / {totalFamilyPages}
+                </span>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setFamilyPage((p) => Math.max(1, p - 1))}
+                    disabled={currentFamilyPage === 1}
+                    className="w-7 h-7 flex items-center justify-center rounded-[3px] border border-[var(--border)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-raised)] disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
+                    aria-label="Previous families"
+                    title="Previous page"
+                  >
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="15 18 9 12 15 6" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFamilyPage((p) => Math.min(totalFamilyPages, p + 1))}
+                    disabled={currentFamilyPage === totalFamilyPages}
+                    className="w-7 h-7 flex items-center justify-center rounded-[3px] border border-[var(--border)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-raised)] disabled:opacity-30 disabled:cursor-not-allowed text-[var(--text-primary)] transition-colors cursor-pointer"
+                    aria-label="Next families"
+                    title="Next page"
+                  >
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {categoryStats.map((cat) => {
+            {paginatedFamilies.map((cat) => {
               const isSelected = selectedCategory === cat.id;
               return (
                 <button
