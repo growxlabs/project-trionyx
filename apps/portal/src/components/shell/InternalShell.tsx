@@ -24,7 +24,7 @@ export function InternalShell({ user, children }: InternalShellProps) {
         <Topbar user={user} />
 
         {/* Main Content Area — light panel with curved top-left corner */}
-        <main className="flex-1 px-4 py-4 sm:px-6 sm:py-5 lg:px-7 lg:py-5 w-full bg-[var(--background)] lg:rounded-tl-[10px]">
+        <main className="flex-1 px-4 py-4 sm:px-6 sm:py-5 lg:px-7 lg:py-5 w-full bg-[var(--background)] lg:rounded-tl-[10px] min-h-0">
           <div className="w-full">
             {children}
           </div>

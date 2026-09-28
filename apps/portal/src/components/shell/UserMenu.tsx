@@ -75,11 +75,11 @@ export function UserMenu({ user }: UserMenuProps) {
         onClick={() => setIsOpen((prev) => !prev)}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
-        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[4px] hover:bg-[var(--surface-subtle)] text-[13px] font-medium text-[var(--text-primary)] transition-colors duration-150 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
+        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[4px] hover:bg-[rgba(255,255,255,0.08)] text-[13px] font-medium text-[rgba(255,255,255,0.8)] transition-colors duration-150 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[rgba(255,255,255,0.2)]"
       >
         <span>{user.name}</span>
         <svg
-          className={`w-3.5 h-3.5 text-[var(--text-secondary)] transition-transform duration-150 ${
+          className={`w-3.5 h-3.5 text-[rgba(255,255,255,0.45)] transition-transform duration-150 ${
             isOpen ? 'rotate-180' : ''
           }`}
           viewBox="0 0 24 24"
