@@ -176,12 +176,12 @@ export default async function OverviewPage() {
                 </span>
               </div>
 
-              <div className="divide-y divide-[var(--border)]">
+              <div className="p-1 space-y-0.5">
                 {reminders.map((rem) => (
                   <Link
                     key={rem.id}
                     href={rem.href}
-                    className="px-3 py-2 flex items-center justify-between gap-3 hover:bg-[var(--surface-subtle)] transition-colors group"
+                    className="px-2.5 py-2 flex items-center justify-between gap-3 hover:bg-[var(--surface-subtle)] rounded-[2px] transition-colors group"
                   >
                     <span className="text-[12.5px] font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors">
                       {rem.label}
@@ -279,7 +279,7 @@ export default async function OverviewPage() {
                   <span className="text-[var(--text-muted)]">Master Catalog SKUs:</span>
                   <span className="font-mono font-bold text-[var(--text-primary)]">{productsRes.length} Formulas</span>
                 </div>
-                <div className="pt-2 border-t border-[var(--border)] flex items-center justify-between text-[11px]">
+                <div className="pt-2 border-t border-[var(--border)]/40 flex items-center justify-between text-[11px]">
                   <span className="text-[var(--text-muted)]">Physical Inventory Health:</span>
                   <span className="font-semibold text-[var(--status-warning)]">REPLENISHMENT REQ.</span>
                 </div>
@@ -305,103 +305,103 @@ export default async function OverviewPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-[12.5px]">
                   <thead>
-                    <tr className="border-b border-[var(--border)] bg-[var(--surface-subtle)] text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                    <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--text-muted)]">
                       <th className="py-2 px-3.5">Operational Entity / Domain</th>
                       <th className="py-2 px-3.5 font-mono text-center w-28">Current Balance</th>
                       <th className="py-2 px-3.5 text-center w-36">Operating Status</th>
                       <th className="py-2 px-3.5 text-right w-36">Ledger Record</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[var(--border)]">
-                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[34px]">
-                      <td className="py-1.5 px-3.5 font-medium text-[var(--text-primary)]">
+                  <tbody className="font-normal">
+                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[36px]">
+                      <td className="py-2 px-3.5 font-medium text-[var(--text-primary)]">
                         Authorized Detailing Studios
                       </td>
-                      <td className="py-1.5 px-3.5 font-mono font-bold text-center text-[var(--text-primary)] text-[12.5px]">
+                      <td className="py-2 px-3.5 font-mono font-bold text-center text-[var(--text-primary)] text-[12.5px]">
                         {activeDealers} <span className="text-[11px] font-normal text-[var(--text-muted)]">Studios</span>
                       </td>
-                      <td className="py-1.5 px-3.5 text-center">
+                      <td className="py-2 px-3.5 text-center">
                         <span className="inline-block px-2 py-0.5 rounded-[2px] font-mono text-[10.5px] font-semibold bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]">
                           ACTIVE (NORMAL)
                         </span>
                       </td>
-                      <td className="py-1.5 px-3.5 text-right">
+                      <td className="py-2 px-3.5 text-right">
                         <Link href="/dealers" className="text-[11.5px] font-semibold text-[var(--accent)] hover:underline">
                           Studio Registry →
                         </Link>
                       </td>
                     </tr>
 
-                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[34px]">
-                      <td className="py-1.5 px-3.5 font-medium text-[var(--text-primary)]">
+                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[36px]">
+                      <td className="py-2 px-3.5 font-medium text-[var(--text-primary)]">
                         Physical Serial Inventory
                       </td>
-                      <td className="py-1.5 px-3.5 font-mono font-bold text-center text-[var(--status-danger)] text-[12.5px]">
+                      <td className="py-2 px-3.5 font-mono font-bold text-center text-[var(--status-danger)] text-[12.5px]">
                         {availableUnits} <span className="text-[11px] font-normal text-[var(--text-muted)]">Bottles</span>
                       </td>
-                      <td className="py-1.5 px-3.5 text-center">
+                      <td className="py-2 px-3.5 text-center">
                         <span className="inline-block px-2 py-0.5 rounded-[2px] font-mono text-[10.5px] font-semibold bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]">
                           CRITICAL LOW
                         </span>
                       </td>
-                      <td className="py-1.5 px-3.5 text-right">
+                      <td className="py-2 px-3.5 text-right">
                         <Link href="/inventory" className="text-[11.5px] font-semibold text-[var(--accent)] hover:underline">
                           Stock Ledger →
                         </Link>
                       </td>
                     </tr>
 
-                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[34px]">
-                      <td className="py-1.5 px-3.5 font-medium text-[var(--text-primary)]">
+                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[36px]">
+                      <td className="py-2 px-3.5 font-medium text-[var(--text-primary)]">
                         Registered Chemical Formulas
                       </td>
-                      <td className="py-1.5 px-3.5 font-mono font-bold text-center text-[var(--text-primary)] text-[12.5px]">
+                      <td className="py-2 px-3.5 font-mono font-bold text-center text-[var(--text-primary)] text-[12.5px]">
                         {productsRes.length} <span className="text-[11px] font-normal text-[var(--text-muted)]">Formulas</span>
                       </td>
-                      <td className="py-1.5 px-3.5 text-center">
+                      <td className="py-2 px-3.5 text-center">
                         <span className="inline-block px-2 py-0.5 rounded-[2px] font-mono text-[10.5px] font-semibold bg-[var(--surface-subtle)] text-[var(--text-secondary)] border border-[var(--border)]">
                           CATALOG STABLE
                         </span>
                       </td>
-                      <td className="py-1.5 px-3.5 text-right">
+                      <td className="py-2 px-3.5 text-right">
                         <Link href="/products" className="text-[11.5px] font-semibold text-[var(--accent)] hover:underline">
                           Product Master →
                         </Link>
                       </td>
                     </tr>
 
-                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[34px]">
-                      <td className="py-1.5 px-3.5 font-medium text-[var(--text-primary)]">
+                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[36px]">
+                      <td className="py-2 px-3.5 font-medium text-[var(--text-primary)]">
                         Inbound Partner Enquiries
                       </td>
-                      <td className="py-1.5 px-3.5 font-mono font-bold text-center text-[var(--status-warning)] text-[12.5px]">
+                      <td className="py-2 px-3.5 font-mono font-bold text-center text-[var(--status-warning)] text-[12.5px]">
                         {newEnquiries} <span className="text-[11px] font-normal text-[var(--text-muted)]">Pending</span>
                       </td>
-                      <td className="py-1.5 px-3.5 text-center">
+                      <td className="py-2 px-3.5 text-center">
                         <span className="inline-block px-2 py-0.5 rounded-[2px] font-mono text-[10.5px] font-semibold bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]">
                           REQUIRES TRIAGE
                         </span>
                       </td>
-                      <td className="py-1.5 px-3.5 text-right">
+                      <td className="py-2 px-3.5 text-right">
                         <Link href="/enquiries" className="text-[11.5px] font-semibold text-[var(--accent)] hover:underline">
                           Open Queue →
                         </Link>
                       </td>
                     </tr>
 
-                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[34px]">
-                      <td className="py-1.5 px-3.5 font-medium text-[var(--text-primary)]">
+                    <tr className="hover:bg-[var(--surface-subtle)] transition-colors h-[36px]">
+                      <td className="py-2 px-3.5 font-medium text-[var(--text-primary)]">
                         Warranty Policies Under Coverage
                       </td>
-                      <td className="py-1.5 px-3.5 font-mono font-bold text-center text-[var(--text-primary)] text-[12.5px]">
+                      <td className="py-2 px-3.5 font-mono font-bold text-center text-[var(--text-primary)] text-[12.5px]">
                         {totalWarranties} <span className="text-[11px] font-normal text-[var(--text-muted)]">Registered</span>
                       </td>
-                      <td className="py-1.5 px-3.5 text-center">
+                      <td className="py-2 px-3.5 text-center">
                         <span className="inline-block px-2 py-0.5 rounded-[2px] font-mono text-[10.5px] font-semibold bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]">
                           AUDITED
                         </span>
                       </td>
-                      <td className="py-1.5 px-3.5 text-right">
+                      <td className="py-2 px-3.5 text-right">
                         <Link href="/warranty" className="text-[11.5px] font-semibold text-[var(--accent)] hover:underline">
                           Warranty Book →
                         </Link>
@@ -426,7 +426,7 @@ export default async function OverviewPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-[12px]">
                   <thead>
-                    <tr className="border-b border-[var(--border)] bg-[var(--surface-subtle)] text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--text-muted)]">
+                    <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--text-muted)]">
                       <th className="py-1.5 px-3.5 w-24">Timestamp</th>
                       <th className="py-1.5 px-3.5 w-52">Transaction Type</th>
                       <th className="py-1.5 px-3.5">Document / Record Ref</th>
@@ -434,7 +434,7 @@ export default async function OverviewPage() {
                       <th className="py-1.5 px-3.5 text-right w-24">Posting</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[var(--border)] font-normal">
+                  <tbody className="divide-y divide-black/[0.04] dark:divide-white/[0.05] font-normal">
                     {activities.map((act) => (
                       <tr key={act.id} className="hover:bg-[var(--surface-subtle)] transition-colors h-[32px]">
                         <td className="py-1 px-3.5 font-mono text-[11px] text-[var(--text-muted)] whitespace-nowrap">
