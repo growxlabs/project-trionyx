@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useTransition } from 'react';
+import React, { useState } from 'react';
 import type { Warranty } from '@trionyx/types';
 
 interface WarrantyViewProps {
@@ -148,14 +148,11 @@ export function WarrantyView({ initialWarranties }: WarrantyViewProps) {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-[#171714]/10">
         <div>
-          <span className="text-[11px] font-bold text-[#F26522] tracking-[0.14em] uppercase block">
-            Partner Services
-          </span>
-          <h1 className="text-[26px] font-bold tracking-[-0.02em] text-[#171714] mt-0.5">
-            Warranty Registrations
+          <h1 className="text-[26px] font-bold tracking-[-0.02em] text-[#171714]">
+            Warranties
           </h1>
           <p className="text-[14px] text-[#171714]/65 mt-1">
-            Activate customer warranties upon product installation and track active coverage terms.
+            Register an installation and check its warranty dates.
           </p>
         </div>
 
@@ -177,7 +174,7 @@ export function WarrantyView({ initialWarranties }: WarrantyViewProps) {
         </button>
       </div>
 
-      {/* Search and Filters Bar */}
+      {warranties.length > 0 && (
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
         <div className="relative flex-1">
           <input
@@ -215,20 +212,18 @@ export function WarrantyView({ initialWarranties }: WarrantyViewProps) {
           ))}
         </div>
       </div>
+      )}
 
       {/* Warranties Table / Cards */}
       {filteredWarranties.length === 0 ? (
-        <div className="bg-white border border-[#171714]/10 rounded-[6px] p-12 text-center">
-          <div className="w-12 h-12 rounded-full bg-[#171714]/05 text-[#171714]/40 flex items-center justify-center mx-auto mb-3">
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-            </svg>
-          </div>
-          <h3 className="text-[16px] font-semibold text-[#171714]">No warranties found</h3>
-          <p className="text-[13px] text-[#171714]/60 mt-1 max-w-sm mx-auto">
-            {search
-              ? 'No registered warranties matched your search term.'
-              : 'You have not activated any product warranties yet. Click "Activate Warranty" above to register your first installation.'}
+        <div className="bg-white border border-[#171714]/10 rounded-[6px] p-6">
+          <h2 className="text-[16px] font-semibold text-[#171714]">
+            {warranties.length === 0 ? 'No warranties registered yet' : 'No matching warranties'}
+          </h2>
+          <p className="text-[13px] text-[#171714]/60 mt-1 max-w-lg">
+            {warranties.length === 0
+              ? 'After an eligible product is installed, activate its warranty with the serial number and installation date.'
+              : 'Try another serial number, product name or status.'}
           </p>
         </div>
       ) : (

@@ -77,7 +77,7 @@ export function RequestsView({ initialRequests }: RequestsViewProps) {
       case 'PRODUCT_ENQUIRY':
         return 'Product Enquiry';
       case 'AVAILABILITY':
-        return 'Availability / Stock';
+        return 'Stock';
       case 'GENERAL_SUPPORT':
         return 'Support';
       case 'OTHER':
@@ -88,18 +88,14 @@ export function RequestsView({ initialRequests }: RequestsViewProps) {
 
   return (
     <div className="space-y-6">
-      {/* Top Header Card */}
       <div className="bg-[#FCFBF7] border border-[#171714]/10 rounded-lg p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <span className="text-[11px] font-bold tracking-wider uppercase text-[#68665F] block">
-              SUPPORT & INQUIRIES
-            </span>
             <h1 className="text-[24px] font-bold text-[#171714] tracking-tight mt-0.5">
-              My Requests
+              Requests
             </h1>
             <p className="text-[13.5px] text-[#68665F] mt-1">
-              Direct inquiries, stock allocations, and technical queries logged with the Trionyx operations desk.
+              Track your product, stock and support requests.
             </p>
           </div>
           <div>
@@ -107,19 +103,19 @@ export function RequestsView({ initialRequests }: RequestsViewProps) {
               href="/requests/new"
               className="inline-flex items-center justify-center px-4 py-2.5 rounded bg-[#F26522] hover:bg-[#D9531E] text-white font-semibold text-[13.5px] shadow-[0_2px_8px_rgba(242,101,34,0.25)] transition-all"
             >
-              + Raise New Request
+              New request
             </Link>
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-[#171714]/08">
+        <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search code, subject, product..."
+              placeholder="Search code, subject or product"
+              aria-label="Search requests"
               className="w-full px-3 py-2 rounded border border-[#171714]/20 bg-white text-[13.5px] text-[#171714] placeholder-[#68665F]/50 focus:outline-none focus:border-[#F26522]"
             />
           </div>
@@ -129,7 +125,7 @@ export function RequestsView({ initialRequests }: RequestsViewProps) {
               onChange={(e) => setStatusFilter(e.target.value)}
               className="w-full px-3 py-2 rounded border border-[#171714]/20 bg-white text-[13.5px] text-[#171714] focus:outline-none focus:border-[#F26522]"
             >
-              <option value="ALL">All Statuses</option>
+              <option value="ALL">All statuses</option>
               <option value="OPEN">Open</option>
               <option value="IN_PROGRESS">In Progress</option>
               <option value="RESOLVED">Resolved</option>
@@ -142,9 +138,9 @@ export function RequestsView({ initialRequests }: RequestsViewProps) {
               onChange={(e) => setTypeFilter(e.target.value)}
               className="w-full px-3 py-2 rounded border border-[#171714]/20 bg-white text-[13.5px] text-[#171714] focus:outline-none focus:border-[#F26522]"
             >
-              <option value="ALL">All Request Types</option>
+              <option value="ALL">All request types</option>
               <option value="PRODUCT_ENQUIRY">Product Enquiry</option>
-              <option value="AVAILABILITY">Availability / Stock</option>
+              <option value="AVAILABILITY">Stock</option>
               <option value="GENERAL_SUPPORT">General Support</option>
               <option value="OTHER">Other</option>
             </select>
@@ -187,7 +183,7 @@ export function RequestsView({ initialRequests }: RequestsViewProps) {
                     </Link>
                     {req.productName && (
                       <span className="inline-block mt-0.5 text-[11.5px] text-[#68665F] bg-[#EFECE3] px-2 py-0.5 rounded font-medium truncate max-w-full">
-                        📦 {req.productName}
+                        {req.productName}
                       </span>
                     )}
                   </td>
@@ -208,7 +204,7 @@ export function RequestsView({ initialRequests }: RequestsViewProps) {
                       href={`/requests/${req.id}`}
                       className="inline-flex items-center text-[12.5px] font-semibold text-[#F26522] hover:text-[#D9531E] transition-colors"
                     >
-                      View Details →
+                      Open request →
                     </Link>
                   </td>
                 </tr>
@@ -218,7 +214,7 @@ export function RequestsView({ initialRequests }: RequestsViewProps) {
                 <td colSpan={7} className="py-12 text-center text-[#68665F]">
                   <p className="text-[14px] font-medium">No requests found</p>
                   <p className="text-[12.5px] mt-1 text-[#68665F]/80">
-                    Try adjusting your filters or submit a new inquiry.
+                    Try another search or clear the filters.
                   </p>
                 </td>
               </tr>
@@ -247,7 +243,7 @@ export function RequestsView({ initialRequests }: RequestsViewProps) {
                   </h3>
                   {req.productName && (
                     <span className="inline-block mt-1 text-[11px] text-[#68665F] bg-[#EFECE3] px-2 py-0.5 rounded">
-                      📦 {req.productName}
+                      {req.productName}
                     </span>
                   )}
                 </div>
@@ -268,7 +264,7 @@ export function RequestsView({ initialRequests }: RequestsViewProps) {
                   href={`/requests/${req.id}`}
                   className="font-semibold text-[#F26522]"
                 >
-                  View Details →
+                  Open request →
                 </Link>
               </div>
             </div>

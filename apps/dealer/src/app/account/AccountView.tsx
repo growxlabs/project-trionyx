@@ -65,8 +65,8 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
       }
 
       setProfileSuccess('Dealership contact details saved successfully.');
-    } catch (err: any) {
-      setProfileError(err.message || 'Something went wrong');
+    } catch (err: unknown) {
+      setProfileError(err instanceof Error ? err.message : 'Could not save account details.');
     } finally {
       setSavingProfile(false);
     }
@@ -104,8 +104,8 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-    } catch (err: any) {
-      setPasswordError(err.message || 'Something went wrong');
+    } catch (err: unknown) {
+      setPasswordError(err instanceof Error ? err.message : 'Could not update password.');
     } finally {
       setSavingPassword(false);
     }
@@ -113,37 +113,18 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      {/* Header Banner */}
       <div className="bg-[#FCFBF7] border border-[#171714]/10 rounded-lg p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="font-mono text-[12px] font-bold text-[#F26522] bg-[#F26522]/10 px-2 py-0.5 rounded">
-                {dealer.dealerCode}
-              </span>
-              <span className="text-[12px] font-bold px-2 py-0.5 rounded bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]">
-                {dealer.status}
-              </span>
-            </div>
-            <h1 className="text-[24px] font-bold text-[#171714] tracking-tight mt-1">
-              {dealer.businessName}
-            </h1>
+            <h1 className="text-[24px] font-bold text-[#171714] tracking-tight">Account</h1>
             <p className="text-[13.5px] text-[#68665F] mt-0.5">
-              Manage dealership profile, credentials, and review authorized portal users.
+              Update your contact and delivery details, password, and team access.
             </p>
-          </div>
-
-          <div className="text-right sm:border-l sm:border-[#171714]/10 sm:pl-6 text-[12.5px] text-[#68665F]">
-            <span className="block font-semibold text-[#171714]">{currentUser.name}</span>
-            <span className="block">{currentUser.email}</span>
-            <span className="inline-block mt-1 text-[11px] text-[#F26522] font-semibold uppercase tracking-wider">
-              Authorized User
-            </span>
           </div>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-[#171714]/10 mt-6 -mb-6 space-x-6 text-[13.5px]">
+        <div className="flex flex-wrap gap-x-6 border-b border-[#171714]/10 mt-6 -mb-6 text-[13.5px]">
           <button
             onClick={() => setActiveTab('profile')}
             className={`py-3 font-semibold border-b-2 transition-colors ${
@@ -152,7 +133,7 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
                 : 'border-transparent text-[#68665F] hover:text-[#171714]'
             }`}
           >
-            Dealership Profile
+            Business details
           </button>
           <button
             onClick={() => setActiveTab('security')}
@@ -162,7 +143,7 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
                 : 'border-transparent text-[#68665F] hover:text-[#171714]'
             }`}
           >
-            Security & Password
+            Password
           </button>
           <button
             onClick={() => setActiveTab('users')}
@@ -172,7 +153,7 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
                 : 'border-transparent text-[#68665F] hover:text-[#171714]'
             }`}
           >
-            Authorized Portal Users ({initialUsers.length})
+            Team access ({initialUsers.length})
           </button>
         </div>
       </div>
@@ -183,16 +164,16 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
           {/* Read-Only Verified Entity Information */}
           <div className="bg-[#FCFBF7] border border-[#171714]/10 rounded-lg p-6 shadow-[0_2px_8px_rgba(23,23,20,0.02)]">
             <h2 className="text-[15px] font-bold text-[#171714] tracking-tight">
-              Verified Legal Registration
+              Business registration
             </h2>
             <p className="text-[12.5px] text-[#68665F] mt-0.5">
-              Official company identifiers on file with Trionyx. To request changes, contact Trionyx compliance.
+              These details are on file with Trionyx and cannot be edited here.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4 p-4 rounded bg-[#EFECE3]/50 border border-[#171714]/08 text-[13px]">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#68665F] block">
-                  Legal Entity Name
+                  Legal business name
                 </span>
                 <span className="font-semibold text-[#171714] mt-0.5 block">
                   {dealer.legalName || dealer.businessName}
@@ -216,36 +197,15 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
               </div>
             </div>
 
-            {/* Assigned Distributor Details */}
-            <div className="mt-4 pt-4 border-t border-[#171714]/08 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[13px]">
-              <div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#68665F] block">
-                  Assigned Regional Distributor
-                </span>
-                <span className="font-bold text-[#171714] text-[14px]">
-                  {dealer.distributor?.businessName || 'Direct Trionyx Operations'}
-                </span>
-                {dealer.distributor && (
-                  <span className="block text-[12px] text-[#68665F]">
-                    {dealer.distributor.city}, {dealer.distributor.state} • {dealer.distributor.phone}
-                  </span>
-                )}
-              </div>
-              <div>
-                <span className="px-2.5 py-1 rounded bg-[#EFECE3] text-[#171714] font-medium text-[12px]">
-                  Fulfillment Partner
-                </span>
-              </div>
-            </div>
           </div>
 
           {/* Editable Operational Contact Details */}
           <div className="bg-[#FCFBF7] border border-[#171714]/10 rounded-lg p-6 shadow-[0_2px_8px_rgba(23,23,20,0.02)]">
             <h2 className="text-[15px] font-bold text-[#171714] tracking-tight">
-              Operational Contact & Delivery Address
+              Contact and delivery address
             </h2>
             <p className="text-[12.5px] text-[#68665F] mt-0.5">
-              Contact person and shipping coordinates used for daily coordination and dispatch.
+              We use these details to contact your business and arrange deliveries.
             </p>
 
             {profileSuccess && (
@@ -398,10 +358,10 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
       {activeTab === 'security' && (
         <div className="bg-[#FCFBF7] border border-[#171714]/10 rounded-lg p-6 shadow-[0_2px_8px_rgba(23,23,20,0.02)] max-w-xl">
           <h2 className="text-[15px] font-bold text-[#171714] tracking-tight">
-            Change Portal Password
+            Change password
           </h2>
           <p className="text-[12.5px] text-[#68665F] mt-0.5">
-            Update your individual login credentials. Passwords must be at least 8 characters long.
+            Use at least 8 characters for your new password.
           </p>
 
           {passwordSuccess && (
@@ -476,10 +436,10 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h2 className="text-[15px] font-bold text-[#171714] tracking-tight">
-                Authorized Portal Logins
+                Team access
               </h2>
               <p className="text-[12.5px] text-[#68665F] mt-0.5">
-                Personnel authorized to access this dealership account on the Trionyx Portal.
+                People who can sign in to this dealer account.
               </p>
             </div>
           </div>
@@ -537,11 +497,9 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
           </div>
 
           <div className="p-4 rounded bg-[#EFECE3]/50 border border-[#171714]/10 text-[12.5px] text-[#68665F] space-y-1">
-            <span className="font-bold text-[#171714] block">User Access Policy</span>
+            <span className="font-bold text-[#171714] block">Need to change access?</span>
             <p>
-              Dealer portal user credentials are provisioning-controlled. To invite a new team member,
-              change roles, or revoke credentials, contact your Trionyx Account Manager or submit a
-              portal support request.
+              To add or remove a team member, submit a support request.
             </p>
           </div>
         </div>

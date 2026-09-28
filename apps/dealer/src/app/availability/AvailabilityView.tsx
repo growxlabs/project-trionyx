@@ -56,7 +56,7 @@ export function AvailabilityView({ initialItems, categories }: AvailabilityViewP
       case 'UNAVAILABLE':
         return (
           <span className="inline-flex items-center px-2.5 py-0.5 rounded text-[11.5px] font-bold bg-[#F4F4F5] text-[#52525B] border border-[#E4E4E7]">
-            BACKORDER ONLY
+            UNAVAILABLE
           </span>
         );
     }
@@ -64,33 +64,29 @@ export function AvailabilityView({ initialItems, categories }: AvailabilityViewP
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
       <div className="bg-[#FCFBF7] border border-[#171714]/10 rounded-lg p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <span className="text-[11px] font-bold tracking-wider uppercase text-[#68665F] block">
-              REAL-TIME LOGISTICS
-            </span>
             <h1 className="text-[24px] font-bold text-[#171714] tracking-tight mt-0.5">
               Product Availability
             </h1>
             <p className="text-[13.5px] text-[#68665F] mt-1">
-              Live replenishment and fulfillment readiness across Trionyx distribution hubs.
+              Check the latest listed stock status before requesting a product.
             </p>
           </div>
           <div className="flex items-center gap-2 text-[12.5px] text-[#68665F]">
-            <span>Showing {filteredItems.length} products</span>
+            <span>{filteredItems.length} of {items.length} products</span>
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-[#171714]/08">
+        <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search product..."
+              placeholder="Search name or code"
+              aria-label="Search product availability"
               className="w-full px-3 py-2 rounded border border-[#171714]/20 bg-white text-[13.5px] text-[#171714] placeholder-[#68665F]/50 focus:outline-none focus:border-[#F26522]"
             />
           </div>
@@ -100,7 +96,7 @@ export function AvailabilityView({ initialItems, categories }: AvailabilityViewP
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="w-full px-3 py-2 rounded border border-[#171714]/20 bg-white text-[13.5px] text-[#171714] focus:outline-none focus:border-[#F26522]"
             >
-              <option value="ALL">All Categories</option>
+              <option value="ALL">All categories</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.name}>
                   {c.name}
@@ -114,10 +110,10 @@ export function AvailabilityView({ initialItems, categories }: AvailabilityViewP
               onChange={(e) => setSelectedStatus(e.target.value)}
               className="w-full px-3 py-2 rounded border border-[#171714]/20 bg-white text-[13.5px] text-[#171714] focus:outline-none focus:border-[#F26522]"
             >
-              <option value="ALL">All Availability States</option>
+              <option value="ALL">All stock statuses</option>
               <option value="AVAILABLE">Available</option>
               <option value="LIMITED">Limited Stock</option>
-              <option value="UNAVAILABLE">Backorder Only</option>
+              <option value="UNAVAILABLE">Unavailable</option>
             </select>
           </div>
         </div>
@@ -130,8 +126,8 @@ export function AvailabilityView({ initialItems, categories }: AvailabilityViewP
             <tr className="bg-[#EFECE3]/60 border-b border-[#171714]/10 text-[11.5px] font-bold uppercase tracking-wider text-[#68665F]">
               <th className="py-3 px-4">Product</th>
               <th className="py-3 px-4">Category</th>
-              <th className="py-3 px-4">Availability Status</th>
-              <th className="py-3 px-4">Last Updated</th>
+              <th className="py-3 px-4">Stock status</th>
+              <th className="py-3 px-4">Updated</th>
               <th className="py-3 px-4 text-right">Action</th>
             </tr>
           </thead>
@@ -157,10 +153,10 @@ export function AvailabilityView({ initialItems, categories }: AvailabilityViewP
                   </td>
                   <td className="py-3.5 px-4 text-right">
                     <Link
-                      href={`/requests/new?productId=${item.id}&subject=Stock+Allocation:+${encodeURIComponent(item.name)}`}
+                      href={`/requests/new?productId=${item.id}&subject=Stock+Enquiry:+${encodeURIComponent(item.name)}`}
                       className="inline-flex items-center px-3 py-1.5 rounded bg-[#171714] text-white font-medium text-[12px] hover:bg-black transition-colors"
                     >
-                      Request Stock
+                      Ask about stock
                     </Link>
                   </td>
                 </tr>
@@ -202,10 +198,10 @@ export function AvailabilityView({ initialItems, categories }: AvailabilityViewP
                   Updated {new Date(item.lastUpdated).toLocaleDateString('en-IN')}
                 </span>
                 <Link
-                  href={`/requests/new?productId=${item.id}&subject=Stock+Allocation:+${encodeURIComponent(item.name)}`}
+                  href={`/requests/new?productId=${item.id}&subject=Stock+Enquiry:+${encodeURIComponent(item.name)}`}
                   className="px-3 py-1.5 rounded bg-[#171714] text-white font-medium"
                 >
-                  Request →
+                  Ask about stock →
                 </Link>
               </div>
             </div>
