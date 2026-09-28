@@ -8,14 +8,14 @@ import { formatRoleLabel } from '@trionyx/types';
 import { useThemePreference } from './ThemeProvider';
 
 import {
-  ControlPanelIcon,
-  StudioRegistryIcon,
-  StockInventoryIcon,
-  SurfaceFormulaIcon,
-  NetworkHubIcon,
-  VerificationShieldIcon,
-  RecordsLedgerIcon,
-  CalibrationTuningIcon,
+  ControlBoardIcon,
+  WorkshopFrontageIcon,
+  SerialStockTraysIcon,
+  LayeredCoatingSheetsIcon,
+  ConnectedNodesIcon,
+  VerifiedShieldIcon,
+  OperationalLedgerIcon,
+  ControlSlidersIcon,
 } from './OperationsIcons';
 
 interface SidebarProps {
@@ -84,58 +84,51 @@ export function Sidebar({ user }: SidebarProps) {
     router.refresh();
   };
 
-  // Custom Trionyx Operations Icon Family (18px, 1.5px stroke, technical/industrial, squared)
+  // Custom Trionyx Operations Icon Family (24x24 canvas, 1.5px stroke, technical/industrial, squared)
   const navItems = [
     {
       name: 'Overview',
-      operationalMeaning: 'Control Panel',
       href: '/overview',
       active: pathname === '/overview',
-      icon: <ControlPanelIcon className="w-[18px] h-[18px] shrink-0" />,
+      icon: <ControlBoardIcon className="w-5 h-5 shrink-0" />,
     },
     {
       name: 'Studios',
-      operationalMeaning: 'Workshop Registry',
       href: '/dealers',
       active: pathname.startsWith('/dealers'),
-      icon: <StudioRegistryIcon className="w-[18px] h-[18px] shrink-0" />,
+      icon: <WorkshopFrontageIcon className="w-5 h-5 shrink-0" />,
     },
     {
       name: 'Inventory',
-      operationalMeaning: 'Stock & Serials',
       href: '/inventory',
       active: pathname.startsWith('/inventory'),
-      icon: <StockInventoryIcon className="w-[18px] h-[18px] shrink-0" />,
+      icon: <SerialStockTraysIcon className="w-5 h-5 shrink-0" />,
     },
     {
       name: 'Products',
-      operationalMeaning: 'Surface Formulas',
       href: '/products',
       active: pathname.startsWith('/products'),
-      icon: <SurfaceFormulaIcon className="w-[18px] h-[18px] shrink-0" />,
+      icon: <LayeredCoatingSheetsIcon className="w-5 h-5 shrink-0" />,
     },
     {
       name: 'Distributor Hub',
-      operationalMeaning: 'Connected Network',
       href: '/distributors',
       active: pathname.startsWith('/distributors'),
-      icon: <NetworkHubIcon className="w-[18px] h-[18px] shrink-0" />,
+      icon: <ConnectedNodesIcon className="w-5 h-5 shrink-0" />,
     },
     ...(user.role !== 'DISTRIBUTOR'
       ? [
           {
-            name: 'Compliance',
-            operationalMeaning: 'Verification Shield',
+            name: 'Warranty',
             href: '/warranty',
             active: pathname.startsWith('/warranty'),
-            icon: <VerificationShieldIcon className="w-[18px] h-[18px] shrink-0" />,
+            icon: <VerifiedShieldIcon className="w-5 h-5 shrink-0" />,
           },
           {
-            name: 'Logs',
-            operationalMeaning: 'Records & Ledger',
+            name: 'Records / Logs',
             href: '/enquiries',
             active: pathname.startsWith('/enquiries'),
-            icon: <RecordsLedgerIcon className="w-[18px] h-[18px] shrink-0" />,
+            icon: <OperationalLedgerIcon className="w-5 h-5 shrink-0" />,
           },
         ]
       : []),
@@ -184,7 +177,7 @@ export function Sidebar({ user }: SidebarProps) {
 
             <Link
               href={item.href}
-              className={`w-10 h-10 rounded-[4px] flex items-center justify-center transition-colors duration-150 ${
+              className={`w-10 h-10 rounded-[4px] flex items-center justify-center transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-[#F26522] focus-visible:outline-offset-2 ${
                 item.active
                   ? 'bg-[#22221E] text-[#F26522]'
                   : 'text-[#B7B2A8] hover:text-[#F5F3EC] hover:bg-[#22221E]/60'
@@ -193,10 +186,9 @@ export function Sidebar({ user }: SidebarProps) {
               {item.icon}
             </Link>
 
-            {/* Hover Tooltip (Appears to the right) */}
-            <div className="absolute left-[calc(100%+12px)] px-2.5 py-1.5 bg-[#22221E] text-[#F5F3EC] rounded-[3px] border border-[rgba(255,255,255,0.08)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
-              <span className="text-[11px] font-semibold tracking-wide">{item.name}</span>
-              <span className="text-[#B7B2A8] text-[9.5px] font-mono ml-1.5 opacity-80">· {item.operationalMeaning}</span>
+            {/* Hover Tooltip (Plain English module name) */}
+            <div className="absolute left-[calc(100%+12px)] px-2.5 py-1 bg-[#22221E] text-[#F5F3EC] text-[11px] font-semibold tracking-wide rounded-[3px] border border-[rgba(255,255,255,0.08)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
+              {item.name}
             </div>
           </div>
         ))}
@@ -204,18 +196,18 @@ export function Sidebar({ user }: SidebarProps) {
 
       {/* 3. BOTTOM SECTION: Theme/Settings + Operator Avatar Menu */}
       <div className="flex flex-col items-center gap-3 w-full px-3" ref={menuRef}>
-        {/* Settings / Precision Calibration Control */}
+        {/* Settings / Industrial Control Sliders */}
         <div className="relative group flex items-center justify-center w-full">
           <button
             type="button"
             onClick={() => setPreference(preference === 'dark' ? 'light' : 'dark')}
-            className="w-10 h-10 rounded-[4px] flex items-center justify-center text-[#B7B2A8] hover:text-[#F5F3EC] hover:bg-[#22221E]/60 transition-colors duration-150"
-            title="Toggle Theme"
+            className="w-10 h-10 rounded-[4px] flex items-center justify-center text-[#B7B2A8] hover:text-[#F5F3EC] hover:bg-[#22221E]/60 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-[#F26522] focus-visible:outline-offset-2"
+            title="Settings"
           >
-            <CalibrationTuningIcon className="w-[18px] h-[18px] shrink-0" />
+            <ControlSlidersIcon className="w-5 h-5 shrink-0" />
           </button>
-          <div className="absolute left-[calc(100%+12px)] px-2.5 py-1 bg-[#22221E] text-[#F5F3EC] text-[11px] font-medium tracking-wide rounded-[3px] border border-[rgba(255,255,255,0.08)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
-            Theme: {preference === 'dark' ? 'Dark' : 'Light'}
+          <div className="absolute left-[calc(100%+12px)] px-2.5 py-1 bg-[#22221E] text-[#F5F3EC] text-[11px] font-semibold tracking-wide rounded-[3px] border border-[rgba(255,255,255,0.08)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
+            Settings
           </div>
         </div>
 

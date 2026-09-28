@@ -8,13 +8,13 @@ import type { SafeUser } from '@trionyx/types';
 import { formatRoleLabel } from '@trionyx/types';
 import { useThemePreference } from './ThemeProvider';
 import {
-  ControlPanelIcon,
-  StudioRegistryIcon,
-  StockInventoryIcon,
-  SurfaceFormulaIcon,
-  NetworkHubIcon,
-  VerificationShieldIcon,
-  RecordsLedgerIcon,
+  ControlBoardIcon,
+  WorkshopFrontageIcon,
+  SerialStockTraysIcon,
+  LayeredCoatingSheetsIcon,
+  ConnectedNodesIcon,
+  VerifiedShieldIcon,
+  OperationalLedgerIcon,
 } from './OperationsIcons';
 
 interface MobileNavigationProps {
@@ -34,54 +34,54 @@ export function MobileNavigation({ user }: MobileNavigationProps) {
   const navItems = [
     {
       name: 'Overview',
-      operationalMeaning: 'Control Panel',
+      operationalMeaning: 'Control Board',
       href: '/overview',
       active: pathname === '/overview',
-      icon: <ControlPanelIcon className="w-[18px] h-[18px] shrink-0" />,
+      icon: <ControlBoardIcon className="w-5 h-5 shrink-0" />,
     },
     {
       name: 'Studios',
-      operationalMeaning: 'Workshop Registry',
+      operationalMeaning: 'Workshop Frontage',
       href: '/dealers',
       active: pathname.startsWith('/dealers'),
-      icon: <StudioRegistryIcon className="w-[18px] h-[18px] shrink-0" />,
+      icon: <WorkshopFrontageIcon className="w-5 h-5 shrink-0" />,
     },
     {
       name: 'Inventory',
-      operationalMeaning: 'Stock & Serials',
+      operationalMeaning: 'Serial Stock Trays',
       href: '/inventory',
       active: pathname.startsWith('/inventory'),
-      icon: <StockInventoryIcon className="w-[18px] h-[18px] shrink-0" />,
+      icon: <SerialStockTraysIcon className="w-5 h-5 shrink-0" />,
     },
     {
       name: 'Products',
-      operationalMeaning: 'Surface Formulas',
+      operationalMeaning: 'Layered Coating Sheets',
       href: '/products',
       active: pathname.startsWith('/products'),
-      icon: <SurfaceFormulaIcon className="w-[18px] h-[18px] shrink-0" />,
+      icon: <LayeredCoatingSheetsIcon className="w-5 h-5 shrink-0" />,
     },
     {
       name: 'Distributor Hub',
-      operationalMeaning: 'Connected Network',
+      operationalMeaning: 'Connected Nodes',
       href: '/distributors',
       active: pathname.startsWith('/distributors'),
-      icon: <NetworkHubIcon className="w-[18px] h-[18px] shrink-0" />,
+      icon: <ConnectedNodesIcon className="w-5 h-5 shrink-0" />,
     },
     ...(user.role !== 'DISTRIBUTOR'
       ? [
           {
-            name: 'Compliance',
-            operationalMeaning: 'Verification Shield',
+            name: 'Warranty',
+            operationalMeaning: 'Verified Shield',
             href: '/warranty',
             active: pathname.startsWith('/warranty'),
-            icon: <VerificationShieldIcon className="w-[18px] h-[18px] shrink-0" />,
+            icon: <VerifiedShieldIcon className="w-5 h-5 shrink-0" />,
           },
           {
-            name: 'Logs',
-            operationalMeaning: 'Records & Ledger',
+            name: 'Records / Logs',
+            operationalMeaning: 'Operational Ledger',
             href: '/enquiries',
             active: pathname.startsWith('/enquiries'),
-            icon: <RecordsLedgerIcon className="w-[18px] h-[18px] shrink-0" />,
+            icon: <OperationalLedgerIcon className="w-5 h-5 shrink-0" />,
           },
         ]
       : []),

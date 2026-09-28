@@ -2,6 +2,14 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import {
+  EmptyStockTrayIcon,
+  DisconnectedWorkshopIcon,
+  ApplicationDocumentIcon,
+  OperationsBoardIcon,
+  ChronologicalLedgerIcon,
+  LocationStockLayersIcon,
+} from '../../components/shell/OperationsIcons';
 
 export type CockpitTab =
   | 'scorecard'
@@ -108,9 +116,20 @@ export function OverviewCockpit({
                   : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
               }`}
             >
-              <span className="truncate">Products Out of Stock</span>
+              <div className="flex items-center gap-2 min-w-0">
+                <EmptyStockTrayIcon
+                  className={`w-4 h-4 shrink-0 transition-colors ${
+                    activeTab === 'stockout'
+                      ? 'text-[var(--status-danger)]'
+                      : outOfStockProducts.length > 0
+                      ? 'text-[var(--status-danger)]'
+                      : 'text-[var(--text-secondary)]'
+                  }`}
+                />
+                <span className="truncate">Products Out of Stock</span>
+              </div>
               <span
-                className={`text-[12px] font-medium px-2 py-0.5 rounded-[2px] tabular-nums ${
+                className={`text-[12px] font-medium px-2 py-0.5 rounded-[2px] tabular-nums shrink-0 ml-2 ${
                   outOfStockProducts.length > 0
                     ? 'bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]'
                     : 'bg-[var(--surface-subtle)] text-[var(--text-muted)]'
@@ -130,9 +149,20 @@ export function OverviewCockpit({
                   : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
               }`}
             >
-              <span className="truncate">Studios Missing Hub</span>
+              <div className="flex items-center gap-2 min-w-0">
+                <DisconnectedWorkshopIcon
+                  className={`w-4 h-4 shrink-0 transition-colors ${
+                    activeTab === 'unassigned-dealers'
+                      ? 'text-[var(--status-warning)]'
+                      : unassignedDealers.length > 0
+                      ? 'text-[var(--status-warning)]'
+                      : 'text-[var(--text-secondary)]'
+                  }`}
+                />
+                <span className="truncate">Studios Missing Hub</span>
+              </div>
               <span
-                className={`text-[12px] font-medium px-2 py-0.5 rounded-[2px] tabular-nums ${
+                className={`text-[12px] font-medium px-2 py-0.5 rounded-[2px] tabular-nums shrink-0 ml-2 ${
                   unassignedDealers.length > 0
                     ? 'bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]'
                     : 'bg-[var(--surface-subtle)] text-[var(--text-muted)]'
@@ -152,9 +182,20 @@ export function OverviewCockpit({
                   : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
               }`}
             >
-              <span className="truncate">Partner Applications</span>
+              <div className="flex items-center gap-2 min-w-0">
+                <ApplicationDocumentIcon
+                  className={`w-4 h-4 shrink-0 transition-colors ${
+                    activeTab === 'enquiries'
+                      ? 'text-[#F26522]'
+                      : newEnquiriesList.length > 0
+                      ? 'text-[var(--accent)]'
+                      : 'text-[var(--text-secondary)]'
+                  }`}
+                />
+                <span className="truncate">Partner Applications</span>
+              </div>
               <span
-                className={`text-[12px] font-medium px-2 py-0.5 rounded-[2px] tabular-nums ${
+                className={`text-[12px] font-medium px-2 py-0.5 rounded-[2px] tabular-nums shrink-0 ml-2 ${
                   newEnquiriesList.length > 0
                     ? 'bg-[var(--accent-soft)] text-[var(--accent)] border border-[var(--accent-soft-border)]'
                     : 'bg-[var(--surface-subtle)] text-[var(--text-muted)]'
@@ -183,8 +224,15 @@ export function OverviewCockpit({
                   : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
               }`}
             >
-              <span>Operations Summary</span>
-              <span className="text-[11px] font-normal text-[var(--text-muted)]">Live</span>
+              <div className="flex items-center gap-2 min-w-0">
+                <OperationsBoardIcon
+                  className={`w-4 h-4 shrink-0 transition-colors ${
+                    activeTab === 'scorecard' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
+                  }`}
+                />
+                <span className="truncate">Operations Summary</span>
+              </div>
+              <span className="text-[11px] font-normal text-[var(--text-muted)] shrink-0 ml-2">Live</span>
             </button>
 
             {/* Recent Operations */}
@@ -197,8 +245,15 @@ export function OverviewCockpit({
                   : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
               }`}
             >
-              <span>Recent Operations</span>
-              <span className="text-[11px] font-normal text-[var(--text-muted)]">Logs</span>
+              <div className="flex items-center gap-2 min-w-0">
+                <ChronologicalLedgerIcon
+                  className={`w-4 h-4 shrink-0 transition-colors ${
+                    activeTab === 'audit-journal' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
+                  }`}
+                />
+                <span className="truncate">Recent Operations</span>
+              </div>
+              <span className="text-[11px] font-normal text-[var(--text-muted)] shrink-0 ml-2">Logs</span>
             </button>
 
             {/* Inventory by Location */}
@@ -211,8 +266,15 @@ export function OverviewCockpit({
                   : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
               }`}
             >
-              <span>Inventory by Location</span>
-              <span className="text-[11px] font-normal text-[var(--text-muted)]">Delhi</span>
+              <div className="flex items-center gap-2 min-w-0">
+                <LocationStockLayersIcon
+                  className={`w-4 h-4 shrink-0 transition-colors ${
+                    activeTab === 'facility' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
+                  }`}
+                />
+                <span className="truncate">Inventory by Location</span>
+              </div>
+              <span className="text-[11px] font-normal text-[var(--text-muted)] shrink-0 ml-2">Delhi</span>
             </button>
           </div>
         </div>
