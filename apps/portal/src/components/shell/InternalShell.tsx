@@ -11,7 +11,7 @@ interface InternalShellProps {
 
 export function InternalShell({ user, children }: InternalShellProps) {
   return (
-    <div className="min-h-screen bg-[#161616] text-[var(--text-primary)] flex flex-col lg:flex-row antialiased">
+    <div className="min-h-screen bg-[#22221E] text-[var(--text-primary)] flex flex-col lg:flex-row antialiased">
       {/* Desktop Sidebar (hidden on mobile) */}
       <Sidebar user={user} />
 

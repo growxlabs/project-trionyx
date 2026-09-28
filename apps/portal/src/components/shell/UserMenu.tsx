@@ -75,11 +75,11 @@ export function UserMenu({ user }: UserMenuProps) {
         onClick={() => setIsOpen((prev) => !prev)}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
-        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[4px] hover:bg-[rgba(255,255,255,0.08)] text-[13px] font-medium text-[rgba(255,255,255,0.8)] transition-colors duration-150 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[rgba(255,255,255,0.2)]"
+        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[4px] hover:bg-[#2D2C27] text-[13px] font-medium text-[#F7F6F0] transition-colors duration-150 cursor-pointer focus:outline-none focus:ring-1 focus:ring-[rgba(255,255,255,0.16)]"
       >
         <span>{user.name}</span>
         <svg
-          className={`w-3.5 h-3.5 text-[rgba(255,255,255,0.45)] transition-transform duration-150 ${
+          className={`w-3.5 h-3.5 text-[#A9A59C] transition-transform duration-150 ${
             isOpen ? 'rotate-180' : ''
           }`}
           viewBox="0 0 24 24"
@@ -98,24 +98,24 @@ export function UserMenu({ user }: UserMenuProps) {
         <div
           role="dialog"
           aria-label="Account menu"
-          className="absolute right-0 mt-1.5 w-60 rounded-[6px] border border-[var(--border)] bg-[var(--surface-raised)] shadow-[0_4px_16px_rgba(23,23,20,0.08)] py-1.5 z-50 focus:outline-none"
+          className="absolute right-0 mt-1.5 w-60 rounded-[6px] border border-[rgba(255,255,255,0.08)] bg-[#22221E] shadow-2xl py-1.5 z-50 focus:outline-none text-[#F7F6F0]"
         >
           {/* Operator Details */}
-          <div className="px-4 py-2 border-b border-[var(--border)]">
-            <p className="text-[13px] font-semibold text-[var(--text-primary)] truncate m-0">
+          <div className="px-4 py-2 border-b border-[rgba(255,255,255,0.08)]">
+            <p className="text-[13px] font-semibold text-[#F7F6F0] truncate m-0">
               {user.name}
             </p>
-            <p className="text-[12px] text-[var(--text-muted)] mt-0.5 m-0">
+            <p className="text-[12px] text-[#A9A59C] mt-0.5 m-0">
               {roleLabel}
             </p>
           </div>
 
           {/* Theme Switcher */}
-          <fieldset className="border-0 m-0 px-3 py-2.5 border-b border-[var(--border)]">
-            <legend className="px-1 text-[10.5px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]">
+          <fieldset className="border-0 m-0 px-3 py-2.5 border-b border-[rgba(255,255,255,0.08)]">
+            <legend className="px-1 text-[10.5px] font-semibold uppercase tracking-[0.1em] text-[#A9A59C]">
               Theme
             </legend>
-            <div className="mt-1.5 grid grid-cols-3 gap-1 rounded-[4px] bg-[var(--surface-subtle)] p-0.5">
+            <div className="mt-1.5 grid grid-cols-3 gap-1 rounded-[4px] bg-[#171714] p-0.5">
               {([
                 ['light', 'Light'],
                 ['dark', 'Dark'],
@@ -125,8 +125,8 @@ export function UserMenu({ user }: UserMenuProps) {
                   key={value}
                   className={`relative flex min-h-7 cursor-pointer items-center justify-center rounded-[3px] px-1 text-[11.5px] font-medium transition-colors ${
                     preference === value
-                      ? 'bg-[var(--surface-raised)] text-[var(--text-primary)] shadow-2xs font-semibold'
-                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                      ? 'bg-[#2D2C27] text-[#F7F6F0] font-semibold'
+                      : 'text-[#A9A59C] hover:text-[#F7F6F0]'
                   }`}
                 >
                   <input
@@ -149,14 +149,14 @@ export function UserMenu({ user }: UserMenuProps) {
               type="button"
               onClick={handleSignOut}
               disabled={isSigningOut}
-              className="w-full flex items-center gap-2 px-3 py-1.5 rounded-[4px] text-[12.5px] font-medium text-[var(--status-danger)] hover:bg-[var(--status-danger-soft)] transition-colors duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center gap-2 px-3 py-1.5 rounded-[4px] text-[12.5px] font-medium text-[#EF4444] hover:bg-[rgba(239,68,68,0.1)] transition-colors duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSigningOut ? (
                 <span>Signing out...</span>
               ) : (
                 <>
                   <svg
-                    className="w-3.5 h-3.5 text-[var(--status-danger)]"
+                    className="w-3.5 h-3.5 text-[#EF4444]"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"

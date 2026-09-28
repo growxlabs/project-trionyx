@@ -252,7 +252,7 @@ export function Sidebar({ user }: SidebarProps) {
   return (
     <aside
       aria-label="Navigation Rail"
-      className="hidden lg:flex w-[72px] shrink-0 bg-[#161616] min-h-screen h-screen sticky top-0 flex-col items-center justify-between pt-4 pb-4 select-none z-40"
+      className="hidden lg:flex w-[72px] shrink-0 bg-[#171714] min-h-screen h-screen sticky top-0 flex-col items-center justify-between pt-4 pb-4 select-none z-40"
     >
       {/* 1. TOP SECTION: Compact Trionyx Geometric Mark + Mode Badge */}
       <div className="flex flex-col items-center gap-1.5">
@@ -262,11 +262,11 @@ export function Sidebar({ user }: SidebarProps) {
           title="Trionyx Operations Portal"
         >
           {/* Engineered Hexagonal X Emblem */}
-          <div className="w-10 h-10 rounded-[4px] bg-[#1F1F1F] border border-[rgba(255,255,255,0.08)] flex items-center justify-center text-[#F97316] group-hover:border-[rgba(249,115,22,0.4)] transition-colors">
+          <div className="w-10 h-10 rounded-[4px] bg-[#22221E] border border-[rgba(255,255,255,0.06)] flex items-center justify-center text-[#F26522] group-hover:border-[rgba(242,101,34,0.4)] transition-colors">
             <svg
               viewBox="0 0 24 24"
               fill="none"
-              className="w-5 h-5 text-[#F97316]"
+              className="w-5 h-5 text-[#F26522]"
               strokeLinecap="round"
               strokeLinejoin="round"
             >
@@ -275,7 +275,7 @@ export function Sidebar({ user }: SidebarProps) {
               <line x1="16" y1="8" x2="8" y2="16" stroke="currentColor" strokeWidth="2" />
             </svg>
           </div>
-          <span className="font-mono text-[9px] font-bold tracking-[0.14em] uppercase text-[#9CA3AF] px-1 py-0.2 rounded-[2px] bg-[#222222] border border-[rgba(255,255,255,0.08)]">
+          <span className="font-mono text-[9px] font-bold tracking-[0.14em] uppercase text-[#A9A59C] px-1 py-0.2 rounded-[2px] bg-[#22221E] border border-[rgba(255,255,255,0.06)]">
             OPS
           </span>
         </Link>
@@ -285,24 +285,24 @@ export function Sidebar({ user }: SidebarProps) {
       <nav className="flex flex-col items-center gap-2.5 w-full px-3">
         {navItems.map((item) => (
           <div key={item.name} className="relative group flex items-center justify-center w-full">
-            {/* Active Left Indicator Notch */}
+            {/* Active Left Indicator: One restrained 2px orange vertical line */}
             {item.active && (
-              <span className="absolute left-[-12px] w-1 h-5 rounded-r bg-[#F97316]" />
+              <span className="absolute left-[-12px] w-[2px] h-5 rounded-r bg-[#F26522]" />
             )}
 
             <Link
               href={item.href}
               className={`w-10 h-10 rounded-[4px] flex items-center justify-center transition-colors duration-150 ${
                 item.active
-                  ? 'bg-[rgba(255,255,255,0.08)] text-[#F97316]'
-                  : 'text-[rgba(255,255,255,0.45)] hover:text-white hover:bg-[rgba(255,255,255,0.04)]'
+                  ? 'bg-[#2D2C27] text-[#F7F6F0]'
+                  : 'text-[#A9A59C] hover:text-[#F7F6F0] hover:bg-[#22221E]/60'
               }`}
             >
               {item.icon}
             </Link>
 
             {/* Hover Tooltip (Appears to the right) */}
-            <div className="absolute left-[calc(100%+12px)] px-2.5 py-1 bg-[#1E1E1E] text-white text-[11px] font-medium tracking-wide rounded-[3px] border border-[rgba(255,255,255,0.12)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
+            <div className="absolute left-[calc(100%+12px)] px-2.5 py-1 bg-[#22221E] text-[#F7F6F0] text-[11px] font-medium tracking-wide rounded-[3px] border border-[rgba(255,255,255,0.08)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
               {item.name}
             </div>
           </div>
@@ -316,7 +316,7 @@ export function Sidebar({ user }: SidebarProps) {
           <button
             type="button"
             onClick={() => setPreference(preference === 'dark' ? 'light' : 'dark')}
-            className="w-10 h-10 rounded-[4px] flex items-center justify-center text-[rgba(255,255,255,0.45)] hover:text-white hover:bg-[rgba(255,255,255,0.04)] transition-colors duration-150"
+            className="w-10 h-10 rounded-[4px] flex items-center justify-center text-[#A9A59C] hover:text-[#F7F6F0] hover:bg-[#22221E]/60 transition-colors duration-150"
             title="Toggle Theme"
           >
             {/* Precision Caliper / Tuning Calibration Icon */}
@@ -338,7 +338,7 @@ export function Sidebar({ user }: SidebarProps) {
               <line x1="18" y1="5" x2="18" y2="7" />
             </svg>
           </button>
-          <div className="absolute left-[calc(100%+12px)] px-2.5 py-1 bg-[#1E1E1E] text-white text-[11px] font-medium tracking-wide rounded-[3px] border border-[rgba(255,255,255,0.12)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
+          <div className="absolute left-[calc(100%+12px)] px-2.5 py-1 bg-[#22221E] text-[#F7F6F0] text-[11px] font-medium tracking-wide rounded-[3px] border border-[rgba(255,255,255,0.08)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
             Theme: {preference === 'dark' ? 'Dark' : 'Light'}
           </div>
         </div>
@@ -350,16 +350,16 @@ export function Sidebar({ user }: SidebarProps) {
             onClick={() => setIsUserMenuOpen((prev) => !prev)}
             aria-expanded={isUserMenuOpen}
             aria-label="User Account Menu"
-            className="w-10 h-10 rounded-[4px] bg-[#222222] border border-[rgba(255,255,255,0.12)] text-[#F3F4F6] text-[12px] font-mono font-bold flex items-center justify-center hover:border-[#F97316] hover:text-[#F97316] transition-colors duration-150 cursor-pointer"
+            className="w-10 h-10 rounded-[4px] bg-[#22221E] border border-[rgba(255,255,255,0.08)] text-[#F7F6F0] text-[12px] font-mono font-bold flex items-center justify-center hover:border-[#A9A59C] hover:text-[#F7F6F0] transition-colors duration-150 cursor-pointer"
           >
             {initials}
           </button>
 
           {/* Hover Tooltip (Only visible when menu is closed) */}
           {!isUserMenuOpen && (
-            <div className="absolute left-[calc(100%+12px)] px-2.5 py-1.5 bg-[#1E1E1E] text-white text-[11px] rounded-[3px] border border-[rgba(255,255,255,0.12)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
+            <div className="absolute left-[calc(100%+12px)] px-2.5 py-1.5 bg-[#22221E] text-[#F7F6F0] text-[11px] rounded-[3px] border border-[rgba(255,255,255,0.08)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
               <div className="font-semibold">{user.name}</div>
-              <div className="text-[9.5px] font-mono text-[#9CA3AF] uppercase">{roleLabel}</div>
+              <div className="text-[9.5px] font-mono text-[#A9A59C] uppercase">{roleLabel}</div>
             </div>
           )}
 
@@ -368,12 +368,12 @@ export function Sidebar({ user }: SidebarProps) {
             <div
               role="dialog"
               aria-label="Account Menu"
-              className="absolute left-[calc(100%+12px)] bottom-0 w-64 bg-[#1E1E1E] border border-[rgba(255,255,255,0.12)] rounded-[4px] shadow-2xl z-50 overflow-hidden divide-y divide-[rgba(255,255,255,0.08)] text-[12px]"
+              className="absolute left-[calc(100%+12px)] bottom-0 w-64 bg-[#22221E] border border-[rgba(255,255,255,0.1)] rounded-[4px] shadow-2xl z-50 overflow-hidden divide-y divide-[rgba(255,255,255,0.08)] text-[12px]"
             >
               <div className="px-3.5 py-3">
-                <div className="font-semibold text-white truncate">{user.name}</div>
-                <div className="text-[11px] text-[#9CA3AF] truncate mt-0.5">{user.email}</div>
-                <div className="mt-2 inline-block font-mono text-[9.5px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-[2px] bg-[#2A2A2A] border border-[rgba(255,255,255,0.08)] text-[#F97316]">
+                <div className="font-semibold text-[#F7F6F0] truncate">{user.name}</div>
+                <div className="text-[11px] text-[#A9A59C] truncate mt-0.5">{user.email}</div>
+                <div className="mt-2 inline-block font-mono text-[9.5px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-[2px] bg-[#2D2C27] border border-[rgba(255,255,255,0.08)] text-[#F7F6F0]">
                   {roleLabel}
                 </div>
               </div>
