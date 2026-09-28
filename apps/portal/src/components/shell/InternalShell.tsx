@@ -2,6 +2,7 @@ import React from 'react';
 import type { SafeUser } from '@trionyx/types';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
+import { ContextStrip } from './ContextStrip';
 import { MobileNavigation } from './MobileNavigation';
 
 interface InternalShellProps {
@@ -20,10 +21,13 @@ export function InternalShell({ user, children }: InternalShellProps) {
         {/* Mobile Header + Slide-out Navigation (hidden on desktop) */}
         <MobileNavigation user={user} />
 
-        {/* Desktop Topbar Header (hidden on mobile) */}
+        {/* Desktop Topbar Header — same dark surface as rail (L-frame) */}
         <Topbar user={user} />
 
-        {/* Main Content Area: Edge-to-Edge Operational Workbench */}
+        {/* Page Context Strip: Facility / Period / Shift (light surface) */}
+        <ContextStrip user={user} />
+
+        {/* Main Content Area */}
         <main className="flex-1 px-4 py-4 sm:px-6 sm:py-5 lg:px-7 lg:py-5 w-full">
           <div className="w-full">
             {children}
