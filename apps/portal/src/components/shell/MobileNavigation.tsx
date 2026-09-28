@@ -7,6 +7,15 @@ import { useRouter, usePathname } from 'next/navigation';
 import type { SafeUser } from '@trionyx/types';
 import { formatRoleLabel } from '@trionyx/types';
 import { useThemePreference } from './ThemeProvider';
+import {
+  ControlPanelIcon,
+  StudioRegistryIcon,
+  StockInventoryIcon,
+  SurfaceFormulaIcon,
+  NetworkHubIcon,
+  VerificationShieldIcon,
+  RecordsLedgerIcon,
+} from './OperationsIcons';
 
 interface MobileNavigationProps {
   user: SafeUser;
@@ -25,85 +34,54 @@ export function MobileNavigation({ user }: MobileNavigationProps) {
   const navItems = [
     {
       name: 'Overview',
+      operationalMeaning: 'Control Panel',
       href: '/overview',
       active: pathname === '/overview',
-      icon: (
-        <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <rect x="3" y="3" width="7" height="7" />
-          <rect x="14" y="3" width="7" height="7" />
-          <rect x="14" y="14" width="7" height="7" />
-          <rect x="3" y="14" width="7" height="7" />
-        </svg>
-      ),
+      icon: <ControlPanelIcon className="w-[18px] h-[18px] shrink-0" />,
     },
     {
-      name: 'Products',
-      href: '/products',
-      active: pathname.startsWith('/products'),
-      icon: (
-        <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
-          <line x1="7" y1="7" x2="7.01" y2="7" />
-        </svg>
-      ),
+      name: 'Studios',
+      operationalMeaning: 'Workshop Registry',
+      href: '/dealers',
+      active: pathname.startsWith('/dealers'),
+      icon: <StudioRegistryIcon className="w-[18px] h-[18px] shrink-0" />,
     },
     {
       name: 'Inventory',
+      operationalMeaning: 'Stock & Serials',
       href: '/inventory',
       active: pathname.startsWith('/inventory'),
-      icon: (
-        <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-          <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-          <line x1="12" y1="22.08" x2="12" y2="12" />
-        </svg>
-      ),
+      icon: <StockInventoryIcon className="w-[18px] h-[18px] shrink-0" />,
     },
     {
-      name: 'Dealers',
-      href: '/dealers',
-      active: pathname.startsWith('/dealers'),
-      icon: (
-        <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-          <polyline points="9 22 9 12 15 12 15 22" />
-        </svg>
-      ),
+      name: 'Products',
+      operationalMeaning: 'Surface Formulas',
+      href: '/products',
+      active: pathname.startsWith('/products'),
+      icon: <SurfaceFormulaIcon className="w-[18px] h-[18px] shrink-0" />,
     },
     {
-      name: 'Distributors',
+      name: 'Distributor Hub',
+      operationalMeaning: 'Connected Network',
       href: '/distributors',
       active: pathname.startsWith('/distributors'),
-      icon: (
-        <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-        </svg>
-      ),
+      icon: <NetworkHubIcon className="w-[18px] h-[18px] shrink-0" />,
     },
     ...(user.role !== 'DISTRIBUTOR'
       ? [
           {
-            name: 'Warranty',
+            name: 'Compliance',
+            operationalMeaning: 'Verification Shield',
             href: '/warranty',
             active: pathname.startsWith('/warranty'),
-            icon: (
-              <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                <path d="M9 12l2 2 4-4" />
-              </svg>
-            ),
+            icon: <VerificationShieldIcon className="w-[18px] h-[18px] shrink-0" />,
           },
           {
-            name: 'Enquiries',
+            name: 'Logs',
+            operationalMeaning: 'Records & Ledger',
             href: '/enquiries',
             active: pathname.startsWith('/enquiries'),
-            icon: (
-              <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                <polyline points="22,6 12,13 2,6" />
-              </svg>
-            ),
+            icon: <RecordsLedgerIcon className="w-[18px] h-[18px] shrink-0" />,
           },
         ]
       : []),
@@ -254,16 +232,21 @@ export function MobileNavigation({ user }: MobileNavigationProps) {
                       key={item.name}
                       href={item.href}
                       onClick={() => setIsOpen(false)}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-[6px] text-[14px] transition-colors ${
+                      className={`flex items-center justify-between px-3 py-2.5 rounded-[4px] text-[13.5px] transition-colors ${
                         item.active
-                          ? 'bg-[var(--background)] border-l-[3px] border-[var(--accent)] text-[var(--text-primary)] font-semibold'
-                          : 'text-[var(--text-secondary)] hover:bg-[var(--background)] hover:text-[var(--text-primary)] font-medium'
+                          ? 'bg-[var(--surface-subtle)] text-[#F26522] font-semibold border-l-2 border-[#F26522]'
+                          : 'text-[var(--text-secondary)] hover:bg-[var(--surface-subtle)] hover:text-[var(--text-primary)] font-medium'
                       }`}
                     >
-                      <span className={item.active ? 'text-[var(--accent-text)]' : 'text-[var(--text-secondary)]'}>
-                        {item.icon}
+                      <div className="flex items-center gap-3">
+                        <span className={item.active ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'}>
+                          {item.icon}
+                        </span>
+                        <span>{item.name}</span>
+                      </div>
+                      <span className="font-mono text-[10px] text-[var(--text-muted)] tracking-wider">
+                        {item.operationalMeaning}
                       </span>
-                      <span>{item.name}</span>
                     </Link>
                   ))}
                 </nav>

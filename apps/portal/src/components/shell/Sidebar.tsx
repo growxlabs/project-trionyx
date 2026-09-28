@@ -7,6 +7,17 @@ import type { SafeUser } from '@trionyx/types';
 import { formatRoleLabel } from '@trionyx/types';
 import { useThemePreference } from './ThemeProvider';
 
+import {
+  ControlPanelIcon,
+  StudioRegistryIcon,
+  StockInventoryIcon,
+  SurfaceFormulaIcon,
+  NetworkHubIcon,
+  VerificationShieldIcon,
+  RecordsLedgerIcon,
+  CalibrationTuningIcon,
+} from './OperationsIcons';
+
 interface SidebarProps {
   user: SafeUser;
 }
@@ -73,177 +84,58 @@ export function Sidebar({ user }: SidebarProps) {
     router.refresh();
   };
 
-  // 7 Trionyx Sketch / Technical Line Icons (24x24 artboard, 1.75px stroke, rounded joints/caps)
+  // Custom Trionyx Operations Icon Family (18px, 1.5px stroke, technical/industrial, squared)
   const navItems = [
     {
       name: 'Overview',
+      operationalMeaning: 'Control Panel',
       href: '/overview',
       active: pathname === '/overview',
-      // Control grid / dashboard telemetry panel (not generic home)
-      icon: (
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.75"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="w-5 h-5 shrink-0"
-        >
-          <rect x="3" y="3" width="18" height="18" rx="2" />
-          <line x1="3" y1="9" x2="21" y2="9" />
-          <line x1="9" y1="9" x2="9" y2="21" />
-          <circle cx="6" cy="6" r="0.8" fill="currentColor" />
-          <circle cx="12" cy="6" r="0.8" fill="currentColor" />
-          <circle cx="18" cy="6" r="0.8" fill="currentColor" />
-          <line x1="12" y1="13" x2="18" y2="13" />
-          <line x1="12" y1="17" x2="16" y2="17" />
-        </svg>
-      ),
+      icon: <ControlPanelIcon className="w-[18px] h-[18px] shrink-0" />,
     },
     {
-      name: 'Products',
-      href: '/products',
-      active: pathname.startsWith('/products'),
-      // Formula bottle / coating chemistry bottle with volume strata
-      icon: (
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.75"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="w-5 h-5 shrink-0"
-        >
-          <rect x="10" y="2" width="4" height="2.5" rx="0.5" />
-          <line x1="11" y1="4.5" x2="11" y2="6.5" />
-          <line x1="13" y1="4.5" x2="13" y2="6.5" />
-          <path d="M7 6.5h10l1.5 3v10.5a2 2 0 0 1-2 2H7.5a2 2 0 0 1-2-2V9.5L7 6.5z" />
-          <line x1="8" y1="11.5" x2="10.5" y2="11.5" />
-          <line x1="8" y1="14.5" x2="11.5" y2="14.5" />
-          <line x1="8" y1="17.5" x2="10.5" y2="17.5" />
-          <path d="M11 16c1.5-0.8 3.5-0.8 5 0" />
-        </svg>
-      ),
+      name: 'Studios',
+      operationalMeaning: 'Workshop Registry',
+      href: '/dealers',
+      active: pathname.startsWith('/dealers'),
+      icon: <StudioRegistryIcon className="w-[18px] h-[18px] shrink-0" />,
     },
     {
       name: 'Inventory',
+      operationalMeaning: 'Stock & Serials',
       href: '/inventory',
       active: pathname.startsWith('/inventory'),
-      // Storage crate + discrete serial scan barcode tag
-      icon: (
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.75"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="w-5 h-5 shrink-0"
-        >
-          <rect x="3" y="4" width="18" height="16" rx="2" />
-          <polyline points="3 8.5 12 12 21 8.5" />
-          <line x1="12" y1="12" x2="12" y2="20" />
-          <line x1="6" y1="14.5" x2="6" y2="17.5" />
-          <line x1="8" y1="14.5" x2="8" y2="17.5" strokeWidth="2.4" />
-          <line x1="10" y1="14.5" x2="10" y2="17.5" />
-        </svg>
-      ),
+      icon: <StockInventoryIcon className="w-[18px] h-[18px] shrink-0" />,
     },
     {
-      name: 'Dealers',
-      href: '/dealers',
-      active: pathname.startsWith('/dealers'),
-      // Authorized detailing studio storefront / applicator service bay
-      icon: (
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.75"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="w-5 h-5 shrink-0"
-        >
-          <polygon points="3 8 6 3 18 3 21 8 3 8" />
-          <rect x="4" y="8" width="16" height="13" rx="0.5" />
-          <path d="M8 21v-7a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v7" />
-          <line x1="10.5" y1="15.5" x2="13.5" y2="15.5" />
-          <line x1="10.5" y1="18" x2="13.5" y2="18" />
-        </svg>
-      ),
+      name: 'Products',
+      operationalMeaning: 'Surface Formulas',
+      href: '/products',
+      active: pathname.startsWith('/products'),
+      icon: <SurfaceFormulaIcon className="w-[18px] h-[18px] shrink-0" />,
     },
     {
-      name: 'Distributors',
+      name: 'Distributor Hub',
+      operationalMeaning: 'Connected Network',
       href: '/distributors',
       active: pathname.startsWith('/distributors'),
-      // Central hub node + routing transfer network
-      icon: (
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.75"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="w-5 h-5 shrink-0"
-        >
-          <circle cx="12" cy="12" r="2.5" />
-          <circle cx="5" cy="6" r="1.75" />
-          <circle cx="19" cy="6" r="1.75" />
-          <circle cx="12" cy="20" r="1.75" />
-          <line x1="10" y1="10.5" x2="6.5" y2="7.5" />
-          <line x1="14" y1="10.5" x2="17.5" y2="7.5" />
-          <line x1="12" y1="14.5" x2="12" y2="18.25" />
-        </svg>
-      ),
+      icon: <NetworkHubIcon className="w-[18px] h-[18px] shrink-0" />,
     },
     ...(user.role !== 'DISTRIBUTOR'
       ? [
           {
-            name: 'Warranty',
+            name: 'Compliance',
+            operationalMeaning: 'Verification Shield',
             href: '/warranty',
             active: pathname.startsWith('/warranty'),
-            // Cryptographic certificate shield + checkmark + serial baseline
-            icon: (
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.75"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="w-5 h-5 shrink-0"
-              >
-                <path d="M12 2.5L4 6v6.5c0 5 3.5 8.5 8 9.5 4.5-1 8-4.5 8-9.5V6l-8-3.5z" />
-                <polyline points="9 11.5 11.5 14 15.5 9.5" />
-                <line x1="9" y1="17" x2="15" y2="17" />
-              </svg>
-            ),
+            icon: <VerificationShieldIcon className="w-[18px] h-[18px] shrink-0" />,
           },
           {
-            name: 'Enquiries',
+            name: 'Logs',
+            operationalMeaning: 'Records & Ledger',
             href: '/enquiries',
             active: pathname.startsWith('/enquiries'),
-            // Commercial lead intake docket board + clamp
-            icon: (
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.75"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="w-5 h-5 shrink-0"
-              >
-                <path d="M9 3h6v2.5H9z" />
-                <rect x="4" y="4.5" width="16" height="17" rx="1.5" />
-                <line x1="8" y1="9.5" x2="16" y2="9.5" />
-                <line x1="8" y1="13" x2="14" y2="13" />
-                <line x1="8" y1="16.5" x2="12" y2="16.5" />
-              </svg>
-            ),
+            icon: <RecordsLedgerIcon className="w-[18px] h-[18px] shrink-0" />,
           },
         ]
       : []),
@@ -294,16 +186,17 @@ export function Sidebar({ user }: SidebarProps) {
               href={item.href}
               className={`w-10 h-10 rounded-[4px] flex items-center justify-center transition-colors duration-150 ${
                 item.active
-                  ? 'bg-[#2D2C27] text-[#F7F6F0]'
-                  : 'text-[#A9A59C] hover:text-[#F7F6F0] hover:bg-[#22221E]/60'
+                  ? 'bg-[#22221E] text-[#F26522]'
+                  : 'text-[#B7B2A8] hover:text-[#F5F3EC] hover:bg-[#22221E]/60'
               }`}
             >
               {item.icon}
             </Link>
 
             {/* Hover Tooltip (Appears to the right) */}
-            <div className="absolute left-[calc(100%+12px)] px-2.5 py-1 bg-[#22221E] text-[#F7F6F0] text-[11px] font-medium tracking-wide rounded-[3px] border border-[rgba(255,255,255,0.08)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
-              {item.name}
+            <div className="absolute left-[calc(100%+12px)] px-2.5 py-1.5 bg-[#22221E] text-[#F5F3EC] rounded-[3px] border border-[rgba(255,255,255,0.08)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
+              <span className="text-[11px] font-semibold tracking-wide">{item.name}</span>
+              <span className="text-[#B7B2A8] text-[9.5px] font-mono ml-1.5 opacity-80">· {item.operationalMeaning}</span>
             </div>
           </div>
         ))}
@@ -316,29 +209,12 @@ export function Sidebar({ user }: SidebarProps) {
           <button
             type="button"
             onClick={() => setPreference(preference === 'dark' ? 'light' : 'dark')}
-            className="w-10 h-10 rounded-[4px] flex items-center justify-center text-[#A9A59C] hover:text-[#F7F6F0] hover:bg-[#22221E]/60 transition-colors duration-150"
+            className="w-10 h-10 rounded-[4px] flex items-center justify-center text-[#B7B2A8] hover:text-[#F5F3EC] hover:bg-[#22221E]/60 transition-colors duration-150"
             title="Toggle Theme"
           >
-            {/* Precision Caliper / Tuning Calibration Icon */}
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.75"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-5 h-5 shrink-0"
-            >
-              <line x1="4" y1="7" x2="20" y2="7" />
-              <path d="M4 7V16a1 1 0 0 0 1 1h1.5" />
-              <rect x="12" y="4" width="5" height="6" rx="0.5" />
-              <path d="M12 10v6a1 1 0 0 0 1 1h1.5" />
-              <line x1="8" y1="5" x2="8" y2="7" />
-              <line x1="10" y1="5" x2="10" y2="7" />
-              <line x1="18" y1="5" x2="18" y2="7" />
-            </svg>
+            <CalibrationTuningIcon className="w-[18px] h-[18px] shrink-0" />
           </button>
-          <div className="absolute left-[calc(100%+12px)] px-2.5 py-1 bg-[#22221E] text-[#F7F6F0] text-[11px] font-medium tracking-wide rounded-[3px] border border-[rgba(255,255,255,0.08)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
+          <div className="absolute left-[calc(100%+12px)] px-2.5 py-1 bg-[#22221E] text-[#F5F3EC] text-[11px] font-medium tracking-wide rounded-[3px] border border-[rgba(255,255,255,0.08)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
             Theme: {preference === 'dark' ? 'Dark' : 'Light'}
           </div>
         </div>
