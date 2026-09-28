@@ -159,19 +159,19 @@ export function Sidebar({ user }: SidebarProps) {
   return (
     <aside
       aria-label="Sidebar navigation"
-      className="hidden lg:flex w-[240px] shrink-0 border-r border-[var(--border)] bg-[var(--surface-raised)] min-h-screen flex-col sticky top-0 h-screen select-none"
+      className="hidden lg:flex w-[220px] shrink-0 border-r border-[var(--border)] bg-[var(--surface-raised)] min-h-screen flex-col sticky top-0 h-screen select-none"
     >
-      {/* Brand Header */}
-      <div className="px-6 py-5 border-b border-[var(--border)]">
-        <Link href="/overview" className="block focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] rounded">
-          <div className="h-7 w-auto relative flex items-center">
+      {/* Brand Header - exact 44px height matching Topbar */}
+      <div className="h-11 px-4 border-b border-[var(--border)] flex items-center justify-between">
+        <Link href="/overview" className="flex items-center gap-2 focus:outline-none">
+          <div className="h-5 w-auto relative flex items-center">
             <Image
               src="/brand/trionyx-logo-dark.png"
               alt="Trionyx"
               width={2092}
               height={752}
               priority
-              className="theme-logo-light h-7 w-auto object-contain"
+              className="theme-logo-light h-5 w-auto object-contain"
             />
             <Image
               src="/brand/trionyx-logo-light.png"
@@ -180,32 +180,29 @@ export function Sidebar({ user }: SidebarProps) {
               width={2092}
               height={752}
               priority
-              className="theme-logo-dark h-7 w-auto object-contain"
+              className="theme-logo-dark h-5 w-auto object-contain"
             />
           </div>
-          <div className="mt-2 flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
-            <span className="text-[10px] font-bold tracking-[0.14em] uppercase text-[var(--text-secondary)]">
-              OPERATIONS PORTAL
-            </span>
-          </div>
+          <span className="text-[9px] font-bold tracking-[0.12em] uppercase text-[var(--text-muted)] border border-[var(--border)] px-1 rounded-[2px] leading-tight">
+            OPS
+          </span>
         </Link>
       </div>
 
       {/* Navigation Section */}
-      <div className="px-3 py-5 flex-1">
-        <nav className="space-y-1">
+      <div className="px-2 py-3 flex-1 overflow-y-auto">
+        <nav className="space-y-0.5">
           {navItems.map((item) => (
             <Link
               key={item.name}
               href={item.href}
-              className={`flex items-center gap-3 px-3 py-2 rounded-[4px] text-[13px] transition-colors duration-150 ${
+              className={`flex items-center gap-2.5 px-2.5 h-[32px] rounded-[3px] text-[12.5px] transition-colors ${
                 item.active
-                  ? 'bg-[var(--background)] border-l-[3px] border-[var(--accent)] text-[var(--text-primary)] font-semibold'
-                  : 'text-[var(--text-secondary)] hover:bg-[var(--background)] hover:text-[var(--text-primary)] font-medium'
+                  ? 'bg-[var(--surface-subtle)] text-[var(--text-primary)] font-semibold border border-[var(--border)]'
+                  : 'text-[var(--text-secondary)] hover:bg-[var(--surface-subtle)] hover:text-[var(--text-primary)] font-normal'
               }`}
             >
-              <span className={item.active ? 'text-[var(--accent-text)]' : 'text-[var(--text-secondary)]'}>
+              <span className={item.active ? 'text-[var(--accent)]' : 'text-[var(--text-muted)]'}>
                 {item.icon}
               </span>
               <span>{item.name}</span>

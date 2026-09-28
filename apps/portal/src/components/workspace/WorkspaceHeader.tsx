@@ -16,21 +16,21 @@ export function WorkspaceHeader({
   className = '',
 }: WorkspaceHeaderProps) {
   return (
-    <header className={`mb-6 pb-4 border-b border-[var(--border)] ${className}`}>
-      <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4">
-        <div className="flex flex-wrap items-baseline gap-3">
-          <h1 className="text-[24px] sm:text-[28px] font-semibold text-[var(--text-primary)] tracking-[-0.03em] leading-tight m-0">
+    <header className={`mb-4 pb-2.5 border-b border-[var(--border)] ${className}`}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <h1 className="text-[17px] font-semibold text-[var(--text-primary)] tracking-[-0.01em] leading-none m-0">
             {title}
           </h1>
           {meta && (
-            <div className="text-[13px] text-[var(--text-muted)] font-normal">
+            <div className="text-[12px] font-mono text-[var(--text-muted)] font-normal">
               {meta}
             </div>
           )}
         </div>
 
         {action && (
-          <div className="flex items-center gap-2.5 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             {action}
           </div>
         )}

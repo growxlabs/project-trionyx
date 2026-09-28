@@ -220,23 +220,22 @@ export default async function OverviewPage() {
       {/* 1. Simplified Single-Line Header */}
       <WorkspaceHeader
         title="Operations Overview"
-        meta={<span className="font-mono text-[13px] text-[var(--text-muted)]">{todayDateString}</span>}
+        meta={<span className="font-mono text-[11.5px] text-[var(--text-muted)]">{todayDateString} · IST (UTC+05:30)</span>}
       />
 
-      {/* 2. Tightened Integrated Operating Metrics Strip */}
+      {/* 2. Tightened Integrated Operating Metrics Ribbon */}
       <OperationalSummaryStrip metrics={summaryMetrics} />
 
-      <div className="border-t border-[var(--border)] pt-6">
-        {/* 3. Attention Required Queue */}
+      {/* 3. Workspace Flow */}
+      <div className="space-y-4">
+        {/* Attention Required Queue */}
         <AttentionQueue
           items={attentionItems}
           title="ATTENTION REQUIRED"
           emptyMessage="All operations are currently running within normal thresholds."
         />
-      </div>
 
-      <div className="border-t border-[var(--border)] pt-6">
-        {/* 4. Today's Operations Ledger */}
+        {/* Today's Operations Ledger */}
         <ActivityLedger
           activities={activities}
           title="TODAY'S OPERATIONS"
