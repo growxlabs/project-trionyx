@@ -29,7 +29,7 @@ export function Topbar({ user }: TopbarProps) {
         </h1>
         <div className="h-4 w-[1px] bg-[var(--border)]" />
         <span className="text-[12px] font-medium text-[var(--text-secondary)]">
-          Internal Operations
+          Operations Portal
         </span>
       </div>
 

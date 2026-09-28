@@ -11,7 +11,7 @@ export function SummaryCards({ summary }: SummaryCardsProps) {
       id: 'active-dealers',
       title: 'Active Dealers',
       value: summary.activeDealers !== null ? summary.activeDealers.toLocaleString() : '—',
-      status: summary.activeDealers !== null ? 'Live network count' : 'Available after Dealers module',
+      status: 'Authorized partner network',
       icon: (
         <svg className="w-4 h-4 text-[var(--text-secondary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -25,7 +25,7 @@ export function SummaryCards({ summary }: SummaryCardsProps) {
       id: 'orders',
       title: 'Orders',
       value: summary.orders !== null ? summary.orders.toLocaleString() : '—',
-      status: summary.orders !== null ? 'Active pipeline orders' : 'Available after Orders module',
+      status: 'Direct distributor orders',
       icon: (
         <svg className="w-4 h-4 text-[var(--text-secondary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
@@ -37,8 +37,8 @@ export function SummaryCards({ summary }: SummaryCardsProps) {
     {
       id: 'low-stock',
       title: 'Low Stock',
-      value: summary.lowStock !== null ? summary.lowStock.toLocaleString() : '—',
-      status: summary.lowStock !== null ? 'Items below reorder threshold' : 'Available after Inventory module',
+      value: summary.lowStock !== null ? summary.lowStock.toLocaleString() : '0',
+      status: 'Products below reorder level',
       icon: (
         <svg className="w-4 h-4 text-[var(--text-secondary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
@@ -51,7 +51,7 @@ export function SummaryCards({ summary }: SummaryCardsProps) {
       id: 'pending-actions',
       title: 'Pending Actions',
       value: summary.pendingActions !== null ? summary.pendingActions.toLocaleString() : '—',
-      status: summary.pendingActions !== null ? 'Require operator review' : 'Available after Workflow module',
+      status: 'Operational items current',
       icon: (
         <svg className="w-4 h-4 text-[var(--text-secondary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <circle cx="12" cy="12" r="10" />

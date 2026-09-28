@@ -545,7 +545,7 @@ export function WarrantyListView({
               disabled={isActivating}
               className="w-full px-3.5 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
             >
-              <option value="">Internal Operations (Direct Registration)</option>
+              <option value="">Direct Registration (Head Office)</option>
               {dealers.map((d) => (
                 <option key={d.id} value={d.id}>
                   {d.businessName} — {d.city}, {d.state} ({d.dealerCode})

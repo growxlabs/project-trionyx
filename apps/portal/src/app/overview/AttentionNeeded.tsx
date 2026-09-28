@@ -15,7 +15,7 @@ export function AttentionNeeded({ items }: AttentionNeededProps) {
             Attention Needed
           </h2>
           <p className="text-[12px] text-[var(--text-secondary)] mt-0.5 m-0">
-            Active alerts and required operator actions
+            Priority inventory and operational alerts
           </p>
         </div>
         <span
@@ -42,7 +42,7 @@ export function AttentionNeeded({ items }: AttentionNeededProps) {
               Nothing requires attention right now.
             </p>
             <p className="text-[12.5px] text-[var(--text-secondary)] mt-1 m-0 max-w-sm">
-              All operational channels are running normally without outstanding alerts.
+              All inventory channels are running normally without outstanding alerts.
             </p>
           </div>
         ) : (
@@ -53,8 +53,8 @@ export function AttentionNeeded({ items }: AttentionNeededProps) {
                   <p className="text-[13.5px] font-medium text-[var(--text-primary)] m-0">
                     {item.label}
                   </p>
-                  <p className="text-[11.5px] text-[var(--text-secondary)] mt-0.5 m-0 uppercase font-mono">
-                    {item.type}
+                  <p className="text-[11.5px] text-[var(--status-danger)] font-medium mt-0.5 m-0 uppercase tracking-wide">
+                    {item.type === 'OUT_OF_STOCK' ? 'Out of Stock' : item.type.replace(/_/g, ' ')}
                   </p>
                 </div>
                 {item.href && (

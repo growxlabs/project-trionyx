@@ -176,7 +176,7 @@ export function Sidebar({ user }: SidebarProps) {
             <div className="mt-2 flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
               <span className="text-[10px] font-bold tracking-[0.14em] uppercase text-[var(--text-secondary)]">
-                INTERNAL OPERATIONS
+                OPERATIONS PORTAL
               </span>
             </div>
           </Link>

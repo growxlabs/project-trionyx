@@ -98,11 +98,11 @@ export function RecentActivity({ activities }: RecentActivityProps) {
             Recent Activity
           </h2>
           <p className="text-[12px] text-[var(--text-secondary)] mt-0.5 m-0">
-            Persisted security & system audit events
+            System security and activity log
           </p>
         </div>
         <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)] bg-[var(--background)] px-2 py-0.5 rounded border border-[var(--border)]">
-          Audit Log
+          Activity Log
         </span>
       </div>
 
@@ -120,7 +120,7 @@ export function RecentActivity({ activities }: RecentActivityProps) {
               No recent activity.
             </p>
             <p className="text-[12.5px] text-[var(--text-secondary)] mt-1 m-0 max-w-sm">
-              Persisted audit events will appear here as internal operations occur.
+              Administrative and system events will appear here as activity occurs.
             </p>
           </div>
         ) : (

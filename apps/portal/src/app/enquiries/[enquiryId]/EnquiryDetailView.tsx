@@ -475,7 +475,7 @@ export function EnquiryDetailView({
                 Internal Notes ({notes.length})
               </h3>
               <p className="text-[11.5px] text-[var(--text-secondary)] mt-0.5 m-0">
-                Notes are strictly confidential and visible only to internal operations staff.
+                Notes are confidential and visible only to authorized team members.
               </p>
             </div>
 
