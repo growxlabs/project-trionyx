@@ -1,252 +1,131 @@
-'use client';
-
-import React from 'react';
 import Link from 'next/link';
-import type { SafeDealerUser, DealerWithRelations, DealerActivityItem } from '@trionyx/types';
+import type { DealerRequest, DealerWithRelations } from '@trionyx/types';
 
 interface OverviewViewProps {
-  user: SafeDealerUser;
   dealer: DealerWithRelations;
   distributor: {
-    id: string;
-    distributorCode: string;
     businessName: string;
     city: string;
     state: string;
     contactPerson: string;
     phone: string;
   } | null;
-  openRequestsCount: number;
-  recentActivity: DealerActivityItem[];
+  openCount: number;
+  inProgressCount: number;
+  currentRequests: DealerRequest[];
+  productCounts: { available: number; limited: number; unavailable: number };
 }
 
+const dateFormatter = new Intl.DateTimeFormat('en-IN', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+  timeZone: 'Asia/Kolkata',
+});
+
 export function OverviewView({
-  user,
   dealer,
   distributor,
-  openRequestsCount,
-  recentActivity,
+  openCount,
+  inProgressCount,
+  currentRequests,
+  productCounts,
 }: OverviewViewProps) {
-  // Format greeting
-  const hour = new Date().getHours();
-  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
-
   return (
-    <div className="space-y-6">
-      {/* Top Banner */}
-      <div className="bg-[#FCFBF7] border border-[#171714]/10 rounded-lg p-6 sm:p-8 shadow-[0_2px_12px_rgba(23,23,20,0.02)]">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <span className="text-[11px] font-bold tracking-[0.16em] uppercase text-[#68665F] block">
-              PARTNER OVERVIEW
-            </span>
-            <h1 className="text-[24px] sm:text-[28px] font-bold text-[#171714] tracking-tight mt-1">
-              {greeting}, {dealer.businessName}
-            </h1>
-            <p className="text-[14px] text-[#68665F] mt-1">
-              Logged in as <span className="font-semibold text-[#171714]">{user.name}</span> ({user.email})
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/requests/new"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded bg-[#171714] text-white font-semibold text-[13px] hover:bg-black transition-colors shadow-sm"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              <span>Raise Request</span>
+    <div className="mx-auto max-w-[1260px] text-[#171714]">
+      <header className="flex flex-col gap-5 border-b border-[#171714]/10 pb-7 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-[32px] font-semibold leading-tight tracking-[-0.035em] sm:text-[38px]">Dealer overview</h1>
+          <p className="mt-2 text-[14px] text-[#68665F] md:hidden">{dealer.businessName}</p>
+        </div>
+        <Link
+          href="/requests/new"
+          className="inline-flex min-h-11 items-center justify-center rounded bg-[#171714] px-5 text-[13px] font-semibold text-[#FCFBF7] transition-opacity hover:opacity-85"
+        >
+          New request
+        </Link>
+      </header>
+
+      <div className="grid gap-10 pt-8 lg:grid-cols-[minmax(0,1.65fr)_minmax(280px,0.8fr)] lg:gap-12">
+        <section aria-labelledby="current-requests-heading">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2 id="current-requests-heading" className="text-[23px] font-semibold tracking-[-0.025em]">Current requests</h2>
+            </div>
+            <Link href="/requests" className="text-[13px] font-semibold text-[#F26522] hover:underline">
+              View all requests →
             </Link>
           </div>
-        </div>
-      </div>
 
-      {/* Grid: Account & Distributor Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Dealer Account Card */}
-        <div className="bg-[#FCFBF7] border border-[#171714]/10 rounded-lg p-6 flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between border-b border-[#171714]/08 pb-3 mb-4">
-              <span className="text-[11px] font-bold tracking-wider uppercase text-[#68665F]">
-                DEALER ACCOUNT
-              </span>
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]">
-                {dealer.status}
-              </span>
-            </div>
-            <h2 className="text-[18px] font-bold text-[#171714]">{dealer.businessName}</h2>
-            <p className="text-[12px] font-mono text-[#68665F] mt-0.5">{dealer.dealerCode}</p>
-
-            <div className="mt-4 space-y-2 text-[13px] text-[#171714]">
-              <div className="flex items-center justify-between">
-                <span className="text-[#68665F]">Primary Contact:</span>
-                <span className="font-medium">{dealer.contactPerson}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[#68665F]">Phone:</span>
-                <span className="font-mono">{dealer.phone}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[#68665F]">Location:</span>
-                <span>{dealer.city}, {dealer.state}</span>
-              </div>
-            </div>
+          <div className="mt-5 flex flex-wrap gap-x-6 gap-y-1 border-y border-[#171714]/10 py-3 text-[12px] text-[#68665F]">
+            <span><strong className="font-semibold text-[#171714]">{openCount}</strong> open</span>
+            <span><strong className="font-semibold text-[#171714]">{inProgressCount}</strong> in progress</span>
           </div>
 
-          <div className="mt-6 pt-3 border-t border-[#171714]/08 flex justify-end">
-            <Link
-              href="/account"
-              className="text-[12.5px] font-semibold text-[#F26522] hover:underline"
-            >
-              View Full Profile →
+          {currentRequests.length > 0 ? (
+            <ul className="divide-y divide-[#171714]/10">
+              {currentRequests.map((request) => (
+                <li key={request.id} className="grid gap-2 py-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-5">
+                  <div className="min-w-0">
+                    <Link
+                      href={`/requests/${request.id}`}
+                      className="text-[15px] font-semibold leading-snug hover:text-[#F26522] hover:underline"
+                    >
+                      {request.subject}
+                    </Link>
+                    <p className="mt-1 text-[12px] text-[#68665F]">
+                      {request.requestCode}{request.productName ? ` · ${request.productName}` : ''}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3 text-[12px] sm:flex-col sm:items-end sm:gap-1">
+                    <span className="font-semibold text-[#171714]">
+                      {request.status === 'OPEN' ? 'Open' : 'In progress'}
+                    </span>
+                    <time className="text-[#68665F]" dateTime={request.updatedAt}>
+                      Updated {dateFormatter.format(new Date(request.updatedAt))}
+                    </time>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="border-b border-[#171714]/10 py-9">
+              <p className="text-[15px] font-medium">No current requests.</p>
+              <p className="mt-1 text-[13px] text-[#68665F]">Ask about a product or stock availability when you need help.</p>
+            </div>
+          )}
+        </section>
+
+        <aside className="space-y-9" aria-label="Dealer tools and contacts">
+          <section aria-labelledby="availability-heading" className="border-t border-[#171714]/10 pt-4">
+            <h2 id="availability-heading" className="text-[20px] font-semibold tracking-[-0.02em]">Product availability</h2>
+            <dl className="mt-4 grid grid-cols-3 gap-2 border-y border-[#171714]/10 py-4 text-center">
+              <div><dt className="text-[11px] text-[#68665F]">Available</dt><dd className="mt-1 text-[20px] font-semibold">{productCounts.available}</dd></div>
+              <div><dt className="text-[11px] text-[#68665F]">Limited</dt><dd className="mt-1 text-[20px] font-semibold">{productCounts.limited}</dd></div>
+              <div><dt className="text-[11px] text-[#68665F]">Unavailable</dt><dd className="mt-1 text-[20px] font-semibold">{productCounts.unavailable}</dd></div>
+            </dl>
+            <Link href="/availability" className="mt-3 inline-block text-[13px] font-semibold text-[#F26522] hover:underline">
+              Check product availability →
             </Link>
-          </div>
-        </div>
+          </section>
 
-        {/* Assigned Distributor Card */}
-        <div className="bg-[#FCFBF7] border border-[#171714]/10 rounded-lg p-6 flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between border-b border-[#171714]/08 pb-3 mb-4">
-              <span className="text-[11px] font-bold tracking-wider uppercase text-[#68665F]">
-                ASSIGNED REGIONAL DISTRIBUTOR
-              </span>
-              {distributor && (
-                <span className="text-[11px] font-mono text-[#68665F]">{distributor.distributorCode}</span>
-              )}
-            </div>
-
+          <section aria-labelledby="distributor-heading" className="border-t border-[#171714]/10 pt-4">
+            <h2 id="distributor-heading" className="text-[20px] font-semibold tracking-[-0.02em]">Distributor contact</h2>
             {distributor ? (
-              <>
-                <h2 className="text-[18px] font-bold text-[#171714]">{distributor.businessName}</h2>
-                <div className="mt-4 space-y-2 text-[13px] text-[#171714]">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[#68665F]">Regional Hub:</span>
-                    <span>{distributor.city}, {distributor.state}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[#68665F]">Distribution Contact:</span>
-                    <span className="font-medium">{distributor.contactPerson}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[#68665F]">Support Phone:</span>
-                    <span className="font-mono">{distributor.phone}</span>
-                  </div>
-                </div>
-              </>
+              <div className="mt-3 text-[13px]">
+                <p className="text-[15px] font-semibold">{distributor.businessName}</p>
+                <p className="mt-1 text-[#68665F]">{distributor.city}, {distributor.state}</p>
+                <p className="mt-4">{distributor.contactPerson}</p>
+                <a href={`tel:${distributor.phone.replace(/[^+0-9]/g, '')}`} className="mt-1 inline-block font-semibold text-[#F26522] hover:underline">
+                  {distributor.phone}
+                </a>
+              </div>
             ) : (
-              <div className="py-6 text-center text-[#68665F] text-[13.5px]">
-                <p>No distributor currently assigned.</p>
-                <p className="text-[12px] mt-1 text-[#68665F]/80">
-                  Your requests are routed directly to Trionyx Operations.
-                </p>
-              </div>
+              <p className="mt-3 text-[13px] text-[#68665F]">No distributor is assigned to this account.</p>
             )}
-          </div>
+          </section>
 
-          <div className="mt-6 pt-3 border-t border-[#171714]/08 flex justify-end">
-            <span className="text-[11.5px] text-[#68665F]">
-              Direct wholesale fulfillment partner
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Grid: Requests & Availability Quick Blocks */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Open Requests Card */}
-        <div className="bg-[#FCFBF7] border border-[#171714]/10 rounded-lg p-6">
-          <span className="text-[11px] font-bold tracking-wider uppercase text-[#68665F] block mb-2">
-            OPEN REQUESTS
-          </span>
-          <div className="flex items-baseline gap-2">
-            <span className="text-[32px] font-bold text-[#171714] leading-none">
-              {openRequestsCount}
-            </span>
-            <span className="text-[13px] text-[#68665F]">in progress</span>
-          </div>
-          <p className="text-[12.5px] text-[#68665F] mt-2">
-            Active product inquiries and availability requests under review.
-          </p>
-          <div className="mt-4 pt-3 border-t border-[#171714]/08">
-            <Link
-              href="/requests"
-              className="text-[12.5px] font-semibold text-[#F26522] hover:underline"
-            >
-              Track Requests →
-            </Link>
-          </div>
-        </div>
-
-        {/* Product Availability Card */}
-        <div className="bg-[#FCFBF7] border border-[#171714]/10 rounded-lg p-6">
-          <span className="text-[11px] font-bold tracking-wider uppercase text-[#68665F] block mb-2">
-            PRODUCT AVAILABILITY
-          </span>
-          <div className="flex items-baseline gap-2">
-            <span className="text-[18px] font-bold text-[#171714] leading-tight">
-              Live Stock Status
-            </span>
-          </div>
-          <p className="text-[12.5px] text-[#68665F] mt-2">
-            Check real-time ceramic coatings and detailing supplies ready for dispatch.
-          </p>
-          <div className="mt-4 pt-3 border-t border-[#171714]/08">
-            <Link
-              href="/availability"
-              className="text-[12.5px] font-semibold text-[#F26522] hover:underline"
-            >
-              View Availability →
-            </Link>
-          </div>
-        </div>
-
-        {/* Product Catalog Card */}
-        <div className="bg-[#FCFBF7] border border-[#171714]/10 rounded-lg p-6">
-          <span className="text-[11px] font-bold tracking-wider uppercase text-[#68665F] block mb-2">
-            TECHNICAL COLLATERALS
-          </span>
-          <div className="flex items-baseline gap-2">
-            <span className="text-[18px] font-bold text-[#171714] leading-tight">
-              Approved Products
-            </span>
-          </div>
-          <p className="text-[12.5px] text-[#68665F] mt-2">
-            Review detailed formulations, application guidelines, and technical specifications.
-          </p>
-          <div className="mt-4 pt-3 border-t border-[#171714]/08">
-            <Link
-              href="/products"
-              className="text-[12.5px] font-semibold text-[#F26522] hover:underline"
-            >
-              Browse Catalog →
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Recent Activity Card */}
-      <div className="bg-[#FCFBF7] border border-[#171714]/10 rounded-lg p-6">
-        <h3 className="text-[14px] font-bold text-[#171714] mb-4">Recent Account Activity</h3>
-        {recentActivity.length > 0 ? (
-          <div className="divide-y divide-[#171714]/08">
-            {recentActivity.map((item) => (
-              <div key={item.id} className="py-2.5 flex items-center justify-between text-[13px]">
-                <div className="flex items-center gap-3">
-                  <span className="w-2 h-2 rounded-full bg-[#F26522]" />
-                  <span className="font-medium text-[#171714]">{item.description}</span>
-                </div>
-                <span className="text-[11.5px] text-[#68665F]">
-                  {new Date(item.timestamp).toLocaleString('en-IN', {
-                    dateStyle: 'medium',
-                    timeStyle: 'short',
-                  })}
-                </span>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-[13px] text-[#68665F] py-2">No recent activity.</p>
-        )}
+        </aside>
       </div>
     </div>
   );
