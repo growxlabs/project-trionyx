@@ -65,13 +65,12 @@ export function DistributorsTable({ initialDistributors, initialTotal, user }: D
   }, [distributors, search, statusFilter, stateFilter]);
 
   const summaryMetrics: SummaryMetric[] = [
-    { label: 'ACTIVE DISTRIBUTORS', value: activeCount, detail: 'Authorized hubs', tone: 'positive' },
-    { label: 'MANAGED DEALERS', value: managedDealersTotal, detail: 'Assigned studio network', tone: 'default' },
-    { label: 'TERRITORIES COVERED', value: territoriesCovered, detail: 'Regional presence', tone: 'default' },
+    { label: 'ACTIVE DISTRIBUTORS', value: activeCount, tone: 'positive' },
+    { label: 'MANAGED DEALERS', value: managedDealersTotal, tone: 'default' },
+    { label: 'TERRITORIES COVERED', value: territoriesCovered, tone: 'default' },
     {
       label: 'INACTIVE / FLAGGED',
       value: inactiveCount,
-      detail: inactiveCount > 0 ? 'Suspended or paused' : 'None',
       tone: inactiveCount > 0 ? 'alert' : 'default',
     },
   ];
@@ -80,24 +79,26 @@ export function DistributorsTable({ initialDistributors, initialTotal, user }: D
     <div className="space-y-8">
       {/* 1. Header with Primary Action */}
       <WorkspaceHeader
-        eyebrow="DISTRIBUTION NETWORK"
-        title="Distribution Network"
-        description="Authorized regional distributors managing tier-1 territory logistics, dealer allocations, and bulk inventory."
+        title="Distributors"
         action={
-          canManage && (
-            <Link
-              href="/distributors/new"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity shadow-xs"
-            >
-              + New Distributor
-            </Link>
-          )
+          <div className="flex items-center gap-3">
+            <span className="text-[12.5px] font-mono text-[var(--text-muted)]">
+              {distributors.length} distributors
+            </span>
+            {canManage && (
+              <Link
+                href="/distributors/new"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity shadow-xs"
+              >
+                + New Distributor
+              </Link>
+            )}
+          </div>
         }
       />
 
       {/* 2. Operational Summary Strip */}
       <OperationalSummaryStrip
-        title="NETWORK COVERAGE"
         metrics={summaryMetrics}
       />
 
@@ -108,9 +109,6 @@ export function DistributorsTable({ initialDistributors, initialTotal, user }: D
             <h2 id="territory-hubs-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] m-0">
               REGIONAL LOGISTICS HUBS ({distributors.length})
             </h2>
-            <span className="text-[11.5px] text-[var(--text-muted)] font-mono">
-              Dealer Network Breakdown
-            </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">

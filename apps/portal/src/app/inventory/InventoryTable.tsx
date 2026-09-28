@@ -318,100 +318,94 @@ export function InventoryTable({
     {
       label: 'AVAILABLE UNITS',
       value: totalAvailable,
-      detail: 'Ready for dispatch',
       tone: totalAvailable > 0 ? 'positive' : 'alert',
     },
     {
       label: 'OUT OF STOCK',
       value: zeroStockCount,
-      detail: 'Positions at zero',
       tone: zeroStockCount > 0 ? 'alert' : 'default',
     },
     {
       label: 'LOCATIONS',
       value: activeLocationsCount,
-      detail: 'Active hubs',
       tone: 'default',
     },
     {
       label: 'TOTAL TRACKED',
       value: totalTracked,
-      detail: 'Historical serials',
       tone: 'default',
     },
   ];
 
   return (
     <div className="space-y-8">
-      {/* 1. Header with Operational Actions */}
+      {/* 1. Header with Primary Action: Serial Number Inventory + Receive Serials */}
       <WorkspaceHeader
-        eyebrow="PHYSICAL INVENTORY"
         title="Serial Number Inventory"
-        description="Physical inventory tracked by discrete serial numbers across regional warehouses and distribution hubs."
         action={
-          <div className="flex items-center gap-2 flex-wrap">
+          canMutate && (
             <button
               type="button"
-              onClick={() => setShowLookupModal(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-[var(--border-strong)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[13px] font-medium transition-colors cursor-pointer"
+              onClick={() => openReceiveModal()}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity cursor-pointer shadow-xs"
             >
-              <svg className="w-3.5 h-3.5 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
-              Lookup Serial
+              + Receive Serials
             </button>
-
-            {canMutate && (
-              <button
-                type="button"
-                onClick={() => openReceiveModal()}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity cursor-pointer shadow-xs"
-              >
-                + Receive Serials
-              </button>
-            )}
-
-            {canMutate && (
-              <button
-                type="button"
-                onClick={() => openTransferModal()}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-[var(--border-strong)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[13px] font-medium transition-colors cursor-pointer"
-              >
-                Transfer
-              </button>
-            )}
-
-            {canMutate && (
-              <button
-                type="button"
-                onClick={() => openAdjustModal()}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-[var(--border-strong)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[13px] font-medium transition-colors cursor-pointer"
-              >
-                Adjust
-              </button>
-            )}
-
-            <Link
-              href="/inventory/movements"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-[var(--border-strong)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-[13px] font-medium transition-colors"
-            >
-              Movements Ledger
-            </Link>
-
-            <Link
-              href="/inventory/locations"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] border border-[var(--border-strong)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-[13px] font-medium transition-colors"
-            >
-              Locations
-            </Link>
-          </div>
+          )
         }
       />
 
+      {/* Secondary Actions Bar */}
+      <div className="flex items-center gap-2 flex-wrap -mt-4 pb-2">
+        <button
+          type="button"
+          onClick={() => setShowLookupModal(true)}
+          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[12.5px] font-medium transition-colors cursor-pointer"
+        >
+          <svg className="w-3.5 h-3.5 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <span>Lookup Serial</span>
+        </button>
+
+        {canMutate && (
+          <button
+            type="button"
+            onClick={() => openTransferModal()}
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[12.5px] font-medium transition-colors cursor-pointer"
+          >
+            Transfer
+          </button>
+        )}
+
+        {canMutate && (
+          <button
+            type="button"
+            onClick={() => openAdjustModal()}
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[12.5px] font-medium transition-colors cursor-pointer"
+          >
+            Adjust
+          </button>
+        )}
+
+        <Link
+          href="/inventory/movements"
+          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-[12.5px] font-medium transition-colors"
+        >
+          Movements
+        </Link>
+
+        <Link
+          href="/inventory/locations"
+          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-[12.5px] font-medium transition-colors"
+        >
+          Locations
+        </Link>
+      </div>
+
       {/* 2. Current Physical Position Strip */}
       <OperationalSummaryStrip
-        title="CURRENT PHYSICAL POSITION"
         metrics={physicalPositionMetrics}
       />
 
@@ -420,11 +414,8 @@ export function InventoryTable({
         <section aria-labelledby="stock-exceptions-heading">
           <div className="flex items-baseline justify-between mb-2.5">
             <h2 id="stock-exceptions-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] m-0">
-              STOCK EXCEPTIONS
+              STOCK EXCEPTIONS ({stockExceptions.length})
             </h2>
-            <span className="text-[11px] text-[var(--text-muted)] font-mono">
-              {stockExceptions.length} critical {stockExceptions.length === 1 ? 'item' : 'items'}
-            </span>
           </div>
 
           <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">

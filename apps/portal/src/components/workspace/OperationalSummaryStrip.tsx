@@ -21,9 +21,9 @@ export function OperationalSummaryStrip({
   className = '',
 }: OperationalSummaryStripProps) {
   return (
-    <section aria-label={title || 'Operating metrics'} className={`mb-8 ${className}`}>
+    <section aria-label={title || 'Operating metrics'} className={`mb-6 ${className}`}>
       {title && (
-        <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-2.5">
+        <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-2 m-0">
           {title}
         </h2>
       )}
@@ -31,7 +31,7 @@ export function OperationalSummaryStrip({
         {metrics.map((m, idx) => {
           const val = m.value === null || m.value === undefined ? '—' : m.value;
           const isZero = val === 0 || val === '0';
-          
+
           let toneClass = 'text-[var(--text-primary)]';
           if (m.tone === 'alert' && !isZero) {
             toneClass = 'text-[var(--status-danger)]';
@@ -47,11 +47,11 @@ export function OperationalSummaryStrip({
                 {m.label}
               </span>
               <div className="mt-2 flex items-baseline gap-2">
-                <span className={`text-[26px] sm:text-[30px] font-semibold tracking-[-0.03em] leading-none ${toneClass}`}>
+                <span className={`text-[24px] sm:text-[28px] font-semibold tracking-[-0.03em] leading-none ${toneClass}`}>
                   {val}
                 </span>
                 {m.detail && (
-                  <span className="text-[12px] text-[var(--text-secondary)] font-normal">
+                  <span className="text-[11.5px] text-[var(--text-muted)] font-normal">
                     {m.detail}
                   </span>
                 )}

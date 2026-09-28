@@ -83,44 +83,44 @@ export function DealersTable({ initialDealers, totalCount, distributors, user }:
   }, [dealers, search, statusFilter, distributorFilter, stateFilter]);
 
   const summaryMetrics: SummaryMetric[] = [
-    { label: 'ACTIVE DEALERS', value: activeCount, detail: 'Operational studios', tone: 'positive' },
+    { label: 'ACTIVE DEALERS', value: activeCount, tone: 'positive' },
     {
       label: 'UNASSIGNED',
       value: unassignedCount,
-      detail: unassignedCount > 0 ? 'Need distributor assignment' : 'All assigned',
       tone: unassignedCount > 0 ? 'alert' : 'default',
     },
     {
       label: 'INACTIVE / SUSPENDED',
       value: inactiveCount,
-      detail: inactiveCount > 0 ? 'Offline or flagged' : 'None',
       tone: inactiveCount > 0 ? 'alert' : 'default',
     },
-    { label: 'TOTAL NETWORK', value: totalNetworkCount, detail: 'Registered entities', tone: 'default' },
+    { label: 'TOTAL NETWORK', value: totalNetworkCount, tone: 'default' },
   ];
 
   return (
     <div className="space-y-8">
       {/* 1. Header with Primary Action */}
       <WorkspaceHeader
-        eyebrow="DEALER NETWORK"
-        title="Dealer Network"
-        description="Automotive detailing studios, certified workshops, and authorized application partners across India."
+        title="Dealers"
         action={
-          canManage && (
-            <Link
-              href="/dealers/new"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity shadow-xs"
-            >
-              + New Dealer
-            </Link>
-          )
+          <div className="flex items-center gap-3">
+            <span className="text-[12.5px] font-mono text-[var(--text-muted)]">
+              {dealers.length} dealers
+            </span>
+            {canManage && (
+              <Link
+                href="/dealers/new"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity shadow-xs"
+              >
+                + New Dealer
+              </Link>
+            )}
+          </div>
         }
       />
 
       {/* 2. Operational Summary Strip */}
       <OperationalSummaryStrip
-        title="NETWORK STATUS"
         metrics={summaryMetrics}
       />
 
@@ -129,11 +129,8 @@ export function DealersTable({ initialDealers, totalCount, distributors, user }:
         <section aria-labelledby="attention-dealers-heading" className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-4">
           <div className="flex items-baseline justify-between mb-3">
             <h2 id="attention-dealers-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--status-warning)] m-0">
-              REQUIRES ATTENTION — UNASSIGNED DEALERS ({unassignedCount})
+              UNASSIGNED DEALERS ({unassignedCount})
             </h2>
-            <span className="text-[11.5px] text-[var(--text-muted)]">
-              Dealers without an assigned regional distributor cannot receive channeled fulfillments.
-            </span>
           </div>
 
           <div className="divide-y divide-[var(--border)] border border-[var(--border)] rounded-[4px] bg-[var(--surface-subtle)]">
@@ -170,9 +167,6 @@ export function DealersTable({ initialDealers, totalCount, distributors, user }:
             <h2 id="regional-coverage-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] m-0">
               REGIONAL COVERAGE ({stateCounts.length} STATES / TERRITORIES)
             </h2>
-            <span className="text-[11px] text-[var(--text-muted)] font-mono">
-              Live Network Spread
-            </span>
           </div>
           <div className="flex flex-wrap gap-2">
             {stateCounts.map(([st, count]) => {

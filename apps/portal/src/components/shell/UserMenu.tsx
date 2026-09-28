@@ -18,18 +18,6 @@ export function UserMenu({ user }: UserMenuProps) {
   const { preference, setPreference } = useThemePreference();
 
   const roleLabel = formatRoleLabel(user.role);
-  const userInitial = user.name ? user.name.charAt(0).toUpperCase() : 'O';
-
-  // Role badge styling
-  const roleBadgeStyles: Record<string, string> = {
-    DISTRIBUTOR: 'bg-[var(--status-info-soft)] text-[var(--status-info)] border-[var(--status-info-border)]',
-    MANAGING_DIRECTOR: 'bg-[var(--status-warning-soft)] text-[var(--status-warning)] border-[var(--status-warning-border)]',
-    ADMIN: 'bg-[var(--status-info-soft)] text-[var(--status-info)] border-[var(--status-info-border)]',
-    STAFF: 'bg-[var(--surface-subtle)] text-[var(--text-secondary)] border-[var(--border)]',
-  };
-
-  const badgeClass =
-    roleBadgeStyles[user.role] || 'bg-[var(--surface-subtle)] text-[var(--text-primary)] border-[var(--border)]';
 
   // Close on outside click
   useEffect(() => {
@@ -81,20 +69,15 @@ export function UserMenu({ user }: UserMenuProps) {
 
   return (
     <div className="relative inline-block text-left" ref={menuRef}>
-      {/* Trigger Button */}
+      {/* Trigger Button: Sai Managing Director ▾ */}
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
-        className="flex items-center gap-2.5 px-3 py-1.5 rounded-[6px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--background)] active:bg-[var(--surface-subtle)] transition-colors duration-150 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
+        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[4px] hover:bg-[var(--surface-subtle)] text-[13px] font-medium text-[var(--text-primary)] transition-colors duration-150 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
       >
-        <div className="w-7 h-7 rounded-full bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-center text-[12px] font-bold text-[var(--text-primary)] shrink-0">
-          {userInitial}
-        </div>
-        <span className="hidden sm:inline-block text-[13px] font-medium text-[var(--text-primary)]">
-          {user.name}
-        </span>
+        <span>{user.name}</span>
         <svg
           className={`w-3.5 h-3.5 text-[var(--text-secondary)] transition-transform duration-150 ${
             isOpen ? 'rotate-180' : ''
@@ -115,37 +98,45 @@ export function UserMenu({ user }: UserMenuProps) {
         <div
           role="dialog"
           aria-label="Account menu"
-          className="absolute right-0 mt-2 w-64 rounded-[8px] border border-[var(--border)] bg-[var(--surface-raised)] shadow-[0_4px_20px_rgba(23,23,20,0.08)] py-2 z-50 focus:outline-none animate-in fade-in zoom-in-95 duration-100"
+          className="absolute right-0 mt-1.5 w-60 rounded-[6px] border border-[var(--border)] bg-[var(--surface-raised)] shadow-[0_4px_16px_rgba(23,23,20,0.08)] py-1.5 z-50 focus:outline-none"
         >
           {/* Operator Details */}
-          <div className="px-4 py-2.5 border-b border-[var(--border)]">
-            <p className="text-[13.5px] font-semibold text-[var(--text-primary)] truncate m-0">
+          <div className="px-4 py-2 border-b border-[var(--border)]">
+            <p className="text-[13px] font-semibold text-[var(--text-primary)] truncate m-0">
               {user.name}
             </p>
-            <p className="text-[12px] text-[var(--text-secondary)] truncate mt-0.5 m-0" title={user.email}>
-              {user.email}
+            <p className="text-[12px] text-[var(--text-muted)] mt-0.5 m-0">
+              {roleLabel}
             </p>
-            <div className="mt-2">
-              <span
-                className={`inline-flex items-center px-2 py-0.5 rounded-[4px] border text-[11px] font-semibold uppercase tracking-wider ${badgeClass}`}
-              >
-                {roleLabel}
-              </span>
-            </div>
           </div>
 
-          <fieldset className="border-0 m-0 px-3 py-3">
-            <legend className="px-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--text-secondary)]">
-              Appearance
+          {/* Theme Switcher */}
+          <fieldset className="border-0 m-0 px-3 py-2.5 border-b border-[var(--border)]">
+            <legend className="px-1 text-[10.5px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]">
+              Theme
             </legend>
-            <div className="mt-2 grid grid-cols-3 gap-1 rounded-[6px] bg-[var(--surface-subtle)] p-1">
+            <div className="mt-1.5 grid grid-cols-3 gap-1 rounded-[4px] bg-[var(--surface-subtle)] p-0.5">
               {([
                 ['light', 'Light'],
                 ['dark', 'Dark'],
                 ['system', 'System'],
               ] as const).map(([value, label]) => (
-                <label key={value} className={`theme-choice relative flex min-h-9 cursor-pointer items-center justify-center rounded-[4px] px-1 text-[12px] font-medium transition-colors ${preference === value ? 'bg-[var(--surface-raised)] text-[var(--text-primary)] shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}>
-                  <input className="sr-only" type="radio" name="ops-theme" value={value} checked={preference === value} onChange={() => setPreference(value)} />
+                <label
+                  key={value}
+                  className={`relative flex min-h-7 cursor-pointer items-center justify-center rounded-[3px] px-1 text-[11.5px] font-medium transition-colors ${
+                    preference === value
+                      ? 'bg-[var(--surface-raised)] text-[var(--text-primary)] shadow-2xs font-semibold'
+                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                  }`}
+                >
+                  <input
+                    className="sr-only"
+                    type="radio"
+                    name="ops-theme"
+                    value={value}
+                    checked={preference === value}
+                    onChange={() => setPreference(value)}
+                  />
                   {label}
                 </label>
               ))}
@@ -158,24 +149,14 @@ export function UserMenu({ user }: UserMenuProps) {
               type="button"
               onClick={handleSignOut}
               disabled={isSigningOut}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-[4px] text-[13px] font-medium text-[var(--status-danger)] hover:bg-[var(--status-danger-soft)] active:bg-[var(--status-danger-soft)] transition-colors duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center gap-2 px-3 py-1.5 rounded-[4px] text-[12.5px] font-medium text-[var(--status-danger)] hover:bg-[var(--status-danger-soft)] transition-colors duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSigningOut ? (
-                <>
-                  <svg className="animate-spin h-4 w-4 text-[var(--status-danger)]" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  <span>Signing out...</span>
-                </>
+                <span>Signing out...</span>
               ) : (
                 <>
                   <svg
-                    className="w-4 h-4 text-[var(--status-danger)]"
+                    className="w-3.5 h-3.5 text-[var(--status-danger)]"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -187,7 +168,7 @@ export function UserMenu({ user }: UserMenuProps) {
                     <polyline points="16 17 21 12 16 7" />
                     <line x1="21" y1="12" x2="9" y2="12" />
                   </svg>
-                  <span>Sign Out</span>
+                  <span>Sign out</span>
                 </>
               )}
             </button>

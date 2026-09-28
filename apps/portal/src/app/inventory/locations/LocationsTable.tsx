@@ -94,18 +94,12 @@ export function LocationsTable({ locations: initialLocations, user }: LocationsT
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
-              Back to Inventory Balances
+              Inventory
             </Link>
           </div>
-          <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-[var(--accent-text)] block mb-1">
-            FACILITIES & LOGISTICS HUBS
-          </span>
-          <h1 className="text-[26px] sm:text-[30px] font-semibold text-[var(--text-primary)] tracking-[-0.03em] m-0">
+          <h1 className="text-[20px] font-semibold text-[var(--text-primary)] tracking-[-0.02em] m-0">
             Inventory Locations
           </h1>
-          <p className="text-[13.5px] text-[var(--text-secondary)] mt-1 m-0">
-            Designated warehousing units, regional distribution depots, and transit facilities.
-          </p>
         </div>
 
         {canManage && (

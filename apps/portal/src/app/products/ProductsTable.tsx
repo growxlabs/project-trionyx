@@ -8,11 +8,9 @@ import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { SerialNumberLookupModal } from '../../components/inventory/SerialNumberLookupModal';
 import {
   WorkspaceHeader,
-  OperationalSummaryStrip,
   StatusBadge,
   RegistryToolbar,
   EmptyOperationalState,
-  type SummaryMetric,
 } from '../../components/workspace';
 
 interface ProductsTableProps {
@@ -111,25 +109,12 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
     }
   };
 
-  const summaryMetrics: SummaryMetric[] = [
-    { label: 'ACTIVE FORMULAS', value: activeCount, detail: 'In catalog circulation', tone: 'positive' },
-    { label: 'IN STOCK (TOTAL)', value: totalAvailableStock, detail: 'Discrete serials ready', tone: 'default' },
-    { label: 'PUBLIC MARKET', value: publicCount, detail: 'Visible to public web', tone: 'default' },
-    {
-      label: 'DRAFT / INACTIVE',
-      value: draftOrInactiveCount,
-      detail: draftOrInactiveCount > 0 ? 'Not in live circulation' : 'All active',
-      tone: draftOrInactiveCount > 0 ? 'alert' : 'default',
-    },
-  ];
-
   return (
     <div className="space-y-8">
-      {/* 1. Header with Primary Action & Serial Lookup Tool */}
+      {/* 1. Header: Products with count and action */}
       <WorkspaceHeader
-        eyebrow="PRODUCT CATALOG"
-        title="Product Catalog & Specifications"
-        description="Canonical registry of Trionyx automotive surface protection formulas, warranty durations, and physical serial inventory."
+        title="Products"
+        meta={<span className="font-mono text-[13px] text-[var(--text-muted)]">{products.length} products</span>}
         action={
           <div className="flex items-center gap-2">
             <button
@@ -155,22 +140,13 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
         }
       />
 
-      {/* 2. Operational Summary Strip */}
-      <OperationalSummaryStrip
-        title="CATALOG & INVENTORY POSITION"
-        metrics={summaryMetrics}
-      />
-
-      {/* 3. Product Family Breakdown */}
+      {/* 2. Product Families */}
       {categoryStats.length > 0 && (
         <section aria-labelledby="product-families-heading" className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-4">
           <div className="flex items-baseline justify-between mb-3">
             <h2 id="product-families-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] m-0">
-              FORMULA FAMILIES & READY STOCK
+              PRODUCT FAMILIES
             </h2>
-            <span className="text-[11px] text-[var(--text-muted)] font-mono">
-              Technology Lines
-            </span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {categoryStats.map((cat) => {
@@ -191,11 +167,11 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
                       {cat.name}
                     </span>
                     <span className="font-mono text-[11px] px-1.5 py-0.5 rounded bg-[var(--background)] border border-[var(--border)] text-[var(--text-secondary)]">
-                      {cat.formulaCount} {cat.formulaCount === 1 ? 'item' : 'items'}
+                      {cat.formulaCount}
                     </span>
                   </div>
                   <div className="mt-2 flex items-center justify-between text-[11.5px]">
-                    <span className="text-[var(--text-muted)]">Warehouse Stock:</span>
+                    <span className="text-[var(--text-muted)]">Stock:</span>
                     <span className={`font-mono font-semibold ${cat.totalUnits === 0 ? 'text-[var(--status-danger)]' : 'text-[var(--status-success)]'}`}>
                       {cat.totalUnits} units
                     </span>
@@ -207,16 +183,13 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
         </section>
       )}
 
-      {/* 4. Stock Bottlenecks / Low Stock Warning */}
+      {/* 3. Needs Attention */}
       {stockAttentionItems.length > 0 && (
         <section aria-labelledby="stock-attention-heading" className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-4">
           <div className="flex items-baseline justify-between mb-3">
-            <h2 id="stock-attention-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--status-warning)] m-0">
-              LOW INVENTORY / STOCK ATTENTION ({stockAttentionItems.length})
+            <h2 id="stock-attention-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--status-danger)] m-0">
+              NEEDS ATTENTION ({stockAttentionItems.length})
             </h2>
-            <span className="text-[11.5px] text-[var(--text-muted)]">
-              Formulas below threshold (&lt;5 units) requiring batch receiving or production allocation.
-            </span>
           </div>
 
           <div className="divide-y divide-[var(--border)] border border-[var(--border)] rounded-[4px] bg-[var(--surface-subtle)]">
@@ -250,7 +223,7 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
         </section>
       )}
 
-      {/* 5. Product Registry */}
+      {/* 4. Product Registry */}
       <section aria-labelledby="product-registry-heading">
         <h2 id="product-registry-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-3">
           PRODUCT REGISTRY

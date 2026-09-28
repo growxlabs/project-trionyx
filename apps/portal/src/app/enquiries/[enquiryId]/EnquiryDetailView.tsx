@@ -185,7 +185,7 @@ export function EnquiryDetailView({
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polyline points="15 18 9 12 15 6" />
           </svg>
-          Back to Enquiries
+          Enquiries
         </Link>
       </div>
 

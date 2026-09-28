@@ -275,36 +275,39 @@ export function WarrantyListView({
   }, [warranties]);
 
   const warrantyMetrics: SummaryMetric[] = [
-    { label: 'ACTIVE', value: activeCount, detail: 'Under valid term', tone: 'positive' },
-    { label: 'EXPIRED', value: expiredCount, detail: 'Coverage concluded', tone: 'default' },
-    { label: 'VOIDED', value: voidCount, detail: 'Revoked', tone: voidCount > 0 ? 'alert' : 'default' },
-    { label: 'TOTAL TRACKED', value: totalCount, detail: 'All activations', tone: 'default' },
+    { label: 'ACTIVE', value: activeCount, tone: 'positive' },
+    { label: 'EXPIRED', value: expiredCount, tone: 'default' },
+    { label: 'VOIDED', value: voidCount, tone: voidCount > 0 ? 'alert' : 'default' },
+    { label: 'TOTAL TRACKED', value: totalCount, tone: 'default' },
   ];
 
   return (
     <div className="space-y-8">
       {/* 1. Header with Primary Action */}
       <WorkspaceHeader
-        eyebrow="WARRANTY OPERATIONS"
-        title="Warranty Operations"
-        description="Serial-based warranty registration, activation verification, and coverage lifecycle tracking."
+        title="Warranty"
         action={
-          canWrite && (
-            <button
-              type="button"
-              onClick={() => {
-                setSerialNumber('');
-                setSelectedDealerId('');
-                setValidatedData(null);
-                setFormError(null);
-                setFormSuccess(null);
-                setIsModalOpen(true);
-              }}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity cursor-pointer shadow-xs"
-            >
-              + Activate Warranty
-            </button>
-          )
+          <div className="flex items-center gap-3">
+            <span className="text-[12.5px] font-mono text-[var(--text-muted)]">
+              {warranties.length} warranties
+            </span>
+            {canWrite && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSerialNumber('');
+                  setSelectedDealerId('');
+                  setValidatedData(null);
+                  setFormError(null);
+                  setFormSuccess(null);
+                  setIsModalOpen(true);
+                }}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity cursor-pointer shadow-xs"
+              >
+                + Activate Warranty
+              </button>
+            )}
+          </div>
         }
       />
 
@@ -387,7 +390,6 @@ export function WarrantyListView({
 
       {/* 3. Current Warranty State Strip */}
       <OperationalSummaryStrip
-        title="CURRENT WARRANTY STATE"
         metrics={warrantyMetrics}
       />
 
@@ -398,9 +400,6 @@ export function WarrantyListView({
             <h2 id="recent-activations-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] m-0">
               RECENT ACTIVATIONS
             </h2>
-            <span className="text-[11px] text-[var(--text-muted)] font-mono">
-              Latest registrations
-            </span>
           </div>
 
           <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">

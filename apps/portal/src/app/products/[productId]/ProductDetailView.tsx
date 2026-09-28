@@ -288,7 +288,7 @@ export function ProductDetailView({
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
-              Back to Catalog
+              Products
             </Link>
           </div>
           <div className="flex items-center gap-2.5 flex-wrap">

@@ -5,7 +5,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { SafeUser } from '@trionyx/types';
-import { formatRoleLabel } from '@trionyx/types';
 
 interface SidebarProps {
   user: SafeUser;
@@ -13,8 +12,6 @@ interface SidebarProps {
 
 export function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname();
-  const roleLabel = formatRoleLabel(user.role);
-  const userInitial = user.name ? user.name.charAt(0).toUpperCase() : 'O';
 
   const navItems = [
     {
@@ -162,73 +159,59 @@ export function Sidebar({ user }: SidebarProps) {
   return (
     <aside
       aria-label="Sidebar navigation"
-      className="hidden lg:flex w-[250px] shrink-0 border-r border-[var(--border)] bg-[var(--surface-raised)] min-h-screen flex-col justify-between sticky top-0 h-screen select-none"
+      className="hidden lg:flex w-[240px] shrink-0 border-r border-[var(--border)] bg-[var(--surface-raised)] min-h-screen flex-col sticky top-0 h-screen select-none"
     >
-      {/* Top Header & Navigation */}
-      <div className="flex flex-col">
-        {/* Brand Header */}
-        <div className="px-6 py-5 border-b border-[var(--border)]">
-          <Link href="/overview" className="block focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] rounded">
-            <div className="h-7 w-auto relative flex items-center">
-              <Image src="/brand/trionyx-logo-dark.png" alt="Trionyx" width={2092} height={752} priority className="theme-logo-light h-7 w-auto object-contain" />
-              <Image src="/brand/trionyx-logo-light.png" alt="" aria-hidden="true" width={2092} height={752} priority className="theme-logo-dark h-7 w-auto object-contain" />
-            </div>
-            <div className="mt-2 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
-              <span className="text-[10px] font-bold tracking-[0.14em] uppercase text-[var(--text-secondary)]">
-                OPERATIONS PORTAL
-              </span>
-            </div>
-          </Link>
-        </div>
-
-        {/* Navigation Section */}
-        <div className="px-3 py-6">
-          <div className="px-3 mb-2">
-            <span className="text-[10px] font-bold tracking-[0.12em] uppercase text-[var(--text-muted)]">
-              Operations
+      {/* Brand Header */}
+      <div className="px-6 py-5 border-b border-[var(--border)]">
+        <Link href="/overview" className="block focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] rounded">
+          <div className="h-7 w-auto relative flex items-center">
+            <Image
+              src="/brand/trionyx-logo-dark.png"
+              alt="Trionyx"
+              width={2092}
+              height={752}
+              priority
+              className="theme-logo-light h-7 w-auto object-contain"
+            />
+            <Image
+              src="/brand/trionyx-logo-light.png"
+              alt=""
+              aria-hidden="true"
+              width={2092}
+              height={752}
+              priority
+              className="theme-logo-dark h-7 w-auto object-contain"
+            />
+          </div>
+          <div className="mt-2 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
+            <span className="text-[10px] font-bold tracking-[0.14em] uppercase text-[var(--text-secondary)]">
+              OPERATIONS PORTAL
             </span>
           </div>
-
-          <nav className="space-y-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-[6px] text-[13.5px] transition-colors duration-150 ${
-                  item.active
-                    ? 'bg-[var(--background)] border-l-[3px] border-[var(--accent)] text-[var(--text-primary)] font-semibold shadow-[0_1px_2px_rgba(23,23,20,0.02)]'
-                    : 'text-[var(--text-secondary)] hover:bg-[var(--background)] hover:text-[var(--text-primary)] font-medium'
-                }`}
-              >
-                <span className={item.active ? 'text-[var(--accent-text)]' : 'text-[var(--text-secondary)]'}>
-                  {item.icon}
-                </span>
-                <span>{item.name}</span>
-              </Link>
-            ))}
-          </nav>
-        </div>
+        </Link>
       </div>
 
-      {/* Operator Identity Footer */}
-      <div className="p-4 border-t border-[var(--border)] bg-[var(--surface)]">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-center text-[13px] font-bold text-[var(--text-primary)] shrink-0">
-            {userInitial}
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-[13px] font-semibold text-[var(--text-primary)] truncate m-0 leading-tight">
-              {user.name}
-            </p>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--status-success)] shrink-0" title="Active session" />
-              <p className="text-[11px] font-medium text-[var(--text-secondary)] truncate m-0 leading-tight">
-                {roleLabel}
-              </p>
-            </div>
-          </div>
-        </div>
+      {/* Navigation Section */}
+      <div className="px-3 py-5 flex-1">
+        <nav className="space-y-1">
+          {navItems.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              className={`flex items-center gap-3 px-3 py-2 rounded-[4px] text-[13px] transition-colors duration-150 ${
+                item.active
+                  ? 'bg-[var(--background)] border-l-[3px] border-[var(--accent)] text-[var(--text-primary)] font-semibold'
+                  : 'text-[var(--text-secondary)] hover:bg-[var(--background)] hover:text-[var(--text-primary)] font-medium'
+              }`}
+            >
+              <span className={item.active ? 'text-[var(--accent-text)]' : 'text-[var(--text-secondary)]'}>
+                {item.icon}
+              </span>
+              <span>{item.name}</span>
+            </Link>
+          ))}
+        </nav>
       </div>
     </aside>
   );

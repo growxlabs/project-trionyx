@@ -61,7 +61,6 @@ export default async function OverviewPage() {
   // Compute Dealer metrics
   const activeDealers = dealersRes.items.filter((d) => d.status === 'ACTIVE').length;
   const unassignedDealers = dealersRes.items.filter((d) => !d.distributorId).length;
-  const inactiveDealers = dealersRes.items.filter((d) => d.status === 'INACTIVE').length;
 
   // Compute Inventory metrics
   const availableUnits = inventorySummaries.reduce((sum, s) => sum + s.availableCount, 0);
@@ -72,33 +71,28 @@ export default async function OverviewPage() {
   const newEnquiries = enquiriesRes.items.filter((e) => e.status === 'NEW').length;
 
   // Compute Warranty metrics
-  const activeWarranties = warrantiesRes.items.filter((w) => w.status === 'ACTIVE').length;
   const voidWarranties = warrantiesRes.items.filter((w) => w.status === 'VOID').length;
 
-  // 1. Summary Strip Metrics
+  // 1. Summary Strip Metrics (tightened, no filler secondary text)
   const summaryMetrics: SummaryMetric[] = [
     {
       label: 'ACTIVE DEALERS',
       value: activeDealers,
-      detail: `${dealersRes.total} total`,
       tone: 'default',
     },
     {
       label: 'PRODUCTS',
       value: productsRes.length,
-      detail: 'Registered formulas',
       tone: 'default',
     },
     {
       label: 'AVAILABLE UNITS',
       value: availableUnits,
-      detail: 'In stock',
       tone: availableUnits > 0 ? 'positive' : 'alert',
     },
     {
       label: 'NEW ENQUIRIES',
       value: newEnquiries,
-      detail: 'Awaiting triage',
       tone: newEnquiries > 0 ? 'warning' : 'default',
     },
   ];
@@ -161,7 +155,7 @@ export default async function OverviewPage() {
     });
   }
 
-  // 3. Activity Ledger (Real Persisted Audit Events)
+  // 3. Activity Ledger (Audit Events)
   const userMap = new Map(allUsers.map((u) => [u.id, u.name]));
   const activities: ActivityEntry[] = auditLogs.map((log) => {
     const dateObj = new Date(log.createdAt);
@@ -172,7 +166,6 @@ export default async function OverviewPage() {
       timeZone: 'Asia/Kolkata',
     });
 
-    // Parse event details
     let recordLabel = 'System Event';
     let recordHref: string | undefined = undefined;
 
@@ -217,94 +210,38 @@ export default async function OverviewPage() {
 
   const todayDateString = new Intl.DateTimeFormat('en-IN', {
     day: 'numeric',
-    month: 'long',
+    month: 'short',
     year: 'numeric',
     timeZone: 'Asia/Kolkata',
   }).format(new Date());
 
   return (
     <InternalShell user={user}>
-      {/* Workspace Header */}
+      {/* 1. Simplified Single-Line Header */}
       <WorkspaceHeader
-        eyebrow="OPERATIONS CONTEXT"
         title="Operations Overview"
         meta={<span className="font-mono text-[13px] text-[var(--text-muted)]">{todayDateString}</span>}
-        description="Unified operational control room tracking network health, physical inventory positions, inbound enquiries, and warranty activations."
       />
 
-      {/* 1. Operating Metrics Strip */}
+      {/* 2. Tightened Integrated Operating Metrics Strip */}
       <OperationalSummaryStrip metrics={summaryMetrics} />
 
-      {/* 2. Attention Required Queue */}
-      <AttentionQueue
-        items={attentionItems}
-        title="ATTENTION REQUIRED"
-        subtitle="Priority operational items requiring management decisions or operator action."
-        emptyMessage="All operations are currently running within normal thresholds."
-      />
+      <div className="border-t border-[var(--border)] pt-6">
+        {/* 3. Attention Required Queue */}
+        <AttentionQueue
+          items={attentionItems}
+          title="ATTENTION REQUIRED"
+          emptyMessage="All operations are currently running within normal thresholds."
+        />
+      </div>
 
-      {/* 3. Today's Operations Ledger */}
-      <ActivityLedger
-        activities={activities}
-        title="TODAY'S OPERATIONS"
-        subtitle="Chronological audit stream of internal and network events."
-      />
-
-      {/* 4. Network / Stock Snapshot */}
-      <section aria-labelledby="snapshot-heading" className="mb-8">
-        <h2 id="snapshot-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] mb-2.5">
-          NETWORK &amp; STOCK SNAPSHOT
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Dealer Network Snapshot */}
-          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-5">
-            <h3 className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[var(--text-secondary)] m-0">
-              Dealer Network
-            </h3>
-            <p className="text-[12px] text-[var(--text-muted)] mt-0.5 mb-4">
-              Regional partner network coverage and wholesale assignments
-            </p>
-            <dl className="grid grid-cols-3 gap-3 border-t border-[var(--border)] pt-4 text-center sm:text-left">
-              <div>
-                <dt className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--text-muted)]">Active</dt>
-                <dd className="mt-1.5 text-[24px] font-semibold text-[var(--status-success)] leading-none">{activeDealers}</dd>
-              </div>
-              <div>
-                <dt className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--text-muted)]">Unassigned</dt>
-                <dd className="mt-1.5 text-[24px] font-semibold text-[var(--status-warning)] leading-none">{unassignedDealers}</dd>
-              </div>
-              <div>
-                <dt className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--text-muted)]">Inactive</dt>
-                <dd className="mt-1.5 text-[24px] font-semibold text-[var(--text-muted)] leading-none">{inactiveDealers}</dd>
-              </div>
-            </dl>
-          </div>
-
-          {/* Inventory Snapshot */}
-          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-5">
-            <h3 className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[var(--text-secondary)] m-0">
-              Physical Inventory
-            </h3>
-            <p className="text-[12px] text-[var(--text-muted)] mt-0.5 mb-4">
-              Warehouse stock positions and critical replenishment thresholds
-            </p>
-            <dl className="grid grid-cols-3 gap-3 border-t border-[var(--border)] pt-4 text-center sm:text-left">
-              <div>
-                <dt className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--text-muted)]">Available Units</dt>
-                <dd className="mt-1.5 text-[24px] font-semibold text-[var(--status-success)] leading-none">{availableUnits}</dd>
-              </div>
-              <div>
-                <dt className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--text-muted)]">Low Stock</dt>
-                <dd className="mt-1.5 text-[24px] font-semibold text-[var(--status-warning)] leading-none">{lowStockProducts.length}</dd>
-              </div>
-              <div>
-                <dt className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--text-muted)]">Out of Stock</dt>
-                <dd className="mt-1.5 text-[24px] font-semibold text-[var(--status-danger)] leading-none">{outOfStockProducts.length}</dd>
-              </div>
-            </dl>
-          </div>
-        </div>
-      </section>
+      <div className="border-t border-[var(--border)] pt-6">
+        {/* 4. Today's Operations Ledger */}
+        <ActivityLedger
+          activities={activities}
+          title="TODAY'S OPERATIONS"
+        />
+      </div>
     </InternalShell>
   );
 }

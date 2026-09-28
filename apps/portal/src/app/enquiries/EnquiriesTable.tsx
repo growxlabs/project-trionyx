@@ -40,10 +40,10 @@ export function EnquiriesTable({ initialEnquiries, internalUsers }: EnquiriesTab
   const closedCount = useMemo(() => enquiries.filter((e) => e.status === 'CLOSED').length, [enquiries]);
 
   const queueMetrics: SummaryMetric[] = [
-    { label: 'NEW', value: newCount, detail: 'Requires triage', tone: newCount > 0 ? 'alert' : 'default' },
-    { label: 'IN PROGRESS', value: inProgressCount, detail: 'Under review', tone: inProgressCount > 0 ? 'warning' : 'default' },
-    { label: 'UNASSIGNED', value: unassignedCount, detail: 'No owner', tone: unassignedCount > 0 ? 'warning' : 'default' },
-    { label: 'CLOSED', value: closedCount, detail: 'Resolved', tone: 'default' },
+    { label: 'NEW', value: newCount, tone: newCount > 0 ? 'alert' : 'default' },
+    { label: 'IN PROGRESS', value: inProgressCount, tone: inProgressCount > 0 ? 'warning' : 'default' },
+    { label: 'UNASSIGNED', value: unassignedCount, tone: unassignedCount > 0 ? 'warning' : 'default' },
+    { label: 'CLOSED', value: closedCount, tone: 'default' },
   ];
 
   // Needs Action items (NEW or UNASSIGNED, up to 4)
@@ -121,15 +121,12 @@ export function EnquiriesTable({ initialEnquiries, internalUsers }: EnquiriesTab
     <div className="space-y-8">
       {/* 1. Header */}
       <WorkspaceHeader
-        eyebrow="INBOUND ENQUIRIES"
-        title="Inbound Enquiries"
-        description="Public website inquiries, dealer network applications, and customer product support requests."
-        meta={<span className="font-mono text-[12.5px] text-[var(--text-muted)]">{enquiries.length} total</span>}
+        title="Enquiries"
+        meta={<span className="font-mono text-[12.5px] text-[var(--text-muted)]">{enquiries.length} enquiries</span>}
       />
 
       {/* 2. Work Queue Strip */}
       <OperationalSummaryStrip
-        title="WORK QUEUE"
         metrics={queueMetrics}
       />
 
@@ -140,9 +137,6 @@ export function EnquiriesTable({ initialEnquiries, internalUsers }: EnquiriesTab
             <h2 id="needs-action-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)] m-0">
               NEW &amp; NEEDS ACTION
             </h2>
-            <span className="text-[11px] text-[var(--text-muted)] font-mono">
-              {needsActionItems.length} awaiting response
-            </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
