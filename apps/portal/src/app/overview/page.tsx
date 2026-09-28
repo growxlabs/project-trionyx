@@ -162,31 +162,8 @@ export default async function OverviewPage() {
 
   return (
     <InternalShell user={user}>
-      <div className="space-y-3.5">
-        {/* 1. ERP WORK CENTER CONTEXT STRIP */}
-        <div className="border border-[var(--border)] bg-[var(--surface-raised)] rounded-[3px] px-3.5 py-2 flex flex-col md:flex-row md:items-center justify-between gap-2.5 text-[11px] font-mono">
-          <div className="flex flex-wrap items-center gap-3 text-[var(--text-secondary)]">
-            <span className="font-bold text-[var(--text-primary)] uppercase tracking-wider flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-[var(--status-success)] shadow-[0_0_6px_var(--status-success)] inline-block"></span>
-              TRIONYX ERP · WORK CENTER
-            </span>
-            <span className="text-[var(--border-strong)]">|</span>
-            <span>FACILITY: ALL LOCATIONS (DELHI CENTRAL + HUBS)</span>
-            <span className="text-[var(--border-strong)]">|</span>
-            <span>PERIOD: {todayDateString} · SHIFT: ACTIVE</span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="text-[10.5px] uppercase font-semibold text-[var(--text-muted)]">
-              WRITE ACCESS:
-            </span>
-            <span className="px-1.5 py-0.5 rounded-[2px] bg-[var(--surface-subtle)] border border-[var(--border)] font-bold text-[var(--text-primary)]">
-              {user.role}
-            </span>
-          </div>
-        </div>
-
-        {/* 2. DUAL-COLUMN ERP WORK CENTER DESK */}
+      <div>
+        {/* DUAL-COLUMN ERP WORK CENTER DESK */}
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-3.5">
           {/* ======================================================== */}
           {/* LEFT COLUMN (4 COLS): REMINDERS + QUICK TRANSACTION LAUNCHPAD */}
