@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { PageFrame, SectionFrame } from '@/components/frame';
 import { HeaderShell } from '@/components/header/HeaderShell';
 import { SiteFooter } from '@/components/footer/SiteFooter';
@@ -49,25 +50,45 @@ export default function WarrantyPage() {
                 <aside className="lg:col-span-5 xl:col-span-4">
                   <div className="space-y-8 lg:sticky lg:top-32">
                     {/* Information Block */}
-                    <div className="bg-[#F5F5EE] border border-[var(--section-divider)] rounded-[8px] p-6">
-                      <h3 className="text-[13px] font-bold text-[#171714] uppercase tracking-[0.1em] mb-4">
-                        About Serial Numbers
-                      </h3>
-                      <p className="text-[14px] leading-relaxed text-[#171714]/75">
-                        Every Trionyx coating bottle and surface protection kit is individually coded with a unique serial number in our central database before leaving the factory.
+                    <div className="bg-[#F5F5EE] border border-[var(--section-divider)] rounded-[8px] p-6 shadow-xs">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="text-[13px] font-bold text-[#171714] uppercase tracking-[0.1em]">
+                          Locating Your Serial Number
+                        </h3>
+                        <span className="text-[10px] font-mono font-semibold text-[#F26522] bg-[#F26522]/10 px-2 py-0.5 rounded-[4px] uppercase tracking-wider">
+                          Label Guide
+                        </span>
+                      </div>
+
+                      <p className="text-[13.5px] leading-relaxed text-[#171714]/75 mb-3.5">
+                        Every authentic Trionyx coating bottle and retail packaging carton carries a registered serial code label with a scannable barcode.
                       </p>
-                      <div className="mt-4 pt-4 border-t border-[#171714]/08 space-y-3">
-                        <div className="flex items-start gap-3">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#F26522] mt-2 shrink-0" />
-                          <span className="text-[13px] text-[#171714]/80">
-                            <strong>Authenticity:</strong> Confirms genuine Trionyx engineered formulations.
-                          </span>
+
+                      {/* Real Support Visual Guide */}
+                      <div className="relative w-full aspect-[4/3] rounded-[6px] overflow-hidden border border-[#171714]/12 bg-[#EFECE3] shadow-xs group">
+                        <Image
+                          src="/images/warranty/serial-number-guide.jpg"
+                          alt="Trionyx product bottle and packaging showing authentic serial number label location with highlighted indicator"
+                          fill
+                          sizes="(max-width: 768px) 100vw, 380px"
+                          className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                          priority
+                        />
+                      </div>
+
+                      {/* Practical Identification Notes (No Decorative Dots) */}
+                      <div className="mt-3.5 pt-3 border-t border-[#171714]/08 space-y-2 text-[12.5px] text-[#171714]/80 leading-normal">
+                        <div className="flex items-start gap-2">
+                          <span className="font-semibold text-[#171714] shrink-0">Label Location:</span>
+                          <span>Printed on the rear barcode sticker of both the bottle and carton box.</span>
                         </div>
-                        <div className="flex items-start gap-3">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#F26522] mt-2 shrink-0" />
-                          <span className="text-[13px] text-[#171714]/80">
-                            <strong>Dealer Backing:</strong> Warranties are activated by authorized installer studios upon vehicle application.
-                          </span>
+                        <div className="flex items-start gap-2">
+                          <span className="font-semibold text-[#171714] shrink-0">Code Format:</span>
+                          <span className="font-mono text-[11.5px] text-[#F26522] font-semibold">TRX-SN-YYYY-XXXX</span>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <span className="font-semibold text-[#171714] shrink-0">Coverage:</span>
+                          <span>Warranties are registered and activated by authorized studio installers.</span>
                         </div>
                       </div>
                     </div>
