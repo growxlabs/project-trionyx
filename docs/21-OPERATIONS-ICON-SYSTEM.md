@@ -129,34 +129,45 @@ export interface IconProps extends React.SVGProps<SVGSVGElement> {
 
 ## 5. Trionyx Operations Emblem (`TrionyxOpsMark`)
 
-The top-left OPS tile features the canonical brand mark identity rather than a generic UI icon.
+The top-left OPS tile features the canonical brand mark identity styled with **Option A: The Performance Tyre & Wheel Rim Chassis**.
 
 ### 5.1 Master Vector Geometry (64 × 64 Grid)
-* **Canvas:** `64 × 64` master vector grid.
-* **Hexagonal Chassis:** 
-  * Dimensions: `42 × 44` units (`d="M32 10L53 21.5V42.5L32 54L11 42.5V21.5Z"`).
-  * Equidistant vertices with softened corners (`strokeLinejoin="round"`).
-  * Stroke width: `3.2px` (scales to ~1.2px at 24px icon size).
-* **Inner Custom X:**
-  * Dimensions: `25 × 25` units (occupies ~59% of hex interior, strictly within the 55–65% specification).
-  * Centered optically and mathematically at `(32, 32)`.
-  * Stroke width: `4.0px` (scales to exactly `1.5px` at 24px icon size).
-  * Counter diagonal (`\`) runs from `(19.5, 19.5)` to `(44.5, 44.5)` with an engineered negative-space notch from `(27.5, 27.5)` to `(36.5, 36.5)`.
-  * Identity blade (`/`) runs continuously from `(19.5, 44.5)` to `(44.5, 19.5)` in Trionyx orange (`#F26522`).
-  * Optical negative space: 8-unit diagonal gap (`11.3` hypotenuse units) provides clean depth separation, ensuring the overlapping X geometry is 100% recognizable in both brand and monochrome modes.
+* **Canvas:** `64 × 64` master vector grid, centered at `(32, 32)`.
+* **Outer Performance Tyre Contour:**
+  * Radius: `r="23"` (`46 × 46` units diameter).
+  * Stroke width: `3.0px` (`#A9A59C` technical steel tone).
+  * Automotive silhouette: Low-profile performance tyre sidewall profile.
+* **Technical Tread & Balance Notches:**
+  * 4 cardinal notches at 12, 3, 6, and 9 o'clock (`M32 5.5V10.5M32 53.5V58.5M5.5 32H10.5M53.5 32H58.5`).
+  * Stroke width: `2.4px` (`#A9A59C`), `strokeLinecap="round"`.
+  * Bridges from the tyre crown into the outer tread band, mirroring competition tyre balance alignment markers.
+* **Inner Wheel Rim Lip:**
+  * Radius: `r="17"` concentric circle (`34 × 34` units diameter).
+  * Stroke width: `1.6px` (`#8E8A81` with `strokeOpacity="0.85"`).
+  * Creates an authentic lathe-turned alloy rim lip separating the tyre sidewall from the center hub.
+* **Center Hub & Custom Trionyx X:**
+  * 45° intersection coordinates mathematically lock exactly at radius 17: `(20, 20)`, `(44, 44)`, `(20, 44)`, and `(44, 20)` (`sqrt(12² + 12²) = 16.97 ≈ 17.0`).
+  * Stroke width: `3.8px` (scales to exactly `1.425px ≈ 1.5px` at 24px icon size).
+  * Counter diagonal (`\`):
+    * Top-left segment: `(20, 20)` to `(27.5, 27.5)` in `#F5F3EC`.
+    * Bottom-right segment: `(36.5, 36.5)` to `(44, 44)` in `#F5F3EC`.
+  * Identity blade (`/`):
+    * Runs continuously from `(20, 44)` to `(44, 20)` in Trionyx orange (`#F26522`).
+  * Engineered negative space notch:
+    * 9-unit diagonal gap (`12.73` hypotenuse units) provides clean depth separation, leaving 2.56 units of negative space on either side of the passing orange blade.
 
 ### 5.2 Multi-Scale Legibility
 The vector construction has been validated across four canonical scale benchmarks:
-* **16px:** Sub-icon micro display (`strokeWidth="1.0px"` effective).
-* **20px:** Compact rail display (`strokeWidth="1.25px"` effective).
-* **24px:** Standard OPS tile display (`strokeWidth="1.5px"` effective).
-* **32px:** High-visibility masthead display (`strokeWidth="2.0px"` effective).
+* **16px:** Sub-icon micro display (`strokeWidth="0.95px"` effective).
+* **20px:** Compact rail display (`strokeWidth="1.19px"` effective).
+* **24px:** Standard OPS tile display (`strokeWidth="1.425px ≈ 1.5px"` effective).
+* **32px:** High-visibility masthead display (`strokeWidth="1.9px"` effective).
 
 ### 5.3 System Initialization Animation (0–850ms)
 The component [`TrionyxOpsMarkAnimated`](file:///c:/growxlabs/trionyx/trion-yx/packages/ui/src/TrionyxOpsMark.tsx) executes a precision machinery assembly sequence on initial workspace load:
-* **0–250ms:** Outer hexagonal frame draws into position (`stroke-dashoffset: 140 -> 0`).
-* **250–550ms:** Structural X counter arms assemble inside the frame (`stroke-dashoffset: 16 -> 0`).
-* **550–750ms:** Signature orange identity blade sweeps into place (`stroke-dashoffset: 38 -> 0`).
+* **0–280ms:** Tyre outer contour (`stroke-dashoffset: 145 -> 0`), inner rim lip (`stroke-dashoffset: 107 -> 0`), and technical tread notches fade and sweep into position.
+* **280–550ms:** Structural X counter arms assemble from the wheel rim lip inward (`stroke-dashoffset: 16 -> 0`).
+* **550–750ms:** Signature orange identity blade sweeps into place through the center hub (`stroke-dashoffset: 36 -> 0`).
 * **750–850ms:** Micro-scale settle (`1.02 -> 1.00`) locking into static equilibrium.
 
 ### 5.4 State & Accessibility Rules

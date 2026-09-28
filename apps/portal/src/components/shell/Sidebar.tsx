@@ -147,7 +147,7 @@ export function Sidebar({ user }: SidebarProps) {
           className="flex flex-col items-center gap-1 focus:outline-none group"
           title="Trionyx Operations Portal"
         >
-          {/* Engineered Hexagonal Trionyx Operations Emblem */}
+          {/* Performance Tyre & Wheel Rim Chassis: Trionyx Operations Emblem */}
           <div className="w-10 h-10 rounded-[4px] bg-[#22221E] border border-[rgba(255,255,255,0.08)] group-hover:border-[#A9A59C]/40 group-hover:bg-[#252520] flex items-center justify-center transition-colors">
             <TrionyxOpsMarkAnimated size={24} className="w-[22px] h-[22px]" />
           </div>
