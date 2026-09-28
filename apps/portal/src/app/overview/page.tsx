@@ -194,69 +194,7 @@ export default async function OverviewPage() {
               </div>
             </div>
 
-            {/* PORTLET 2: QUICK TRANSACTION LAUNCHPAD */}
-            <div className="border border-[var(--border)] bg-[var(--surface-raised)] rounded-[3px] overflow-hidden">
-              <div className="bg-[var(--surface-subtle)] border-b border-[var(--border)] px-3 py-2 flex items-center justify-between">
-                <span className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-[var(--text-primary)]">
-                  TRANSACTION LAUNCHPAD
-                </span>
-                <span className="font-mono text-[10px] text-[var(--text-muted)] uppercase">
-                  DIRECT ACTION
-                </span>
-              </div>
-
-              <div className="p-2.5 grid grid-cols-2 gap-2 text-[12px]">
-                <Link
-                  href="/inventory"
-                  className="btn-primary px-2.5 py-2 text-[12px] flex items-center gap-2"
-                >
-                  <span className="font-mono text-[10px] font-bold text-white/90">[RCV]</span>
-                  <span>Receive Serials</span>
-                </Link>
-
-                <Link
-                  href="/dealers/new"
-                  className="btn-secondary px-2.5 py-2 text-[12px] flex items-center gap-2"
-                >
-                  <span className="font-mono text-[10px] text-[var(--text-muted)] font-bold">[ONB]</span>
-                  <span>Onboard Studio</span>
-                </Link>
-
-                <Link
-                  href="/warranty"
-                  className="btn-secondary px-2.5 py-2 text-[12px] flex items-center gap-2"
-                >
-                  <span className="font-mono text-[10px] text-[var(--text-muted)] font-bold">[VRF]</span>
-                  <span>Verify Warranty</span>
-                </Link>
-
-                <Link
-                  href="/distributors/new"
-                  className="btn-secondary px-2.5 py-2 text-[12px] flex items-center gap-2"
-                >
-                  <span className="font-mono text-[10px] text-[var(--text-muted)] font-bold">[HUB]</span>
-                  <span>Add Dist. Hub</span>
-                </Link>
-
-                <Link
-                  href="/inventory/movements"
-                  className="btn-secondary px-2.5 py-2 text-[12px] flex items-center gap-2"
-                >
-                  <span className="font-mono text-[10px] text-[var(--text-muted)] font-bold">[MOV]</span>
-                  <span>Stock Movements</span>
-                </Link>
-
-                <Link
-                  href="/enquiries"
-                  className="btn-secondary px-2.5 py-2 text-[12px] flex items-center gap-2"
-                >
-                  <span className="font-mono text-[10px] text-[var(--text-muted)] font-bold">[TRG]</span>
-                  <span>Triage Enquiries</span>
-                </Link>
-              </div>
-            </div>
-
-            {/* PORTLET 3: PHYSICAL WAREHOUSE CAPACITY SUMMARY */}
+            {/* PORTLET 2: PHYSICAL WAREHOUSE CAPACITY SUMMARY */}
             <div className="border border-[var(--border)] bg-[var(--surface-raised)] rounded-[3px] overflow-hidden">
               <div className="bg-[var(--surface-subtle)] border-b border-[var(--border)] px-3 py-2 flex items-center justify-between">
                 <span className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-[var(--text-primary)]">
