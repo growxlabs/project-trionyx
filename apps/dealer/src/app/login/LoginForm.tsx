@@ -63,8 +63,8 @@ export function LoginForm() {
           autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="dealer@studio.com"
-          className="w-full px-3.5 py-2.5 rounded border border-[#171714]/20 bg-white text-[14px] text-[#171714] placeholder-[#68665F]/50 focus:outline-none focus:border-[#F26522] focus:ring-1 focus:ring-[#F26522] transition-colors"
+          placeholder="Enter your email address"
+          className="w-full px-3.5 py-2.5 rounded border border-[#E5E3DB] bg-white text-[14px] text-[#171714] placeholder-[#68665F]/50 focus:outline-none focus:border-[#F26522] focus:ring-1 focus:ring-[#F26522] transition-colors"
         />
       </div>
 
@@ -87,8 +87,8 @@ export function LoginForm() {
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••••••"
-            className="w-full px-3.5 py-2.5 rounded border border-[#171714]/20 bg-white text-[14px] text-[#171714] placeholder-[#68665F]/50 focus:outline-none focus:border-[#F26522] focus:ring-1 focus:ring-[#F26522] transition-colors pr-10"
+            placeholder="Enter password"
+            className="w-full px-3.5 py-2.5 rounded border border-[#E5E3DB] bg-white text-[14px] text-[#171714] placeholder-[#68665F]/50 focus:outline-none focus:border-[#F26522] focus:ring-1 focus:ring-[#F26522] transition-colors pr-10"
           />
           <button
             type="button"
@@ -104,7 +104,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full mt-2 py-2.5 px-4 rounded bg-[#171714] text-white font-semibold text-[14px] hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm flex items-center justify-center gap-2"
+        className="w-full mt-2 py-2.5 px-4 rounded bg-[#171714] text-[#FCFBF7] font-semibold text-[14px] hover:bg-[#171714]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm flex items-center justify-center gap-2"
       >
         {isLoading ? (
           <>

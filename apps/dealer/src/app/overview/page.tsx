@@ -1,37 +1,71 @@
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { requireDealerSession, DEALER_AUTH_CONFIG } from '@trionyx/auth';
-import { dealerRequestsRepository, productsRepository } from '@trionyx/database';
-import { DealerShell } from '@/components/shell/DealerShell';
+import {
+  requireDistributorSession,
+  DISTRIBUTOR_AUTH_CONFIG,
+  AUTH_CONFIG,
+} from '@trionyx/auth';
+import {
+  dealerRequestsRepository,
+  dealersRepository,
+  productsRepository,
+} from '@trionyx/database';
+import { DistributorShell } from '@/components/shell/DealerShell';
 import { OverviewView } from './OverviewView';
 
 export const metadata: Metadata = {
-  title: 'Overview — Trionyx Dealer Portal',
-  description: 'Dealer requests, product availability, and distributor contact',
+  title: 'Distributor Overview — Trionyx Operations',
+  description: 'Regional dealer network, request queue, and inventory availability',
 };
+
+export const dynamic = 'force-dynamic';
 
 export default async function OverviewPage() {
   const cookieStore = await cookies();
-  const token = cookieStore.get(DEALER_AUTH_CONFIG.cookieName)?.value;
+  const token =
+    cookieStore.get(DISTRIBUTOR_AUTH_CONFIG.cookieName)?.value ||
+    cookieStore.get(AUTH_CONFIG.cookieName)?.value;
 
   let sessionData;
   try {
-    sessionData = await requireDealerSession(token);
-  } catch {
+    sessionData = await requireDistributorSession(token);
+  } catch (err) {
     redirect('/login');
   }
 
-  const { dealerUser, dealer } = sessionData;
-  const [openRequests, inProgressRequests, products] = await Promise.all([
-    dealerRequestsRepository.list({ dealerId: dealer.id, status: 'OPEN', limit: 100 }),
-    dealerRequestsRepository.list({ dealerId: dealer.id, status: 'IN_PROGRESS', limit: 100 }),
+  const { user, distributor } = sessionData;
+
+  // Strictly scoped to the authenticated distributor ID
+  const [
+    openRequests,
+    inProgressRequests,
+    recentRequests,
+    dealersResult,
+    activeDealerCount,
+    products,
+  ] = await Promise.all([
+    dealerRequestsRepository.list({
+      distributorId: distributor.id,
+      status: 'OPEN',
+      limit: 100,
+    }),
+    dealerRequestsRepository.list({
+      distributorId: distributor.id,
+      status: 'IN_PROGRESS',
+      limit: 100,
+    }),
+    dealerRequestsRepository.list({
+      distributorId: distributor.id,
+      limit: 6,
+    }),
+    dealersRepository.list({
+      distributorId: distributor.id,
+      limit: 6,
+    }),
+    dealersRepository.countActive(distributor.id),
     productsRepository.listDealerProducts(),
   ]);
-
-  const currentRequests = [...openRequests.items, ...inProgressRequests.items]
-    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-    .slice(0, 5);
 
   const productCounts = {
     available: products.filter((product) => product.availability === 'AVAILABLE').length,
@@ -40,15 +74,18 @@ export default async function OverviewPage() {
   };
 
   return (
-    <DealerShell user={dealerUser} dealer={dealer}>
+    <DistributorShell user={user} distributor={distributor}>
       <OverviewView
-        dealer={dealer}
-        distributor={dealer.distributor || null}
+        distributor={distributor}
+        user={user}
         openCount={openRequests.total}
         inProgressCount={inProgressRequests.total}
-        currentRequests={currentRequests}
+        requestQueue={recentRequests.items}
+        dealers={dealersResult.items}
+        totalDealerCount={dealersResult.total}
+        activeDealerCount={activeDealerCount}
         productCounts={productCounts}
       />
-    </DealerShell>
+    </DistributorShell>
   );
 }

@@ -1,11 +1,14 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const AUTH_COOKIE_NAME = 'trionyx_dealer_session';
+const DISTRIBUTOR_COOKIE_NAME = 'trionyx_distributor_session';
+const PORTAL_COOKIE_NAME = 'trionyx_portal_session';
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
+  const token =
+    request.cookies.get(DISTRIBUTOR_COOKIE_NAME)?.value ||
+    request.cookies.get(PORTAL_COOKIE_NAME)?.value;
 
   // Static assets and API routes are exempt
   if (
@@ -17,14 +20,10 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const isPublicAuthPage =
-    pathname === '/login' ||
-    pathname === '/activate' ||
-    pathname === '/forgot-password' ||
-    pathname === '/reset-password';
+  const isLoginPage = pathname === '/login';
 
   // 1. Guest trying to access protected route -> redirect to /login
-  if (!token && !isPublicAuthPage) {
+  if (!token && !isLoginPage) {
     const loginUrl = new URL('/login', request.url);
     const response = NextResponse.redirect(loginUrl);
     response.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate');
@@ -35,8 +34,8 @@ export function middleware(request: NextRequest) {
 
   const response = NextResponse.next();
 
-  // Prevent caching for all dealer portal pages
-  if (!isPublicAuthPage) {
+  // Prevent caching for all protected distributor workspace pages
+  if (!isLoginPage) {
     response.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate');
     response.headers.set('Pragma', 'no-cache');
   }

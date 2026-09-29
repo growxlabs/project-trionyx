@@ -4,14 +4,18 @@ import Image from 'next/image';
 import { LoginForm } from './LoginForm';
 
 export const metadata: Metadata = {
-  title: 'Dealer Sign In — Trionyx',
-  description: 'Sign in to your Trionyx dealer account.',
+  title: 'Distributor Login — Trionyx Operations',
+  description: 'Sign in to the Trionyx Distributor Workspace.',
 };
 
 export default function LoginPage() {
+  const contactUrl = process.env.NEXT_PUBLIC_APP_URL
+    ? `${process.env.NEXT_PUBLIC_APP_URL}/contact`
+    : 'http://localhost:3000/contact';
+
   return (
-    <div className="min-h-screen bg-[#F5F5EE] flex flex-col justify-center items-center px-4 py-12">
-      <div className="w-full max-w-[420px] bg-[#FCFBF7] border border-[#171714]/10 rounded-lg p-8 shadow-[0_4px_24px_rgba(23,23,20,0.04)]">
+    <div className="min-h-screen bg-[#F7F6F0] flex flex-col justify-center items-center px-4 py-12">
+      <div className="w-full max-w-[420px] bg-[#FCFBF7] border border-[#E5E3DB] rounded-lg p-8 shadow-[0_4px_24px_rgba(23,23,20,0.04)]">
         {/* Header */}
         <div className="text-center mb-8">
           <Image
@@ -20,23 +24,26 @@ export default function LoginPage() {
             width={2092}
             height={752}
             priority
-            className="mx-auto mb-4 h-14 w-auto object-contain"
+            className="mx-auto mb-5 h-14 w-auto object-contain"
           />
-          <h1 className="text-[22px] font-bold text-[#171714] mt-1 tracking-tight">
-            Dealer sign in
+          <h1 className="text-[22px] font-bold text-[#171714] tracking-tight">
+            Distributor Login
           </h1>
-          <p className="text-[13px] text-[#68665F] mt-1.5">
-            View products, check availability, and manage your requests.
-          </p>
         </div>
 
         {/* Form */}
         <LoginForm />
 
         {/* Footer */}
-        <div className="mt-8 pt-6 border-t border-[#171714]/08 text-center text-[12px] text-[#68665F]">
-          <p>Need a dealer account?</p>
-          <p className="mt-1 text-[#171714] font-medium">Contact your Trionyx distributor.</p>
+        <div className="mt-6 text-center text-[12.5px] text-[#68665F]">
+          Need access?{' '}
+          <a
+            href={contactUrl}
+            className="font-medium text-[#171714] hover:text-[#F26522] transition-colors underline underline-offset-2"
+          >
+            Contact Trionyx
+          </a>
+          .
         </div>
       </div>
     </div>

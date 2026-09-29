@@ -6,6 +6,7 @@ export * from './guards';
 export * from './authenticate';
 export * from './overview';
 export * from './dealerAuth';
+export * from './distributorAuth';
 
 import type { Role } from '@trionyx/types';
 

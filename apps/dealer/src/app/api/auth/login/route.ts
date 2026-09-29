@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
-import { dealerLoginSchema } from '@trionyx/validation';
-import { authenticateDealerUser, DEALER_AUTH_CONFIG } from '@trionyx/auth';
+import { loginSchema } from '@trionyx/validation';
+import { authenticateDistributorUser, DISTRIBUTOR_AUTH_CONFIG } from '@trionyx/auth';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json().catch(() => ({}));
-    const parseResult = dealerLoginSchema.safeParse(body);
+    const parseResult = loginSchema.safeParse(body);
 
     if (!parseResult.success) {
       return NextResponse.json(
@@ -21,7 +21,12 @@ export async function POST(request: Request) {
     const ipAddress = request.headers.get('x-forwarded-for')?.split(',')[0].trim() || null;
     const userAgent = request.headers.get('user-agent') || null;
 
-    const authResult = await authenticateDealerUser(email, password, ipAddress, userAgent);
+    const authResult = await authenticateDistributorUser({
+      email,
+      password,
+      ipAddress,
+      userAgent,
+    });
 
     if (!authResult.success) {
       return NextResponse.json(
@@ -36,26 +41,26 @@ export async function POST(request: Request) {
     const response = NextResponse.json(
       {
         success: true,
-        user: authResult.dealerUser,
-        dealer: authResult.dealer,
+        user: authResult.user,
+        distributor: authResult.distributor,
       },
       { status: 200 }
     );
 
     // Set secure, HTTP-only, SameSite session cookie
     response.cookies.set({
-      name: DEALER_AUTH_CONFIG.cookieName,
-      value: authResult.rawToken,
+      name: DISTRIBUTOR_AUTH_CONFIG.cookieName,
+      value: authResult.rawToken!,
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 7 * 24 * 60 * 60, // 7 days
+      maxAge: DISTRIBUTOR_AUTH_CONFIG.sessionDurationMs / 1000,
     });
 
     return response;
   } catch (err) {
-    console.error('Dealer login route error:', err);
+    console.error('Distributor login route error:', err);
     return NextResponse.json(
       {
         success: false,
