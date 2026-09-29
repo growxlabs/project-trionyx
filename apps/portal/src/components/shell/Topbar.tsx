@@ -9,16 +9,9 @@ interface TopbarProps {
 export function Topbar({ user }: TopbarProps) {
   return (
     <header className="hidden lg:flex items-center justify-between h-11 px-5 bg-[#171714] sticky top-0 z-30 select-none">
-      {/* Left: App Label + System Telemetry */}
+      {/* Left: App Label */}
       <div className="flex items-center gap-3 text-[11px] font-mono text-[#A9A59C]">
         <span className="font-bold text-[12px] tracking-[0.14em] text-[#F7F6F0] uppercase">TRIONYX</span>
-        <span className="text-[rgba(255,255,255,0.12)]">|</span>
-        <span className="inline-flex items-center gap-1.5 font-medium text-[#F7F6F0]">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
-          SYS.ONLINE
-        </span>
-        <span className="text-[rgba(255,255,255,0.15)]">/</span>
-        <span className="text-[#A9A59C]">PROD · IST (UTC+05:30)</span>
       </div>
 
       {/* Center: Search (Recessed plate with subtle border) */}

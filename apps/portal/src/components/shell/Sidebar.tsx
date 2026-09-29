@@ -6,17 +6,18 @@ import { usePathname, useRouter } from 'next/navigation';
 import type { SafeUser } from '@trionyx/types';
 import { formatRoleLabel } from '@trionyx/types';
 import { useThemePreference } from './ThemeProvider';
+import {
+  IconBuildingStore,
+  IconClipboardList,
+  IconHierarchy2,
+  IconLayoutDashboard,
+  IconPackages,
+  IconLayersIntersect,
+  IconShieldCheck,
+} from '@tabler/icons-react';
 
 import {
-  ControlBoardIcon,
-  WorkshopFrontageIcon,
-  SerialStockTraysIcon,
-  LayeredCoatingSheetsIcon,
-  ConnectedNodesIcon,
-  VerifiedShieldIcon,
-  OperationalLedgerIcon,
   ControlSlidersIcon,
-  TrionyxOpsMarkAnimated,
 } from './OperationsIcons';
 
 interface SidebarProps {
@@ -85,37 +86,37 @@ export function Sidebar({ user }: SidebarProps) {
     router.refresh();
   };
 
-  // Custom Trionyx Operations Icon Family (24x24 canvas, 1.5px stroke, technical/industrial, squared)
+  // Tabler outline icon preview for the primary rail navigation.
   const navItems = [
     {
       name: 'Overview',
       href: '/overview',
       active: pathname === '/overview',
-      icon: <ControlBoardIcon className="w-5 h-5 shrink-0" />,
+      icon: <IconLayoutDashboard className="w-5 h-5 shrink-0" stroke={1.6} />,
     },
     {
       name: 'Studios',
       href: '/dealers',
       active: pathname.startsWith('/dealers'),
-      icon: <WorkshopFrontageIcon className="w-5 h-5 shrink-0" />,
+      icon: <IconBuildingStore className="w-5 h-5 shrink-0" stroke={1.6} />,
     },
     {
       name: 'Inventory',
       href: '/inventory',
       active: pathname.startsWith('/inventory'),
-      icon: <SerialStockTraysIcon className="w-5 h-5 shrink-0" />,
+      icon: <IconPackages className="w-5 h-5 shrink-0" stroke={1.6} />,
     },
     {
       name: 'Products',
       href: '/products',
       active: pathname.startsWith('/products'),
-      icon: <LayeredCoatingSheetsIcon className="w-5 h-5 shrink-0" />,
+      icon: <IconLayersIntersect className="w-5 h-5 shrink-0" stroke={1.6} />,
     },
     {
       name: 'Distributor Hub',
       href: '/distributors',
       active: pathname.startsWith('/distributors'),
-      icon: <ConnectedNodesIcon className="w-5 h-5 shrink-0" />,
+      icon: <IconHierarchy2 className="w-5 h-5 shrink-0" stroke={1.6} />,
     },
     ...(user.role !== 'DISTRIBUTOR'
       ? [
@@ -123,13 +124,13 @@ export function Sidebar({ user }: SidebarProps) {
             name: 'Warranty',
             href: '/warranty',
             active: pathname.startsWith('/warranty'),
-            icon: <VerifiedShieldIcon className="w-5 h-5 shrink-0" />,
+            icon: <IconShieldCheck className="w-5 h-5 shrink-0" stroke={1.6} />,
           },
           {
             name: 'Records / Logs',
             href: '/enquiries',
             active: pathname.startsWith('/enquiries'),
-            icon: <OperationalLedgerIcon className="w-5 h-5 shrink-0" />,
+            icon: <IconClipboardList className="w-5 h-5 shrink-0" stroke={1.6} />,
           },
         ]
       : []),
@@ -147,9 +148,35 @@ export function Sidebar({ user }: SidebarProps) {
           className="flex flex-col items-center gap-1 focus-visible:outline-none group"
           title="Trionyx Operations Portal"
         >
-          {/* Performance Tyre & Wheel Rim Chassis: Trionyx Operations Emblem */}
+          {/* Compact brand mark: the Trionyx X with its signature orange arc. */}
           <div className="w-11 h-11 rounded-[5px] bg-[#22221E] border border-[rgba(255,255,255,0.10)] group-hover:border-[#F26522]/55 group-hover:bg-[#252520] group-focus-visible:border-[#F26522] flex items-center justify-center transition-colors">
-            <TrionyxOpsMarkAnimated size={28} className="w-7 h-7" />
+            <svg
+              viewBox="0 0 48 48"
+              className="w-8 h-8 shrink-0"
+              fill="none"
+              role="img"
+              aria-label="Trionyx"
+            >
+              <path
+                d="M7 19.5C15.5 10.5 30.8 7.5 42 12.2C39.1 15.1 35.8 18.3 32.4 21.7"
+                stroke="#F26522"
+                strokeWidth="3.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M17.2 19.2L30.6 33.5M30.4 19.2L17 33.5"
+                stroke="#F5F3EC"
+                strokeWidth="3.8"
+                strokeLinecap="square"
+              />
+              <path
+                d="M30.4 19.2L17 33.5"
+                stroke="#F26522"
+                strokeWidth="3.8"
+                strokeLinecap="square"
+              />
+            </svg>
           </div>
           <span className="font-mono text-[9px] font-medium tracking-[0.12em] text-[#A9A59C] px-1 py-0.2 rounded-[2px] bg-[#22221E] border border-[rgba(255,255,255,0.06)]">
             OPS

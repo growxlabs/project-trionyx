@@ -2,16 +2,16 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import {
+  IconBuildingOff,
+  IconFileDescription,
+  IconHistory,
+  IconMapPin2,
+  IconPackageOff,
+  IconReportAnalytics,
+} from '@tabler/icons-react';
 import { StockAvailableIllustration } from './StockAvailableIllustration';
 import { QueueEmptyIllustration } from './QueueEmptyIllustration';
-import {
-  EmptyStockTrayIcon,
-  DisconnectedWorkshopIcon,
-  ApplicationDocumentIcon,
-  OperationsBoardIcon,
-  ChronologicalLedgerIcon,
-  LocationStockLayersIcon,
-} from '../../components/shell/OperationsIcons';
 
 export type CockpitTab =
   | 'scorecard'
@@ -119,7 +119,8 @@ export function OverviewCockpit({
               }`}
             >
               <div className="flex items-center gap-2 min-w-0">
-                <EmptyStockTrayIcon
+                <IconPackageOff
+                  stroke={1.6}
                   className={`w-4 h-4 shrink-0 transition-colors ${
                     activeTab === 'stockout'
                       ? 'text-[var(--status-danger)]'
@@ -152,7 +153,8 @@ export function OverviewCockpit({
               }`}
             >
               <div className="flex items-center gap-2 min-w-0">
-                <DisconnectedWorkshopIcon
+                <IconBuildingOff
+                  stroke={1.6}
                   className={`w-4 h-4 shrink-0 transition-colors ${
                     activeTab === 'unassigned-dealers'
                       ? 'text-[var(--status-warning)]'
@@ -185,7 +187,8 @@ export function OverviewCockpit({
               }`}
             >
               <div className="flex items-center gap-2 min-w-0">
-                <ApplicationDocumentIcon
+                <IconFileDescription
+                  stroke={1.6}
                   className={`w-4 h-4 shrink-0 transition-colors ${
                     activeTab === 'enquiries'
                       ? 'text-[#F26522]'
@@ -227,7 +230,8 @@ export function OverviewCockpit({
               }`}
             >
               <div className="flex items-center gap-2 min-w-0">
-                <OperationsBoardIcon
+                <IconReportAnalytics
+                  stroke={1.6}
                   className={`w-4 h-4 shrink-0 transition-colors ${
                     activeTab === 'scorecard' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
                   }`}
@@ -248,7 +252,8 @@ export function OverviewCockpit({
               }`}
             >
               <div className="flex items-center gap-2 min-w-0">
-                <ChronologicalLedgerIcon
+                <IconHistory
+                  stroke={1.6}
                   className={`w-4 h-4 shrink-0 transition-colors ${
                     activeTab === 'audit-journal' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
                   }`}
@@ -269,7 +274,8 @@ export function OverviewCockpit({
               }`}
             >
               <div className="flex items-center gap-2 min-w-0">
-                <LocationStockLayersIcon
+                <IconMapPin2
+                  stroke={1.6}
                   className={`w-4 h-4 shrink-0 transition-colors ${
                     activeTab === 'facility' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
                   }`}
@@ -303,7 +309,7 @@ export function OverviewCockpit({
                 <thead>
                   <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
                     <th className="py-2.5 px-4 font-semibold">Operational Domain</th>
-                    <th className="py-2.5 px-4 font-semibold text-center w-36">Current Balance</th>
+                    <th className="py-2.5 px-4 font-semibold text-right w-36">Current Balance</th>
                     <th className="py-2.5 px-4 font-semibold text-center w-40">Status</th>
                     <th className="py-2.5 px-4 font-semibold text-right w-40">Action</th>
                   </tr>
@@ -314,7 +320,7 @@ export function OverviewCockpit({
                       <td className="py-2.5 px-4 text-[14px] font-medium text-[var(--text-primary)]">
                         {row.label}
                       </td>
-                      <td className="py-2.5 px-4 text-[14px] font-semibold text-center text-[var(--text-primary)] font-sans">
+                      <td className="py-2.5 px-4 text-[14px] font-semibold text-right text-[var(--text-primary)] font-sans">
                         {row.balance} <span className="text-[13px] font-normal text-[var(--text-secondary)] ml-1">{row.unit}</span>
                       </td>
                       <td className="py-2.5 px-4 text-center">
@@ -329,7 +335,9 @@ export function OverviewCockpit({
                               : 'bg-[var(--surface-subtle)] text-[var(--text-secondary)] border border-[var(--border)]'
                           }`}
                         >
-                          {row.status}
+                          {row.balance === 0 && (row.status === 'Normal' || row.status === 'Audited')
+                            ? 'None yet'
+                            : row.status}
                         </span>
                       </td>
                       <td className="py-2.5 px-4 text-right">

@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@tabler/icons-react": "^3.48.0",
     "@trionyx/api": "workspace:*",
     "@trionyx/auth": "workspace:*",
     "@trionyx/database": "workspace:*",
