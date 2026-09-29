@@ -1001,9 +1001,6 @@ export function ProductDetailView({
           <div className="p-4 border-b border-[var(--border)] flex items-center justify-between">
             <div>
               <h2 className="text-[15px] font-semibold text-[var(--text-primary)] m-0">Serial Movement History</h2>
-              <p className="text-[12.5px] text-[var(--text-secondary)] mt-0.5 m-0">
-                Immutable audit trail of receipts, facility transfers, and status adjustments for this product.
-              </p>
             </div>
             <Link
               href="/inventory/movements"
@@ -1017,7 +1014,7 @@ export function ProductDetailView({
             <ProductEmptyState
               kind="attention"
               title="No serial movement history"
-              description="Units of this formula have not undergone any facility transfers, receipts, or status adjustments yet."
+              description="No physical inventory transactions or status transitions have been recorded for this product yet."
             />
           ) : (
             <div className="overflow-x-auto border border-[var(--border)] rounded-[3px]">
