@@ -26,6 +26,9 @@ import {
   IconUpload,
   IconTrash,
   IconAdjustmentsHorizontal,
+  IconBarcode,
+  IconPhoto,
+  IconHistory,
 } from '@tabler/icons-react';
 import {
   OperationalSummaryStrip,
@@ -389,39 +392,230 @@ export function ProductDetailView({
         ]}
       />
 
-      {/* Tabs Bar */}
-      <div className="border-b border-[var(--border)] flex items-center gap-1 overflow-x-auto no-scrollbar pb-px">
-        {[
-          { key: 'overview', label: 'Overview' },
-          { key: 'serials', label: `Tracked Serials (${serials.length})` },
-          { key: 'specs', label: `Specifications (${product.specifications.length})` },
-          { key: 'media', label: `Media & Docs (${product.media.length})` },
-          { key: 'movements', label: `Movements (${movements.length})` },
-          {
-            key: 'warranty',
-            label: `Warranty Policy (${
-              policy?.status === 'ACTIVE'
-                ? `${policy.durationMonths}m`
-                : policy
-                ? 'Inactive'
-                : 'Not Set'
-            })`,
-          },
-        ].map((tab) => (
-          <button
-            key={tab.key}
-            type="button"
-            onClick={() => setActiveTab(tab.key as typeof activeTab)}
-            className={`px-3 py-2 text-[12.5px] font-medium border-b-2 whitespace-nowrap transition-colors cursor-pointer ${
-              activeTab === tab.key
-                ? 'border-[var(--accent)] text-[var(--accent-text)] font-semibold'
-                : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border)]'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      {/* ======================================================== */}
+      {/* TWO-COLUMN LAYOUT: INSIDE PAGE NAVBAR + CONTENT AREA    */}
+      {/* ======================================================== */}
+      <div className="flex flex-col lg:flex-row gap-4 items-start w-full">
+        {/* ======================================================== */}
+        {/* 1. LEFT INSIDE PAGE NAVBAR (Operational Index / Tabs)    */}
+        {/* ======================================================== */}
+        <aside className="w-full lg:w-72 shrink-0 bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-3 space-y-4">
+          {/* Section 1: Catalog & Formulation */}
+          <div>
+            <div className="px-2 pb-1.5 flex items-center justify-between text-[12px] font-semibold text-[var(--text-secondary)]">
+              <span>Catalog & Specs</span>
+              <span className="text-[11.5px] font-normal text-[var(--text-muted)]">
+                {product.specifications.length} attrs
+              </span>
+            </div>
+
+            <div className="space-y-0.5">
+              {/* Formulation Overview */}
+              <button
+                type="button"
+                onClick={() => setActiveTab('overview')}
+                className={`w-full text-left px-2.5 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
+                  activeTab === 'overview'
+                    ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--accent)]'
+                    : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
+                }`}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <IconFileText
+                    stroke={1.6}
+                    className={`w-4 h-4 shrink-0 transition-colors ${
+                      activeTab === 'overview' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
+                    }`}
+                  />
+                  <span className="truncate">Formulation Overview</span>
+                </div>
+                <span className="text-[11px] font-medium px-2 py-0.5 rounded-[2px] tabular-nums shrink-0 ml-2 bg-[var(--surface-subtle)] text-[var(--text-muted)]">
+                  Core
+                </span>
+              </button>
+
+              {/* Technical Specifications */}
+              <button
+                type="button"
+                onClick={() => setActiveTab('specs')}
+                className={`w-full text-left px-2.5 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
+                  activeTab === 'specs'
+                    ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--accent)]'
+                    : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
+                }`}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <IconAdjustmentsHorizontal
+                    stroke={1.6}
+                    className={`w-4 h-4 shrink-0 transition-colors ${
+                      activeTab === 'specs' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
+                    }`}
+                  />
+                  <span className="truncate">Specifications</span>
+                </div>
+                <span className="text-[11px] font-medium px-2 py-0.5 rounded-[2px] tabular-nums shrink-0 ml-2 bg-[var(--surface-subtle)] text-[var(--text-muted)]">
+                  {product.specifications.length}
+                </span>
+              </button>
+
+              {/* Media & Documentation */}
+              <button
+                type="button"
+                onClick={() => setActiveTab('media')}
+                className={`w-full text-left px-2.5 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
+                  activeTab === 'media'
+                    ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--accent)]'
+                    : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
+                }`}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <IconPhoto
+                    stroke={1.6}
+                    className={`w-4 h-4 shrink-0 transition-colors ${
+                      activeTab === 'media' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
+                    }`}
+                  />
+                  <span className="truncate">Media & Docs</span>
+                </div>
+                <span className="text-[11px] font-medium px-2 py-0.5 rounded-[2px] tabular-nums shrink-0 ml-2 bg-[var(--surface-subtle)] text-[var(--text-muted)]">
+                  {product.media.length}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Section 2: Physical Inventory & Ledger */}
+          <div className="pt-2 border-t border-[var(--border)]">
+            <div className="px-2 pb-1.5 flex items-center justify-between text-[12px] font-semibold text-[var(--text-secondary)]">
+              <span>Inventory & Ledger</span>
+              <span className="text-[11.5px] font-normal text-[var(--text-muted)]">
+                {totalAvailable} available
+              </span>
+            </div>
+
+            <div className="space-y-0.5">
+              {/* Tracked Serials */}
+              <button
+                type="button"
+                onClick={() => setActiveTab('serials')}
+                className={`w-full text-left px-2.5 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
+                  activeTab === 'serials'
+                    ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--accent)]'
+                    : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
+                }`}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <IconBarcode
+                    stroke={1.6}
+                    className={`w-4 h-4 shrink-0 transition-colors ${
+                      activeTab === 'serials' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
+                    }`}
+                  />
+                  <span className="truncate">Tracked Serials</span>
+                </div>
+                <span
+                  className={`text-[11px] font-medium px-2 py-0.5 rounded-[2px] tabular-nums shrink-0 ml-2 ${
+                    totalAvailable > 0
+                      ? 'bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]'
+                      : 'bg-[var(--surface-subtle)] text-[var(--text-muted)]'
+                  }`}
+                >
+                  {serials.length}
+                </span>
+              </button>
+
+              {/* Movement History */}
+              <button
+                type="button"
+                onClick={() => setActiveTab('movements')}
+                className={`w-full text-left px-2.5 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
+                  activeTab === 'movements'
+                    ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--accent)]'
+                    : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
+                }`}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <IconHistory
+                    stroke={1.6}
+                    className={`w-4 h-4 shrink-0 transition-colors ${
+                      activeTab === 'movements' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
+                    }`}
+                  />
+                  <span className="truncate">Serial Movements</span>
+                </div>
+                <span className="text-[11px] font-medium px-2 py-0.5 rounded-[2px] tabular-nums shrink-0 ml-2 bg-[var(--surface-subtle)] text-[var(--text-muted)]">
+                  {movements.length}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Section 3: Governance & Coverage */}
+          <div className="pt-2 border-t border-[var(--border)]">
+            <div className="px-2 pb-1.5 flex items-center justify-between text-[12px] font-semibold text-[var(--text-secondary)]">
+              <span>Governance</span>
+            </div>
+
+            <div className="space-y-0.5">
+              {/* Warranty Policy */}
+              <button
+                type="button"
+                onClick={() => setActiveTab('warranty')}
+                className={`w-full text-left px-2.5 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
+                  activeTab === 'warranty'
+                    ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--accent)]'
+                    : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
+                }`}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <IconShieldCheck
+                    stroke={1.6}
+                    className={`w-4 h-4 shrink-0 transition-colors ${
+                      activeTab === 'warranty' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
+                    }`}
+                  />
+                  <span className="truncate">Warranty Policy</span>
+                </div>
+                <span
+                  className={`text-[11px] font-medium px-2 py-0.5 rounded-[2px] tabular-nums shrink-0 ml-2 ${
+                    policy?.status === 'ACTIVE'
+                      ? 'bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]'
+                      : policy
+                      ? 'bg-[var(--surface-subtle)] text-[var(--text-muted)]'
+                      : 'bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]'
+                  }`}
+                >
+                  {policy?.status === 'ACTIVE'
+                    ? `${policy.durationMonths}m`
+                    : policy
+                    ? 'Inactive'
+                    : 'Not Set'}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Persistent Meta / Context Card */}
+          <div className="pt-3 border-t border-[var(--border)] text-[12px] space-y-2">
+            <div className="flex items-center justify-between text-[var(--text-muted)]">
+              <span className="uppercase font-semibold text-[10px] tracking-wider">Product Code</span>
+              <span className="font-mono font-bold text-[var(--accent-text)]">{product.productCode}</span>
+            </div>
+            <div className="flex items-center justify-between text-[var(--text-muted)]">
+              <span className="uppercase font-semibold text-[10px] tracking-wider">Tracking</span>
+              <span className="font-medium text-[var(--status-success)] text-[11.5px]">Individual Serials</span>
+            </div>
+            <div className="flex items-center justify-between text-[var(--text-muted)]">
+              <span className="uppercase font-semibold text-[10px] tracking-wider">Catalog</span>
+              <span className="text-[var(--text-secondary)] font-medium text-[11.5px]">{product.publicVisibility}</span>
+            </div>
+          </div>
+        </aside>
+
+        {/* ======================================================== */}
+        {/* 2. RIGHT MAIN CONTENT AREA                               */}
+        {/* ======================================================== */}
+        <div className="flex-1 min-w-0 w-full space-y-4">
 
       {/* Tab 1: Overview */}
       {activeTab === 'overview' && (
@@ -1028,6 +1222,9 @@ export function ProductDetailView({
           </div>
         </div>
       )}
+
+        </div>
+      </div>
 
       {/* Archive Product Confirmation Modal */}
       <ConfirmDialog
