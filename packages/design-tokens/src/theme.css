@@ -56,6 +56,17 @@
   --context-strip-badge-border: #D8DCE3;
   --context-strip-badge-text: #171714;
 
+  /* Canopy / L-Frame Shell Tokens (Light Mode) */
+  --canopy-bg: #E4E7EC;
+  --canopy-plate: #FFFFFF;
+  --canopy-border: rgba(17, 24, 39, 0.10);
+  --canopy-border-strong: rgba(17, 24, 39, 0.18);
+  --canopy-hover-bg: rgba(17, 24, 39, 0.06);
+  --canopy-text-primary: #111827;
+  --canopy-text-secondary: #4B5563;
+  --canopy-text-muted: #6B7280;
+  --canopy-divider: rgba(17, 24, 39, 0.14);
+
   /* Account Dropdown Menu Tokens (Light Mode) */
   --menu-bg: #FFFFFF;
   --menu-border: #E5E3DB;
@@ -127,6 +138,17 @@
   --context-strip-badge-bg: #2D2C27;
   --context-strip-badge-border: rgba(255, 255, 255, 0.08);
   --context-strip-badge-text: #F7F6F0;
+
+  /* Canopy / L-Frame Shell Tokens (Dark Mode) */
+  --canopy-bg: #171714;
+  --canopy-plate: #22221E;
+  --canopy-border: rgba(255, 255, 255, 0.08);
+  --canopy-border-strong: rgba(255, 255, 255, 0.16);
+  --canopy-hover-bg: rgba(255, 255, 255, 0.06);
+  --canopy-text-primary: #F7F6F0;
+  --canopy-text-secondary: #B7B2A8;
+  --canopy-text-muted: #858178;
+  --canopy-divider: rgba(255, 255, 255, 0.12);
 
   /* Account Dropdown Menu Tokens (Dark Mode) */
   --menu-bg: #22221E;

@@ -11,7 +11,7 @@ interface InternalShellProps {
 
 export function InternalShell({ user, children }: InternalShellProps) {
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--text-primary)] flex flex-col lg:flex-row antialiased transition-colors duration-150">
+    <div className="min-h-screen bg-[var(--canopy-bg)] text-[var(--text-primary)] flex flex-col lg:flex-row antialiased transition-colors duration-150">
       {/* Desktop Sidebar (hidden on mobile) */}
       <Sidebar user={user} />
 
@@ -20,11 +20,11 @@ export function InternalShell({ user, children }: InternalShellProps) {
         {/* Mobile Header + Slide-out Navigation (hidden on desktop) */}
         <MobileNavigation user={user} />
 
-        {/* Desktop Topbar */}
+        {/* Desktop Topbar — unified canopy header */}
         <Topbar user={user} />
 
-        {/* Workbench Canvas */}
-        <div className="flex-1 flex flex-col bg-[var(--background)] overflow-hidden min-h-0">
+        {/* Workbench Canvas — nested with 16px corner curve meeting the canopy */}
+        <div className="flex-1 flex flex-col bg-[var(--background)] lg:rounded-tl-[16px] lg:border-t lg:border-l border-[var(--border)] overflow-hidden min-h-0 transition-colors duration-150">
           {/* Main Content Area */}
           <main className="flex-1 px-4 py-4 sm:px-6 sm:py-5 lg:px-7 lg:py-5 w-full">
             <div className="w-full">

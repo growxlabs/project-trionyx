@@ -380,12 +380,12 @@ export function ProductDetailView({
             detail: 'registered',
           },
           {
-            label: 'Media & Docs',
+            label: 'Assets',
             value: product.media.length,
-            detail: 'assets',
+            detail: 'files',
           },
           {
-            label: 'Serial Movements',
+            label: 'Movements',
             value: movements.length,
             detail: 'events',
           },
@@ -400,17 +400,14 @@ export function ProductDetailView({
         {/* 1. LEFT INSIDE PAGE NAVBAR (Operational Index / Tabs)    */}
         {/* ======================================================== */}
         <aside className="w-full lg:w-72 shrink-0 bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-3 space-y-4">
-          {/* Section 1: Catalog & Formulation */}
+          {/* Section 1: Product details */}
           <div>
-            <div className="px-2 pb-1.5 flex items-center justify-between text-[12px] font-semibold text-[var(--text-secondary)]">
-              <span>Catalog & Specs</span>
-              <span className="text-[11.5px] font-normal text-[var(--text-muted)]">
-                {product.specifications.length} attrs
-              </span>
+            <div className="px-2 pb-1.5 text-[12px] font-semibold text-[var(--text-secondary)]">
+              Product
             </div>
 
             <div className="space-y-0.5">
-              {/* Formulation Overview */}
+              {/* Overview */}
               <button
                 type="button"
                 onClick={() => setActiveTab('overview')}
@@ -427,11 +424,8 @@ export function ProductDetailView({
                       activeTab === 'overview' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
                     }`}
                   />
-                  <span className="truncate">Formulation Overview</span>
+                  <span className="truncate">Overview</span>
                 </div>
-                <span className="text-[11px] font-medium px-2 py-0.5 rounded-[2px] tabular-nums shrink-0 ml-2 bg-[var(--surface-subtle)] text-[var(--text-muted)]">
-                  Core
-                </span>
               </button>
 
               {/* Technical Specifications */}
@@ -475,7 +469,7 @@ export function ProductDetailView({
                       activeTab === 'media' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
                     }`}
                   />
-                  <span className="truncate">Media & Docs</span>
+                  <span className="truncate">Files</span>
                 </div>
                 <span className="text-[11px] font-medium px-2 py-0.5 rounded-[2px] tabular-nums shrink-0 ml-2 bg-[var(--surface-subtle)] text-[var(--text-muted)]">
                   {product.media.length}
@@ -484,13 +478,10 @@ export function ProductDetailView({
             </div>
           </div>
 
-          {/* Section 2: Physical Inventory & Ledger */}
+          {/* Section 2: Inventory */}
           <div className="pt-2 border-t border-[var(--border)]">
-            <div className="px-2 pb-1.5 flex items-center justify-between text-[12px] font-semibold text-[var(--text-secondary)]">
-              <span>Inventory & Ledger</span>
-              <span className="text-[11.5px] font-normal text-[var(--text-muted)]">
-                {totalAvailable} available
-              </span>
+            <div className="px-2 pb-1.5 text-[12px] font-semibold text-[var(--text-secondary)]">
+              Inventory
             </div>
 
             <div className="space-y-0.5">
@@ -550,10 +541,10 @@ export function ProductDetailView({
             </div>
           </div>
 
-          {/* Section 3: Governance & Coverage */}
+          {/* Section 3: Warranty */}
           <div className="pt-2 border-t border-[var(--border)]">
-            <div className="px-2 pb-1.5 flex items-center justify-between text-[12px] font-semibold text-[var(--text-secondary)]">
-              <span>Governance</span>
+            <div className="px-2 pb-1.5 text-[12px] font-semibold text-[var(--text-secondary)]">
+              Warranty
             </div>
 
             <div className="space-y-0.5">
@@ -595,21 +586,6 @@ export function ProductDetailView({
             </div>
           </div>
 
-          {/* Persistent Meta / Context Card */}
-          <div className="pt-3 border-t border-[var(--border)] text-[12px] space-y-2">
-            <div className="flex items-center justify-between text-[var(--text-muted)]">
-              <span className="uppercase font-semibold text-[10px] tracking-wider">Product Code</span>
-              <span className="font-mono font-bold text-[var(--accent-text)]">{product.productCode}</span>
-            </div>
-            <div className="flex items-center justify-between text-[var(--text-muted)]">
-              <span className="uppercase font-semibold text-[10px] tracking-wider">Tracking</span>
-              <span className="font-medium text-[var(--status-success)] text-[11.5px]">Individual Serials</span>
-            </div>
-            <div className="flex items-center justify-between text-[var(--text-muted)]">
-              <span className="uppercase font-semibold text-[10px] tracking-wider">Catalog</span>
-              <span className="text-[var(--text-secondary)] font-medium text-[11.5px]">{product.publicVisibility}</span>
-            </div>
-          </div>
         </aside>
 
         {/* ======================================================== */}
@@ -622,54 +598,12 @@ export function ProductDetailView({
         <div className="space-y-4">
           <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-5 shadow-[0_1px_2px_rgba(23,23,20,0.02)] space-y-4">
             <h2 className="text-[14px] font-semibold text-[var(--text-primary)] pb-2.5 border-b border-[var(--border)] m-0">
-              Formulation Summary
+              Product Overview
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="md:col-span-2 space-y-4">
-                <div>
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-secondary)] block mb-1">
-                    Short Description
-                  </span>
-                  <p className="text-[13px] text-[var(--text-primary)] leading-relaxed m-0">
-                    {product.shortDescription || 'No short description provided.'}
-                  </p>
-                </div>
-                <div>
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-secondary)] block mb-1">
-                    Technical Formulation Description
-                  </span>
-                  <p className="text-[13px] text-[var(--text-primary)] leading-relaxed whitespace-pre-line m-0">
-                    {product.description || 'No detailed technical description recorded.'}
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-[var(--surface-subtle)] border border-[var(--border)] rounded-[3px] p-4 space-y-3 self-start text-[12px]">
-                <div>
-                  <span className="text-[var(--text-muted)] block text-[10.5px] uppercase font-semibold">Product ID</span>
-                  <span className="font-mono text-[var(--text-primary)] break-all">{product.id}</span>
-                </div>
-                <div>
-                  <span className="text-[var(--text-muted)] block text-[10.5px] uppercase font-semibold">Product Code</span>
-                  <span className="font-mono font-bold text-[var(--accent-text)]">{product.productCode}</span>
-                </div>
-                <div>
-                  <span className="text-[var(--text-muted)] block text-[10.5px] uppercase font-semibold">Slug</span>
-                  <span className="font-mono text-[var(--text-primary)]">{product.slug}</span>
-                </div>
-                <div>
-                  <span className="text-[var(--text-muted)] block text-[10.5px] uppercase font-semibold">Tracking Model</span>
-                  <span className="font-semibold text-[var(--status-success)]">Individual Serial Numbers</span>
-                </div>
-                <div>
-                  <span className="text-[var(--text-muted)] block text-[10.5px] uppercase font-semibold">Created At</span>
-                  <span className="text-[var(--text-primary)]">{new Date(product.createdAt).toLocaleString()}</span>
-                </div>
-                <div>
-                  <span className="text-[var(--text-muted)] block text-[10.5px] uppercase font-semibold">Last Updated</span>
-                  <span className="text-[var(--text-primary)]">{new Date(product.updatedAt).toLocaleString()}</span>
-                </div>
-              </div>
+            <div>
+              <p className="text-[13px] text-[var(--text-primary)] leading-relaxed m-0">
+                {product.shortDescription || 'Product overview has not been added yet.'}
+              </p>
             </div>
 
             {/* Warranty Status Banner in Overview */}
@@ -680,7 +614,7 @@ export function ProductDetailView({
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[13px] font-semibold text-[var(--text-primary)]">Warranty Policy:</span>
+                    <span className="text-[13px] font-semibold text-[var(--text-primary)]">Warranty</span>
                     <span
                       className={`inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-semibold uppercase tracking-wider border ${
                         policy?.status === 'ACTIVE'
@@ -691,17 +625,12 @@ export function ProductDetailView({
                       }`}
                     >
                       {policy?.status === 'ACTIVE'
-                        ? `${policy.durationMonths} Months (${Math.round((policy.durationMonths / 12) * 10) / 10} yrs)`
+                        ? `${policy.durationMonths} months`
                         : policy
                         ? 'Inactive'
-                        : 'Not Configured'}
+                        : 'No policy'}
                     </span>
                   </div>
-                  <p className="text-[12px] text-[var(--text-secondary)] m-0 mt-0.5">
-                    {policy?.status === 'ACTIVE'
-                      ? 'Authorized distributors and dealers can register warranty cards for active serial numbers.'
-                      : 'Dealers cannot activate warranties until an active policy is configured.'}
-                  </p>
                 </div>
               </div>
 
@@ -710,7 +639,7 @@ export function ProductDetailView({
                 onClick={() => setActiveTab('warranty')}
                 className="text-[12px] font-semibold text-[var(--accent-text)] hover:underline self-start sm:self-auto cursor-pointer"
               >
-                Manage Policy →
+                {policy ? 'Manage policy' : 'Set up policy'} →
               </button>
             </div>
           </div>
@@ -1000,22 +929,23 @@ export function ProductDetailView({
         <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] overflow-hidden shadow-[0_1px_3px_rgba(23,23,20,0.03)]">
           <div className="p-4 border-b border-[var(--border)] flex items-center justify-between">
             <div>
-              <h2 className="text-[15px] font-semibold text-[var(--text-primary)] m-0">Serial Movement History</h2>
+              <h2 className="text-[15px] font-semibold text-[var(--text-primary)] m-0">Serial Movements</h2>
             </div>
             <Link
               href="/inventory/movements"
               className="text-[12.5px] font-medium text-[var(--accent-text)] hover:underline"
             >
-              Full Ledger View →
+              View all movements →
             </Link>
           </div>
 
           {movements.length === 0 ? (
-            <ProductEmptyState
-              kind="attention"
-              title="No serial movement history"
-              description="No physical inventory transactions or status transitions have been recorded for this product yet."
-            />
+            <div className="min-h-[300px] flex flex-col items-center justify-center px-6 py-10 text-center">
+              <div className="w-12 h-12 rounded-full bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-center text-[var(--text-secondary)]">
+                <IconHistory className="w-6 h-6" stroke={1.6} />
+              </div>
+              <h3 className="mt-4 mb-0 text-[15px] font-semibold text-[var(--text-primary)]">No movements yet</h3>
+            </div>
           ) : (
             <div className="overflow-x-auto border border-[var(--border)] rounded-[3px]">
               <table className="w-full text-left border-collapse text-[13px]">

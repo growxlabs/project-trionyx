@@ -139,7 +139,7 @@ export function Sidebar({ user }: SidebarProps) {
   return (
     <aside
       aria-label="Navigation Rail"
-      className="hidden lg:flex w-[72px] shrink-0 bg-[var(--surface-raised)] border-r border-[var(--border)] min-h-screen h-screen sticky top-0 flex-col items-center justify-between pt-4 pb-4 select-none z-40 transition-colors duration-150"
+      className="hidden lg:flex w-[72px] shrink-0 bg-[var(--canopy-bg)] min-h-screen h-screen sticky top-0 flex-col items-center justify-between pt-4 pb-4 select-none z-40 transition-colors duration-150"
     >
       {/* 1. TOP SECTION: Compact Trionyx Geometric Mark + Mode Badge */}
       <div className="flex flex-col items-center gap-1.5">
@@ -149,7 +149,7 @@ export function Sidebar({ user }: SidebarProps) {
           title="Trionyx Operations Portal"
         >
           {/* Compact brand mark: the Trionyx X with its signature orange arc. */}
-          <div className="w-11 h-11 rounded-[5px] bg-[var(--surface-subtle)] border border-[var(--border)] group-hover:border-[var(--accent)]/55 group-hover:bg-[var(--surface-subtle)]/80 group-focus-visible:border-[var(--accent)] flex items-center justify-center transition-colors">
+          <div className="w-11 h-11 rounded-[5px] bg-[var(--canopy-plate)] border border-[var(--canopy-border)] group-hover:border-[var(--accent)]/55 group-hover:bg-[var(--canopy-hover-bg)] group-focus-visible:border-[var(--accent)] flex items-center justify-center transition-colors shadow-xs">
             <svg
               viewBox="0 0 48 48"
               className="w-8 h-8 shrink-0"
@@ -167,7 +167,7 @@ export function Sidebar({ user }: SidebarProps) {
               <path
                 d="M17.2 19.2L30.6 33.5M30.4 19.2L17 33.5"
                 stroke="currentColor"
-                className="text-[var(--text-primary)]"
+                className="text-[var(--canopy-text-primary)]"
                 strokeWidth="3.8"
                 strokeLinecap="square"
               />
@@ -179,7 +179,7 @@ export function Sidebar({ user }: SidebarProps) {
               />
             </svg>
           </div>
-          <span className="font-mono text-[9px] font-bold tracking-[0.12em] text-[var(--text-secondary)] px-1.5 py-0.5 rounded-[2px] bg-[var(--surface-subtle)] border border-[var(--border)]">
+          <span className="font-mono text-[9px] font-bold tracking-[0.12em] text-[var(--canopy-text-secondary)] px-1.5 py-0.5 rounded-[2px] bg-[var(--canopy-plate)] border border-[var(--canopy-border)]">
             OPS
           </span>
         </Link>
@@ -202,7 +202,7 @@ export function Sidebar({ user }: SidebarProps) {
               className={`w-11 h-11 rounded-[5px] border flex items-center justify-center transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2 ${
                 item.active
                   ? 'bg-[var(--accent-soft)] border-[var(--accent-soft-border)] text-[var(--accent)] font-semibold'
-                  : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)] hover:border-[var(--border)]'
+                  : 'border-transparent text-[var(--canopy-text-secondary)] hover:text-[var(--canopy-text-primary)] hover:bg-[var(--canopy-hover-bg)] hover:border-[var(--canopy-border)]'
               }`}
             >
               {item.icon}
@@ -224,7 +224,7 @@ export function Sidebar({ user }: SidebarProps) {
             type="button"
             onClick={() => setPreference(preference === 'dark' ? 'light' : 'dark')}
             aria-label={`Switch to ${preference === 'dark' ? 'light' : 'dark'} theme`}
-            className="w-11 h-11 rounded-[5px] border border-transparent flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)] hover:border-[var(--border)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2 cursor-pointer"
+            className="w-11 h-11 rounded-[5px] border border-transparent flex items-center justify-center text-[var(--canopy-text-secondary)] hover:text-[var(--canopy-text-primary)] hover:bg-[var(--canopy-hover-bg)] hover:border-[var(--canopy-border)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2 cursor-pointer"
             title="Settings"
           >
             <ControlSlidersIcon className="w-5 h-5 shrink-0" />
@@ -241,7 +241,7 @@ export function Sidebar({ user }: SidebarProps) {
             onClick={() => setIsUserMenuOpen((prev) => !prev)}
             aria-expanded={isUserMenuOpen}
             aria-label="User Account Menu"
-            className="w-10 h-10 rounded-[4px] bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--text-primary)] text-[12px] font-mono font-bold flex items-center justify-center hover:border-[var(--border-strong)] transition-colors duration-150 cursor-pointer"
+            className="w-10 h-10 rounded-[4px] bg-[var(--canopy-plate)] border border-[var(--canopy-border)] text-[var(--canopy-text-primary)] text-[12px] font-mono font-bold flex items-center justify-center hover:border-[var(--canopy-border-strong)] transition-colors duration-150 cursor-pointer shadow-xs"
           >
             {initials}
           </button>

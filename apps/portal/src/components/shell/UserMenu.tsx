@@ -84,14 +84,14 @@ export function UserMenu({ user }: UserMenuProps) {
         onClick={() => setIsOpen((prev) => !prev)}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
-        className="flex items-center gap-2 px-2.5 py-1 rounded-[4px] hover:bg-[var(--surface-subtle)] text-[13px] font-medium text-[var(--text-primary)] transition-colors duration-150 cursor-pointer focus:outline-none focus:ring-1 focus:ring-[var(--border)]"
+        className="flex items-center gap-2 px-2.5 py-1 rounded-[4px] hover:bg-[var(--canopy-hover-bg)] text-[13px] font-medium text-[var(--canopy-text-primary)] transition-colors duration-150 cursor-pointer focus:outline-none focus:ring-1 focus:ring-[var(--canopy-border)]"
       >
-        <span className="w-5 h-5 rounded-full bg-[var(--surface-subtle)] border border-[var(--border)] text-[10px] font-mono font-semibold text-[var(--text-primary)] flex items-center justify-center shrink-0">
+        <span className="w-5 h-5 rounded-full bg-[var(--canopy-plate)] border border-[var(--canopy-border)] text-[10px] font-mono font-semibold text-[var(--canopy-text-primary)] flex items-center justify-center shrink-0">
           {initials}
         </span>
         <span>{user.name}</span>
         <svg
-          className={`w-3.5 h-3.5 text-[var(--text-muted)] transition-transform duration-150 ${
+          className={`w-3.5 h-3.5 text-[var(--canopy-text-muted)] transition-transform duration-150 ${
             isOpen ? 'rotate-180' : ''
           }`}
           viewBox="0 0 24 24"
