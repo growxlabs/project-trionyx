@@ -16,20 +16,20 @@ import { ConfirmDialog } from '../../../components/ui/ConfirmDialog';
 import { Modal } from '../../../components/ui/Modal';
 import { SerialNumberLookupModal } from '../../../components/inventory/SerialNumberLookupModal';
 import {
-  IconArrowLeft,
-  IconSearch,
-  IconEdit,
-  IconArchive,
-  IconPlus,
-  IconFileText,
-  IconShieldCheck,
-  IconUpload,
-  IconTrash,
-  IconAdjustmentsHorizontal,
-  IconBarcode,
-  IconPhoto,
-  IconHistory,
-} from '@tabler/icons-react';
+  ArrowLeft,
+  Search,
+  Edit,
+  Archive,
+  Add,
+  Document,
+  Security,
+  Upload,
+  TrashCan,
+  SettingsAdjust,
+  Barcode,
+  Image,
+  Time,
+} from '@carbon/icons-react';
 import {
   OperationalSummaryStrip,
   StatusBadge,
@@ -304,7 +304,7 @@ export function ProductDetailView({
             href="/products"
             className="inline-flex items-center gap-1.5 text-[12px] font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
           >
-            <IconArrowLeft className="w-3.5 h-3.5" stroke={1.8} />
+            <ArrowLeft size={14} className="shrink-0" />
             Products Registry
           </Link>
         </div>
@@ -335,7 +335,7 @@ export function ProductDetailView({
               }}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[3px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[12.5px] font-medium transition-colors cursor-pointer"
             >
-              <IconSearch className="w-3.5 h-3.5 text-[var(--text-muted)]" stroke={1.8} />
+              <Search size={14} className="text-[var(--text-muted)] shrink-0" />
               Lookup Serial
             </button>
 
@@ -345,7 +345,7 @@ export function ProductDetailView({
                   href={`/products/${product.id}/edit`}
                   className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[3px] bg-[var(--text-primary)] hover:opacity-90 text-[var(--background)] text-[12.5px] font-semibold transition-opacity shadow-xs"
                 >
-                  <IconEdit className="w-3.5 h-3.5" stroke={1.8} />
+                  <Edit size={14} className="shrink-0" />
                   Edit Product
                 </Link>
 
@@ -355,7 +355,7 @@ export function ProductDetailView({
                     onClick={() => setShowArchiveDialog(true)}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[3px] border border-[var(--status-danger-border)] hover:bg-[var(--status-danger-soft)] text-[var(--status-danger)] text-[12.5px] font-medium transition-colors cursor-pointer"
                   >
-                    <IconArchive className="w-3.5 h-3.5" stroke={1.8} />
+                    <Archive size={14} className="shrink-0" />
                     Archive
                   </button>
                 )}
@@ -418,9 +418,9 @@ export function ProductDetailView({
                 }`}
               >
                 <div className="flex items-center gap-2 min-w-0">
-                  <IconFileText
-                    stroke={1.6}
-                    className={`w-4 h-4 shrink-0 transition-colors ${
+                  <Document
+                    size={16}
+                    className={`shrink-0 transition-colors ${
                       activeTab === 'overview' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
                     }`}
                   />
@@ -439,9 +439,9 @@ export function ProductDetailView({
                 }`}
               >
                 <div className="flex items-center gap-2 min-w-0">
-                  <IconAdjustmentsHorizontal
-                    stroke={1.6}
-                    className={`w-4 h-4 shrink-0 transition-colors ${
+                  <SettingsAdjust
+                    size={16}
+                    className={`shrink-0 transition-colors ${
                       activeTab === 'specs' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
                     }`}
                   />
@@ -463,9 +463,9 @@ export function ProductDetailView({
                 }`}
               >
                 <div className="flex items-center gap-2 min-w-0">
-                  <IconPhoto
-                    stroke={1.6}
-                    className={`w-4 h-4 shrink-0 transition-colors ${
+                  <Image
+                    size={16}
+                    className={`shrink-0 transition-colors ${
                       activeTab === 'media' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
                     }`}
                   />
@@ -496,9 +496,9 @@ export function ProductDetailView({
                 }`}
               >
                 <div className="flex items-center gap-2 min-w-0">
-                  <IconBarcode
-                    stroke={1.6}
-                    className={`w-4 h-4 shrink-0 transition-colors ${
+                  <Barcode
+                    size={16}
+                    className={`shrink-0 transition-colors ${
                       activeTab === 'serials' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
                     }`}
                   />
@@ -526,9 +526,9 @@ export function ProductDetailView({
                 }`}
               >
                 <div className="flex items-center gap-2 min-w-0">
-                  <IconHistory
-                    stroke={1.6}
-                    className={`w-4 h-4 shrink-0 transition-colors ${
+                  <Time
+                    size={16}
+                    className={`shrink-0 transition-colors ${
                       activeTab === 'movements' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
                     }`}
                   />
@@ -559,9 +559,9 @@ export function ProductDetailView({
                 }`}
               >
                 <div className="flex items-center gap-2 min-w-0">
-                  <IconShieldCheck
-                    stroke={1.6}
-                    className={`w-4 h-4 shrink-0 transition-colors ${
+                  <Security
+                    size={16}
+                    className={`shrink-0 transition-colors ${
                       activeTab === 'warranty' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
                     }`}
                   />
@@ -610,7 +610,7 @@ export function ProductDetailView({
             <div className="pt-4 border-t border-[var(--border)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-[4px] bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-center text-[var(--accent-text)] shrink-0">
-                  <IconShieldCheck className="w-4 h-4" stroke={1.8} />
+                  <Security size={16} />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
@@ -796,7 +796,7 @@ export function ProductDetailView({
                     href={`/products/${product.id}/edit`}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[3px] bg-[var(--text-primary)] text-[var(--background)] text-[12px] font-semibold hover:opacity-90 transition-opacity"
                   >
-                    <IconPlus className="w-3.5 h-3.5" stroke={1.8} />
+                    <Add size={14} className="shrink-0" />
                     Add Specifications
                   </Link>
                 ) : undefined
@@ -837,7 +837,7 @@ export function ProductDetailView({
                   onClick={() => setShowUploadModal(true)}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[3px] bg-[var(--text-primary)] hover:opacity-90 text-[var(--background)] text-[12px] font-semibold transition-opacity cursor-pointer"
                 >
-                  <IconUpload className="w-3.5 h-3.5" stroke={1.8} />
+                  <Upload size={14} className="shrink-0" />
                   Upload File
                 </button>
               )}
@@ -855,7 +855,7 @@ export function ProductDetailView({
                       onClick={() => setShowUploadModal(true)}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[3px] bg-[var(--text-primary)] text-[var(--background)] text-[12px] font-semibold hover:opacity-90 transition-opacity cursor-pointer"
                     >
-                      <IconUpload className="w-3.5 h-3.5" stroke={1.8} />
+                      <Upload size={14} className="shrink-0" />
                       Upload Document
                     </button>
                   ) : undefined
@@ -942,7 +942,7 @@ export function ProductDetailView({
           {movements.length === 0 ? (
             <div className="min-h-[300px] flex flex-col items-center justify-center px-6 py-10 text-center">
               <div className="w-12 h-12 rounded-full bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-center text-[var(--text-secondary)]">
-                <IconHistory className="w-6 h-6" stroke={1.6} />
+                <Time size={24} className="shrink-0" />
               </div>
               <h3 className="mt-4 mb-0 text-[15px] font-semibold text-[var(--text-primary)]">No movements yet</h3>
             </div>

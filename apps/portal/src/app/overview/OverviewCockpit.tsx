@@ -3,13 +3,13 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import {
-  IconBuildingOff,
-  IconFileDescription,
-  IconHistory,
-  IconMapPin2,
-  IconPackageOff,
-  IconReportAnalytics,
-} from '@tabler/icons-react';
+  Box,
+  Building,
+  DocumentTasks,
+  Analytics,
+  Time,
+  Location,
+} from '@carbon/icons-react';
 import { StockAvailableIllustration } from './StockAvailableIllustration';
 import { QueueEmptyIllustration } from './QueueEmptyIllustration';
 
@@ -119,9 +119,9 @@ export function OverviewCockpit({
               }`}
             >
               <div className="flex items-center gap-2 min-w-0">
-                <IconPackageOff
-                  stroke={1.6}
-                  className={`w-4 h-4 shrink-0 transition-colors ${
+                <Box
+                  size={16}
+                  className={`shrink-0 transition-colors ${
                     activeTab === 'stockout'
                       ? 'text-[var(--status-danger)]'
                       : outOfStockProducts.length > 0
@@ -153,9 +153,9 @@ export function OverviewCockpit({
               }`}
             >
               <div className="flex items-center gap-2 min-w-0">
-                <IconBuildingOff
-                  stroke={1.6}
-                  className={`w-4 h-4 shrink-0 transition-colors ${
+                <Building
+                  size={16}
+                  className={`shrink-0 transition-colors ${
                     activeTab === 'unassigned-dealers'
                       ? 'text-[var(--status-warning)]'
                       : unassignedDealers.length > 0
@@ -187,9 +187,9 @@ export function OverviewCockpit({
               }`}
             >
               <div className="flex items-center gap-2 min-w-0">
-                <IconFileDescription
-                  stroke={1.6}
-                  className={`w-4 h-4 shrink-0 transition-colors ${
+                <DocumentTasks
+                  size={16}
+                  className={`shrink-0 transition-colors ${
                     activeTab === 'enquiries'
                       ? 'text-[#F26522]'
                       : newEnquiriesList.length > 0
@@ -230,9 +230,9 @@ export function OverviewCockpit({
               }`}
             >
               <div className="flex items-center gap-2 min-w-0">
-                <IconReportAnalytics
-                  stroke={1.6}
-                  className={`w-4 h-4 shrink-0 transition-colors ${
+                <Analytics
+                  size={16}
+                  className={`shrink-0 transition-colors ${
                     activeTab === 'scorecard' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
                   }`}
                 />
@@ -252,9 +252,9 @@ export function OverviewCockpit({
               }`}
             >
               <div className="flex items-center gap-2 min-w-0">
-                <IconHistory
-                  stroke={1.6}
-                  className={`w-4 h-4 shrink-0 transition-colors ${
+                <Time
+                  size={16}
+                  className={`shrink-0 transition-colors ${
                     activeTab === 'audit-journal' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
                   }`}
                 />
@@ -274,9 +274,9 @@ export function OverviewCockpit({
               }`}
             >
               <div className="flex items-center gap-2 min-w-0">
-                <IconMapPin2
-                  stroke={1.6}
-                  className={`w-4 h-4 shrink-0 transition-colors ${
+                <Location
+                  size={16}
+                  className={`shrink-0 transition-colors ${
                     activeTab === 'facility' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
                   }`}
                 />
