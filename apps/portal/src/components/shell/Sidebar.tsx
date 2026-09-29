@@ -139,7 +139,7 @@ export function Sidebar({ user }: SidebarProps) {
   return (
     <aside
       aria-label="Navigation Rail"
-      className="hidden lg:flex w-[72px] shrink-0 bg-[#171714] min-h-screen h-screen sticky top-0 flex-col items-center justify-between pt-4 pb-4 select-none z-40"
+      className="hidden lg:flex w-[72px] shrink-0 bg-[var(--surface-raised)] border-r border-[var(--border)] min-h-screen h-screen sticky top-0 flex-col items-center justify-between pt-4 pb-4 select-none z-40 transition-colors duration-150"
     >
       {/* 1. TOP SECTION: Compact Trionyx Geometric Mark + Mode Badge */}
       <div className="flex flex-col items-center gap-1.5">
@@ -149,7 +149,7 @@ export function Sidebar({ user }: SidebarProps) {
           title="Trionyx Operations Portal"
         >
           {/* Compact brand mark: the Trionyx X with its signature orange arc. */}
-          <div className="w-11 h-11 rounded-[5px] bg-[#22221E] border border-[rgba(255,255,255,0.10)] group-hover:border-[#F26522]/55 group-hover:bg-[#252520] group-focus-visible:border-[#F26522] flex items-center justify-center transition-colors">
+          <div className="w-11 h-11 rounded-[5px] bg-[var(--surface-subtle)] border border-[var(--border)] group-hover:border-[var(--accent)]/55 group-hover:bg-[var(--surface-subtle)]/80 group-focus-visible:border-[var(--accent)] flex items-center justify-center transition-colors">
             <svg
               viewBox="0 0 48 48"
               className="w-8 h-8 shrink-0"
@@ -166,7 +166,8 @@ export function Sidebar({ user }: SidebarProps) {
               />
               <path
                 d="M17.2 19.2L30.6 33.5M30.4 19.2L17 33.5"
-                stroke="#F5F3EC"
+                stroke="currentColor"
+                className="text-[var(--text-primary)]"
                 strokeWidth="3.8"
                 strokeLinecap="square"
               />
@@ -178,7 +179,7 @@ export function Sidebar({ user }: SidebarProps) {
               />
             </svg>
           </div>
-          <span className="font-mono text-[9px] font-medium tracking-[0.12em] text-[#A9A59C] px-1 py-0.2 rounded-[2px] bg-[#22221E] border border-[rgba(255,255,255,0.06)]">
+          <span className="font-mono text-[9px] font-bold tracking-[0.12em] text-[var(--text-secondary)] px-1.5 py-0.5 rounded-[2px] bg-[var(--surface-subtle)] border border-[var(--border)]">
             OPS
           </span>
         </Link>
@@ -198,17 +199,17 @@ export function Sidebar({ user }: SidebarProps) {
               aria-label={item.name}
               aria-current={item.active ? 'page' : undefined}
               title={item.name}
-              className={`w-11 h-11 rounded-[5px] border flex items-center justify-center transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-[#F26522] focus-visible:outline-offset-2 ${
+              className={`w-11 h-11 rounded-[5px] border flex items-center justify-center transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2 ${
                 item.active
-                  ? 'bg-[#F26522]/[0.10] border-[#F26522]/25 text-[#F26522]'
-                  : 'border-transparent text-[#B7B2A8] hover:text-[#F5F3EC] hover:bg-[#22221E]/60 hover:border-[rgba(255,255,255,0.06)]'
+                  ? 'bg-[var(--accent-soft)] border-[var(--accent-soft-border)] text-[var(--accent)] font-semibold'
+                  : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)] hover:border-[var(--border)]'
               }`}
             >
               {item.icon}
             </Link>
 
             {/* Hover Tooltip (Plain English module name) */}
-            <div role="tooltip" className="absolute left-[calc(100%+12px)] px-2.5 py-1.5 bg-[#22221E] text-[#F5F3EC] text-[11px] font-semibold tracking-wide rounded-[4px] border border-[rgba(255,255,255,0.08)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
+            <div role="tooltip" className="absolute left-[calc(100%+12px)] px-2.5 py-1.5 bg-[var(--surface-raised)] text-[var(--text-primary)] text-[11px] font-semibold tracking-wide rounded-[4px] border border-[var(--border)] shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
               {item.name}
             </div>
           </div>
@@ -223,12 +224,12 @@ export function Sidebar({ user }: SidebarProps) {
             type="button"
             onClick={() => setPreference(preference === 'dark' ? 'light' : 'dark')}
             aria-label={`Switch to ${preference === 'dark' ? 'light' : 'dark'} theme`}
-            className="w-11 h-11 rounded-[5px] border border-transparent flex items-center justify-center text-[#B7B2A8] hover:text-[#F5F3EC] hover:bg-[#22221E]/60 hover:border-[rgba(255,255,255,0.06)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-[#F26522] focus-visible:outline-offset-2"
+            className="w-11 h-11 rounded-[5px] border border-transparent flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)] hover:border-[var(--border)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2 cursor-pointer"
             title="Settings"
           >
             <ControlSlidersIcon className="w-5 h-5 shrink-0" />
           </button>
-          <div role="tooltip" className="absolute left-[calc(100%+12px)] px-2.5 py-1.5 bg-[#22221E] text-[#F5F3EC] text-[11px] font-semibold tracking-wide rounded-[4px] border border-[rgba(255,255,255,0.08)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
+          <div role="tooltip" className="absolute left-[calc(100%+12px)] px-2.5 py-1.5 bg-[var(--surface-raised)] text-[var(--text-primary)] text-[11px] font-semibold tracking-wide rounded-[4px] border border-[var(--border)] shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
             Settings
           </div>
         </div>
@@ -240,16 +241,16 @@ export function Sidebar({ user }: SidebarProps) {
             onClick={() => setIsUserMenuOpen((prev) => !prev)}
             aria-expanded={isUserMenuOpen}
             aria-label="User Account Menu"
-            className="w-10 h-10 rounded-[4px] bg-[#22221E] border border-[rgba(255,255,255,0.08)] text-[#F7F6F0] text-[12px] font-mono font-bold flex items-center justify-center hover:border-[#A9A59C] hover:text-[#F7F6F0] transition-colors duration-150 cursor-pointer"
+            className="w-10 h-10 rounded-[4px] bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--text-primary)] text-[12px] font-mono font-bold flex items-center justify-center hover:border-[var(--border-strong)] transition-colors duration-150 cursor-pointer"
           >
             {initials}
           </button>
 
           {/* Hover Tooltip (Only visible when menu is closed) */}
           {!isUserMenuOpen && (
-            <div className="absolute left-[calc(100%+12px)] px-2.5 py-1.5 bg-[#22221E] text-[#F7F6F0] text-[11px] rounded-[3px] border border-[rgba(255,255,255,0.08)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
+            <div className="absolute left-[calc(100%+12px)] px-2.5 py-1.5 bg-[var(--surface-raised)] text-[var(--text-primary)] text-[11px] rounded-[3px] border border-[var(--border)] shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
               <div className="font-semibold">{user.name}</div>
-              <div className="text-[9.5px] font-mono text-[#A9A59C] uppercase">{roleLabel}</div>
+              <div className="text-[9.5px] font-mono text-[var(--text-muted)] uppercase">{roleLabel}</div>
             </div>
           )}
 

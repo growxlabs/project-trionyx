@@ -27,7 +27,7 @@ export function OperationalSummaryStrip({
           {title}
         </h2>
       )}
-      <div className="bg-[var(--context-strip-bg)] border border-[var(--context-strip-border)] rounded-[3px] grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-[var(--context-strip-divider)]">
+      <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] shadow-sm grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-[var(--border)] overflow-hidden">
         {metrics.map((m, idx) => {
           const val = m.value === null || m.value === undefined ? '—' : m.value;
           const isZero = val === 0 || val === '0';
@@ -42,8 +42,8 @@ export function OperationalSummaryStrip({
           }
 
           return (
-            <div key={idx} className="px-3.5 py-2.5 flex items-baseline justify-between gap-3">
-              <span className="text-[12px] font-medium text-[var(--context-strip-text-secondary)] truncate">
+            <div key={idx} className="px-4 py-3 bg-[var(--surface-raised)] flex items-center justify-between gap-3">
+              <span className="text-[12px] font-medium text-[var(--text-secondary)] truncate">
                 {m.label}
               </span>
               <div className="flex items-baseline gap-1.5 shrink-0">
@@ -51,7 +51,7 @@ export function OperationalSummaryStrip({
                   {val}
                 </span>
                 {m.detail && (
-                  <span className="text-[12px] text-[var(--context-strip-text-secondary)] font-normal">
+                  <span className="text-[12px] text-[var(--text-muted)] font-normal">
                     {m.detail}
                   </span>
                 )}

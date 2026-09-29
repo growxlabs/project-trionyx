@@ -24,7 +24,7 @@ export function InternalShell({ user, children }: InternalShellProps) {
         <Topbar user={user} />
 
         {/* Workbench Canvas */}
-        <div className="flex-1 flex flex-col bg-[var(--background)] border-l border-[var(--border)] overflow-hidden min-h-0">
+        <div className="flex-1 flex flex-col bg-[var(--background)] overflow-hidden min-h-0">
           {/* Main Content Area */}
           <main className="flex-1 px-4 py-4 sm:px-6 sm:py-5 lg:px-7 lg:py-5 w-full">
             <div className="w-full">
