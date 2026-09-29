@@ -390,6 +390,7 @@ export const warrantiesService = {
    */
   async listWarranties(
     filter?: {
+      distributorId?: string;
       dealerId?: string;
       productId?: string;
       status?: WarrantyStatus | 'EXPIRED';

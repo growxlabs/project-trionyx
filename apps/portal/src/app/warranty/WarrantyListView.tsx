@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { Warranty, SafeUser, Dealer, Product } from '@trionyx/types';
 import { Modal } from '../../components/ui/Modal';
+import { WarrantyEmptyIllustration } from './WarrantyEmptyIllustration';
 import {
   WorkspaceHeader,
   OperationalSummaryStrip,
@@ -68,6 +69,7 @@ export function WarrantyListView({
   const [formSuccess, setFormSuccess] = useState<string | null>(null);
 
   const canWrite = user.role === 'MANAGING_DIRECTOR' || user.role === 'ADMIN';
+  const hasFilters = Boolean(search.trim()) || statusFilter !== 'ALL' || productFilter !== 'ALL' || dealerFilter !== 'ALL';
 
   // Derived KPI Counts
   const totalCount = warranties.length;
@@ -501,21 +503,27 @@ export function WarrantyListView({
       {/* Warranties Table */}
       <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
         {filteredWarranties.length === 0 ? (
-          <div className="p-12 text-center space-y-3">
-            <div className="w-12 h-12 mx-auto rounded-full bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-center text-[var(--text-muted)]">
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              </svg>
-            </div>
+          <div className="px-6 py-8 text-center flex flex-col items-center gap-4">
+            <WarrantyEmptyIllustration />
             <div>
               <h3 className="text-[14px] font-semibold text-[var(--text-primary)] m-0">
-                No warranty registrations found
+                {hasFilters ? 'No matching warranties' : 'No warranties yet'}
               </h3>
               <p className="text-[13px] text-[var(--text-secondary)] mt-1 m-0">
-                {search || statusFilter !== 'ALL' || productFilter !== 'ALL' || dealerFilter !== 'ALL'
-                  ? 'No records match the active search filters.'
-                  : 'No warranty records have been activated yet.'}
+                {hasFilters
+                  ? 'Try a different search or clear your filters.'
+                  : canWrite ? 'Activate a warranty to add it here.' : 'Warranties will appear here once activated.'}
               </p>
+              {hasFilters && (
+                <button type="button" onClick={() => {
+                  setSearch('');
+                  setStatusFilter('ALL');
+                  setProductFilter('ALL');
+                  setDealerFilter('ALL');
+                }} className="mt-3 min-h-9 px-3 text-[13px] font-medium text-[var(--accent-text)] hover:underline cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2">
+                  Clear filters
+                </button>
+              )}
             </div>
           </div>
         ) : (

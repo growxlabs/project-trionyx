@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { StockAvailableIllustration } from './StockAvailableIllustration';
+import { QueueEmptyIllustration } from './QueueEmptyIllustration';
 import {
   EmptyStockTrayIcon,
   DisconnectedWorkshopIcon,
@@ -347,7 +349,7 @@ export function OverviewCockpit({
         {activeTab === 'stockout' && (
           <div>
             <div className="bg-[var(--surface-subtle)] border-b border-[var(--border)] px-4 py-2.5 flex items-center justify-between">
-              <h2 className="text-[14px] font-semibold text-[var(--status-danger)] m-0">
+              <h2 className={`text-[14px] font-semibold m-0 ${outOfStockProducts.length === 0 ? 'text-[var(--text-primary)]' : 'text-[var(--status-danger)]'}`}>
                 Products Out of Stock
               </h2>
               <Link
@@ -359,8 +361,14 @@ export function OverviewCockpit({
             </div>
 
             {outOfStockProducts.length === 0 ? (
-              <div className="p-8 text-center text-[var(--text-secondary)] text-[13px]">
-                No stockout breaches. All catalog formulas have available stock.
+              <div className="min-h-[360px] flex flex-col items-center justify-center px-6 py-12 text-center">
+                <StockAvailableIllustration />
+                <h3 className="mt-5 mb-0 text-[16px] font-semibold text-[var(--text-primary)]">
+                  No products out of stock
+                </h3>
+                <p className="mt-2 mb-0 text-[13px] leading-relaxed text-[var(--text-secondary)]">
+                  All products currently have available stock.
+                </p>
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -414,7 +422,7 @@ export function OverviewCockpit({
         {activeTab === 'unassigned-dealers' && (
           <div>
             <div className="bg-[var(--surface-subtle)] border-b border-[var(--border)] px-4 py-2.5 flex items-center justify-between">
-              <h2 className="text-[14px] font-semibold text-[var(--status-warning)] m-0">
+              <h2 className={`text-[14px] font-semibold m-0 ${unassignedDealers.length === 0 ? 'text-[var(--text-primary)]' : 'text-[var(--status-warning)]'}`}>
                 Studios Missing Distributor Hub
               </h2>
               <Link
@@ -426,8 +434,10 @@ export function OverviewCockpit({
             </div>
 
             {unassignedDealers.length === 0 ? (
-              <div className="p-8 text-center text-[var(--text-secondary)] text-[13px]">
-                All authorized studios are assigned to active regional distributor hubs.
+              <div className="min-h-[360px] flex flex-col items-center justify-center px-6 py-12 text-center">
+                <QueueEmptyIllustration kind="studios" />
+                <h3 className="mt-5 mb-0 text-[16px] font-semibold text-[var(--text-primary)]">All studios have a hub</h3>
+                <p className="mt-2 mb-0 text-[13px] leading-relaxed text-[var(--text-secondary)]">No assignments needed.</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -481,7 +491,7 @@ export function OverviewCockpit({
         {activeTab === 'enquiries' && (
           <div>
             <div className="bg-[var(--surface-subtle)] border-b border-[var(--border)] px-4 py-2.5 flex items-center justify-between">
-              <h2 className="text-[14px] font-semibold text-[var(--accent)] m-0">
+              <h2 className={`text-[14px] font-semibold m-0 ${newEnquiriesList.length === 0 ? 'text-[var(--text-primary)]' : 'text-[var(--accent)]'}`}>
                 Partner Applications Pending Triage
               </h2>
               <Link
@@ -493,8 +503,10 @@ export function OverviewCockpit({
             </div>
 
             {newEnquiriesList.length === 0 ? (
-              <div className="p-8 text-center text-[var(--text-secondary)] text-[13px]">
-                Inbound partner queue is cleared. No pending triage items.
+              <div className="min-h-[360px] flex flex-col items-center justify-center px-6 py-12 text-center">
+                <QueueEmptyIllustration kind="partners" />
+                <h3 className="mt-5 mb-0 text-[16px] font-semibold text-[var(--text-primary)]">No applications to review</h3>
+                <p className="mt-2 mb-0 text-[13px] leading-relaxed text-[var(--text-secondary)]">New applications will appear here.</p>
               </div>
             ) : (
               <div className="overflow-x-auto">

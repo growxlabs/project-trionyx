@@ -494,6 +494,7 @@ export const activateWarrantySchema = z.object({
   installationDate: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Installation date must be in YYYY-MM-DD format'),
+  dealerId: z.string().trim().optional().nullable(),
 });
 export type ActivateWarrantyInput = z.infer<typeof activateWarrantySchema>;
 

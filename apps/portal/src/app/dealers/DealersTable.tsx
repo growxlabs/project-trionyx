@@ -8,9 +8,9 @@ import {
   OperationalSummaryStrip,
   StatusBadge,
   RegistryToolbar,
-  EmptyOperationalState,
   type SummaryMetric,
 } from '../../components/workspace';
+import { DealerEmptyState } from './DealerEmptyState';
 
 interface DealersTableProps {
   initialDealers: DealerWithRelations[];
@@ -315,12 +315,13 @@ export function DealersTable({ initialDealers, totalCount, distributors, user }:
               {/* Working Table */}
               <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
                 {filteredDealers.length === 0 ? (
-                  <EmptyOperationalState
-                    title="No dealers match current filters"
+                  <DealerEmptyState
+                    kind="registry"
+                    title={dealers.length === 0 ? 'No studios yet' : 'No matching studios'}
                     description={
                       search || statusFilter !== 'ALL' || distributorFilter !== 'ALL' || stateFilter !== 'ALL'
-                        ? 'Try clearing the search or filter controls to view all network records.'
-                        : 'No dealer records have been registered in the database yet.'
+                        ? 'Try a different search or clear your filters.'
+                        : dealers.length === 0 ? 'Add your first studio to get started.' : 'No studios match this view.'
                     }
                     action={
                       search || statusFilter !== 'ALL' || distributorFilter !== 'ALL' || stateFilter !== 'ALL' ? (
@@ -334,7 +335,7 @@ export function DealersTable({ initialDealers, totalCount, distributors, user }:
                           }}
                           className="text-[12px] font-semibold text-[var(--accent)] hover:underline cursor-pointer"
                         >
-                          Reset all filters
+                          Clear filters
                         </button>
                       ) : undefined
                     }
@@ -452,9 +453,7 @@ export function DealersTable({ initialDealers, totalCount, distributors, user }:
               </div>
 
               {unassignedCount === 0 ? (
-                <div className="py-8 text-center text-[var(--text-secondary)] text-[13px]">
-                  All authorized detailing studios are assigned to active regional distributor hubs.
-                </div>
+                <DealerEmptyState kind="unassigned" title="All studios assigned" description="No hub assignments needed." />
               ) : (
                 <div className="divide-y divide-[var(--border)] border border-[var(--border)] rounded-[4px] bg-[var(--surface-subtle)]">
                   {unassignedDealers.map((d) => (
@@ -510,6 +509,9 @@ export function DealersTable({ initialDealers, totalCount, distributors, user }:
                 )}
               </div>
 
+              {stateCounts.length === 0 ? (
+                <DealerEmptyState kind="coverage" title="No coverage to show" description="Add a studio with its location to see coverage here." />
+              ) : <>
               <p className="text-[13px] text-[var(--text-secondary)] m-0">
                 Select any state below to filter the studio registry.
               </p>
@@ -548,6 +550,7 @@ export function DealersTable({ initialDealers, totalCount, distributors, user }:
                   );
                 })}
               </div>
+              </>}
             </section>
           )}
         </main>

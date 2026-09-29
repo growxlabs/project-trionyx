@@ -172,6 +172,7 @@ export const warrantiesRepository = {
 
   async list(
     filter?: {
+      distributorId?: string;
       dealerId?: string;
       productId?: string;
       status?: WarrantyStatus | 'EXPIRED';
@@ -184,6 +185,11 @@ export const warrantiesRepository = {
     let whereSql = 'WHERE 1=1';
     const args: (string | number)[] = [];
     const today = new Date().toISOString().split('T')[0];
+
+    if (filter?.distributorId) {
+      whereSql += ' AND d.distributor_id = ?';
+      args.push(filter.distributorId);
+    }
 
     if (filter?.dealerId) {
       whereSql += ' AND w.dealer_id = ?';

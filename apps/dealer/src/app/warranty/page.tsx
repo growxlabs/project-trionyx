@@ -2,38 +2,56 @@ import React from 'react';
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { requireDealerSession, DEALER_AUTH_CONFIG } from '@trionyx/auth';
-import { warrantiesRepository } from '@trionyx/database';
-import { DealerShell } from '@/components/shell/DealerShell';
+import {
+  requireDistributorSession,
+  DISTRIBUTOR_AUTH_CONFIG,
+  AUTH_CONFIG,
+} from '@trionyx/auth';
+import { warrantiesRepository, dealersRepository } from '@trionyx/database';
+import { DistributorShell } from '@/components/shell/DealerShell';
 import { WarrantyView } from './WarrantyView';
 
 export const metadata: Metadata = {
-  title: 'Warranty Registrations — Trionyx Dealer Portal',
-  description: 'Manage and register customer warranties for installed Trionyx products',
+  title: 'Warranty Registrations — Trionyx Operations',
+  description: 'Manage and register customer warranties for installed Trionyx products across regional dealers',
 };
 
-export default async function DealerWarrantyPage() {
+export const dynamic = 'force-dynamic';
+
+export default async function DistributorWarrantyPage() {
   const cookieStore = await cookies();
-  const token = cookieStore.get(DEALER_AUTH_CONFIG.cookieName)?.value;
+  const token =
+    cookieStore.get(DISTRIBUTOR_AUTH_CONFIG.cookieName)?.value ||
+    cookieStore.get(AUTH_CONFIG.cookieName)?.value;
 
   let sessionData;
   try {
-    sessionData = await requireDealerSession(token);
+    sessionData = await requireDistributorSession(token);
   } catch {
     redirect('/login');
   }
 
-  const { dealerUser, dealer } = sessionData;
+  const { user, distributor } = sessionData;
 
-  // Fetch warranties activated by this dealer
-  const result = await warrantiesRepository.list({
-    dealerId: dealer.id,
-    limit: 100,
-  });
+  // Fetch warranties and assigned dealers for this distributor territory
+  const [warrantiesResult, dealersResult] = await Promise.all([
+    warrantiesRepository.list({
+      distributorId: distributor.id,
+      limit: 100,
+    }),
+    dealersRepository.list({
+      distributorId: distributor.id,
+      limit: 100,
+    }),
+  ]);
 
   return (
-    <DealerShell user={dealerUser} dealer={dealer}>
-      <WarrantyView initialWarranties={result.items} />
-    </DealerShell>
+    <DistributorShell user={user} distributor={distributor}>
+      <WarrantyView
+        initialWarranties={warrantiesResult.items}
+        dealers={dealersResult.items}
+        distributorId={distributor.id}
+      />
+    </DistributorShell>
   );
 }

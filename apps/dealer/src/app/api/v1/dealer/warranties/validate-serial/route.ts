@@ -1,12 +1,20 @@
 import { NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
-import { dealerAuthService, warrantiesService, apiSuccess, apiError } from '@trionyx/api';
+import {
+  requireDistributorSession,
+  DISTRIBUTOR_AUTH_CONFIG,
+  AUTH_CONFIG,
+} from '@trionyx/auth';
+import { warrantiesService, apiSuccess, apiError } from '@trionyx/api';
 
 export async function POST(request: NextRequest) {
   try {
     const cookieStore = await cookies();
-    const token = cookieStore.get(dealerAuthService.cookieConfig.cookieName)?.value;
-    const { dealer } = await dealerAuthService.getSession(token);
+    const token =
+      cookieStore.get(DISTRIBUTOR_AUTH_CONFIG.cookieName)?.value ||
+      cookieStore.get(AUTH_CONFIG.cookieName)?.value;
+
+    const { distributor } = await requireDistributorSession(token);
 
     const body = await request.json().catch(() => ({}));
     const serialNumber = typeof body.serialNumber === 'string' ? body.serialNumber.trim() : '';
@@ -15,7 +23,7 @@ export async function POST(request: NextRequest) {
       return apiError('VALIDATION_ERROR', 'Please provide a serial number', 400);
     }
 
-    const validation = await warrantiesService.validateSerialForActivation(serialNumber, dealer.id);
+    const validation = await warrantiesService.validateSerialForActivation(serialNumber);
     return apiSuccess(validation, 200);
   } catch (err: any) {
     if (err.message === 'UNAUTHENTICATED' || err.code === 'UNAUTHENTICATED') {

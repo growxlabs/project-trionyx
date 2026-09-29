@@ -1,21 +1,34 @@
 import { NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
-import { dealerAuthService, warrantiesService, apiSuccess, apiError } from '@trionyx/api';
+import {
+  requireDistributorSession,
+  DISTRIBUTOR_AUTH_CONFIG,
+  AUTH_CONFIG,
+} from '@trionyx/auth';
+import { warrantiesService, apiSuccess, apiError } from '@trionyx/api';
+import { dealersRepository } from '@trionyx/database';
 import { activateWarrantySchema } from '@trionyx/validation';
 
 export async function GET(request: NextRequest) {
   try {
     const cookieStore = await cookies();
-    const token = cookieStore.get(dealerAuthService.cookieConfig.cookieName)?.value;
-    const { dealer } = await dealerAuthService.getSession(token);
+    const token =
+      cookieStore.get(DISTRIBUTOR_AUTH_CONFIG.cookieName)?.value ||
+      cookieStore.get(AUTH_CONFIG.cookieName)?.value;
+
+    const { distributor } = await requireDistributorSession(token);
 
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || undefined;
+    const dealerId = searchParams.get('dealerId') || undefined;
+    const status = (searchParams.get('status') as any) || undefined;
     const page = searchParams.get('page') ? parseInt(searchParams.get('page')!, 10) : 1;
     const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!, 10) : 50;
 
     const result = await warrantiesService.listWarranties({
-      dealerId: dealer.id,
+      distributorId: distributor.id,
+      dealerId,
+      status: status && status !== 'ALL' ? status : undefined,
       search,
       page,
       limit,
@@ -33,8 +46,11 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const cookieStore = await cookies();
-    const token = cookieStore.get(dealerAuthService.cookieConfig.cookieName)?.value;
-    const { dealerUser, dealer } = await dealerAuthService.getSession(token);
+    const token =
+      cookieStore.get(DISTRIBUTOR_AUTH_CONFIG.cookieName)?.value ||
+      cookieStore.get(AUTH_CONFIG.cookieName)?.value;
+
+    const { user, distributor } = await requireDistributorSession(token);
 
     const body = await request.json().catch(() => ({}));
     const parse = activateWarrantySchema.safeParse(body);
@@ -47,6 +63,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Verify dealer assignment belongs to this distributor if provided
+    let targetDealerId: string | null = null;
+    if (parse.data.dealerId) {
+      const assignedDealer = await dealersRepository.findById(parse.data.dealerId);
+      if (!assignedDealer || assignedDealer.distributorId !== distributor.id) {
+        return apiError(
+          'FORBIDDEN',
+          'Selected dealer is not assigned to your regional distribution territory',
+          403
+        );
+      }
+      targetDealerId = assignedDealer.id;
+    }
+
     const clientIp =
       request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
       request.headers.get('x-real-ip') ||
@@ -56,9 +86,9 @@ export async function POST(request: NextRequest) {
       {
         serialNumber: parse.data.serialNumber,
         installationDate: parse.data.installationDate,
-        actorId: dealerUser.id,
+        actorId: user.id,
         actorType: 'DEALER',
-        dealerId: dealer.id,
+        dealerId: targetDealerId,
       },
       {
         ipAddress: clientIp,
