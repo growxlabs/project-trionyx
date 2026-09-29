@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import type { ContactEnquiryType } from '@trionyx/types';
+import { ContactSuccess } from './ContactSuccess';
 
 /* ─── Enquiry Type Definitions ─── */
 const ENQUIRY_TYPES: { value: ContactEnquiryType; label: string }[] = [
@@ -383,38 +384,15 @@ export function ContactForm() {
   /* ─── Success State ─── */
   if (submitted) {
     return (
-      <div className="text-center py-16 px-6">
-        <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-[#EFECE3] flex items-center justify-center">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#15803D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-        </div>
-        <h3 className="text-[24px] font-semibold text-[#171714] mb-3">
-          Thank you.
-        </h3>
-        <p className="text-[15px] text-[#68665F] mb-2 max-w-md mx-auto">
-          Your enquiry has been received.
-        </p>
-        <p className="text-[14px] text-[#68665F] mb-6 max-w-md mx-auto">
-          The Trionyx team will contact you regarding the next steps.
-        </p>
-        {enquiryCode && (
-          <p className="text-[13px] font-mono text-[#68665F]">
-            Reference: <span className="text-[#171714] font-semibold">{enquiryCode}</span>
-          </p>
-        )}
-        <button
-          onClick={() => {
-            setSubmitted(false);
-            setForm(initialFormData);
-            setErrors({});
-            setEnquiryCode('');
-          }}
-          className="mt-8 text-[14px] font-medium text-[#F26522] hover:text-[#DC5414] transition-colors"
-        >
-          Submit another enquiry
-        </button>
-      </div>
+      <ContactSuccess
+        enquiryCode={enquiryCode}
+        onReset={() => {
+          setSubmitted(false);
+          setForm(initialFormData);
+          setErrors({});
+          setEnquiryCode('');
+        }}
+      />
     );
   }
 
