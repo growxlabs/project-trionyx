@@ -10,8 +10,8 @@ import {
   WorkspaceHeader,
   StatusBadge,
   RegistryToolbar,
-  EmptyOperationalState,
 } from '../../components/workspace';
+import { ProductEmptyState } from './ProductEmptyState';
 
 interface ProductsTableProps {
   initialProducts: (Product & { categoryName?: string; availableUnits?: number })[];
@@ -326,12 +326,13 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
               {/* Working Table */}
               <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
                 {filteredProducts.length === 0 ? (
-                  <EmptyOperationalState
-                    title="No products match current filters"
+                  <ProductEmptyState
+                    kind="registry"
+                    title={products.length === 0 ? 'No products yet' : 'No matching products'}
                     description={
                       search || selectedCategory !== 'ALL' || selectedStatus !== 'ALL' || selectedVisibility !== 'ALL'
-                        ? 'Try clearing the search or filter controls to view all catalog items.'
-                        : 'No products have been registered in the database yet.'
+                        ? 'Try a different search or clear your filters.'
+                        : products.length === 0 ? 'Add your first product to build the catalog.' : 'No products match this view.'
                     }
                     action={
                       search || selectedCategory !== 'ALL' || selectedStatus !== 'ALL' || selectedVisibility !== 'ALL' ? (
@@ -345,7 +346,7 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
                           }}
                           className="text-[12px] font-semibold text-[var(--accent)] hover:underline cursor-pointer"
                         >
-                          Reset all filters
+                          Clear filters
                         </button>
                       ) : undefined
                     }
@@ -501,9 +502,7 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
               </div>
 
               {stockAttentionItems.length === 0 ? (
-                <div className="py-8 text-center text-[var(--text-secondary)] text-[13px]">
-                  All active catalog formulas meet minimum inventory safety levels (5+ units).
-                </div>
+                <ProductEmptyState kind="attention" title="No stock issues" description="All products have enough stock." />
               ) : (
                 <div className="divide-y divide-[var(--border)] border border-[var(--border)] rounded-[4px] bg-[var(--surface-subtle)]">
                   {stockAttentionItems.map((p) => (
@@ -569,6 +568,9 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
                 )}
               </div>
 
+              {categoryStats.length === 0 ? (
+                <ProductEmptyState kind="families" title="No product families yet" description="Product categories will appear here." />
+              ) : <>
               <p className="text-[13px] text-[var(--text-secondary)] m-0">
                 Select any product family below to filter the master registry.
               </p>
@@ -613,6 +615,7 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
                   );
                 })}
               </div>
+              </>}
             </section>
           )}
         </main>

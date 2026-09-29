@@ -8,9 +8,9 @@ import {
   OperationalSummaryStrip,
   StatusBadge,
   RegistryToolbar,
-  EmptyOperationalState,
   type SummaryMetric,
 } from '../../components/workspace';
+import { EnquiryEmptyState } from './EnquiryEmptyState';
 
 interface EnquiriesTableProps {
   initialEnquiries: ContactEnquiry[];
@@ -105,6 +105,7 @@ export function EnquiriesTable({ initialEnquiries, internalUsers, user }: Enquir
       return true;
     });
   }, [enquiries, search, typeFilter, statusFilter, stateFilter, assignedFilter]);
+  const hasActiveFilters = Boolean(search.trim()) || typeFilter !== 'ALL' || statusFilter !== 'ALL' || stateFilter !== 'ALL' || assignedFilter !== 'ALL';
 
   const formatDate = (isoString: string) => {
     try {
@@ -333,15 +334,16 @@ export function EnquiriesTable({ initialEnquiries, internalUsers, user }: Enquir
               {/* Table */}
               <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
                 {filteredEnquiries.length === 0 ? (
-                  <EmptyOperationalState
-                    title="No enquiries match current filters"
+                  <EnquiryEmptyState
+                    kind="registry"
+                    title={hasActiveFilters ? 'No matching enquiries' : 'No enquiries yet'}
                     description={
-                      search || typeFilter !== 'ALL' || statusFilter !== 'ALL' || stateFilter !== 'ALL' || assignedFilter !== 'ALL'
-                        ? 'Try adjusting your search query or reset active filters.'
-                        : 'No customer or partner enquiries are registered in the system.'
+                      hasActiveFilters
+                        ? 'Try a different search or clear your filters.'
+                        : 'New customer and partner enquiries will appear here.'
                     }
                     action={
-                      search || typeFilter !== 'ALL' || statusFilter !== 'ALL' || stateFilter !== 'ALL' || assignedFilter !== 'ALL' ? (
+                      hasActiveFilters ? (
                         <button
                           type="button"
                           onClick={() => {
@@ -353,7 +355,7 @@ export function EnquiriesTable({ initialEnquiries, internalUsers, user }: Enquir
                           }}
                           className="text-[12px] font-semibold text-[var(--accent)] hover:underline cursor-pointer"
                         >
-                          Reset all filters
+                          Clear filters
                         </button>
                       ) : undefined
                     }
@@ -450,10 +452,7 @@ export function EnquiriesTable({ initialEnquiries, internalUsers, user }: Enquir
               </div>
 
               {needsActionItems.length === 0 ? (
-                <EmptyOperationalState
-                  title="No Inquiries Require Immediate Action"
-                  description="All enquiries are currently assigned to team members and in progress."
-                />
+                <EnquiryEmptyState kind="caught-up" title="You’re all caught up" description="No enquiries need action right now." />
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {needsActionItems.map((item) => (

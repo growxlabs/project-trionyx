@@ -8,9 +8,9 @@ import {
   OperationalSummaryStrip,
   StatusBadge,
   RegistryToolbar,
-  EmptyOperationalState,
   type SummaryMetric,
 } from '../../components/workspace';
+import { DistributorEmptyState } from './DistributorEmptyState';
 
 interface DistributorsTableProps {
   initialDistributors: DistributorWithRelations[];
@@ -67,6 +67,7 @@ export function DistributorsTable({ initialDistributors, initialTotal, user }: D
       return true;
     });
   }, [distributors, search, statusFilter, stateFilter]);
+  const hasActiveFilters = Boolean(search.trim()) || statusFilter !== 'ALL' || stateFilter !== 'ALL';
 
   const summaryMetrics: SummaryMetric[] = [
     { label: 'Active Distributors', value: activeCount, tone: 'positive' },
@@ -244,15 +245,16 @@ export function DistributorsTable({ initialDistributors, initialTotal, user }: D
               {/* Working Table */}
               <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
                 {filteredDistributors.length === 0 ? (
-                  <EmptyOperationalState
-                    title="No distributors match current filters"
+                  <DistributorEmptyState
+                    kind="registry"
+                    title={hasActiveFilters ? 'No matching distributors' : 'No distributors yet'}
                     description={
-                      search || statusFilter !== 'ALL' || stateFilter !== 'ALL'
-                        ? 'Try adjusting your search query or reset active filters.'
-                        : 'No distributor organizations are registered in the system.'
+                      hasActiveFilters
+                        ? 'Try a different search or clear your filters.'
+                        : 'Add a distributor to start building your network.'
                     }
                     action={
-                      search || statusFilter !== 'ALL' || stateFilter !== 'ALL' ? (
+                      hasActiveFilters ? (
                         <button
                           type="button"
                           onClick={() => {
@@ -262,7 +264,7 @@ export function DistributorsTable({ initialDistributors, initialTotal, user }: D
                           }}
                           className="text-[12px] font-semibold text-[var(--accent)] hover:underline cursor-pointer"
                         >
-                          Reset all filters
+                          Clear filters
                         </button>
                       ) : undefined
                     }
@@ -366,10 +368,7 @@ export function DistributorsTable({ initialDistributors, initialTotal, user }: D
               </div>
 
               {distributors.length === 0 ? (
-                <EmptyOperationalState
-                  title="No Logistics Hubs"
-                  description="No regional logistics hubs have been registered yet."
-                />
+                <DistributorEmptyState kind="hubs" title="No logistics hubs yet" description="Regional hubs will appear here when distributors are added." />
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {distributors.map((d) => (

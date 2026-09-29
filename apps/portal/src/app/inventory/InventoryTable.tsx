@@ -625,7 +625,16 @@ export function InventoryTable({
 
                             {/* Location */}
                             <td className="py-2.5 px-4">
-                              <span className="text-[14px] font-normal text-[var(--text-primary)] block">{item.locationName}</span>
+                              {item.availableCount === 0 ? (
+                                <span className="inline-flex items-center gap-2 text-[13px] text-[var(--text-secondary)]">
+                                  <svg width="28" height="26" viewBox="0 0 32 30" fill="none" aria-hidden="true">
+                                    <path d="M4 26V5h24v21M3 26h26M4 15h24" stroke="var(--text-muted)" strokeWidth="1.4" strokeLinecap="round" />
+                                    <path d="M9 9h5v5H9zM20 8v2l-2 2v3h6v-3l-2-2V8" fill="var(--surface-subtle)" stroke="var(--text-secondary)" strokeWidth="1.2" strokeLinejoin="round" />
+                                    <path d="M20 12h4" stroke="var(--accent)" strokeWidth="2" />
+                                  </svg>
+                                  <span>No stock recorded</span>
+                                </span>
+                              ) : <span className="text-[14px] font-normal text-[var(--text-primary)] block">{item.locationName}</span>}
                               <span className="font-mono text-[12px] text-[var(--text-secondary)]">{item.locationCode}</span>
                             </td>
 
@@ -792,8 +801,21 @@ export function InventoryTable({
               </div>
 
               {movements.length === 0 ? (
-                <div className="py-8 text-center text-[var(--text-secondary)] text-[13px]">
-                  No physical serial movements logged yet.
+                <div className="min-h-[280px] flex flex-col items-center justify-center px-6 py-10 text-center">
+                  <svg width="160" height="120" viewBox="0 0 192 144" fill="none" aria-hidden="true" focusable="false">
+                    <ellipse cx="91" cy="128" rx="61" ry="6" fill="var(--surface-subtle)" />
+                    <rect x="40" y="30" width="96" height="76" rx="5" fill="var(--surface-subtle)" stroke="var(--border-strong)" strokeWidth="1.5" />
+                    <path d="M48 44h80M48 91h80" stroke="var(--text-muted)" strokeWidth="1.5" />
+                    <rect x="57" y="55" width="22" height="28" rx="2" fill="var(--surface)" stroke="var(--text-muted)" strokeWidth="1.4" />
+                    <path d="M62 56v7h12v-7" stroke="var(--accent)" strokeWidth="1.4" />
+                    <rect x="91" y="57" width="24" height="26" rx="2" fill="var(--surface)" stroke="var(--text-muted)" strokeWidth="1.4" />
+                    <path d="m95 70 5 5 10-11" stroke="var(--accent)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                    <circle cx="143" cy="95" r="22" fill="var(--surface)" />
+                    <circle cx="143" cy="95" r="17" fill="var(--accent-soft)" stroke="var(--accent)" strokeWidth="1.5" />
+                    <path d="M135 95h16m-6-6 6 6-6 6" stroke="var(--accent)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <h3 className="mt-4 mb-0 text-[15px] font-semibold text-[var(--text-primary)]">No movements yet</h3>
+                  <p className="mt-1.5 mb-0 text-[13px] text-[var(--text-secondary)]">Serial transfers will appear here.</p>
                 </div>
               ) : (
                 <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">

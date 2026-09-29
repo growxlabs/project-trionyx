@@ -144,12 +144,12 @@ export function Sidebar({ user }: SidebarProps) {
       <div className="flex flex-col items-center gap-1.5">
         <Link
           href="/overview"
-          className="flex flex-col items-center gap-1 focus:outline-none group"
+          className="flex flex-col items-center gap-1 focus-visible:outline-none group"
           title="Trionyx Operations Portal"
         >
           {/* Performance Tyre & Wheel Rim Chassis: Trionyx Operations Emblem */}
-          <div className="w-10 h-10 rounded-[4px] bg-[#22221E] border border-[rgba(255,255,255,0.08)] group-hover:border-[#A9A59C]/40 group-hover:bg-[#252520] flex items-center justify-center transition-colors">
-            <TrionyxOpsMarkAnimated size={24} className="w-[22px] h-[22px]" />
+          <div className="w-11 h-11 rounded-[5px] bg-[#22221E] border border-[rgba(255,255,255,0.10)] group-hover:border-[#F26522]/55 group-hover:bg-[#252520] group-focus-visible:border-[#F26522] flex items-center justify-center transition-colors">
+            <TrionyxOpsMarkAnimated size={28} className="w-7 h-7" />
           </div>
           <span className="font-mono text-[9px] font-medium tracking-[0.12em] text-[#A9A59C] px-1 py-0.2 rounded-[2px] bg-[#22221E] border border-[rgba(255,255,255,0.06)]">
             OPS
@@ -158,27 +158,30 @@ export function Sidebar({ user }: SidebarProps) {
       </div>
 
       {/* 2. MAIN NAV ICON STACK (Gap 10px / space-y-2.5) */}
-      <nav className="flex flex-col items-center gap-2.5 w-full px-3">
+      <nav aria-label="Primary navigation" className="flex flex-col items-center gap-2.5 w-full px-3">
         {navItems.map((item) => (
           <div key={item.name} className="relative group flex items-center justify-center w-full">
             {/* Active Left Indicator: One restrained 2px orange vertical line */}
             {item.active && (
-              <span className="absolute left-[-12px] w-[2px] h-5 rounded-r bg-[#F26522]" />
+              <span aria-hidden="true" className="absolute left-[-12px] w-[3px] h-6 rounded-r bg-[#F26522]" />
             )}
 
             <Link
               href={item.href}
-              className={`w-10 h-10 rounded-[4px] flex items-center justify-center transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-[#F26522] focus-visible:outline-offset-2 ${
+              aria-label={item.name}
+              aria-current={item.active ? 'page' : undefined}
+              title={item.name}
+              className={`w-11 h-11 rounded-[5px] border flex items-center justify-center transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-[#F26522] focus-visible:outline-offset-2 ${
                 item.active
-                  ? 'bg-[#22221E] text-[#F26522]'
-                  : 'text-[#B7B2A8] hover:text-[#F5F3EC] hover:bg-[#22221E]/60'
+                  ? 'bg-[#F26522]/[0.10] border-[#F26522]/25 text-[#F26522]'
+                  : 'border-transparent text-[#B7B2A8] hover:text-[#F5F3EC] hover:bg-[#22221E]/60 hover:border-[rgba(255,255,255,0.06)]'
               }`}
             >
               {item.icon}
             </Link>
 
             {/* Hover Tooltip (Plain English module name) */}
-            <div className="absolute left-[calc(100%+12px)] px-2.5 py-1 bg-[#22221E] text-[#F5F3EC] text-[11px] font-semibold tracking-wide rounded-[3px] border border-[rgba(255,255,255,0.08)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
+            <div role="tooltip" className="absolute left-[calc(100%+12px)] px-2.5 py-1.5 bg-[#22221E] text-[#F5F3EC] text-[11px] font-semibold tracking-wide rounded-[4px] border border-[rgba(255,255,255,0.08)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
               {item.name}
             </div>
           </div>
@@ -192,12 +195,13 @@ export function Sidebar({ user }: SidebarProps) {
           <button
             type="button"
             onClick={() => setPreference(preference === 'dark' ? 'light' : 'dark')}
-            className="w-10 h-10 rounded-[4px] flex items-center justify-center text-[#B7B2A8] hover:text-[#F5F3EC] hover:bg-[#22221E]/60 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-[#F26522] focus-visible:outline-offset-2"
+            aria-label={`Switch to ${preference === 'dark' ? 'light' : 'dark'} theme`}
+            className="w-11 h-11 rounded-[5px] border border-transparent flex items-center justify-center text-[#B7B2A8] hover:text-[#F5F3EC] hover:bg-[#22221E]/60 hover:border-[rgba(255,255,255,0.06)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-[#F26522] focus-visible:outline-offset-2"
             title="Settings"
           >
             <ControlSlidersIcon className="w-5 h-5 shrink-0" />
           </button>
-          <div className="absolute left-[calc(100%+12px)] px-2.5 py-1 bg-[#22221E] text-[#F5F3EC] text-[11px] font-semibold tracking-wide rounded-[3px] border border-[rgba(255,255,255,0.08)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
+          <div role="tooltip" className="absolute left-[calc(100%+12px)] px-2.5 py-1.5 bg-[#22221E] text-[#F5F3EC] text-[11px] font-semibold tracking-wide rounded-[4px] border border-[rgba(255,255,255,0.08)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
             Settings
           </div>
         </div>
