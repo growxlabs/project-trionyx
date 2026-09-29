@@ -303,6 +303,7 @@ export function InventoryTable({
       {/* 1. Header with Primary Action: Serial Number Inventory + Receive Serials */}
       <WorkspaceHeader
         title="Serial Number Inventory"
+        className="mb-0 border-b-0 pb-0"
         action={
           canMutate && (
             <button
@@ -322,7 +323,7 @@ export function InventoryTable({
       />
 
       {/* Secondary Actions Bar */}
-      <div className="flex items-center gap-2 flex-wrap -mt-4 pb-2">
+      <div className="flex items-center gap-2 flex-wrap pb-2 border-b border-[var(--border)]">
         <button
           type="button"
           onClick={() => setShowLookupModal(true)}

@@ -15,6 +15,23 @@ import type {
 import { ConfirmDialog } from '../../../components/ui/ConfirmDialog';
 import { Modal } from '../../../components/ui/Modal';
 import { SerialNumberLookupModal } from '../../../components/inventory/SerialNumberLookupModal';
+import {
+  IconArrowLeft,
+  IconSearch,
+  IconEdit,
+  IconArchive,
+  IconPlus,
+  IconFileText,
+  IconShieldCheck,
+  IconUpload,
+  IconTrash,
+  IconAdjustmentsHorizontal,
+} from '@tabler/icons-react';
+import {
+  OperationalSummaryStrip,
+  StatusBadge,
+} from '../../../components/workspace';
+import { ProductEmptyState } from '../ProductEmptyState';
 
 interface ProductDetailViewProps {
   product: ProductWithRelations;
@@ -276,154 +293,110 @@ export function ProductDetailView({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Top Breadcrumb & Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--border)]">
-        <div>
-          <div className="mb-2">
-            <Link
-              href="/products"
-              className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-            >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-              </svg>
-              Products
-            </Link>
-          </div>
+      <div className="pb-3 border-b border-[var(--border)]">
+        <div className="mb-2">
+          <Link
+            href="/products"
+            className="inline-flex items-center gap-1.5 text-[12px] font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+          >
+            <IconArrowLeft className="w-3.5 h-3.5" stroke={1.8} />
+            Products Registry
+          </Link>
+        </div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-2.5 flex-wrap">
-            <span className="font-mono text-[12px] font-medium text-[var(--accent-text)] bg-[var(--accent-soft)] border border-[var(--accent-soft-border)] px-2 py-0.5 rounded-[2px]">
+            <span className="font-mono text-[12px] font-semibold text-[var(--accent-text)] bg-[var(--accent-soft)] border border-[var(--accent-soft-border)] px-2 py-0.5 rounded-[2px]">
               {product.productCode}
             </span>
-            <h1 className="text-[20px] font-semibold text-[var(--text-primary)] m-0">
+            <h1 className="text-[20px] font-semibold text-[var(--text-primary)] tracking-[-0.01em] m-0">
               {product.name}
             </h1>
             {category && (
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--background)] border border-[var(--border)] text-[var(--text-primary)]">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--text-secondary)]">
                 {category.name}
               </span>
             )}
-            {/* Status Badge */}
-            <span
-              className={`inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium ${
-                product.status === 'ACTIVE'
-                  ? 'bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]'
-                  : product.status === 'DRAFT'
-                  ? 'bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]'
-                  : product.status === 'INACTIVE'
-                  ? 'bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]'
-                  : 'bg-[var(--surface-subtle)] text-[var(--text-secondary)] border border-[var(--border)]'
-              }`}
-            >
-              {product.status === 'ACTIVE' ? 'Active' : product.status === 'DRAFT' ? 'Draft' : product.status === 'INACTIVE' ? 'Inactive' : 'Archived'}
-            </span>
-            {/* Visibility Badge */}
-            <span
-              className={`inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium ${
-                product.publicVisibility === 'PUBLIC'
-                  ? 'bg-[var(--status-info-soft)] text-[var(--status-info)] border border-[var(--status-info-border)]'
-                  : 'bg-[var(--background)] text-[var(--text-secondary)] border border-[var(--border)]'
-              }`}
-            >
-              {product.publicVisibility === 'PUBLIC' ? 'Public' : 'Internal'}
-            </span>
+            <StatusBadge status={product.status} />
+            <StatusBadge status={product.publicVisibility} />
           </div>
-        </div>
 
-        {/* Action Buttons */}
-        <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
-          <button
-            type="button"
-            onClick={() => {
-              setLookupInitialSerial(undefined);
-              setShowLookupModal(true);
-            }}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[13px] font-semibold transition-colors cursor-pointer"
-          >
-            <svg className="w-4 h-4 text-[var(--accent-text)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            Lookup Serial
-          </button>
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2 shrink-0 flex-wrap">
+            <button
+              type="button"
+              onClick={() => {
+                setLookupInitialSerial(undefined);
+                setShowLookupModal(true);
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[3px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[12.5px] font-medium transition-colors cursor-pointer"
+            >
+              <IconSearch className="w-3.5 h-3.5 text-[var(--text-muted)]" stroke={1.8} />
+              Lookup Serial
+            </button>
 
-          {canWrite && (
-            <>
-              <Link
-                href={`/products/${product.id}/edit`}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[6px] bg-[var(--text-primary)] hover:bg-[var(--surface-subtle)] text-[var(--background)] text-[13px] font-medium transition-colors shadow-sm"
-              >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-                Edit Product
-              </Link>
-
-              {product.status !== 'ARCHIVED' && (
-                <button
-                  type="button"
-                  onClick={() => setShowArchiveDialog(true)}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[6px] border border-[var(--border)] hover:bg-[var(--status-danger-soft)] hover:border-[var(--status-danger-border)] text-[var(--status-danger)] text-[13px] font-medium transition-colors cursor-pointer"
+            {canWrite && (
+              <>
+                <Link
+                  href={`/products/${product.id}/edit`}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[3px] bg-[var(--text-primary)] hover:opacity-90 text-[var(--background)] text-[12.5px] font-semibold transition-opacity shadow-xs"
                 >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-                  </svg>
-                  Archive
-                </button>
-              )}
-            </>
-          )}
-        </div>
-      </div>
+                  <IconEdit className="w-3.5 h-3.5" stroke={1.8} />
+                  Edit Product
+                </Link>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] p-4 shadow-[0_1px_2px_rgba(23,23,20,0.02)]">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--status-success)] block mb-1">
-            Available Stock
-          </span>
-          <div className="flex items-baseline gap-2">
-            <span className="text-[24px] font-bold text-[var(--status-success)] tracking-tight">{totalAvailable}</span>
-            <span className="text-[12px] text-[var(--text-muted)]">units (active serials)</span>
+                {product.status !== 'ARCHIVED' && (
+                  <button
+                    type="button"
+                    onClick={() => setShowArchiveDialog(true)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[3px] border border-[var(--status-danger-border)] hover:bg-[var(--status-danger-soft)] text-[var(--status-danger)] text-[12.5px] font-medium transition-colors cursor-pointer"
+                  >
+                    <IconArchive className="w-3.5 h-3.5" stroke={1.8} />
+                    Archive
+                  </button>
+                )}
+              </>
+            )}
           </div>
         </div>
-
-        <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] p-4 shadow-[0_1px_2px_rgba(23,23,20,0.02)]">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-secondary)] block mb-1">
-            Tracked Serials
-          </span>
-          <span className="text-[24px] font-bold text-[var(--text-primary)] tracking-tight">
-            {totalTracked}
-          </span>
-        </div>
-
-        <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] p-4 shadow-[0_1px_2px_rgba(23,23,20,0.02)]">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-secondary)] block mb-1">
-            Media & Docs
-          </span>
-          <span className="text-[24px] font-bold text-[var(--text-primary)] tracking-tight">
-            {product.media.length}
-          </span>
-        </div>
-
-        <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] p-4 shadow-[0_1px_2px_rgba(23,23,20,0.02)]">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-secondary)] block mb-1">
-            Serial Movements
-          </span>
-          <span className="text-[24px] font-bold text-[var(--text-primary)] tracking-tight">
-            {movements.length}
-          </span>
-        </div>
       </div>
+
+      {/* Sleek Operational Summary Strip */}
+      <OperationalSummaryStrip
+        metrics={[
+          {
+            label: 'Available Stock',
+            value: totalAvailable,
+            detail: 'units',
+            tone: totalAvailable > 0 ? 'positive' : 'default',
+          },
+          {
+            label: 'Tracked Serials',
+            value: totalTracked,
+            detail: 'registered',
+          },
+          {
+            label: 'Media & Docs',
+            value: product.media.length,
+            detail: 'assets',
+          },
+          {
+            label: 'Serial Movements',
+            value: movements.length,
+            detail: 'events',
+          },
+        ]}
+      />
 
       {/* Tabs Bar */}
-      <div className="border-b border-[var(--border)] flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar">
+      <div className="border-b border-[var(--border)] flex items-center gap-1 overflow-x-auto no-scrollbar pb-px">
         {[
           { key: 'overview', label: 'Overview' },
-          { key: 'serials', label: `Tracked Serial Numbers (${serials.length})` },
+          { key: 'serials', label: `Tracked Serials (${serials.length})` },
           { key: 'specs', label: `Specifications (${product.specifications.length})` },
           { key: 'media', label: `Media & Docs (${product.media.length})` },
-          { key: 'movements', label: `Movement History (${movements.length})` },
+          { key: 'movements', label: `Movements (${movements.length})` },
           {
             key: 'warranty',
             label: `Warranty Policy (${
@@ -439,10 +412,10 @@ export function ProductDetailView({
             key={tab.key}
             type="button"
             onClick={() => setActiveTab(tab.key as typeof activeTab)}
-            className={`px-3.5 py-2.5 text-[13px] font-medium border-b-2 whitespace-nowrap transition-colors cursor-pointer ${
+            className={`px-3 py-2 text-[12.5px] font-medium border-b-2 whitespace-nowrap transition-colors cursor-pointer ${
               activeTab === tab.key
                 ? 'border-[var(--accent)] text-[var(--accent-text)] font-semibold'
-                : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]'
+                : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border)]'
             }`}
           >
             {tab.label}
@@ -452,54 +425,54 @@ export function ProductDetailView({
 
       {/* Tab 1: Overview */}
       {activeTab === 'overview' && (
-        <div className="space-y-6">
-          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] p-6 shadow-[0_1px_3px_rgba(23,23,20,0.03)] space-y-4">
-            <h2 className="text-[15px] font-semibold text-[var(--text-primary)] pb-2 border-b border-[var(--border)] m-0">
+        <div className="space-y-4">
+          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-5 shadow-[0_1px_2px_rgba(23,23,20,0.02)] space-y-4">
+            <h2 className="text-[14px] font-semibold text-[var(--text-primary)] pb-2.5 border-b border-[var(--border)] m-0">
               Formulation Summary
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="md:col-span-2 space-y-4">
                 <div>
-                  <span className="text-[11.5px] font-semibold uppercase tracking-wider text-[var(--text-secondary)] block mb-1">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-secondary)] block mb-1">
                     Short Description
                   </span>
-                  <p className="text-[13.5px] text-[var(--text-primary)] leading-relaxed m-0">
+                  <p className="text-[13px] text-[var(--text-primary)] leading-relaxed m-0">
                     {product.shortDescription || 'No short description provided.'}
                   </p>
                 </div>
                 <div>
-                  <span className="text-[11.5px] font-semibold uppercase tracking-wider text-[var(--text-secondary)] block mb-1">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-secondary)] block mb-1">
                     Technical Formulation Description
                   </span>
-                  <p className="text-[13.5px] text-[var(--text-primary)] leading-relaxed whitespace-pre-line m-0">
+                  <p className="text-[13px] text-[var(--text-primary)] leading-relaxed whitespace-pre-line m-0">
                     {product.description || 'No detailed technical description recorded.'}
                   </p>
                 </div>
               </div>
 
-              <div className="bg-[var(--background)] border border-[var(--border)] rounded-[6px] p-4 space-y-3 self-start text-[12.5px]">
+              <div className="bg-[var(--surface-subtle)] border border-[var(--border)] rounded-[3px] p-4 space-y-3 self-start text-[12px]">
                 <div>
-                  <span className="text-[var(--text-muted)] block text-[11px] uppercase font-semibold">Product ID</span>
+                  <span className="text-[var(--text-muted)] block text-[10.5px] uppercase font-semibold">Product ID</span>
                   <span className="font-mono text-[var(--text-primary)] break-all">{product.id}</span>
                 </div>
                 <div>
-                  <span className="text-[var(--text-muted)] block text-[11px] uppercase font-semibold">Product Code</span>
+                  <span className="text-[var(--text-muted)] block text-[10.5px] uppercase font-semibold">Product Code</span>
                   <span className="font-mono font-bold text-[var(--accent-text)]">{product.productCode}</span>
                 </div>
                 <div>
-                  <span className="text-[var(--text-muted)] block text-[11px] uppercase font-semibold">Slug</span>
+                  <span className="text-[var(--text-muted)] block text-[10.5px] uppercase font-semibold">Slug</span>
                   <span className="font-mono text-[var(--text-primary)]">{product.slug}</span>
                 </div>
                 <div>
-                  <span className="text-[var(--text-muted)] block text-[11px] uppercase font-semibold">Tracking Model</span>
-                  <span className="font-bold text-[var(--status-success)]">Individual Serial Numbers</span>
+                  <span className="text-[var(--text-muted)] block text-[10.5px] uppercase font-semibold">Tracking Model</span>
+                  <span className="font-semibold text-[var(--status-success)]">Individual Serial Numbers</span>
                 </div>
                 <div>
-                  <span className="text-[var(--text-muted)] block text-[11px] uppercase font-semibold">Created At</span>
+                  <span className="text-[var(--text-muted)] block text-[10.5px] uppercase font-semibold">Created At</span>
                   <span className="text-[var(--text-primary)]">{new Date(product.createdAt).toLocaleString()}</span>
                 </div>
                 <div>
-                  <span className="text-[var(--text-muted)] block text-[11px] uppercase font-semibold">Last Updated</span>
+                  <span className="text-[var(--text-muted)] block text-[10.5px] uppercase font-semibold">Last Updated</span>
                   <span className="text-[var(--text-primary)]">{new Date(product.updatedAt).toLocaleString()}</span>
                 </div>
               </div>
@@ -508,17 +481,14 @@ export function ProductDetailView({
             {/* Warranty Status Banner in Overview */}
             <div className="pt-4 border-t border-[var(--border)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-center text-[var(--text-primary)] shrink-0">
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                    <path d="M9 12l2 2 4-4" />
-                  </svg>
+                <div className="w-8 h-8 rounded-[4px] bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-center text-[var(--accent-text)] shrink-0">
+                  <IconShieldCheck className="w-4 h-4" stroke={1.8} />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-[13px] font-semibold text-[var(--text-primary)]">Warranty Policy:</span>
                     <span
-                      className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider border ${
+                      className={`inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-semibold uppercase tracking-wider border ${
                         policy?.status === 'ACTIVE'
                           ? 'bg-[var(--status-success-soft)] text-[var(--status-success)] border-[var(--status-success-border)]'
                           : policy
@@ -535,7 +505,7 @@ export function ProductDetailView({
                   </div>
                   <p className="text-[12px] text-[var(--text-secondary)] m-0 mt-0.5">
                     {policy?.status === 'ACTIVE'
-                      ? 'Authorized dealers can register warranty cards for active serial numbers.'
+                      ? 'Authorized distributors and dealers can register warranty cards for active serial numbers.'
                       : 'Dealers cannot activate warranties until an active policy is configured.'}
                   </p>
                 </div>
@@ -544,7 +514,7 @@ export function ProductDetailView({
               <button
                 type="button"
                 onClick={() => setActiveTab('warranty')}
-                className="text-[12.5px] font-semibold text-[var(--accent-text)] hover:underline self-start sm:self-auto cursor-pointer"
+                className="text-[12px] font-semibold text-[var(--accent-text)] hover:underline self-start sm:self-auto cursor-pointer"
               >
                 Manage Policy →
               </button>
@@ -595,14 +565,20 @@ export function ProductDetailView({
           </div>
 
           {filteredSerials.length === 0 ? (
-            <div className="p-8 text-center text-[var(--text-muted)] text-[13.5px]">
-              No serial numbers match the selected criteria.
-            </div>
+            <ProductEmptyState
+              kind="registry"
+              title={serials.length === 0 ? 'No physical serials tracked' : 'No matching serials found'}
+              description={
+                serials.length === 0
+                  ? 'Physical container units for this formula have not been received into warehouse inventory yet.'
+                  : 'Try clearing your search query or adjusting your status filter.'
+              }
+            />
           ) : (
-            <div className="overflow-x-auto border border-[var(--border)] rounded-[4px]">
-              <table className="w-full text-left border-collapse text-[14px]">
+            <div className="overflow-x-auto border border-[var(--border)] rounded-[3px]">
+              <table className="w-full text-left border-collapse text-[13px]">
                 <thead>
-                  <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                  <tr className="border-b border-[var(--border)] bg-[var(--surface-subtle)] text-[11px] font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
                     <th className="py-2.5 px-4 w-40">Serial Number</th>
                     <th className="py-2.5 px-4">Current Location</th>
                     <th className="py-2.5 px-4 text-center w-28">Status</th>
@@ -610,20 +586,18 @@ export function ProductDetailView({
                     <th className="py-2.5 px-4 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[var(--border)]/60">
+                <tbody className="divide-y divide-[var(--border)]">
                   {filteredSerials.map((s) => (
                     <tr key={s.id} className="hover:bg-[var(--surface-subtle)] transition-colors">
                       <td className="py-2.5 px-4 font-mono font-medium text-[12px] text-[var(--text-primary)]">
                         {s.serialNumber}
                       </td>
                       <td className="py-2.5 px-4">
-                        <span className="font-medium text-[14px] text-[var(--text-primary)] block">{s.location?.name}</span>
-                        <span className="font-mono text-[12px] text-[var(--text-muted)]">{s.location?.code}</span>
+                        <span className="font-medium text-[13px] text-[var(--text-primary)] block">{s.location?.name}</span>
+                        <span className="font-mono text-[11px] text-[var(--text-muted)]">{s.location?.code}</span>
                       </td>
                       <td className="py-2.5 px-4 text-center">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium capitalize ${statusBadge(s.status)}`}>
-                          {s.status.toLowerCase()}
-                        </span>
+                        <StatusBadge status={s.status} />
                       </td>
                       <td className="py-2.5 px-4 text-[var(--text-muted)] text-[12px] whitespace-nowrap">
                         {new Date(s.receivedAt).toLocaleDateString(undefined, {
@@ -639,7 +613,7 @@ export function ProductDetailView({
                             setLookupInitialSerial(s.serialNumber);
                             setShowLookupModal(true);
                           }}
-                          className="text-[13px] font-medium text-[var(--accent)] hover:underline cursor-pointer"
+                          className="text-[12.5px] font-medium text-[var(--accent-text)] hover:underline cursor-pointer"
                         >
                           History
                         </button>
@@ -689,20 +663,33 @@ export function ProductDetailView({
           </div>
 
           {product.specifications.length === 0 ? (
-            <p className="text-[13px] text-[var(--text-muted)] py-4 m-0">
-              No technical specifications recorded for this formula.
-            </p>
+            <ProductEmptyState
+              kind="families"
+              title="No specifications recorded"
+              description="Application coats, curing windows, chemical resistance, and hardness parameters have not been entered yet."
+              action={
+                canWrite ? (
+                  <Link
+                    href={`/products/${product.id}/edit`}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[3px] bg-[var(--text-primary)] text-[var(--background)] text-[12px] font-semibold hover:opacity-90 transition-opacity"
+                  >
+                    <IconPlus className="w-3.5 h-3.5" stroke={1.8} />
+                    Add Specifications
+                  </Link>
+                ) : undefined
+              }
+            />
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {product.specifications.map((spec) => (
                 <div
                   key={spec.id || spec.label}
-                  className="bg-[var(--background)] border border-[var(--border)] rounded-[6px] p-3"
+                  className="bg-[var(--surface-subtle)] border border-[var(--border)] rounded-[3px] p-3"
                 >
                   <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-secondary)] block mb-1">
                     {spec.label}
                   </span>
-                  <span className="text-[13.5px] font-medium text-[var(--text-primary)]">{spec.value}</span>
+                  <span className="text-[13px] font-medium text-[var(--text-primary)]">{spec.value}</span>
                 </div>
               ))}
             </div>
@@ -713,11 +700,11 @@ export function ProductDetailView({
       {/* Tab 4: Media & Docs */}
       {activeTab === 'media' && (
         <div className="space-y-6">
-          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[8px] p-6 shadow-[0_1px_3px_rgba(23,23,20,0.03)] space-y-4">
+          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-5 shadow-[0_1px_2px_rgba(23,23,20,0.02)] space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
               <div>
-                <h2 className="text-[15px] font-semibold text-[var(--text-primary)] m-0">Media Assets & Technical Documents</h2>
-                <p className="text-[12.5px] text-[var(--text-secondary)] mt-0.5 m-0">
+                <h2 className="text-[14px] font-semibold text-[var(--text-primary)] m-0">Media Assets & Technical Documents</h2>
+                <p className="text-[12px] text-[var(--text-secondary)] mt-0.5 m-0">
                   Product imagery, packaging diagrams, Technical Data Sheets (TDS), and Material Safety Data Sheets (MSDS).
                 </p>
               </div>
@@ -725,20 +712,32 @@ export function ProductDetailView({
                 <button
                   type="button"
                   onClick={() => setShowUploadModal(true)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] bg-[var(--text-primary)] hover:bg-[var(--surface-subtle)] text-[var(--background)] text-[12.5px] font-medium transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[3px] bg-[var(--text-primary)] hover:opacity-90 text-[var(--background)] text-[12px] font-semibold transition-opacity cursor-pointer"
                 >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                  </svg>
+                  <IconUpload className="w-3.5 h-3.5" stroke={1.8} />
                   Upload File
                 </button>
               )}
             </div>
 
             {product.media.length === 0 ? (
-              <div className="p-8 text-center text-[var(--text-muted)] text-[13.5px]">
-                No media assets or documentation files uploaded for this product yet.
-              </div>
+              <ProductEmptyState
+                kind="registry"
+                title="No media assets or documents"
+                description="Upload packaging imagery, Technical Data Sheets (TDS), or Material Safety Data Sheets (MSDS)."
+                action={
+                  canWrite ? (
+                    <button
+                      type="button"
+                      onClick={() => setShowUploadModal(true)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[3px] bg-[var(--text-primary)] text-[var(--background)] text-[12px] font-semibold hover:opacity-90 transition-opacity cursor-pointer"
+                    >
+                      <IconUpload className="w-3.5 h-3.5" stroke={1.8} />
+                      Upload Document
+                    </button>
+                  ) : undefined
+                }
+              />
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {product.media.map((item) => (
@@ -821,14 +820,16 @@ export function ProductDetailView({
           </div>
 
           {movements.length === 0 ? (
-            <div className="p-8 text-center text-[var(--text-muted)] text-[13.5px]">
-              No stock movements recorded for this product yet.
-            </div>
+            <ProductEmptyState
+              kind="attention"
+              title="No serial movement history"
+              description="Units of this formula have not undergone any facility transfers, receipts, or status adjustments yet."
+            />
           ) : (
-            <div className="overflow-x-auto border border-[var(--border)] rounded-[4px]">
-              <table className="w-full text-left border-collapse text-[14px]">
+            <div className="overflow-x-auto border border-[var(--border)] rounded-[3px]">
+              <table className="w-full text-left border-collapse text-[13px]">
                 <thead>
-                  <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                  <tr className="border-b border-[var(--border)] bg-[var(--surface-subtle)] text-[11px] font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
                     <th className="py-2.5 px-4 w-36">Timestamp</th>
                     <th className="py-2.5 px-4 w-28">Type</th>
                     <th className="py-2.5 px-4 w-40">Serial Number</th>
@@ -837,7 +838,7 @@ export function ProductDetailView({
                     <th className="py-2.5 px-4 w-32">Operator</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[var(--border)]/60">
+                <tbody className="divide-y divide-[var(--border)]">
                   {movements.map((m) => (
                     <tr key={m.id} className="hover:bg-[var(--surface-subtle)] transition-colors">
                       <td className="py-2.5 px-4 text-[var(--text-muted)] whitespace-nowrap text-[12px]">
