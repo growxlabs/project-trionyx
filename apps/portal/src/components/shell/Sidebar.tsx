@@ -7,18 +7,15 @@ import type { SafeUser } from '@trionyx/types';
 import { formatRoleLabel } from '@trionyx/types';
 import { useThemePreference } from './ThemeProvider';
 import {
-  IconBuildingStore,
-  IconClipboardList,
-  IconHierarchy2,
-  IconLayoutDashboard,
-  IconPackages,
-  IconLayersIntersect,
-  IconShieldCheck,
-} from '@tabler/icons-react';
-
-import {
-  ControlSlidersIcon,
-} from './OperationsIcons';
+  Dashboard,
+  Store,
+  InventoryManagement,
+  Layers,
+  Network_2,
+  Security,
+  DocumentTasks,
+  SettingsAdjust,
+} from '@carbon/icons-react';
 
 interface SidebarProps {
   user: SafeUser;
@@ -86,37 +83,37 @@ export function Sidebar({ user }: SidebarProps) {
     router.refresh();
   };
 
-  // Tabler outline icon preview for the primary rail navigation.
+  // IBM Carbon Design System icons for the primary rail navigation.
   const navItems = [
     {
       name: 'Overview',
       href: '/overview',
       active: pathname === '/overview',
-      icon: <IconLayoutDashboard className="w-5 h-5 shrink-0" stroke={1.6} />,
+      icon: <Dashboard size={20} className="shrink-0" />,
     },
     {
       name: 'Studios',
       href: '/dealers',
       active: pathname.startsWith('/dealers'),
-      icon: <IconBuildingStore className="w-5 h-5 shrink-0" stroke={1.6} />,
+      icon: <Store size={20} className="shrink-0" />,
     },
     {
       name: 'Inventory',
       href: '/inventory',
       active: pathname.startsWith('/inventory'),
-      icon: <IconPackages className="w-5 h-5 shrink-0" stroke={1.6} />,
+      icon: <InventoryManagement size={20} className="shrink-0" />,
     },
     {
       name: 'Products',
       href: '/products',
       active: pathname.startsWith('/products'),
-      icon: <IconLayersIntersect className="w-5 h-5 shrink-0" stroke={1.6} />,
+      icon: <Layers size={20} className="shrink-0" />,
     },
     {
       name: 'Distributor Hub',
       href: '/distributors',
       active: pathname.startsWith('/distributors'),
-      icon: <IconHierarchy2 className="w-5 h-5 shrink-0" stroke={1.6} />,
+      icon: <Network_2 size={20} className="shrink-0" />,
     },
     ...(user.role !== 'DISTRIBUTOR'
       ? [
@@ -124,13 +121,13 @@ export function Sidebar({ user }: SidebarProps) {
             name: 'Warranty',
             href: '/warranty',
             active: pathname.startsWith('/warranty'),
-            icon: <IconShieldCheck className="w-5 h-5 shrink-0" stroke={1.6} />,
+            icon: <Security size={20} className="shrink-0" />,
           },
           {
             name: 'Records / Logs',
             href: '/enquiries',
             active: pathname.startsWith('/enquiries'),
-            icon: <IconClipboardList className="w-5 h-5 shrink-0" stroke={1.6} />,
+            icon: <DocumentTasks size={20} className="shrink-0" />,
           },
         ]
       : []),
@@ -227,7 +224,7 @@ export function Sidebar({ user }: SidebarProps) {
             className="w-11 h-11 rounded-[5px] border border-transparent flex items-center justify-center text-[var(--canopy-text-secondary)] hover:text-[var(--canopy-text-primary)] hover:bg-[var(--canopy-hover-bg)] hover:border-[var(--canopy-border)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2 cursor-pointer"
             title="Settings"
           >
-            <ControlSlidersIcon className="w-5 h-5 shrink-0" />
+            <SettingsAdjust size={20} className="shrink-0" />
           </button>
           <div role="tooltip" className="absolute left-[calc(100%+12px)] px-2.5 py-1.5 bg-[var(--surface-raised)] text-[var(--text-primary)] text-[11px] font-semibold tracking-wide rounded-[4px] border border-[var(--border)] shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
             Settings

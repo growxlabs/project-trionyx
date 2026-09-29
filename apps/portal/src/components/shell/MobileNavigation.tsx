@@ -8,14 +8,14 @@ import type { SafeUser } from '@trionyx/types';
 import { formatRoleLabel } from '@trionyx/types';
 import { useThemePreference } from './ThemeProvider';
 import {
-  ControlBoardIcon,
-  WorkshopFrontageIcon,
-  SerialStockTraysIcon,
-  LayeredCoatingSheetsIcon,
-  ConnectedNodesIcon,
-  VerifiedShieldIcon,
-  OperationalLedgerIcon,
-} from './OperationsIcons';
+  Dashboard,
+  Store,
+  InventoryManagement,
+  Layers,
+  Network_2,
+  Security,
+  DocumentTasks,
+} from '@carbon/icons-react';
 
 interface MobileNavigationProps {
   user: SafeUser;
@@ -34,54 +34,47 @@ export function MobileNavigation({ user }: MobileNavigationProps) {
   const navItems = [
     {
       name: 'Overview',
-      operationalMeaning: 'Control Board',
       href: '/overview',
       active: pathname === '/overview',
-      icon: <ControlBoardIcon className="w-5 h-5 shrink-0" />,
+      icon: <Dashboard size={20} className="shrink-0" />,
     },
     {
       name: 'Studios',
-      operationalMeaning: 'Workshop Frontage',
       href: '/dealers',
       active: pathname.startsWith('/dealers'),
-      icon: <WorkshopFrontageIcon className="w-5 h-5 shrink-0" />,
+      icon: <Store size={20} className="shrink-0" />,
     },
     {
       name: 'Inventory',
-      operationalMeaning: 'Serial Stock Trays',
       href: '/inventory',
       active: pathname.startsWith('/inventory'),
-      icon: <SerialStockTraysIcon className="w-5 h-5 shrink-0" />,
+      icon: <InventoryManagement size={20} className="shrink-0" />,
     },
     {
       name: 'Products',
-      operationalMeaning: 'Layered Coating Sheets',
       href: '/products',
       active: pathname.startsWith('/products'),
-      icon: <LayeredCoatingSheetsIcon className="w-5 h-5 shrink-0" />,
+      icon: <Layers size={20} className="shrink-0" />,
     },
     {
       name: 'Distributor Hub',
-      operationalMeaning: 'Connected Nodes',
       href: '/distributors',
       active: pathname.startsWith('/distributors'),
-      icon: <ConnectedNodesIcon className="w-5 h-5 shrink-0" />,
+      icon: <Network_2 size={20} className="shrink-0" />,
     },
     ...(user.role !== 'DISTRIBUTOR'
       ? [
           {
             name: 'Warranty',
-            operationalMeaning: 'Verified Shield',
             href: '/warranty',
             active: pathname.startsWith('/warranty'),
-            icon: <VerifiedShieldIcon className="w-5 h-5 shrink-0" />,
+            icon: <Security size={20} className="shrink-0" />,
           },
           {
             name: 'Records / Logs',
-            operationalMeaning: 'Operational Ledger',
             href: '/enquiries',
             active: pathname.startsWith('/enquiries'),
-            icon: <OperationalLedgerIcon className="w-5 h-5 shrink-0" />,
+            icon: <DocumentTasks size={20} className="shrink-0" />,
           },
         ]
       : []),
@@ -244,9 +237,6 @@ export function MobileNavigation({ user }: MobileNavigationProps) {
                         </span>
                         <span>{item.name}</span>
                       </div>
-                      <span className="font-mono text-[10px] text-[var(--text-muted)] tracking-wider">
-                        {item.operationalMeaning}
-                      </span>
                     </Link>
                   ))}
                 </nav>
