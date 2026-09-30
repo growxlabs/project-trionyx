@@ -8,9 +8,10 @@ import { useThemePreference } from './ThemeProvider';
 
 interface UserMenuProps {
   user: SafeUser;
+  compact?: boolean;
 }
 
-export function UserMenu({ user }: UserMenuProps) {
+export function UserMenu({ user, compact = false }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -78,31 +79,44 @@ export function UserMenu({ user }: UserMenuProps) {
 
   return (
     <div className="relative inline-block text-left" ref={menuRef}>
-      {/* Trigger Button: User Avatar + Name + Chevron */}
+      {/* Trigger Button: avatar (compact) or avatar + name + chevron */}
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
-        className="flex items-center gap-2 px-2.5 py-1 rounded-[4px] hover:bg-[#2D2C27] text-[13px] font-medium text-[#F7F6F0] transition-colors duration-150 cursor-pointer focus:outline-none focus:ring-1 focus:ring-[rgba(255,255,255,0.16)]"
+        title={compact ? user.name : undefined}
+        className={
+          compact
+            ? 'flex items-center justify-center w-9 h-9 rounded-[5px] hover:bg-[#161616] transition-colors duration-150 cursor-pointer focus:outline-none focus:ring-1 focus:ring-[rgba(255,255,255,0.16)]'
+            : 'flex items-center gap-2 px-2.5 py-1 rounded-[4px] hover:bg-[#1A1A1A] text-[13px] font-medium text-[#FAFAFA] transition-colors duration-150 cursor-pointer focus:outline-none focus:ring-1 focus:ring-[rgba(255,255,255,0.16)]'
+        }
       >
-        <span className="w-5 h-5 rounded-full bg-[#2D2C27] border border-[rgba(255,255,255,0.12)] text-[10px] font-mono font-semibold text-[#F7F6F0] flex items-center justify-center shrink-0">
+        <span
+          className={`rounded-full bg-[#1A1A1A] border border-[rgba(255,255,255,0.12)] font-mono font-semibold text-[#FAFAFA] flex items-center justify-center shrink-0 ${
+            compact ? 'w-9 h-9 text-[12px]' : 'w-5 h-5 text-[10px]'
+          }`}
+        >
           {initials}
         </span>
-        <span>{user.name}</span>
-        <svg
-          className={`w-3.5 h-3.5 text-[#A9A59C] transition-transform duration-150 ${
-            isOpen ? 'rotate-180' : ''
-          }`}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
+        {!compact && (
+          <>
+            <span>{user.name}</span>
+            <svg
+              className={`w-3.5 h-3.5 text-[#A3A3A3] transition-transform duration-150 ${
+                isOpen ? 'rotate-180' : ''
+              }`}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </>
+        )}
       </button>
 
       {/* Dropdown Menu */}
@@ -110,7 +124,9 @@ export function UserMenu({ user }: UserMenuProps) {
         <div
           role="dialog"
           aria-label="Account menu"
-          className="absolute right-0 mt-1.5 w-60 rounded-[6px] border border-[var(--menu-border)] bg-[var(--menu-bg)] shadow-2xl py-1.5 z-50 focus:outline-none text-[var(--menu-text-primary)]"
+          className={`absolute w-60 rounded-[6px] border border-[var(--menu-border)] bg-[var(--menu-bg)] shadow-2xl py-1.5 z-50 focus:outline-none text-[var(--menu-text-primary)] ${
+            compact ? 'left-[calc(100%+8px)] bottom-0' : 'right-0 mt-1.5'
+          }`}
         >
           {/* Operator Details */}
           <div className="px-4 py-2 border-b border-[var(--menu-divider)]">

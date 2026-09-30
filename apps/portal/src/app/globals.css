@@ -120,21 +120,6 @@ body {
 [data-theme] .bg-\[\#FEE2E2\] { background: var(--status-danger-soft); }
 [data-theme] .hover\:bg-\[\#FEE2E2\]:hover, [data-theme] .active\:bg-\[\#FEE2E2\]:active { background: var(--status-danger-soft); }
 
-/* Protect shell header inputs from global form theme overrides */
-header input.header-search-input {
-  background-color: #2D2C27 !important;
-  color: #F7F6F0 !important;
-  border-color: rgba(255, 255, 255, 0.10) !important;
-}
-header input.header-search-input::placeholder {
-  color: #A9A59C !important;
-}
-header input.header-search-input:focus {
-  border-color: #F26522 !important;
-  outline: none !important;
-  box-shadow: 0 0 0 1px #F26522 !important;
-}
-
 /* Controls, forms, tables and the shared surfaces inherit the active palette. */
 [data-theme] main input,
 [data-theme] main select,

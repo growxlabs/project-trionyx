@@ -16,12 +16,13 @@ import { Modal } from '../../components/ui/Modal';
 import { SerialNumberLookupModal } from '../../components/inventory/SerialNumberLookupModal';
 import { ReceiveStockModal } from '../../components/inventory/ReceiveStockModal';
 import {
-  WorkspaceHeader,
-  OperationalSummaryStrip,
+  OperationalSummary,
   StatusBadge,
   RegistryToolbar,
-  type SummaryMetric,
+  useRegisterWorkspaceViews,
+  type WorkspaceViewsConfig,
 } from '../../components/workspace';
+import { WorkshopFrontageIcon } from '../../components/shell/OperationsIcons';
 
 interface InventoryTableProps {
   initialSummaries: ProductInventorySummary[];
@@ -275,54 +276,67 @@ export function InventoryTable({
       }));
   }, [initialSummaries]);
 
-  const physicalPositionMetrics: SummaryMetric[] = [
-    {
-      label: 'Available Units',
-      value: totalAvailable,
-      tone: totalAvailable > 0 ? 'positive' : 'alert',
-    },
-    {
-      label: 'Out of Stock',
-      value: zeroStockCount,
-      tone: zeroStockCount > 0 ? 'alert' : 'default',
-    },
-    {
-      label: 'Facilities',
-      value: activeLocationsCount,
-      tone: 'default',
-    },
-    {
-      label: 'Total Tracked',
-      value: totalTracked,
-      tone: 'default',
-    },
-  ];
+  const workspaceViews = useMemo<WorkspaceViewsConfig>(
+    () => ({
+      storageKey: 'trionyx-workspace-inventory',
+      activeId: activeTab,
+      onSelect: (id: string) => setActiveTab(id as InventoryWorkspaceTab),
+      sections: [
+        {
+          items: [
+            {
+              id: 'registry',
+              label: 'Inventory Registry',
+            },
+            {
+              id: 'exceptions',
+              label: 'Stock Exceptions',
+            },
+            {
+              id: 'movements',
+              label: 'Recent Movements',
+            },
+          ],
+        },
+      ],
+    }),
+    [activeTab]
+  );
+  useRegisterWorkspaceViews(workspaceViews);
 
   return (
     <div className="space-y-8">
-      {/* 1. Header with Primary Action: Serial Number Inventory + Receive Serials */}
-      <WorkspaceHeader
-        title="Serial Number Inventory"
-        action={
-          canMutate && (
-            <button
-              type="button"
-              onClick={() => openReceiveModal()}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity cursor-pointer shadow-xs"
-            >
-              <svg className="w-4 h-4 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                <polyline points="3.29 7 12 12 20.71 7" />
-                <line x1="12" y1="22" x2="12" y2="12" />
-              </svg>
-              <span>Receive Serials</span>
-            </button>
-          )
-        }
+      {/* 1. Operational Summary */}
+      <OperationalSummary
+        segments={[
+          { text: 'Right now we hold ' },
+          { value: totalAvailable, tone: 'positive' },
+          { text: ' available units across ' },
+          { value: activeLocationsCount },
+          { text: ' active facilities, with ' },
+          { value: zeroStockCount, tone: zeroStockCount > 0 ? 'danger' : 'default' },
+          { text: ' out of stock of ' },
+          { value: totalTracked },
+          { text: ' tracked positions.' },
+        ]}
       />
 
-      {/* Secondary Actions Bar */}
-      <div className="flex items-center gap-2 flex-wrap -mt-4 pb-2">
+      {/* 2. Actions */}
+      <div className="flex items-center gap-2 flex-wrap">
+        {canMutate && (
+          <button
+            type="button"
+            onClick={() => openReceiveModal()}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity cursor-pointer shadow-xs"
+          >
+            <svg className="w-4 h-4 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+              <polyline points="3.29 7 12 12 20.71 7" />
+              <line x1="12" y1="22" x2="12" y2="12" />
+            </svg>
+            <span>Receive Serials</span>
+          </button>
+        )}
         <button
           type="button"
           onClick={() => setShowLookupModal(true)}
@@ -400,147 +414,22 @@ export function InventoryTable({
         </Link>
       </div>
 
-      {/* 2. Current Physical Position Strip */}
-      <OperationalSummaryStrip
-        metrics={physicalPositionMetrics}
-      />
-
-      {/* 3. In-Page Navigation & Workspace Stage */}
-      <div className="flex flex-col lg:flex-row gap-5 items-start w-full">
-        {/* ======================================================== */}
-        {/* LEFT IN-PAGE NAVIGATION (Operational Index)             */}
-        {/* ======================================================== */}
-        <aside className="w-full lg:w-64 shrink-0 bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-3 space-y-3">
-          <div>
-            <div className="px-2 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
-              Workspace Views
-            </div>
-
-            <div className="space-y-1">
-              {/* 1. Inventory Registry */}
-              <button
-                type="button"
-                onClick={() => setActiveTab('registry')}
-                className={`w-full text-left px-3 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
-                  activeTab === 'registry'
-                    ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--accent)]'
-                    : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
-                }`}
-              >
-                <div className="flex items-center gap-2.5 truncate">
-                  <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <rect x="3" y="3" width="18" height="18" rx="2" />
-                    <line x1="3" y1="9" x2="21" y2="9" />
-                    <line x1="9" y1="9" x2="9" y2="21" />
-                  </svg>
-                  <span className="truncate">Inventory Registry</span>
-                </div>
-                <span className="text-[11px] font-medium px-1.5 py-0.5 rounded-[2px] bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--text-secondary)] tabular-nums">
-                  {initialSummaries.length}
-                </span>
-              </button>
-
-              {/* 2. Stock Exceptions */}
-              <button
-                type="button"
-                onClick={() => setActiveTab('exceptions')}
-                className={`w-full text-left px-3 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
-                  activeTab === 'exceptions'
-                    ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--status-danger)]'
-                    : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
-                }`}
-              >
-                <div className="flex items-center gap-2.5 truncate">
-                  <svg className="w-4 h-4 text-[var(--status-danger)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                    <line x1="12" y1="9" x2="12" y2="13" />
-                    <line x1="12" y1="17" x2="12.01" y2="17" strokeWidth="2.5" />
-                  </svg>
-                  <span className="truncate">Stock Exceptions</span>
-                </div>
-                <span
-                  className={`text-[11px] font-medium px-1.5 py-0.5 rounded-[2px] tabular-nums ${
-                    stockExceptions.length > 0
-                      ? 'bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]'
-                      : 'bg-[var(--surface-subtle)] text-[var(--text-muted)] border border-[var(--border)]'
-                  }`}
-                >
-                  {stockExceptions.length}
-                </span>
-              </button>
-
-              {/* 3. Recent Movements */}
-              <button
-                type="button"
-                onClick={() => setActiveTab('movements')}
-                className={`w-full text-left px-3 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
-                  activeTab === 'movements'
-                    ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--accent)]'
-                    : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
-                }`}
-              >
-                <div className="flex items-center gap-2.5 truncate">
-                  <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <circle cx="12" cy="12" r="9" />
-                    <polyline points="12 7 12 12 15 15" />
-                  </svg>
-                  <span className="truncate">Recent Movements</span>
-                </div>
-                <span className="text-[11px] font-medium px-1.5 py-0.5 rounded-[2px] bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--text-secondary)] tabular-nums">
-                  {movements.length}
-                </span>
-              </button>
-            </div>
-          </div>
-
-          {/* Quick Summary Counts inside subnav */}
-          <div className="pt-3 border-t border-[var(--border)] text-[12px] space-y-1.5 text-[var(--text-secondary)]">
-            <div className="flex items-center justify-between">
-              <span>Available Units</span>
-              <span className="font-semibold text-[var(--status-success)] tabular-nums">{totalAvailable}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Depleted Breaches</span>
-              <span className={`font-semibold tabular-nums ${zeroStockCount > 0 ? 'text-[var(--status-danger)]' : 'text-[var(--text-primary)]'}`}>
-                {zeroStockCount}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Active Facilities</span>
-              <span className="font-semibold text-[var(--text-primary)] tabular-nums">{activeLocationsCount}</span>
-            </div>
-          </div>
-        </aside>
-
-        {/* ======================================================== */}
-        {/* RIGHT FOCUSED WORKSPACE STAGE                            */}
-        {/* ======================================================== */}
-        <main className="flex-1 w-full min-w-0">
+      {/* 3. Workspace Stage — view selection lives in the secondary sidebar */}
+      <div className="w-full">
           {/* TAB 1: INVENTORY REGISTRY */}
           {activeTab === 'registry' && (
             <section aria-labelledby="registry-heading" className="space-y-3">
-              <div className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <rect x="3" y="3" width="18" height="18" rx="2" />
-                  <line x1="3" y1="9" x2="21" y2="9" />
-                  <line x1="9" y1="9" x2="9" y2="21" />
-                </svg>
-                <h2 id="registry-heading" className="text-[14px] font-semibold text-[var(--text-primary)] m-0">
+              {filteredSummaries.length > 0 && (
+              <div className="flex items-center justify-between gap-4 mb-2">
+                <div className="flex items-center gap-2">
+                <h2 id="registry-heading" className="text-[14px] font-semibold text-[var(--text-primary)] m-0 shrink-0">
                   Inventory Registry
                 </h2>
-                <span className="text-[12px] font-normal text-[var(--text-secondary)]">
-                  ({filteredSummaries.length} of {initialSummaries.length} positions)
-                </span>
-              </div>
-
-              {/* Compact Registry Toolbar */}
-              <RegistryToolbar
+                </div>
+                <RegistryToolbar
                 searchValue={search}
                 onSearchChange={setSearch}
                 searchPlaceholder="Search product, code, or facility..."
-                totalCount={initialSummaries.length}
-                filteredCount={filteredSummaries.length}
-                unitLabel="positions"
                 filters={[
                   {
                     id: 'location',
@@ -574,13 +463,16 @@ export function InventoryTable({
                     ],
                   },
                 ]}
-              />
+                />
+              </div>
+              )}
 
               {/* Main Table */}
-              <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
+              <div className={`overflow-hidden ${filteredSummaries.length === 0 ? '' : 'bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px]'}`}>
                 {filteredSummaries.length === 0 ? (
-                  <div className="p-12 text-center text-[var(--text-secondary)]">
-                    <p className="text-[14px] font-medium text-[var(--text-primary)] mb-1">No inventory positions found</p>
+                  <div className="p-12 flex flex-col items-center text-center text-[var(--text-secondary)]">
+                    <WorkshopFrontageIcon className="w-16 h-16 text-[var(--text-muted)]" />
+                    <p className="mt-3 text-[14px] font-medium text-[var(--text-primary)] mb-1">No inventory positions found</p>
                     <p className="text-[13px] m-0">
                       Try adjusting your search criteria or receive initial physical serial numbers.
                     </p>
@@ -731,7 +623,8 @@ export function InventoryTable({
               </div>
 
               {stockExceptions.length === 0 ? (
-                <div className="py-8 text-center text-[var(--text-secondary)] text-[13px]">
+                <div className="py-8 flex flex-col items-center text-center text-[var(--text-secondary)] text-[13px]">
+                  <WorkshopFrontageIcon className="w-14 h-14 text-[var(--text-muted)] mb-3" />
                   No inventory exceptions recorded. All positions meet safety threshold levels.
                 </div>
               ) : (
@@ -802,18 +695,7 @@ export function InventoryTable({
 
               {movements.length === 0 ? (
                 <div className="min-h-[280px] flex flex-col items-center justify-center px-6 py-10 text-center">
-                  <svg width="160" height="120" viewBox="0 0 192 144" fill="none" aria-hidden="true" focusable="false">
-                    <ellipse cx="91" cy="128" rx="61" ry="6" fill="var(--surface-subtle)" />
-                    <rect x="40" y="30" width="96" height="76" rx="5" fill="var(--surface-subtle)" stroke="var(--border-strong)" strokeWidth="1.5" />
-                    <path d="M48 44h80M48 91h80" stroke="var(--text-muted)" strokeWidth="1.5" />
-                    <rect x="57" y="55" width="22" height="28" rx="2" fill="var(--surface)" stroke="var(--text-muted)" strokeWidth="1.4" />
-                    <path d="M62 56v7h12v-7" stroke="var(--accent)" strokeWidth="1.4" />
-                    <rect x="91" y="57" width="24" height="26" rx="2" fill="var(--surface)" stroke="var(--text-muted)" strokeWidth="1.4" />
-                    <path d="m95 70 5 5 10-11" stroke="var(--accent)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                    <circle cx="143" cy="95" r="22" fill="var(--surface)" />
-                    <circle cx="143" cy="95" r="17" fill="var(--accent-soft)" stroke="var(--accent)" strokeWidth="1.5" />
-                    <path d="M135 95h16m-6-6 6 6-6 6" stroke="var(--accent)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+                  <WorkshopFrontageIcon className="w-20 h-20 text-[var(--text-muted)]" />
                   <h3 className="mt-4 mb-0 text-[15px] font-semibold text-[var(--text-primary)]">No movements yet</h3>
                   <p className="mt-1.5 mb-0 text-[13px] text-[var(--text-secondary)]">Serial transfers will appear here.</p>
                 </div>
@@ -869,7 +751,6 @@ export function InventoryTable({
               )}
             </section>
           )}
-        </main>
       </div>
 
       {/* ========================================================================= */}

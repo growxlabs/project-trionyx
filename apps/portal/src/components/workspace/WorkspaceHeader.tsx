@@ -1,9 +1,7 @@
 import React from 'react';
 
 interface WorkspaceHeaderProps {
-  eyebrow?: string; // deprecated, ignored for subtractive design
   title: string;
-  description?: string; // deprecated, ignored for subtractive design
   meta?: React.ReactNode;
   action?: React.ReactNode;
   className?: string;
@@ -16,23 +14,17 @@ export function WorkspaceHeader({
   className = '',
 }: WorkspaceHeaderProps) {
   return (
-    <header className={`mb-4 pb-2.5 border-b border-[var(--border)] ${className}`}>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <h1 className="text-[20px] font-semibold text-[var(--text-primary)] tracking-[-0.01em] leading-none m-0">
+    <header className={className}>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex min-w-0 items-baseline gap-3">
+          <h1 className="text-[28px] font-semibold leading-[1.1] tracking-[-0.02em] text-[var(--text-primary)] m-0">
             {title}
           </h1>
-          {meta && (
-            <div className="text-[12px] font-mono text-[var(--text-muted)] font-normal">
-              {meta}
-            </div>
-          )}
+          {meta && <div className="text-[13px] text-[var(--text-muted)]">{meta}</div>}
         </div>
 
         {action && (
-          <div className="flex items-center gap-2 shrink-0">
-            {action}
-          </div>
+          <div className="flex shrink-0 items-center gap-2 lg:pb-1">{action}</div>
         )}
       </div>
     </header>

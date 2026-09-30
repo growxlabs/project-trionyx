@@ -7,9 +7,11 @@ import type { Product, ProductCategory, SafeUser } from '@trionyx/types';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { SerialNumberLookupModal } from '../../components/inventory/SerialNumberLookupModal';
 import {
-  WorkspaceHeader,
+  OperationalSummary,
   StatusBadge,
   RegistryToolbar,
+  useRegisterWorkspaceViews,
+  type WorkspaceViewsConfig,
 } from '../../components/workspace';
 import { ProductEmptyState } from './ProductEmptyState';
 
@@ -108,183 +110,104 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
     }
   };
 
+  const workspaceViews = useMemo<WorkspaceViewsConfig>(
+    () => ({
+      storageKey: 'trionyx-workspace-products',
+      activeId: activeTab,
+      onSelect: (id: string) => setActiveTab(id as ProductWorkspaceTab),
+      sections: [
+        {
+          items: [
+            {
+              id: 'registry',
+              label: 'Product Registry',
+            },
+            {
+              id: 'attention',
+              label: 'Needs Attention',
+            },
+            {
+              id: 'families',
+              label: 'Product Families',
+            },
+          ],
+        },
+      ],
+    }),
+    [activeTab]
+  );
+  useRegisterWorkspaceViews(workspaceViews);
+
   return (
     <div className="space-y-8">
-      {/* 1. Header: Products with count and action */}
-      <WorkspaceHeader
-        title="Products"
-        meta={<span className="text-[13px] font-normal text-[var(--text-secondary)]">{products.length} products</span>}
-        action={
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setShowLookupModal(true)}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-[4px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[13px] font-medium transition-colors cursor-pointer"
+      {/* 1. Operational Summary + primary actions */}
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <OperationalSummary
+          segments={[
+            { text: 'Right now the catalogue holds ' },
+            { value: products.length },
+            { text: ' products — ' },
+            { value: activeCount, tone: 'positive' },
+            { text: ' active, ' },
+            { value: publicCount, tone: 'info' },
+            { text: ' public, across ' },
+            { value: categoryStats.length },
+            { text: ' categories.' },
+          ]}
+        />
+        <div className="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowLookupModal(true)}
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-[4px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[13px] font-medium transition-colors cursor-pointer"
+          >
+            <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+              <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+              <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+              <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+              <line x1="7" y1="7" x2="7" y2="17" />
+              <line x1="12" y1="7" x2="12" y2="17" />
+              <line x1="17" y1="7" x2="17" y2="17" />
+            </svg>
+            <span>Lookup Serial</span>
+          </button>
+          {canWrite && (
+            <Link
+              href="/products/new"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity shadow-xs"
             >
-              <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M3 7V5a2 2 0 0 1 2-2h2" />
-                <path d="M17 3h2a2 2 0 0 1 2 2v2" />
-                <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
-                <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
-                <line x1="7" y1="7" x2="7" y2="17" />
-                <line x1="12" y1="7" x2="12" y2="17" />
-                <line x1="17" y1="7" x2="17" y2="17" />
+              <svg className="w-4 h-4 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
               </svg>
-              <span>Lookup Serial</span>
-            </button>
-            {canWrite && (
-              <Link
-                href="/products/new"
-                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity shadow-xs"
-              >
-                <svg className="w-4 h-4 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                <span>New Product</span>
-              </Link>
-            )}
-          </div>
-        }
-      />
+              <span>New Product</span>
+            </Link>
+          )}
+        </div>
+      </div>
 
-      {/* 2. In-Page Navigation & Workspace Stage */}
-      <div className="flex flex-col lg:flex-row gap-5 items-start w-full">
-        {/* ======================================================== */}
-        {/* LEFT IN-PAGE NAVIGATION (Operational Index)             */}
-        {/* ======================================================== */}
-        <aside className="w-full lg:w-64 shrink-0 bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-3 space-y-3">
-          <div>
-            <div className="px-2 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
-              Workspace Views
-            </div>
-
-            <div className="space-y-1">
-              {/* 1. Product Registry */}
-              <button
-                type="button"
-                onClick={() => setActiveTab('registry')}
-                className={`w-full text-left px-3 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
-                  activeTab === 'registry'
-                    ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--accent)]'
-                    : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
-                }`}
-              >
-                <div className="flex items-center gap-2.5 truncate">
-                  <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <rect x="3" y="3" width="18" height="18" rx="2" />
-                    <line x1="3" y1="9" x2="21" y2="9" />
-                    <line x1="9" y1="9" x2="9" y2="21" />
-                  </svg>
-                  <span className="truncate">Product Registry</span>
-                </div>
-                <span className="text-[11px] font-medium px-1.5 py-0.5 rounded-[2px] bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--text-secondary)] tabular-nums">
-                  {products.length}
-                </span>
-              </button>
-
-              {/* 2. Needs Attention */}
-              <button
-                type="button"
-                onClick={() => setActiveTab('attention')}
-                className={`w-full text-left px-3 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
-                  activeTab === 'attention'
-                    ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--status-danger)]'
-                    : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
-                }`}
-              >
-                <div className="flex items-center gap-2.5 truncate">
-                  <svg className="w-4 h-4 text-[var(--status-danger)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                    <line x1="12" y1="9" x2="12" y2="13" />
-                    <line x1="12" y1="17" x2="12.01" y2="17" strokeWidth="2.5" />
-                  </svg>
-                  <span className="truncate">Needs Attention</span>
-                </div>
-                <span
-                  className={`text-[11px] font-medium px-1.5 py-0.5 rounded-[2px] tabular-nums ${
-                    stockAttentionItems.length > 0
-                      ? 'bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]'
-                      : 'bg-[var(--surface-subtle)] text-[var(--text-muted)] border border-[var(--border)]'
-                  }`}
-                >
-                  {stockAttentionItems.length}
-                </span>
-              </button>
-
-              {/* 3. Product Families */}
-              <button
-                type="button"
-                onClick={() => setActiveTab('families')}
-                className={`w-full text-left px-3 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
-                  activeTab === 'families'
-                    ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--accent)]'
-                    : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
-                }`}
-              >
-                <div className="flex items-center gap-2.5 truncate">
-                  <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <polygon points="12 2 2 7 12 12 22 7 12 2" />
-                    <polyline points="2 17 12 22 22 17" />
-                    <polyline points="2 12 12 17 22 12" />
-                  </svg>
-                  <span className="truncate">Product Families</span>
-                </div>
-                <span className="text-[11px] font-medium px-1.5 py-0.5 rounded-[2px] bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--text-secondary)] tabular-nums">
-                  {categoryStats.length}
-                </span>
-              </button>
-            </div>
-          </div>
-
-          {/* Quick Summary Counts */}
-          <div className="pt-3 border-t border-[var(--border)] text-[12px] space-y-1.5 text-[var(--text-secondary)]">
-            <div className="flex items-center justify-between">
-              <span>Active SKUs</span>
-              <span className="font-semibold text-[var(--text-primary)] tabular-nums">{activeCount}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Public Listed</span>
-              <span className="font-semibold text-[var(--text-primary)] tabular-nums">{publicCount}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Total Categories</span>
-              <span className="font-semibold text-[var(--text-primary)] tabular-nums">{categoryStats.length}</span>
-            </div>
-          </div>
-        </aside>
-
-        {/* ======================================================== */}
-        {/* RIGHT FOCUSED WORKSPACE STAGE                            */}
-        {/* ======================================================== */}
-        <main className="flex-1 w-full min-w-0">
+      {/* 3. Workspace Stage — view selection lives in the secondary sidebar */}
+      <div className="w-full">
           {/* TAB 1: PRODUCT REGISTRY */}
           {activeTab === 'registry' && (
             <section aria-labelledby="product-registry-heading" className="space-y-3">
-              <div className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <rect x="3" y="3" width="18" height="18" rx="2" />
-                  <line x1="3" y1="9" x2="21" y2="9" />
-                  <line x1="9" y1="9" x2="9" y2="21" />
-                </svg>
-                <h2 id="product-registry-heading" className="text-[14px] font-semibold text-[var(--text-primary)] m-0">
+              {filteredProducts.length > 0 && (
+              <div className="flex items-center justify-between gap-4 mb-2">
+                <div className="flex items-center gap-2">
+                <h2 id="product-registry-heading" className="text-[14px] font-semibold text-[var(--text-primary)] m-0 shrink-0">
                   Product Registry
                 </h2>
                 {selectedCategory !== 'ALL' && (
-                  <span className="text-[12px] font-normal text-[var(--text-secondary)]">
+                  <span className="text-[12px] font-normal text-[var(--text-secondary)] shrink-0">
                     · Filtered by {categories.find((c) => c.id === selectedCategory)?.name || 'Category'}
                   </span>
                 )}
-              </div>
-
-              {/* Compact Registry Toolbar */}
-              <RegistryToolbar
+                </div>
+                <RegistryToolbar
                 searchValue={search}
                 onSearchChange={setSearch}
                 searchPlaceholder="Search product name, code (TRX-PROD-...), or slug..."
-                totalCount={products.length}
-                filteredCount={filteredProducts.length}
-                unitLabel="products"
                 filters={[
                   {
                     id: 'category',
@@ -321,10 +244,12 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
                     ],
                   },
                 ]}
-              />
+                />
+              </div>
+              )}
 
               {/* Working Table */}
-              <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
+              <div className={`overflow-hidden ${filteredProducts.length === 0 ? '' : 'bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px]'}`}>
                 {filteredProducts.length === 0 ? (
                   <ProductEmptyState
                     kind="registry"
@@ -618,7 +543,6 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
               </>}
             </section>
           )}
-        </main>
       </div>
 
       {/* Confirmation Dialog for Product Archival */}

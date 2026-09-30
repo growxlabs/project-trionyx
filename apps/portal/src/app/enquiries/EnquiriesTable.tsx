@@ -4,11 +4,11 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import type { ContactEnquiry, ContactEnquiryType, SafeUser, User } from '@trionyx/types';
 import {
-  WorkspaceHeader,
-  OperationalSummaryStrip,
+  OperationalSummary,
   StatusBadge,
   RegistryToolbar,
-  type SummaryMetric,
+  useRegisterWorkspaceViews,
+  type WorkspaceViewsConfig,
 } from '../../components/workspace';
 import { EnquiryEmptyState } from './EnquiryEmptyState';
 
@@ -42,13 +42,6 @@ export function EnquiriesTable({ initialEnquiries, internalUsers, user }: Enquir
   const inProgressCount = useMemo(() => enquiries.filter((e) => e.status === 'IN_PROGRESS').length, [enquiries]);
   const unassignedCount = useMemo(() => enquiries.filter((e) => !e.assignedTo).length, [enquiries]);
   const closedCount = useMemo(() => enquiries.filter((e) => e.status === 'CLOSED').length, [enquiries]);
-
-  const queueMetrics: SummaryMetric[] = [
-    { label: 'New', value: newCount, tone: newCount > 0 ? 'alert' : 'default' },
-    { label: 'In Progress', value: inProgressCount, tone: inProgressCount > 0 ? 'warning' : 'default' },
-    { label: 'Unassigned', value: unassignedCount, tone: unassignedCount > 0 ? 'warning' : 'default' },
-    { label: 'Closed', value: closedCount, tone: 'default' },
-  ];
 
   // Needs Action items (NEW or UNASSIGNED)
   const needsActionItems = useMemo(() => {
@@ -120,165 +113,72 @@ export function EnquiriesTable({ initialEnquiries, internalUsers, user }: Enquir
     }
   };
 
+  const workspaceViews = useMemo<WorkspaceViewsConfig>(
+    () => ({
+      storageKey: 'trionyx-workspace-enquiries',
+      activeId: activeTab,
+      onSelect: (id: string) => setActiveTab(id as EnquiriesWorkspaceTab),
+      sections: [
+        {
+          items: [
+            {
+              id: 'registry',
+              label: 'Enquiries Registry',
+            },
+            {
+              id: 'needs_action',
+              label: 'Needs Action',
+            },
+            {
+              id: 'breakdown',
+              label: 'Enquiry Channels',
+            },
+          ],
+        },
+      ],
+    }),
+    [activeTab]
+  );
+  useRegisterWorkspaceViews(workspaceViews);
+
   return (
     <div className="space-y-8">
-      {/* 1. Header */}
-      <WorkspaceHeader
-        title="Enquiries"
-        meta={<span className="text-[13px] font-normal text-[var(--text-secondary)]">{enquiries.length} enquiries</span>}
+      {/* 1. Operational Summary */}
+      <OperationalSummary
+        segments={[
+          { text: 'Right now there are ' },
+          { value: newCount, tone: 'accent' },
+          { text: ' new enquiries, ' },
+          { value: inProgressCount, tone: 'warning' },
+          { text: ' in progress and ' },
+          { value: unassignedCount, tone: 'info' },
+          { text: ' unassigned, with ' },
+          { value: closedCount, tone: 'positive' },
+          { text: ' closed.' },
+        ]}
       />
 
-      {/* 2. Work Queue Strip */}
-      <OperationalSummaryStrip
-        metrics={queueMetrics}
-      />
-
-      {/* 3. In-Page Navigation & Workspace Stage */}
-      <div className="flex flex-col lg:flex-row gap-5 items-start w-full">
-        {/* ======================================================== */}
-        {/* LEFT IN-PAGE NAVIGATION (Operational Index)             */}
-        {/* ======================================================== */}
-        <aside className="w-full lg:w-64 shrink-0 bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-3 space-y-3">
-          <div>
-            <div className="px-2 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
-              Workspace Views
-            </div>
-
-            <div className="space-y-1">
-              {/* 1. Enquiries Registry */}
-              <button
-                type="button"
-                onClick={() => setActiveTab('registry')}
-                className={`w-full text-left px-3 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
-                  activeTab === 'registry'
-                    ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--accent)]'
-                    : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
-                }`}
-              >
-                <div className="flex items-center gap-2.5 truncate">
-                  <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                    <polyline points="22,6 12,13 2,6" />
-                  </svg>
-                  <span className="truncate">Enquiries Registry</span>
-                </div>
-                <span className="text-[11px] font-medium px-1.5 py-0.5 rounded-[2px] bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--text-secondary)] tabular-nums">
-                  {enquiries.length}
-                </span>
-              </button>
-
-              {/* 2. Needs Action */}
-              <button
-                type="button"
-                onClick={() => setActiveTab('needs_action')}
-                className={`w-full text-left px-3 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
-                  activeTab === 'needs_action'
-                    ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--status-warning)]'
-                    : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
-                }`}
-              >
-                <div className="flex items-center gap-2.5 truncate">
-                  <svg className="w-4 h-4 text-[var(--status-warning)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                    <line x1="12" y1="9" x2="12" y2="13" />
-                    <line x1="12" y1="17" x2="12.01" y2="17" strokeWidth="2.5" />
-                  </svg>
-                  <span className="truncate">Needs Action</span>
-                </div>
-                <span
-                  className={`text-[11px] font-medium px-1.5 py-0.5 rounded-[2px] tabular-nums ${
-                    needsActionItems.length > 0
-                      ? 'bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]'
-                      : 'bg-[var(--surface-subtle)] text-[var(--text-muted)] border border-[var(--border)]'
-                  }`}
-                >
-                  {needsActionItems.length}
-                </span>
-              </button>
-
-              {/* 3. Enquiry Types Breakdown */}
-              <button
-                type="button"
-                onClick={() => setActiveTab('breakdown')}
-                className={`w-full text-left px-3 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
-                  activeTab === 'breakdown'
-                    ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--accent)]'
-                    : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
-                }`}
-              >
-                <div className="flex items-center gap-2.5 truncate">
-                  <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <polygon points="12 2 2 7 12 12 22 7 12 2" />
-                    <polyline points="2 17 12 22 22 17" />
-                    <polyline points="2 12 12 17 22 12" />
-                  </svg>
-                  <span className="truncate">Enquiry Channels</span>
-                </div>
-                <span className="text-[11px] font-medium px-1.5 py-0.5 rounded-[2px] bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--text-secondary)] tabular-nums">
-                  5
-                </span>
-              </button>
-            </div>
-          </div>
-
-          {/* Operational Subnav Counts */}
-          <div className="pt-3 border-t border-[var(--border)] text-[12px] space-y-1.5 text-[var(--text-secondary)]">
-            <div className="flex items-center justify-between">
-              <span>New Inquiries</span>
-              <span className={`font-semibold tabular-nums ${newCount > 0 ? 'text-[var(--status-danger)]' : 'text-[var(--text-primary)]'}`}>
-                {newCount}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>In Progress</span>
-              <span className="font-semibold text-[var(--text-primary)] tabular-nums">{inProgressCount}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Unassigned</span>
-              <span className={`font-semibold tabular-nums ${unassignedCount > 0 ? 'text-[var(--status-warning)]' : 'text-[var(--text-primary)]'}`}>
-                {unassignedCount}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span>Closed / Resolved</span>
-              <span className="font-semibold text-[var(--status-success)] tabular-nums">{closedCount}</span>
-            </div>
-          </div>
-        </aside>
-
-        {/* ======================================================== */}
-        {/* RIGHT FOCUSED WORKSPACE STAGE                            */}
-        {/* ======================================================== */}
-        <main className="flex-1 w-full min-w-0">
+      {/* 3. Workspace Stage — view selection lives in the secondary sidebar */}
+      <div className="w-full">
           {/* TAB 1: ENQUIRIES REGISTRY */}
           {activeTab === 'registry' && (
             <section aria-labelledby="all-enquiries-heading" className="space-y-3">
-              <div className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                  <polyline points="22,6 12,13 2,6" />
-                </svg>
-                <h2 id="all-enquiries-heading" className="text-[14px] font-semibold text-[var(--text-primary)] m-0">
+              {filteredEnquiries.length > 0 && (
+              <div className="flex items-center justify-between gap-4 mb-2">
+                <div className="flex items-center gap-2">
+                <h2 id="all-enquiries-heading" className="text-[14px] font-semibold text-[var(--text-primary)] m-0 shrink-0">
                   Enquiries Registry
                 </h2>
-                <span className="text-[12px] font-normal text-[var(--text-secondary)]">
-                  ({filteredEnquiries.length} of {enquiries.length} enquiries)
-                </span>
                 {typeFilter !== 'ALL' && (
-                  <span className="text-[12px] font-medium text-[var(--accent)]">
+                  <span className="text-[12px] font-medium text-[var(--accent)] shrink-0">
                     · Filtered by {TYPE_LABELS[typeFilter as ContactEnquiryType] || typeFilter}
                   </span>
                 )}
-              </div>
-
-              {/* Compact Toolbar */}
-              <RegistryToolbar
+                </div>
+                <RegistryToolbar
                 searchValue={search}
                 onSearchChange={setSearch}
                 searchPlaceholder="Search code, name, business, email, or city..."
-                totalCount={enquiries.length}
-                filteredCount={filteredEnquiries.length}
-                unitLabel="enquiries"
                 filters={[
                   {
                     id: 'type',
@@ -329,10 +229,12 @@ export function EnquiriesTable({ initialEnquiries, internalUsers, user }: Enquir
                     ],
                   },
                 ]}
-              />
+                />
+              </div>
+              )}
 
               {/* Table */}
-              <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
+              <div className={`overflow-hidden ${filteredEnquiries.length === 0 ? '' : 'bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px]'}`}>
                 {filteredEnquiries.length === 0 ? (
                   <EnquiryEmptyState
                     kind="registry"
@@ -612,7 +514,6 @@ export function EnquiriesTable({ initialEnquiries, internalUsers, user }: Enquir
               </div>
             </section>
           )}
-        </main>
       </div>
     </div>
   );

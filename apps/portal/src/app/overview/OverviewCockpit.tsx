@@ -1,18 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { StockAvailableIllustration } from './StockAvailableIllustration';
 import { QueueEmptyIllustration } from './QueueEmptyIllustration';
-import {
-  EmptyStockTrayIcon,
-  DisconnectedWorkshopIcon,
-  ApplicationDocumentIcon,
-  OperationsBoardIcon,
-  ChronologicalLedgerIcon,
-  LocationStockLayersIcon,
-} from '../../components/shell/OperationsIcons';
-
+import { useRegisterWorkspaceViews, type WorkspaceViewsConfig } from '../../components/workspace';
 export type CockpitTab =
   | 'scorecard'
   | 'stockout'
@@ -92,200 +84,57 @@ export function OverviewCockpit({
 
   const totalActionable = outOfStockProducts.length + unassignedDealers.length + newEnquiriesList.length;
 
+  const workspaceViews = useMemo<WorkspaceViewsConfig>(
+    () => ({
+      storageKey: 'trionyx-workspace-overview',
+      activeId: activeTab,
+      onSelect: (id: string) => setActiveTab(id as CockpitTab),
+      sections: [
+        {
+          title: 'Exception Queues',
+          meta: `${totalActionable} actionable`,
+          items: [
+            {
+              id: 'stockout',
+              label: 'Products Out of Stock',
+              count: outOfStockProducts.length,
+              countTone: outOfStockProducts.length > 0 ? 'danger' : 'default',
+            },
+            {
+              id: 'unassigned-dealers',
+              label: 'Studios Missing Hub',
+              count: unassignedDealers.length,
+              countTone: unassignedDealers.length > 0 ? 'warning' : 'default',
+            },
+            {
+              id: 'enquiries',
+              label: 'Partner Applications',
+              count: newEnquiriesList.length,
+              countTone: newEnquiriesList.length > 0 ? 'accent' : 'default',
+            },
+          ],
+        },
+        {
+          title: 'Records',
+          items: [
+            { id: 'scorecard', label: 'Operations Summary', trailing: 'Live' },
+            { id: 'audit-journal', label: 'Recent Operations', trailing: 'Logs' },
+            { id: 'facility', label: 'Inventory by Location', trailing: 'Delhi' },
+          ],
+        },
+      ],
+    }),
+    [activeTab, totalActionable, outOfStockProducts.length, unassignedDealers.length, newEnquiriesList.length]
+  );
+  useRegisterWorkspaceViews(workspaceViews);
+
   return (
-    <div className="flex flex-col lg:flex-row gap-4 items-start w-full">
+    <div className="w-full">
       {/* ======================================================== */}
-      {/* 1. LEFT INSIDE PAGE NAVBAR (Operational Index / Filter)  */}
+      {/* FOCUSED, HIGH-READABILITY WORKSPACE (view choice is in  */}
+      {/* the secondary sidebar)                                  */}
       {/* ======================================================== */}
-      <aside className="w-full lg:w-72 shrink-0 bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-3 space-y-4">
-        {/* Section A: Exception Queues */}
-        <div>
-          <div className="px-2 pb-1.5 flex items-center justify-between text-[12px] font-semibold text-[var(--text-secondary)]">
-            <span>Exception Queues</span>
-            <span className="text-[12px] font-normal text-[var(--text-muted)]">
-              {totalActionable} actionable
-            </span>
-          </div>
-
-          <div className="space-y-0.5">
-            {/* 1. Products Out of Stock */}
-            <button
-              type="button"
-              onClick={() => setActiveTab('stockout')}
-              className={`w-full text-left px-2.5 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
-                activeTab === 'stockout'
-                  ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--status-danger)]'
-                  : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
-              }`}
-            >
-              <div className="flex items-center gap-2 min-w-0">
-                <EmptyStockTrayIcon
-                  className={`w-4 h-4 shrink-0 transition-colors ${
-                    activeTab === 'stockout'
-                      ? 'text-[var(--status-danger)]'
-                      : outOfStockProducts.length > 0
-                      ? 'text-[var(--status-danger)]'
-                      : 'text-[var(--text-secondary)]'
-                  }`}
-                />
-                <span className="truncate">Products Out of Stock</span>
-              </div>
-              <span
-                className={`text-[12px] font-medium px-2 py-0.5 rounded-[2px] tabular-nums shrink-0 ml-2 ${
-                  outOfStockProducts.length > 0
-                    ? 'bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]'
-                    : 'bg-[var(--surface-subtle)] text-[var(--text-muted)]'
-                }`}
-              >
-                {outOfStockProducts.length}
-              </span>
-            </button>
-
-            {/* 2. Studios Missing Distributor Hub */}
-            <button
-              type="button"
-              onClick={() => setActiveTab('unassigned-dealers')}
-              className={`w-full text-left px-2.5 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
-                activeTab === 'unassigned-dealers'
-                  ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--status-warning)]'
-                  : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
-              }`}
-            >
-              <div className="flex items-center gap-2 min-w-0">
-                <DisconnectedWorkshopIcon
-                  className={`w-4 h-4 shrink-0 transition-colors ${
-                    activeTab === 'unassigned-dealers'
-                      ? 'text-[var(--status-warning)]'
-                      : unassignedDealers.length > 0
-                      ? 'text-[var(--status-warning)]'
-                      : 'text-[var(--text-secondary)]'
-                  }`}
-                />
-                <span className="truncate">Studios Missing Hub</span>
-              </div>
-              <span
-                className={`text-[12px] font-medium px-2 py-0.5 rounded-[2px] tabular-nums shrink-0 ml-2 ${
-                  unassignedDealers.length > 0
-                    ? 'bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]'
-                    : 'bg-[var(--surface-subtle)] text-[var(--text-muted)]'
-                }`}
-              >
-                {unassignedDealers.length}
-              </span>
-            </button>
-
-            {/* 3. Partner Applications Pending Triage */}
-            <button
-              type="button"
-              onClick={() => setActiveTab('enquiries')}
-              className={`w-full text-left px-2.5 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
-                activeTab === 'enquiries'
-                  ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--accent)]'
-                  : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
-              }`}
-            >
-              <div className="flex items-center gap-2 min-w-0">
-                <ApplicationDocumentIcon
-                  className={`w-4 h-4 shrink-0 transition-colors ${
-                    activeTab === 'enquiries'
-                      ? 'text-[#F26522]'
-                      : newEnquiriesList.length > 0
-                      ? 'text-[var(--accent)]'
-                      : 'text-[var(--text-secondary)]'
-                  }`}
-                />
-                <span className="truncate">Partner Applications</span>
-              </div>
-              <span
-                className={`text-[12px] font-medium px-2 py-0.5 rounded-[2px] tabular-nums shrink-0 ml-2 ${
-                  newEnquiriesList.length > 0
-                    ? 'bg-[var(--accent-soft)] text-[var(--accent)] border border-[var(--accent-soft-border)]'
-                    : 'bg-[var(--surface-subtle)] text-[var(--text-muted)]'
-                }`}
-              >
-                {newEnquiriesList.length}
-              </span>
-            </button>
-          </div>
-        </div>
-
-        {/* Section B: Records */}
-        <div className="pt-2 border-t border-[var(--border)]">
-          <div className="px-2 pb-1.5 text-[12px] font-semibold text-[var(--text-secondary)]">
-            Records
-          </div>
-
-          <div className="space-y-0.5">
-            {/* Operations Summary */}
-            <button
-              type="button"
-              onClick={() => setActiveTab('scorecard')}
-              className={`w-full text-left px-2.5 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
-                activeTab === 'scorecard'
-                  ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--accent)]'
-                  : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
-              }`}
-            >
-              <div className="flex items-center gap-2 min-w-0">
-                <OperationsBoardIcon
-                  className={`w-4 h-4 shrink-0 transition-colors ${
-                    activeTab === 'scorecard' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
-                  }`}
-                />
-                <span className="truncate">Operations Summary</span>
-              </div>
-              <span className="text-[11px] font-normal text-[var(--text-muted)] shrink-0 ml-2">Live</span>
-            </button>
-
-            {/* Recent Operations */}
-            <button
-              type="button"
-              onClick={() => setActiveTab('audit-journal')}
-              className={`w-full text-left px-2.5 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
-                activeTab === 'audit-journal'
-                  ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--accent)]'
-                  : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
-              }`}
-            >
-              <div className="flex items-center gap-2 min-w-0">
-                <ChronologicalLedgerIcon
-                  className={`w-4 h-4 shrink-0 transition-colors ${
-                    activeTab === 'audit-journal' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
-                  }`}
-                />
-                <span className="truncate">Recent Operations</span>
-              </div>
-              <span className="text-[11px] font-normal text-[var(--text-muted)] shrink-0 ml-2">Logs</span>
-            </button>
-
-            {/* Inventory by Location */}
-            <button
-              type="button"
-              onClick={() => setActiveTab('facility')}
-              className={`w-full text-left px-2.5 py-2 rounded-[3px] text-[13px] flex items-center justify-between transition-colors cursor-pointer ${
-                activeTab === 'facility'
-                  ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)] border-l-2 border-[var(--accent)]'
-                  : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]/60'
-              }`}
-            >
-              <div className="flex items-center gap-2 min-w-0">
-                <LocationStockLayersIcon
-                  className={`w-4 h-4 shrink-0 transition-colors ${
-                    activeTab === 'facility' ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'
-                  }`}
-                />
-                <span className="truncate">Inventory by Location</span>
-              </div>
-              <span className="text-[11px] font-normal text-[var(--text-muted)] shrink-0 ml-2">Delhi</span>
-            </button>
-          </div>
-        </div>
-      </aside>
-
-      {/* ======================================================== */}
-      {/* 2. RIGHT MAIN VIEW: FOCUSED, HIGH-READABILITY WORKSPACE  */}
-      {/* ======================================================== */}
-      <section className="flex-1 w-full bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden min-h-[420px]">
+      <section className="w-full bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden min-h-[420px]">
         {/* VIEW 1: OPERATIONS SUMMARY (SCORECARD) */}
         {activeTab === 'scorecard' && (
           <div>
@@ -302,9 +151,9 @@ export function OverviewCockpit({
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
-                    <th className="py-2.5 px-4 font-semibold">Operational Domain</th>
-                    <th className="py-2.5 px-4 font-semibold text-center w-36">Current Balance</th>
-                    <th className="py-2.5 px-4 font-semibold text-center w-40">Status</th>
+                    <th className="py-2.5 px-4 font-semibold text-left">Operational Domain</th>
+                    <th className="py-2.5 px-4 font-semibold text-left w-36">Current Balance</th>
+                    <th className="py-2.5 px-4 font-semibold text-left w-40">Status</th>
                     <th className="py-2.5 px-4 font-semibold text-right w-40">Action</th>
                   </tr>
                 </thead>
@@ -314,10 +163,10 @@ export function OverviewCockpit({
                       <td className="py-2.5 px-4 text-[14px] font-medium text-[var(--text-primary)]">
                         {row.label}
                       </td>
-                      <td className="py-2.5 px-4 text-[14px] font-semibold text-center text-[var(--text-primary)] font-sans">
+                      <td className="py-2.5 px-4 text-[14px] font-semibold text-left text-[var(--text-primary)] font-sans">
                         {row.balance} <span className="text-[13px] font-normal text-[var(--text-secondary)] ml-1">{row.unit}</span>
                       </td>
-                      <td className="py-2.5 px-4 text-center">
+                      <td className="py-2.5 px-4 text-left">
                         <span
                           className={`inline-block px-2.5 py-0.5 rounded-[2px] text-[12px] font-medium border ${
                             row.statusType === 'success'
@@ -435,7 +284,7 @@ export function OverviewCockpit({
 
             {unassignedDealers.length === 0 ? (
               <div className="min-h-[360px] flex flex-col items-center justify-center px-6 py-12 text-center">
-                <QueueEmptyIllustration kind="studios" />
+                <QueueEmptyIllustration />
                 <h3 className="mt-5 mb-0 text-[16px] font-semibold text-[var(--text-primary)]">All studios have a hub</h3>
                 <p className="mt-2 mb-0 text-[13px] leading-relaxed text-[var(--text-secondary)]">No assignments needed.</p>
               </div>
@@ -504,7 +353,7 @@ export function OverviewCockpit({
 
             {newEnquiriesList.length === 0 ? (
               <div className="min-h-[360px] flex flex-col items-center justify-center px-6 py-12 text-center">
-                <QueueEmptyIllustration kind="partners" />
+                <QueueEmptyIllustration />
                 <h3 className="mt-5 mb-0 text-[16px] font-semibold text-[var(--text-primary)]">No applications to review</h3>
                 <p className="mt-2 mb-0 text-[13px] leading-relaxed text-[var(--text-secondary)]">New applications will appear here.</p>
               </div>

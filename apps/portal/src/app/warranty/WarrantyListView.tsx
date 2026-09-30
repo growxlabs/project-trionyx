@@ -7,12 +7,9 @@ import type { Warranty, SafeUser, Dealer, Product } from '@trionyx/types';
 import { Modal } from '../../components/ui/Modal';
 import { WarrantyEmptyIllustration } from './WarrantyEmptyIllustration';
 import {
-  WorkspaceHeader,
-  OperationalSummaryStrip,
+  OperationalSummary,
   StatusBadge,
   RegistryToolbar,
-  EmptyOperationalState,
-  type SummaryMetric,
 } from '../../components/workspace';
 
 interface WarrantyListViewProps {
@@ -276,42 +273,42 @@ export function WarrantyListView({
       .slice(0, 4);
   }, [warranties]);
 
-  const warrantyMetrics: SummaryMetric[] = [
-    { label: 'Active Policies', value: activeCount, tone: 'positive' },
-    { label: 'Expired', value: expiredCount, tone: 'default' },
-    { label: 'Void Policies', value: voidCount, tone: voidCount > 0 ? 'alert' : 'default' },
-    { label: 'Total Tracked', value: totalCount, tone: 'default' },
-  ];
-
   return (
     <div className="space-y-8">
-      {/* 1. Header with Primary Action */}
-      <WorkspaceHeader
-        title="Warranty"
-        action={
-          <div className="flex items-center gap-3">
-            <span className="text-[13px] font-normal text-[var(--text-secondary)]">
-              {warranties.length} warranties
-            </span>
-            {canWrite && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSerialNumber('');
-                  setSelectedDealerId('');
-                  setValidatedData(null);
-                  setFormError(null);
-                  setFormSuccess(null);
-                  setIsModalOpen(true);
-                }}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity cursor-pointer shadow-xs"
-              >
-                + Activate Warranty
-              </button>
-            )}
+      {/* 1. Operational Summary + primary action */}
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <OperationalSummary
+          segments={[
+            { text: 'Right now ' },
+            { value: activeCount, tone: 'positive' },
+            { text: ' policies are active, ' },
+            { value: expiredCount, tone: 'warning' },
+            { text: ' have expired and ' },
+            { value: voidCount, tone: 'danger' },
+            { text: ' are void, from ' },
+            { value: totalCount },
+            { text: ' tracked.' },
+          ]}
+        />
+        {canWrite && (
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setSerialNumber('');
+                setSelectedDealerId('');
+                setValidatedData(null);
+                setFormError(null);
+                setFormSuccess(null);
+                setIsModalOpen(true);
+              }}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity cursor-pointer shadow-xs"
+            >
+              + Activate Warranty
+            </button>
           </div>
-        }
-      />
+        )}
+      </div>
 
       {/* 2. Check Serial Operational Tool */}
       <section aria-labelledby="check-serial-heading" className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-5">
@@ -389,11 +386,6 @@ export function WarrantyListView({
           </div>
         )}
       </section>
-
-      {/* 3. Current Warranty State Strip */}
-      <OperationalSummaryStrip
-        metrics={warrantyMetrics}
-      />
 
       {/* 4. Recent Activations */}
       {recentActivations.length > 0 && (
