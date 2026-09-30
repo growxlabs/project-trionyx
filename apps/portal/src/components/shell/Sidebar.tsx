@@ -79,7 +79,7 @@ export function Sidebar({ user }: SidebarProps) {
   return (
     <aside
       aria-label="Navigation Rail"
-      className="hidden lg:flex w-[72px] shrink-0 bg-[#000000] min-h-screen h-screen sticky top-0 flex-col items-center justify-between pt-4 pb-4 select-none z-40"
+      className="hidden lg:flex w-[72px] shrink-0 bg-[var(--surface-raised)] border-r border-[var(--border)] min-h-screen h-screen sticky top-0 flex-col items-center justify-between pt-4 pb-4 select-none z-40"
     >
       {/* 1. MAIN NAV ICON STACK (Gap 10px / space-y-2.5) */}
       <nav aria-label="Primary navigation" className="flex flex-col items-center gap-2.5 w-full px-3">
@@ -90,17 +90,17 @@ export function Sidebar({ user }: SidebarProps) {
               aria-label={item.name}
               aria-current={item.active ? 'page' : undefined}
               title={item.name}
-              className={`w-11 h-11 rounded-[5px] border flex items-center justify-center transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-[#F26522] focus-visible:outline-offset-2 ${
+              className={`w-11 h-11 rounded-[5px] border flex items-center justify-center transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2 ${
                 item.active
-                  ? 'border-transparent text-[#F26522]'
-                  : 'border-transparent text-[#A3A3A3] hover:text-[#FAFAFA] hover:bg-[#161616]/60 hover:border-[rgba(255,255,255,0.06)]'
+                  ? 'border-transparent text-[var(--accent)]'
+                  : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]'
               }`}
             >
               {item.icon}
             </Link>
 
             {/* Hover Tooltip (Plain English module name) */}
-            <div role="tooltip" className="absolute left-[calc(100%+12px)] px-2.5 py-1.5 bg-[#161616] text-[#FAFAFA] text-[11px] font-semibold tracking-wide rounded-[4px] border border-[rgba(255,255,255,0.08)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
+            <div role="tooltip" className="absolute left-[calc(100%+12px)] px-2.5 py-1.5 bg-[var(--surface-raised)] text-[var(--text-primary)] text-[11px] font-semibold tracking-wide rounded-[4px] border border-[var(--border)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
               {item.name}
             </div>
           </div>
@@ -120,12 +120,12 @@ export function Sidebar({ user }: SidebarProps) {
             type="button"
             onClick={() => setPreference(preference === 'dark' ? 'light' : 'dark')}
             aria-label={`Switch to ${preference === 'dark' ? 'light' : 'dark'} theme`}
-            className="w-11 h-11 rounded-[5px] border border-transparent flex items-center justify-center text-[#A3A3A3] hover:text-[#FAFAFA] hover:bg-[#161616]/60 hover:border-[rgba(255,255,255,0.06)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-[#F26522] focus-visible:outline-offset-2"
+            className="w-11 h-11 rounded-[5px] border border-transparent flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2"
             title="Settings"
           >
             <ControlSlidersIcon className="w-6 h-6 shrink-0" />
           </button>
-          <div role="tooltip" className="absolute left-[calc(100%+12px)] px-2.5 py-1.5 bg-[#161616] text-[#FAFAFA] text-[11px] font-semibold tracking-wide rounded-[4px] border border-[rgba(255,255,255,0.08)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
+          <div role="tooltip" className="absolute left-[calc(100%+12px)] px-2.5 py-1.5 bg-[var(--surface-raised)] text-[var(--text-primary)] text-[11px] font-semibold tracking-wide rounded-[4px] border border-[var(--border)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
             Settings
           </div>
         </div>

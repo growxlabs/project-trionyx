@@ -32,16 +32,14 @@ export interface WorkspaceViewsConfig {
   storageKey?: string;
 }
 
-/* This sidebar is part of the always-dark operations chrome, so it mirrors the
-   primary rail's fixed palette instead of the theme-aware semantic tokens. */
-const HAIRLINE = 'border-[rgba(255,255,255,0.08)]';
+const HAIRLINE = 'border-[var(--border)]';
 
 const valueToneClass: Record<WorkspaceTone, string> = {
-  default: 'text-[#FAFAFA]',
-  danger: 'text-[#F2A09A]',
-  warning: 'text-[#F0C36D]',
-  accent: 'text-[#FF7433]',
-  success: 'text-[#86D6A5]',
+  default: 'text-[var(--text-primary)]',
+  danger: 'text-[var(--status-danger)]',
+  warning: 'text-[var(--status-warning)]',
+  accent: 'text-[var(--accent)]',
+  success: 'text-[var(--status-success)]',
 };
 
 export function WorkspaceSidebar({
@@ -75,7 +73,7 @@ export function WorkspaceSidebar({
   return (
     <aside
       aria-label={title}
-      className={`hidden lg:flex shrink-0 flex-col bg-[#000000] border-r ${HAIRLINE} sticky top-0 h-screen overflow-hidden transition-[width] duration-200 ${
+      className={`hidden lg:flex shrink-0 flex-col bg-[var(--surface-raised)] border-r ${HAIRLINE} sticky top-0 h-screen overflow-hidden transition-[width] duration-200 ${
         collapsed ? 'w-[60px]' : 'w-64'
       }`}
     >
@@ -86,7 +84,7 @@ export function WorkspaceSidebar({
         }`}
       >
         {!collapsed && (
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[#A3A3A3] truncate">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)] truncate">
             {title}
           </span>
         )}
@@ -95,7 +93,7 @@ export function WorkspaceSidebar({
           onClick={toggle}
           aria-label={collapsed ? 'Expand workspace views' : 'Collapse workspace views'}
           title={collapsed ? 'Expand' : 'Collapse'}
-          className="flex h-7 w-7 items-center justify-center rounded-[4px] text-[#A3A3A3] hover:bg-[#161616] hover:text-[#FAFAFA] transition-colors cursor-pointer shrink-0"
+          className="flex h-7 w-7 items-center justify-center rounded-[4px] text-[var(--text-secondary)] hover:bg-[var(--surface-subtle)] hover:text-[var(--text-primary)] transition-colors cursor-pointer shrink-0"
         >
           <svg
             className={`w-4 h-4 transition-transform duration-200 ${collapsed ? 'rotate-180' : ''}`}
@@ -119,12 +117,12 @@ export function WorkspaceSidebar({
             {!collapsed && (section.title || section.meta) && (
               <div className="px-2 pb-1 flex items-center justify-between gap-2">
                 {section.title && (
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-[#A3A3A3] truncate">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)] truncate">
                     {section.title}
                   </span>
                 )}
                 {section.meta && (
-                  <span className="text-[11px] text-[#A3A3A3] shrink-0">{section.meta}</span>
+                  <span className="text-[11px] text-[var(--text-muted)] shrink-0">{section.meta}</span>
                 )}
               </div>
             )}
@@ -142,8 +140,8 @@ export function WorkspaceSidebar({
                       collapsed ? 'justify-center px-0 py-2' : 'justify-between px-3 py-2'
                     } ${
                       isActive
-                        ? 'bg-[#222222] font-semibold text-[#FAFAFA]'
-                        : 'text-[#A3A3A3] font-medium hover:text-[#FAFAFA] hover:bg-[#161616]/60'
+                        ? 'bg-[var(--surface-subtle)] font-semibold text-[var(--text-primary)]'
+                        : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]'
                     }`}
                   >
                     {collapsed ? (
@@ -156,7 +154,7 @@ export function WorkspaceSidebar({
                           <span className="truncate">{item.label}</span>
                         </div>
                         {item.trailing !== undefined ? (
-                          <span className="text-[11px] font-normal text-[#737373] shrink-0 ml-2">
+                          <span className="text-[11px] font-normal text-[var(--text-muted)] shrink-0 ml-2">
                             {item.trailing}
                           </span>
                         ) : null}
@@ -175,7 +173,7 @@ export function WorkspaceSidebar({
         <div className={`shrink-0 border-t ${HAIRLINE} p-3 text-[12px] space-y-1.5`}>
           {summary.map((s, i) => (
             <div key={i} className="flex items-center justify-between gap-2">
-              <span className="text-[#A3A3A3] truncate">{s.label}</span>
+              <span className="text-[var(--text-secondary)] truncate">{s.label}</span>
               <span className={`font-semibold tabular-nums shrink-0 ${valueToneClass[s.tone ?? 'default']}`}>
                 {s.value}
               </span>
