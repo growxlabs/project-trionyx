@@ -6,6 +6,7 @@ export * from './AttentionQueue';
 export * from './ActivityLedger';
 export * from './RegistryToolbar';
 export * from './EmptyOperationalState';
+export * from './EmptyState';
 export * from './RecordSection';
 export * from './WorkspaceSidebar';
 export * from './WorkspaceViewsProvider';

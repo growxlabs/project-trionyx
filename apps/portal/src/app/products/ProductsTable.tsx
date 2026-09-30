@@ -401,7 +401,7 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
 
           {/* TAB 2: NEEDS ATTENTION */}
           {activeTab === 'attention' && (
-            <section aria-labelledby="stock-attention-heading" className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-4 space-y-4">
+            <section aria-labelledby="stock-attention-heading" className={`p-4 space-y-4 ${stockAttentionItems.length > 0 ? 'bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px]' : ''}`}>
               <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
                 <div className="flex items-center gap-2">
                   <svg className="w-4 h-4 text-[var(--status-danger)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -470,7 +470,7 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
 
           {/* TAB 3: PRODUCT FAMILIES */}
           {activeTab === 'families' && (
-            <section aria-labelledby="product-families-heading" className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-4 space-y-4">
+            <section aria-labelledby="product-families-heading" className={`p-4 space-y-4 ${categoryStats.length > 0 ? 'bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px]' : ''}`}>
               <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
                 <div className="flex items-center gap-2">
                   <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

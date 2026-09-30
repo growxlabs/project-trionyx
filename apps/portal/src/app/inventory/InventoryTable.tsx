@@ -19,6 +19,7 @@ import {
   OperationalSummary,
   StatusBadge,
   RegistryToolbar,
+  EmptyState,
   useRegisterWorkspaceViews,
   type WorkspaceViewsConfig,
 } from '../../components/workspace';
@@ -470,13 +471,11 @@ export function InventoryTable({
               {/* Main Table */}
               <div className={`overflow-hidden ${filteredSummaries.length === 0 ? '' : 'bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px]'}`}>
                 {filteredSummaries.length === 0 ? (
-                  <div className="p-12 flex flex-col items-center text-center text-[var(--text-secondary)]">
-                    <WorkshopFrontageIcon className="w-16 h-16 text-[var(--text-muted)]" />
-                    <p className="mt-3 text-[14px] font-medium text-[var(--text-primary)] mb-1">No inventory positions found</p>
-                    <p className="text-[13px] m-0">
-                      Try adjusting your search criteria or receive initial physical serial numbers.
-                    </p>
-                  </div>
+                  <EmptyState
+                    icon={<WorkshopFrontageIcon className="w-20 h-20 text-[var(--text-muted)]" />}
+                    title="No inventory positions found"
+                    description="Try adjusting your search criteria or receive initial physical serial numbers."
+                  />
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
@@ -594,7 +593,7 @@ export function InventoryTable({
 
           {/* TAB 2: STOCK EXCEPTIONS */}
           {activeTab === 'exceptions' && (
-            <section aria-labelledby="stock-exceptions-heading" className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-4 space-y-4">
+            <section aria-labelledby="stock-exceptions-heading" className={`p-4 space-y-4 ${stockExceptions.length > 0 ? 'bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px]' : ''}`}>
               <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
                 <div className="flex items-center gap-2">
                   <svg className="w-4 h-4 text-[var(--status-danger)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -623,10 +622,11 @@ export function InventoryTable({
               </div>
 
               {stockExceptions.length === 0 ? (
-                <div className="py-8 flex flex-col items-center text-center text-[var(--text-secondary)] text-[13px]">
-                  <WorkshopFrontageIcon className="w-14 h-14 text-[var(--text-muted)] mb-3" />
-                  No inventory exceptions recorded. All positions meet safety threshold levels.
-                </div>
+                <EmptyState
+                  icon={<WorkshopFrontageIcon className="w-20 h-20 text-[var(--text-muted)]" />}
+                  title="No exceptions recorded"
+                  description="All positions meet safety threshold levels."
+                />
               ) : (
                 <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
                   <div className="overflow-x-auto">
@@ -677,7 +677,7 @@ export function InventoryTable({
 
           {/* TAB 3: RECENT MOVEMENTS */}
           {activeTab === 'movements' && (
-            <section aria-labelledby="movements-heading" className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] p-4 space-y-4">
+            <section aria-labelledby="movements-heading" className={`p-4 space-y-4 ${movements.length > 0 ? 'bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px]' : ''}`}>
               <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
                 <div className="flex items-center gap-2">
                   <svg className="w-4 h-4 text-[var(--text-secondary)] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -694,11 +694,11 @@ export function InventoryTable({
               </div>
 
               {movements.length === 0 ? (
-                <div className="min-h-[280px] flex flex-col items-center justify-center px-6 py-10 text-center">
-                  <WorkshopFrontageIcon className="w-20 h-20 text-[var(--text-muted)]" />
-                  <h3 className="mt-4 mb-0 text-[15px] font-semibold text-[var(--text-primary)]">No movements yet</h3>
-                  <p className="mt-1.5 mb-0 text-[13px] text-[var(--text-secondary)]">Serial transfers will appear here.</p>
-                </div>
+                <EmptyState
+                  icon={<WorkshopFrontageIcon className="w-20 h-20 text-[var(--text-muted)]" />}
+                  title="No movements yet"
+                  description="Serial transfers will appear here."
+                />
               ) : (
                 <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
                   <div className="overflow-x-auto">

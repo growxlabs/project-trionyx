@@ -5,11 +5,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { Warranty, SafeUser, Dealer, Product } from '@trionyx/types';
 import { Modal } from '../../components/ui/Modal';
-import { WarrantyEmptyIllustration } from './WarrantyEmptyIllustration';
+import { VerifiedShieldIcon } from '../../components/shell/OperationsIcons';
 import {
   OperationalSummary,
   StatusBadge,
   RegistryToolbar,
+  EmptyState,
 } from '../../components/workspace';
 
 interface WarrantyListViewProps {
@@ -460,7 +461,7 @@ export function WarrantyListView({
               id: 'status',
               label: 'Status',
               value: statusFilter,
-              onChange: (v) => setStatusFilter(v as any),
+              onChange: (v) => setStatusFilter(v as 'ALL' | 'ACTIVE' | 'EXPIRED' | 'VOID'),
               options: [
                 { label: 'All Statuses', value: 'ALL' },
                 { label: `Active (${activeCount})`, value: 'ACTIVE' },
@@ -493,31 +494,29 @@ export function WarrantyListView({
         />
 
       {/* Warranties Table */}
-      <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
+      <div className={`overflow-hidden ${filteredWarranties.length === 0 ? '' : 'bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px]'}`}>
         {filteredWarranties.length === 0 ? (
-          <div className="px-6 py-8 text-center flex flex-col items-center gap-4">
-            <WarrantyEmptyIllustration />
-            <div>
-              <h3 className="text-[14px] font-semibold text-[var(--text-primary)] m-0">
-                {hasFilters ? 'No matching warranties' : 'No warranties yet'}
-              </h3>
-              <p className="text-[13px] text-[var(--text-secondary)] mt-1 m-0">
-                {hasFilters
-                  ? 'Try a different search or clear your filters.'
-                  : canWrite ? 'Activate a warranty to add it here.' : 'Warranties will appear here once activated.'}
-              </p>
-              {hasFilters && (
+          <EmptyState
+            icon={<VerifiedShieldIcon className="w-20 h-20 text-[var(--text-muted)]" />}
+            title={hasFilters ? 'No matching warranties' : 'No warranties yet'}
+            description={
+              hasFilters
+                ? 'Try a different search or clear your filters.'
+                : canWrite ? 'Activate a warranty to add it here.' : 'Warranties will appear here once activated.'
+            }
+            action={
+              hasFilters ? (
                 <button type="button" onClick={() => {
                   setSearch('');
                   setStatusFilter('ALL');
                   setProductFilter('ALL');
                   setDealerFilter('ALL');
-                }} className="mt-3 min-h-9 px-3 text-[13px] font-medium text-[var(--accent-text)] hover:underline cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2">
+                }} className="min-h-9 px-3 text-[13px] font-medium text-[var(--accent-text)] hover:underline cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2">
                   Clear filters
                 </button>
-              )}
-            </div>
-          </div>
+              ) : undefined
+            }
+          />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">

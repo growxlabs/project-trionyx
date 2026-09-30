@@ -2,9 +2,8 @@
 
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { StockAvailableIllustration } from './StockAvailableIllustration';
-import { QueueEmptyIllustration } from './QueueEmptyIllustration';
-import { useRegisterWorkspaceViews, type WorkspaceViewsConfig } from '../../components/workspace';
+import { ControlBoardIcon } from '../../components/shell/OperationsIcons';
+import { useRegisterWorkspaceViews, type WorkspaceViewsConfig, EmptyState } from '../../components/workspace';
 export type CockpitTab =
   | 'scorecard'
   | 'stockout'
@@ -210,15 +209,11 @@ export function OverviewCockpit({
             </div>
 
             {outOfStockProducts.length === 0 ? (
-              <div className="min-h-[360px] flex flex-col items-center justify-center px-6 py-12 text-center">
-                <StockAvailableIllustration />
-                <h3 className="mt-5 mb-0 text-[16px] font-semibold text-[var(--text-primary)]">
-                  No products out of stock
-                </h3>
-                <p className="mt-2 mb-0 text-[13px] leading-relaxed text-[var(--text-secondary)]">
-                  All products currently have available stock.
-                </p>
-              </div>
+              <EmptyState
+                icon={<ControlBoardIcon className="w-20 h-20 text-[var(--text-muted)]" />}
+                title="No products out of stock"
+                description="All products currently have available stock."
+              />
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
@@ -283,11 +278,11 @@ export function OverviewCockpit({
             </div>
 
             {unassignedDealers.length === 0 ? (
-              <div className="min-h-[360px] flex flex-col items-center justify-center px-6 py-12 text-center">
-                <QueueEmptyIllustration />
-                <h3 className="mt-5 mb-0 text-[16px] font-semibold text-[var(--text-primary)]">All studios have a hub</h3>
-                <p className="mt-2 mb-0 text-[13px] leading-relaxed text-[var(--text-secondary)]">No assignments needed.</p>
-              </div>
+              <EmptyState
+                icon={<ControlBoardIcon className="w-20 h-20 text-[var(--text-muted)]" />}
+                title="All studios have a hub"
+                description="No assignments needed."
+              />
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
@@ -352,11 +347,11 @@ export function OverviewCockpit({
             </div>
 
             {newEnquiriesList.length === 0 ? (
-              <div className="min-h-[360px] flex flex-col items-center justify-center px-6 py-12 text-center">
-                <QueueEmptyIllustration />
-                <h3 className="mt-5 mb-0 text-[16px] font-semibold text-[var(--text-primary)]">No applications to review</h3>
-                <p className="mt-2 mb-0 text-[13px] leading-relaxed text-[var(--text-secondary)]">New applications will appear here.</p>
-              </div>
+              <EmptyState
+                icon={<ControlBoardIcon className="w-20 h-20 text-[var(--text-muted)]" />}
+                title="No applications to review"
+                description="New applications will appear here."
+              />
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">

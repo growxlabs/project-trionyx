@@ -32,7 +32,7 @@ export function OperationalSummary({
 }: OperationalSummaryProps) {
   return (
     <Component
-      className={`max-w-[940px] text-[32px] font-medium leading-[1.3] text-[var(--text-secondary)] mt-0 mb-6 ${className}`}
+      className={`max-w-[1080px] text-[36px] font-semibold leading-[1.25] text-[var(--text-secondary)] mt-0 mb-6 ${className}`}
     >
       {segments.map((seg, i) =>
         'value' in seg ? (
