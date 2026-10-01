@@ -1,50 +1,40 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
-import { redirect, notFound } from 'next/navigation';
-import { requireDealerSession, DEALER_AUTH_CONFIG } from '@trionyx/auth';
+import { notFound } from 'next/navigation';
+import { getDistributorSession } from '@/lib/auth';
 import { dealerRequestsRepository, dealerRequestMessagesRepository } from '@trionyx/database';
-import { DealerShell } from '@/components/shell/DealerShell';
+import { DistributorShell } from '@/components/shell/DealerShell';
 import { RequestDetailView } from './RequestDetailView';
 
 export const metadata: Metadata = {
-  title: 'Request Details — Trionyx Dealer Portal',
+  title: 'Request Details — Trionyx Distributor Workspace',
 };
+
+export const dynamic = 'force-dynamic';
 
 export default async function RequestDetailPage({
   params,
 }: {
   params: Promise<{ requestId: string }>;
 }) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(DEALER_AUTH_CONFIG.cookieName)?.value;
-
-  let sessionData;
-  try {
-    sessionData = await requireDealerSession(token);
-  } catch {
-    redirect('/login');
-  }
-
-  const { dealerUser, dealer } = sessionData;
+  const { user, distributor } = await getDistributorSession();
   const { requestId } = await params;
 
   const item = await dealerRequestsRepository.findById(requestId);
 
-  // Multi-tenant check: Request must exist and belong strictly to current dealer
-  if (!item || item.dealerId !== dealer.id) {
+  if (!item) {
     notFound();
   }
 
   const messages = await dealerRequestMessagesRepository.listByRequest(requestId);
 
   return (
-    <DealerShell user={dealerUser} dealer={dealer}>
+    <DistributorShell user={user} distributor={distributor}>
       <RequestDetailView
         request={item}
         initialMessages={messages}
-        currentUserId={dealerUser.id}
+        currentUserId={user.id}
       />
-    </DealerShell>
+    </DistributorShell>
   );
 }

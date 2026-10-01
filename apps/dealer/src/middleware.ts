@@ -3,12 +3,14 @@ import type { NextRequest } from 'next/server';
 
 const DISTRIBUTOR_COOKIE_NAME = 'trionyx_distributor_session';
 const PORTAL_COOKIE_NAME = 'trionyx_portal_session';
+const DEALER_COOKIE_NAME = 'trionyx_dealer_session';
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token =
     request.cookies.get(DISTRIBUTOR_COOKIE_NAME)?.value ||
-    request.cookies.get(PORTAL_COOKIE_NAME)?.value;
+    request.cookies.get(PORTAL_COOKIE_NAME)?.value ||
+    request.cookies.get(DEALER_COOKIE_NAME)?.value;
 
   // Static assets and API routes are exempt
   if (
@@ -30,7 +32,10 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-
+  // 2. Logged-in user visiting /login -> redirect to /overview
+  if (token && isLoginPage) {
+    return NextResponse.redirect(new URL('/overview', request.url));
+  }
 
   const response = NextResponse.next();
 

@@ -1,42 +1,25 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
-import { requireDealerSession, DEALER_AUTH_CONFIG } from '@trionyx/auth';
-import { dealersRepository, dealerUsersRepository } from '@trionyx/database';
-import { DealerShell } from '@/components/shell/DealerShell';
-import { AccountView } from './AccountView';
+import { getDistributorSession } from '@/lib/auth';
+import { DistributorShell } from '@/components/shell/DealerShell';
+import { DistributorAccountView } from './DistributorAccountView';
 
 export const metadata: Metadata = {
-  title: 'My Account — Trionyx Dealer Portal',
-  description: 'Manage dealership details, contacts, authorized users and security',
+  title: 'My Account — Trionyx Distributor Workspace',
+  description: 'Manage distributor details, regional profile, and security settings',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function AccountPage() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(DEALER_AUTH_CONFIG.cookieName)?.value;
-
-  let sessionData;
-  try {
-    sessionData = await requireDealerSession(token);
-  } catch {
-    redirect('/login');
-  }
-
-  const { dealerUser, dealer } = sessionData;
-
-  const [dealerFull, users] = await Promise.all([
-    dealersRepository.findById(dealer.id),
-    dealerUsersRepository.listByDealer(dealer.id),
-  ]);
+  const { user, distributor } = await getDistributorSession();
 
   return (
-    <DealerShell user={dealerUser} dealer={dealer}>
-      <AccountView
-        dealer={dealerFull || dealer}
-        currentUser={dealerUser}
-        initialUsers={users}
+    <DistributorShell user={user} distributor={distributor}>
+      <DistributorAccountView
+        user={user}
+        distributor={distributor}
       />
-    </DealerShell>
+    </DistributorShell>
   );
 }

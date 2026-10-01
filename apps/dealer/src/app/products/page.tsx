@@ -1,29 +1,19 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
-import { requireDealerSession, DEALER_AUTH_CONFIG } from '@trionyx/auth';
+import { getDistributorSession } from '@/lib/auth';
 import { productsRepository, categoriesRepository } from '@trionyx/database';
-import { DealerShell } from '@/components/shell/DealerShell';
+import { DistributorShell } from '@/components/shell/DealerShell';
 import { ProductsView } from './ProductsView';
 
 export const metadata: Metadata = {
-  title: 'Products — Trionyx Dealer Portal',
-  description: 'Approved Dealer Products & Formulations',
+  title: 'Products — Trionyx Distributor Workspace',
+  description: 'Approved Regional Products & Formulations',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function ProductsPage() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(DEALER_AUTH_CONFIG.cookieName)?.value;
-
-  let sessionData;
-  try {
-    sessionData = await requireDealerSession(token);
-  } catch {
-    redirect('/login');
-  }
-
-  const { dealerUser, dealer } = sessionData;
+  const { user, distributor } = await getDistributorSession();
 
   const [products, categories] = await Promise.all([
     productsRepository.listDealerProducts(),
@@ -31,11 +21,11 @@ export default async function ProductsPage() {
   ]);
 
   return (
-    <DealerShell user={dealerUser} dealer={dealer}>
+    <DistributorShell user={user} distributor={distributor}>
       <ProductsView
         initialProducts={products}
         categories={categories.map((c) => ({ id: c.id, name: c.name }))}
       />
-    </DealerShell>
+    </DistributorShell>
   );
 }

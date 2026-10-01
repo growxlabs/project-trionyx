@@ -1,28 +1,31 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import { getDistributorSession } from '@/lib/auth';
-import { dealerRequestsRepository } from '@trionyx/database';
+import { dealersRepository } from '@trionyx/database';
 import { DistributorShell } from '@/components/shell/DealerShell';
-import { RequestsView } from './RequestsView';
+import { DealersView } from './DealersView';
 
 export const metadata: Metadata = {
-  title: 'Dealer Requests — Trionyx Distributor Workspace',
-  description: 'Track and manage requests and queries across regional network',
+  title: 'My Dealers — Trionyx Distributor Workspace',
+  description: 'Regional dealer network and authorized detailing studios',
 };
 
 export const dynamic = 'force-dynamic';
 
-export default async function RequestsPage() {
+export default async function DealersPage() {
   const { user, distributor } = await getDistributorSession();
 
-  const result = await dealerRequestsRepository.list({
+  const dealersResult = await dealersRepository.list({
     distributorId: distributor.id,
     limit: 100,
   });
 
   return (
     <DistributorShell user={user} distributor={distributor}>
-      <RequestsView initialRequests={result.items} />
+      <DealersView
+        initialDealers={dealersResult.items}
+        distributor={distributor}
+      />
     </DistributorShell>
   );
 }

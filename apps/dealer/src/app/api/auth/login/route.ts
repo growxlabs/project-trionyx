@@ -47,12 +47,15 @@ export async function POST(request: Request) {
       { status: 200 }
     );
 
+    const isHttps = request.headers.get('x-forwarded-proto') === 'https' || request.url.startsWith('https:');
+    const isProduction = process.env.NODE_ENV === 'production' && isHttps;
+
     // Set secure, HTTP-only, SameSite session cookie
     response.cookies.set({
       name: DISTRIBUTOR_AUTH_CONFIG.cookieName,
       value: authResult.rawToken!,
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isProduction,
       sameSite: 'lax',
       path: '/',
       maxAge: DISTRIBUTOR_AUTH_CONFIG.sessionDurationMs / 1000,
