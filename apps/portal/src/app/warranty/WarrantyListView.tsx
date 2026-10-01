@@ -12,6 +12,12 @@ import {
   RegistryToolbar,
   EmptyState,
 } from '../../components/workspace';
+import {
+  useBarcodeScanner,
+  CameraScannerModal,
+  type SerialInputSource,
+  playScanSound,
+} from '@trionyx/ui';
 
 interface WarrantyListViewProps {
   initialWarranties: Warranty[];
@@ -65,6 +71,8 @@ export function WarrantyListView({
   const [isActivating, setIsActivating] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [formSuccess, setFormSuccess] = useState<string | null>(null);
+  const [isWarrantyCameraOpen, setIsWarrantyCameraOpen] = useState(false);
+  const warrantySerialInputRef = React.useRef<HTMLInputElement>(null);
 
   const canWrite = user.role === 'MANAGING_DIRECTOR' || user.role === 'ADMIN';
   const hasFilters = Boolean(search.trim()) || statusFilter !== 'ALL' || productFilter !== 'ALL' || dealerFilter !== 'ALL';
@@ -105,9 +113,12 @@ export function WarrantyListView({
     return true;
   });
 
-  const handleValidateSerial = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    const cleanSn = serialNumber.trim().toUpperCase();
+  const handleValidateSerial = async (overrideSn?: string | React.FormEvent) => {
+    if (overrideSn && typeof overrideSn !== 'string' && 'preventDefault' in overrideSn) {
+      overrideSn.preventDefault();
+    }
+    const targetSn = typeof overrideSn === 'string' ? overrideSn : serialNumber;
+    const cleanSn = targetSn.trim().toUpperCase();
     if (!cleanSn) {
       setFormError('Please enter a serial number');
       return;
@@ -145,6 +156,27 @@ export function WarrantyListView({
       setIsValidating(false);
     }
   };
+
+  const handleWarrantyCapturedSerial = React.useCallback(
+    (rawSerial: string, _source?: SerialInputSource) => {
+      const sn = rawSerial.trim().toUpperCase();
+      if (!sn) return;
+      setSerialNumber(sn);
+      setValidatedData(null);
+      setFormError(null);
+      playScanSound('success');
+      void handleValidateSerial(sn);
+    },
+    []
+  );
+
+  useBarcodeScanner({
+    enabled: isModalOpen && !isWarrantyCameraOpen && !validatedData,
+    targetInputRef: warrantySerialInputRef,
+    onScan: (scannedSerial, source) => {
+      handleWarrantyCapturedSerial(scannedSerial, source);
+    },
+  });
 
   const handleConfirmActivate = async () => {
     const cleanSn = serialNumber.trim().toUpperCase();
@@ -624,6 +656,7 @@ export function WarrantyListView({
             </label>
             <div className="flex gap-2">
               <input
+                ref={warrantySerialInputRef}
                 type="text"
                 value={serialNumber}
                 onChange={(e) => {
@@ -631,19 +664,41 @@ export function WarrantyListView({
                   setValidatedData(null);
                   setFormError(null);
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (serialNumber.trim() && !validatedData) {
+                      void handleValidateSerial();
+                    }
+                  }
+                }}
                 placeholder="e.g. TRX-BR-2609-000001"
                 disabled={isActivating || !!validatedData}
                 className="flex-1 px-3.5 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] font-mono text-[13.5px] uppercase focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] disabled:opacity-60"
               />
               {!validatedData ? (
-                <button
-                  type="button"
-                  onClick={() => handleValidateSerial()}
-                  disabled={isValidating || !serialNumber.trim()}
-                  className="px-4 py-2 rounded-[6px] bg-[var(--text-primary)] hover:bg-[var(--surface-subtle)] disabled:opacity-50 text-[var(--background)] text-[13px] font-semibold transition-colors cursor-pointer shrink-0"
-                >
-                  {isValidating ? 'Checking...' : 'Verify'}
-                </button>
+                <>
+                  <button
+                    type="button"
+                    onClick={() => handleValidateSerial()}
+                    disabled={isValidating || !serialNumber.trim()}
+                    className="px-4 py-2 rounded-[6px] bg-[var(--text-primary)] hover:bg-[var(--surface-subtle)] disabled:opacity-50 text-[var(--background)] text-[13px] font-semibold transition-colors cursor-pointer shrink-0"
+                  >
+                    {isValidating ? 'Checking...' : 'Verify'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsWarrantyCameraOpen(true)}
+                    className="px-3.5 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[13px] font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+                    title="Scan serial with mobile/tablet camera"
+                  >
+                    <svg className="w-4 h-4 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                      <circle cx="12" cy="13" r="4" />
+                    </svg>
+                    <span>Camera</span>
+                  </button>
+                </>
               ) : (
                 <button
                   type="button"
@@ -748,6 +803,16 @@ export function WarrantyListView({
           </div>
         </div>
       </Modal>
+
+      {/* Warranty Serial Camera Scanner */}
+      <CameraScannerModal
+        isOpen={isWarrantyCameraOpen}
+        onClose={() => setIsWarrantyCameraOpen(false)}
+        onScan={(serial, source) => handleWarrantyCapturedSerial(serial, source)}
+        mode="single"
+        title="Activate Warranty — Camera Scanner"
+        subtitle="Align serial barcode or QR code on product label to verify immediately."
+      />
     </div>
   );
 }

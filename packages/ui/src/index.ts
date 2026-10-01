@@ -5,3 +5,4 @@ export * from './Forms';
 export * from './Typography';
 export * from './TrionyxLogo';
 export * from './TrionyxOpsMark';
+export * from './scanner';

@@ -3,6 +3,12 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import type { SerialNumberWithDetails } from '@trionyx/types';
+import {
+  useBarcodeScanner,
+  CameraScannerModal,
+  type SerialInputSource,
+  playScanSound,
+} from '@trionyx/ui';
 import { Modal } from '../ui/Modal';
 
 interface SerialNumberLookupModalProps {
@@ -22,6 +28,8 @@ export function SerialNumberLookupModal({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [serialData, setSerialData] = useState<SerialNumberWithDetails | null>(null);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
   const executeLookup = React.useCallback(async (sn: string) => {
     if (!sn.trim()) return;
@@ -44,6 +52,25 @@ export function SerialNumberLookupModal({
       setIsLoading(false);
     }
   }, []);
+
+  const handleCapturedSerial = React.useCallback(
+    (rawSerial: string, _source?: SerialInputSource) => {
+      const sn = rawSerial.trim().toUpperCase();
+      if (!sn) return;
+      setQuery(sn);
+      playScanSound('success');
+      void executeLookup(sn);
+    },
+    [executeLookup]
+  );
+
+  useBarcodeScanner({
+    enabled: isOpen && !isCameraOpen,
+    targetInputRef: inputRef,
+    onScan: (scannedSerial, source) => {
+      handleCapturedSerial(scannedSerial, source);
+    },
+  });
 
   React.useEffect(() => {
     if (initialSerialNumber) {
@@ -73,9 +100,10 @@ export function SerialNumberLookupModal({
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
             <input
+              ref={inputRef}
               type="text"
               autoFocus
-              placeholder="Enter exact serial number (e.g. TRX12345)..."
+              placeholder="Enter or scan serial number (e.g. TRX12345)..."
               value={query}
               onChange={(e) => setQuery(e.target.value.toUpperCase())}
               className="w-full pl-9 pr-4 py-2.5 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] font-mono text-[14px] uppercase placeholder:font-sans placeholder:normal-case placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
@@ -84,9 +112,21 @@ export function SerialNumberLookupModal({
           <button
             type="submit"
             disabled={isLoading || !query.trim()}
-            className="px-4 py-2.5 rounded-[6px] bg-[var(--text-primary)] hover:bg-[var(--surface-subtle)] disabled:opacity-50 text-[var(--background)] text-[13px] font-semibold transition-colors"
+            className="px-4 py-2.5 rounded-[6px] bg-[var(--text-primary)] hover:bg-[var(--surface-subtle)] disabled:opacity-50 text-[var(--background)] text-[13px] font-semibold transition-colors shrink-0"
           >
             {isLoading ? 'Searching...' : 'Lookup'}
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsCameraOpen(true)}
+            className="px-3.5 py-2.5 rounded-[6px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[13px] font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+            title="Scan barcode with camera"
+          >
+            <svg className="w-4 h-4 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+              <circle cx="12" cy="13" r="4" />
+            </svg>
+            <span>Camera</span>
           </button>
         </form>
 
@@ -218,6 +258,16 @@ export function SerialNumberLookupModal({
           </div>
         )}
       </div>
+
+      {/* Mobile / Tablet Camera Scanner */}
+      <CameraScannerModal
+        isOpen={isCameraOpen}
+        onClose={() => setIsCameraOpen(false)}
+        onScan={(serial, source) => handleCapturedSerial(serial, source)}
+        mode="single"
+        title="Serial Lookup — Camera Scanner"
+        subtitle="Align serial barcode or QR code to immediately execute lookup."
+      />
     </Modal>
   );
 }

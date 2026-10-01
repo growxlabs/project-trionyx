@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@trionyx/design-tokens": "workspace:*",
+    "@zxing/browser": "^0.2.1",
     "next": "16.3.5"
   },
   "peerDependencies": {

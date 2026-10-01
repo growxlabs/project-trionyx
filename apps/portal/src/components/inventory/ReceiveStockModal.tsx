@@ -1,7 +1,13 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useMemo, useId } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useId, useCallback } from 'react';
 import type { Product, InventoryLocation } from '@trionyx/types';
+import {
+  useBarcodeScanner,
+  CameraScannerModal,
+  type SerialInputSource,
+  playScanSound,
+} from '@trionyx/ui';
 
 interface ReceiveStockModalProps {
   isOpen: boolean;
@@ -26,12 +32,15 @@ export function ReceiveStockModal({
   const modalRef = useRef<HTMLDivElement>(null);
   const lastActiveElementRef = useRef<HTMLElement | null>(null);
   const productSelectRef = useRef<HTMLSelectElement>(null);
+  const serialInputRef = useRef<HTMLInputElement>(null);
   const cacheRef = useRef<Map<string, boolean>>(new Map());
 
   // Form states
   const [productId, setProductId] = useState(initialProductId || '');
   const [locationId, setLocationId] = useState(initialLocationId || '');
   const [serialsText, setSerialsText] = useState('');
+  const [inputSerial, setInputSerial] = useState('');
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [reference, setReference] = useState('');
   const [notes, setNotes] = useState('');
 
@@ -125,6 +134,90 @@ export function ReceiveStockModal({
   }, [conflicts, uniqueSerials]);
 
   const conflictsCount = activeConflicts.length;
+
+  // Single unified handler for all 4 input sources (Keyboard, Paste, USB Scanner, Camera)
+  const handleCapturedSerial = useCallback((rawSerial: string, source: SerialInputSource) => {
+    const serial = rawSerial.trim().toUpperCase();
+    if (!serial) return;
+
+    setSerialsText((prev) => {
+      const tokens = prev
+        .split(/[\n,;]+/)
+        .map((s) => s.trim().toUpperCase())
+        .filter(Boolean);
+
+      // Play auditory feedback based on duplicate status
+      if (tokens.includes(serial)) {
+        playScanSound('warning');
+      } else {
+        playScanSound('success');
+      }
+
+      return tokens.length > 0 ? `${tokens.join('\n')}\n${serial}` : serial;
+    });
+  }, []);
+
+  const handleAddInputSerial = () => {
+    const sn = inputSerial.trim().toUpperCase();
+    if (!sn) return;
+    handleCapturedSerial(sn, 'KEYBOARD');
+    setInputSerial('');
+  };
+
+  const handleRemoveSerial = (indexToRemove: number) => {
+    setSerialsText((prev) => {
+      const tokens = prev
+        .split(/[\n,;]+/)
+        .map((s) => s.trim().toUpperCase())
+        .filter(Boolean);
+      tokens.splice(indexToRemove, 1);
+      return tokens.join('\n');
+    });
+  };
+
+  const handleClearAllSerials = () => {
+    setSerialsText('');
+    setInputSerial('');
+  };
+
+  // Attach USB/Bluetooth scanner hook while modal is open
+  useBarcodeScanner({
+    enabled: isOpen && !isCameraOpen,
+    targetInputRef: serialInputRef,
+    onScan: (scannedSerial, source) => {
+      handleCapturedSerial(scannedSerial, source);
+      setInputSerial('');
+    },
+  });
+
+  // Calculate status per item in queue for visual queue list
+  const serialItems = useMemo(() => {
+    const seen = new Set<string>();
+    return parsedSerials.map((sn, idx) => {
+      let status: 'READY' | 'DUPLICATE' | 'CONFLICT' = 'READY';
+      let label = 'Ready';
+
+      if (seen.has(sn)) {
+        status = 'DUPLICATE';
+        label = 'Duplicate';
+      } else if (conflicts.includes(sn)) {
+        status = 'CONFLICT';
+        label = 'Already in inventory';
+      } else {
+        seen.add(sn);
+      }
+
+      return {
+        id: `${sn}-${idx}`,
+        serialNumber: sn,
+        status,
+        label,
+      };
+    });
+  }, [parsedSerials, conflicts]);
+
+  const readyCount = useMemo(() => serialItems.filter((i) => i.status === 'READY').length, [serialItems]);
+  const issuesCount = useMemo(() => serialItems.filter((i) => i.status !== 'READY').length, [serialItems]);
 
   // Validation blocking check
   const hasBlockingErrors =
@@ -352,54 +445,159 @@ export function ReceiveStockModal({
             </div>
 
             {/* Field: Serial Numbers */}
-            <div>
-              <label htmlFor="receive-serials-input" className="block text-[13px] font-medium text-[var(--text-primary)] mb-[6px]">
-                Serial Numbers <span className="text-[var(--accent)]">*</span>
-              </label>
-              <textarea
-                id="receive-serials-input"
-                required
-                rows={4}
-                value={serialsText}
-                onChange={(e) => setSerialsText(e.target.value)}
-                placeholder="Paste or scan one serial per line"
-                className="w-full min-h-[112px] max-h-[180px] p-3 rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text-primary)] font-mono text-[14px] font-normal leading-relaxed hover:border-[var(--text-secondary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] resize-y placeholder:text-[var(--text-muted)] placeholder:font-sans transition-colors"
-              />
-
-              {/* Quiet inline feedback */}
-              <div
-                className="mt-[6px] text-[12px] font-normal flex flex-wrap items-center gap-1.5 text-[var(--text-secondary)]"
-                aria-live="polite"
-              >
-                <span
-                  className={
-                    parsedSerials.length > 0 && duplicatesCount === 0 && conflictsCount === 0
-                      ? 'text-[var(--success)] font-medium'
-                      : 'text-[var(--text-secondary)]'
-                  }
-                >
-                  {parsedSerials.length} serial{parsedSerials.length === 1 ? '' : 's'} detected
-                </span>
-                <span className="text-[var(--border-strong)]">·</span>
-                <span className={duplicatesCount > 0 ? 'text-[var(--warning)] font-medium' : 'text-[var(--text-secondary)]'}>
-                  {duplicatesCount} duplicate{duplicatesCount === 1 ? '' : 's'}
-                </span>
-                <span className="text-[var(--border-strong)]">·</span>
-                <span className={conflictsCount > 0 ? 'text-[var(--danger)] font-medium' : 'text-[var(--text-secondary)]'}>
-                  {conflictsCount} conflict{conflictsCount === 1 ? '' : 's'}
-                </span>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label htmlFor="receive-serial-quick-input" className="block text-[13px] font-medium text-[var(--text-primary)]">
+                  Serial Numbers <span className="text-[var(--accent)]">*</span>
+                </label>
+                {parsedSerials.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleClearAllSerials}
+                    className="text-[12px] text-[var(--text-muted)] hover:text-[var(--status-danger)] transition-colors cursor-pointer"
+                  >
+                    Clear All
+                  </button>
+                )}
               </div>
 
-              {/* Accessible assistance if validation errors exist */}
-              {duplicatesCount > 0 && (
-                <p className="text-[12px] text-[var(--warning)] mt-1 m-0">
-                  Batch contains duplicate entries ({duplicateSerials.join(', ')}). Remove duplicates to proceed.
-                </p>
-              )}
-              {conflictsCount > 0 && (
-                <p className="text-[12px] text-[var(--danger)] mt-1 m-0">
-                  Conflicting serials already exist in inventory: {conflicts.join(', ')}.
-                </p>
+              {/* Dual Input: Keyboard/USB scan input + Mobile Camera Button */}
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <input
+                    ref={serialInputRef}
+                    id="receive-serial-quick-input"
+                    type="text"
+                    value={inputSerial}
+                    onChange={(e) => setInputSerial(e.target.value.toUpperCase())}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddInputSerial();
+                      }
+                    }}
+                    onPaste={(e) => {
+                      const text = e.clipboardData.getData('text');
+                      if (text.includes('\n') || text.includes(',') || text.includes(';')) {
+                        e.preventDefault();
+                        const tokens = text
+                          .split(/[\n,;]+/)
+                          .map((s) => s.trim().toUpperCase())
+                          .filter(Boolean);
+                        if (tokens.length > 0) {
+                          setSerialsText((prev) => {
+                            const existing = prev.trim() ? prev.trim() + '\n' : '';
+                            return existing + tokens.join('\n');
+                          });
+                          setInputSerial('');
+                          playScanSound('success');
+                        }
+                      }
+                    }}
+                    placeholder="Type, paste, or scan serial number..."
+                    className="w-full h-[40px] px-3 rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text-primary)] font-mono text-[13px] hover:border-[var(--text-secondary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] placeholder:text-[var(--text-muted)] placeholder:font-sans transition-colors"
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleAddInputSerial}
+                  disabled={!inputSerial.trim()}
+                  className="px-3.5 h-[40px] rounded-[6px] bg-[var(--surface-subtle)] hover:bg-[var(--surface-sunken)] disabled:opacity-40 text-[var(--text-primary)] text-[13px] font-semibold transition-colors cursor-pointer shrink-0"
+                >
+                  Add
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setIsCameraOpen(true)}
+                  className="px-3.5 h-[40px] rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[13px] font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+                  title="Scan serial with mobile/tablet camera"
+                >
+                  <svg className="w-4 h-4 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                    <circle cx="12" cy="13" r="4" />
+                  </svg>
+                  <span>Camera</span>
+                </button>
+              </div>
+
+              {/* Scanned Serial Queue View */}
+              {parsedSerials.length > 0 ? (
+                <div className="rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] overflow-hidden">
+                  <div className="max-h-[170px] overflow-y-auto divide-y divide-[var(--border)]">
+                    {serialItems.map((item, idx) => (
+                      <div
+                        key={item.id}
+                        className="px-3 py-2 flex items-center justify-between text-[13px] hover:bg-[var(--surface-subtle)]/40 transition-colors"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-[11px] font-mono text-[var(--text-muted)] w-5">
+                            {idx + 1}.
+                          </span>
+                          <span className="font-mono font-medium text-[var(--text-primary)]">
+                            {item.serialNumber}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {item.status === 'READY' && (
+                            <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]">
+                              Ready
+                            </span>
+                          )}
+                          {item.status === 'DUPLICATE' && (
+                            <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]">
+                              Duplicate
+                            </span>
+                          )}
+                          {item.status === 'CONFLICT' && (
+                            <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]">
+                              Already in inventory
+                            </span>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSerial(idx)}
+                            aria-label={`Remove ${item.serialNumber}`}
+                            className="w-6 h-6 rounded flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--status-danger)] hover:bg-[var(--status-danger-soft)] transition-colors cursor-pointer"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Queue Summary Strip (Matching Section 14) */}
+                  <div className="px-3 py-2 bg-[var(--surface-subtle)] border-t border-[var(--border)] flex items-center justify-between text-[12px] font-mono">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-[var(--text-primary)]">
+                        {parsedSerials.length} captured
+                      </span>
+                      <span>·</span>
+                      <span className="text-[var(--status-success)] font-semibold">
+                        {readyCount} ready
+                      </span>
+                      {issuesCount > 0 && (
+                        <>
+                          <span>·</span>
+                          <span className="text-[var(--status-danger)] font-semibold">
+                            {issuesCount} issue{issuesCount === 1 ? '' : 's'}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    <span className="text-[11px] font-sans text-[var(--text-muted)]">
+                      USB Scanner active
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-4 rounded-[6px] border border-dashed border-[var(--border-strong)] bg-[var(--surface-subtle)]/30 text-center">
+                  <p className="text-[12.5px] text-[var(--text-secondary)] m-0">
+                    No serial units captured yet. Scan with USB/Bluetooth scanner, open camera, or type and press Enter.
+                  </p>
+                </div>
               )}
             </div>
 
@@ -454,6 +652,16 @@ export function ReceiveStockModal({
           </div>
         </form>
       </div>
+
+      {/* Mobile / Tablet Camera Scanner */}
+      <CameraScannerModal
+        isOpen={isCameraOpen}
+        onClose={() => setIsCameraOpen(false)}
+        onScan={(serial, source) => handleCapturedSerial(serial, source)}
+        mode="continuous"
+        title="Receive Stock — Continuous Scanner"
+        subtitle="Point camera at product barcodes or QR codes. Scanned units add to queue automatically."
+      />
     </div>
   );
 }

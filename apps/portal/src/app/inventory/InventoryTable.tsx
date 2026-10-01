@@ -24,6 +24,12 @@ import {
   type WorkspaceViewsConfig,
 } from '../../components/workspace';
 import { WorkshopFrontageIcon } from '../../components/shell/OperationsIcons';
+import {
+  useBarcodeScanner,
+  CameraScannerModal,
+  type SerialInputSource,
+  playScanSound,
+} from '@trionyx/ui';
 
 interface InventoryTableProps {
   initialSummaries: ProductInventorySummary[];
@@ -84,6 +90,87 @@ export function InventoryTable({
       .map((s) => s.trim().toUpperCase())
       .filter((s) => s.length > 0);
   }, [formSerialsText]);
+
+  // Inventory Transfer scanning states and handlers
+  const [transferInputSerial, setTransferInputSerial] = useState('');
+  const [isTransferCameraOpen, setIsTransferCameraOpen] = useState(false);
+  const transferSerialInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleTransferCapturedSerial = React.useCallback(
+    (rawSerial: string, _source?: SerialInputSource) => {
+      const serial = rawSerial.trim().toUpperCase();
+      if (!serial) return;
+
+      setFormSerialsText((prev) => {
+        const tokens = prev
+          .split(/[\n,;]+/)
+          .map((s) => s.trim().toUpperCase())
+          .filter(Boolean);
+
+        if (tokens.includes(serial)) {
+          playScanSound('warning');
+        } else {
+          playScanSound('success');
+        }
+
+        return tokens.length > 0 ? `${tokens.join('\n')}\n${serial}` : serial;
+      });
+    },
+    []
+  );
+
+  const handleAddTransferInputSerial = () => {
+    const sn = transferInputSerial.trim().toUpperCase();
+    if (!sn) return;
+    handleTransferCapturedSerial(sn, 'KEYBOARD');
+    setTransferInputSerial('');
+  };
+
+  const handleRemoveTransferSerial = (idxToRemove: number) => {
+    setFormSerialsText((prev) => {
+      const tokens = prev
+        .split(/[\n,;]+/)
+        .map((s) => s.trim().toUpperCase())
+        .filter(Boolean);
+      tokens.splice(idxToRemove, 1);
+      return tokens.join('\n');
+    });
+  };
+
+  useBarcodeScanner({
+    enabled: modalMode === 'TRANSFER' && !isTransferCameraOpen,
+    targetInputRef: transferSerialInputRef,
+    onScan: (scannedSerial, source) => {
+      handleTransferCapturedSerial(scannedSerial, source);
+      setTransferInputSerial('');
+    },
+  });
+
+  const transferSerialItems = useMemo(() => {
+    const seen = new Set<string>();
+    return parsedSerials.map((sn, idx) => {
+      let status: 'READY' | 'DUPLICATE' = 'READY';
+      if (seen.has(sn)) {
+        status = 'DUPLICATE';
+      } else {
+        seen.add(sn);
+      }
+      return {
+        id: `${sn}-${idx}`,
+        serialNumber: sn,
+        status,
+      };
+    });
+  }, [parsedSerials]);
+
+  const transferReadyCount = useMemo(
+    () => transferSerialItems.filter((i) => i.status === 'READY').length,
+    [transferSerialItems]
+  );
+  const transferIssuesCount = useMemo(
+    () => transferSerialItems.filter((i) => i.status !== 'READY').length,
+    [transferSerialItems]
+  );
 
   // Filter items
   const filteredSummaries = useMemo(() => {
@@ -822,23 +909,138 @@ export function InventoryTable({
             </div>
           </div>
 
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="block text-[12px] font-semibold text-[var(--text-secondary)]">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label htmlFor="transfer-serial-quick-input" className="block text-[12px] font-semibold text-[var(--text-secondary)]">
                 Serial Numbers to Move *
               </label>
-              <span className="text-[11.5px] font-mono font-bold text-[var(--status-info)] bg-[var(--status-info-soft)] border border-[var(--status-info-border)] px-2 py-0.5 rounded">
-                {parsedSerials.length} unit{parsedSerials.length === 1 ? '' : 's'}
-              </span>
+              {parsedSerials.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setFormSerialsText('')}
+                  className="text-[11.5px] text-[var(--text-muted)] hover:text-[var(--status-danger)] transition-colors cursor-pointer"
+                >
+                  Clear All
+                </button>
+              )}
             </div>
-            <textarea
-              rows={4}
-              required
-              value={formSerialsText}
-              onChange={(e) => setFormSerialsText(e.target.value)}
-              placeholder="Enter or scan serial numbers to move:&#10;TRX10001&#10;TRX10002"
-              className="w-full px-3 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] font-mono text-[12.5px] uppercase focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] resize-y"
-            />
+
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <input
+                  ref={transferSerialInputRef}
+                  id="transfer-serial-quick-input"
+                  type="text"
+                  value={transferInputSerial}
+                  onChange={(e) => setTransferInputSerial(e.target.value.toUpperCase())}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddTransferInputSerial();
+                    }
+                  }}
+                  onPaste={(e) => {
+                    const text = e.clipboardData.getData('text');
+                    if (text.includes('\n') || text.includes(',') || text.includes(';')) {
+                      e.preventDefault();
+                      const tokens = text
+                        .split(/[\n,;]+/)
+                        .map((s) => s.trim().toUpperCase())
+                        .filter(Boolean);
+                      if (tokens.length > 0) {
+                        setFormSerialsText((prev) => {
+                          const existing = prev.trim() ? prev.trim() + '\n' : '';
+                          return existing + tokens.join('\n');
+                        });
+                        setTransferInputSerial('');
+                        playScanSound('success');
+                      }
+                    }
+                  }}
+                  placeholder="Type, paste, or scan serial numbers..."
+                  className="w-full h-[38px] px-3 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] font-mono text-[13px] uppercase focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] placeholder:text-[var(--text-muted)] placeholder:font-sans placeholder:normal-case transition-colors"
+                />
+              </div>
+
+              <button
+                type="button"
+                onClick={handleAddTransferInputSerial}
+                disabled={!transferInputSerial.trim()}
+                className="px-3.5 h-[38px] rounded-[6px] bg-[var(--surface-subtle)] hover:bg-[var(--surface-sunken)] disabled:opacity-40 text-[var(--text-primary)] text-[12.5px] font-semibold transition-colors cursor-pointer shrink-0"
+              >
+                Add
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsTransferCameraOpen(true)}
+                className="px-3 h-[38px] rounded-[6px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[12.5px] font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+                title="Scan serial with mobile/tablet camera"
+              >
+                <svg className="w-4 h-4 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                  <circle cx="12" cy="13" r="4" />
+                </svg>
+                <span>Camera</span>
+              </button>
+            </div>
+
+            {parsedSerials.length > 0 ? (
+              <div className="rounded-[6px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
+                <div className="max-h-[140px] overflow-y-auto divide-y divide-[var(--border)]">
+                  {transferSerialItems.map((item, idx) => (
+                    <div
+                      key={item.id}
+                      className="px-3 py-1.5 flex items-center justify-between text-[12.5px] hover:bg-[var(--surface-subtle)]/40 transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-mono text-[var(--text-muted)] w-5">{idx + 1}.</span>
+                        <span className="font-mono font-medium text-[var(--text-primary)]">{item.serialNumber}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {item.status === 'READY' ? (
+                          <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]">
+                            Ready
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]">
+                            Duplicate
+                          </span>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveTransferSerial(idx)}
+                          aria-label={`Remove ${item.serialNumber}`}
+                          className="w-5 h-5 rounded flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--status-danger)] hover:bg-[var(--status-danger-soft)] transition-colors cursor-pointer"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="px-3 py-1.5 bg-[var(--surface-subtle)] border-t border-[var(--border)] flex items-center justify-between text-[11.5px] font-mono">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-[var(--text-primary)]">{parsedSerials.length} captured</span>
+                    <span>·</span>
+                    <span className="text-[var(--status-success)] font-semibold">{transferReadyCount} ready</span>
+                    {transferIssuesCount > 0 && (
+                      <>
+                        <span>·</span>
+                        <span className="text-[var(--status-warning)] font-semibold">{transferIssuesCount} duplicate</span>
+                      </>
+                    )}
+                  </div>
+                  <span className="text-[11px] font-sans text-[var(--text-muted)]">USB Scanner active</span>
+                </div>
+              </div>
+            ) : (
+              <div className="p-3 rounded-[6px] border border-dashed border-[var(--border)] bg-[var(--surface-subtle)]/30 text-center">
+                <p className="text-[12px] text-[var(--text-secondary)] m-0">
+                  No serial units entered. Scan with USB scanner, camera, or type and press Enter.
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -887,6 +1089,16 @@ export function InventoryTable({
           </div>
         </form>
       </Modal>
+
+      {/* Transfer Camera Scanner */}
+      <CameraScannerModal
+        isOpen={isTransferCameraOpen}
+        onClose={() => setIsTransferCameraOpen(false)}
+        onScan={(serial, source) => handleTransferCapturedSerial(serial, source)}
+        mode="continuous"
+        title="Transfer Stock — Continuous Scanner"
+        subtitle="Point camera at product barcodes or QR codes to add to transfer queue."
+      />
 
       {/* ========================================================================= */}
       {/* ADJUST STATUS MODAL                                                       */}

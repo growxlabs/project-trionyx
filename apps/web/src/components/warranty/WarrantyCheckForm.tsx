@@ -3,16 +3,17 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import type { PublicWarrantyCheckResult } from '@trionyx/types';
+import { CameraScannerModal } from '@trionyx/ui';
 
 export function WarrantyCheckForm() {
   const [serialNumber, setSerialNumber] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [result, setResult] = useState<PublicWarrantyCheckResult | null>(null);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const cleanSn = serialNumber.trim().toUpperCase();
+  const executeCheck = async (sn: string) => {
+    const cleanSn = sn.trim().toUpperCase();
 
     if (!cleanSn) {
       setErrorMessage('Please enter a serial number');
@@ -43,6 +44,18 @@ export function WarrantyCheckForm() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await executeCheck(serialNumber);
+  };
+
+  const handleCameraScan = (scannedSerial: string) => {
+    const sn = scannedSerial.trim().toUpperCase();
+    if (!sn) return;
+    setSerialNumber(sn);
+    void executeCheck(sn);
   };
 
   const formatDate = (isoString?: string | null) => {
@@ -85,9 +98,23 @@ export function WarrantyCheckForm() {
               className="w-full h-13 px-4 sm:px-5 bg-white border border-[#171714]/15 rounded-[4px] text-[16px] sm:text-[17px] font-mono font-medium text-[#171714] uppercase tracking-wider placeholder:text-[#171714]/35 placeholder:font-sans placeholder:normal-case placeholder:tracking-normal focus:outline-none focus:border-[#F26522] focus:ring-1 focus:ring-[#F26522] transition-colors"
             />
           </div>
-          <p className="mt-2 text-[13px] text-[#171714]/60">
-            You can find the serial number on your product packaging, container label, or installation invoice.
-          </p>
+          <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <p className="text-[13px] text-[#171714]/60 m-0">
+              You can find the serial number on your product packaging, container label, or installation invoice.
+            </p>
+            <button
+              type="button"
+              onClick={() => setIsCameraOpen(true)}
+              className="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[4px] border border-[#171714]/15 hover:border-[#F26522] bg-[#F5F5EE] hover:bg-[#EFECE3] text-[#171714] text-[13px] font-semibold transition-colors cursor-pointer shrink-0"
+              title="Scan serial with mobile/tablet camera"
+            >
+              <svg className="w-4 h-4 text-[#F26522]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                <circle cx="12" cy="13" r="4" />
+              </svg>
+              <span>Scan Serial</span>
+            </button>
+          </div>
         </div>
 
         {errorMessage && (
@@ -326,6 +353,16 @@ export function WarrantyCheckForm() {
           )}
         </div>
       )}
+
+      {/* Public Warranty Camera Scanner */}
+      <CameraScannerModal
+        isOpen={isCameraOpen}
+        onClose={() => setIsCameraOpen(false)}
+        onScan={(serial) => handleCameraScan(serial)}
+        mode="single"
+        title="Scan Warranty Barcode / QR"
+        subtitle="Align the serial barcode or QR code on your product packaging or certificate."
+      />
     </div>
   );
 }
