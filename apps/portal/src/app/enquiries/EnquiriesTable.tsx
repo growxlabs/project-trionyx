@@ -225,7 +225,9 @@ export function EnquiriesTable({ initialEnquiries, internalUsers, user }: Enquir
                       { label: 'All Owners', value: 'ALL' },
                       { label: `Unassigned (${unassignedCount})`, value: 'UNASSIGNED' },
                       ...(user?.id ? [{ label: 'Assigned to Me', value: user.id }] : []),
-                      ...internalUsers.map((u) => ({ label: u.name, value: u.id })),
+                      ...internalUsers
+                        .filter((u) => u.id !== user?.id)
+                        .map((u) => ({ label: u.name, value: u.id })),
                     ],
                   },
                 ]}

@@ -102,8 +102,8 @@ export function RegistryToolbar({
             aria-label={f.label}
             className="px-2.5 py-1.5 rounded-[4px] border border-[var(--border-strong)] bg-[var(--surface-raised)] text-[13px] font-medium text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] cursor-pointer"
           >
-            {f.options.map((opt) => (
-              <option key={opt.value} value={opt.value}>
+            {f.options.map((opt, optIndex) => (
+              <option key={`${f.id}-${opt.value}-${optIndex}`} value={opt.value}>
                 {opt.label}
               </option>
             ))}
