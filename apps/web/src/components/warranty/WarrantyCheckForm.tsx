@@ -357,7 +357,12 @@ export function WarrantyCheckForm() {
       {/* Public Warranty Camera Scanner */}
       <CameraScannerModal
         isOpen={isCameraOpen}
-        onClose={() => setIsCameraOpen(false)}
+        onClose={() => {
+          setIsCameraOpen(false);
+          setTimeout(() => {
+            document.getElementById('serial-number-input')?.focus();
+          }, 50);
+        }}
         onScan={(serial) => handleCameraScan(serial)}
         mode="single"
         title="Scan Warranty Barcode / QR"

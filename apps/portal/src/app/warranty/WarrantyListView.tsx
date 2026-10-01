@@ -807,7 +807,12 @@ export function WarrantyListView({
       {/* Warranty Serial Camera Scanner */}
       <CameraScannerModal
         isOpen={isWarrantyCameraOpen}
-        onClose={() => setIsWarrantyCameraOpen(false)}
+        onClose={() => {
+          setIsWarrantyCameraOpen(false);
+          setTimeout(() => {
+            warrantySerialInputRef.current?.focus();
+          }, 50);
+        }}
         onScan={(serial, source) => handleWarrantyCapturedSerial(serial, source)}
         mode="single"
         title="Activate Warranty — Camera Scanner"

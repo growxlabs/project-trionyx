@@ -84,7 +84,8 @@ export function SerialNumberLookupModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Serial Number Tracker & Lineage" maxWidth="max-w-2xl">
+    <>
+      <Modal isOpen={isOpen} onClose={onClose} title="Serial Number Tracker & Lineage" maxWidth="max-w-2xl">
       <div className="space-y-5">
         {/* Search Bar */}
         <form onSubmit={handleSearch} className="flex items-center gap-2">
@@ -258,16 +259,22 @@ export function SerialNumberLookupModal({
           </div>
         )}
       </div>
-
-      {/* Mobile / Tablet Camera Scanner */}
-      <CameraScannerModal
-        isOpen={isCameraOpen}
-        onClose={() => setIsCameraOpen(false)}
-        onScan={(serial, source) => handleCapturedSerial(serial, source)}
-        mode="single"
-        title="Serial Lookup — Camera Scanner"
-        subtitle="Align serial barcode or QR code to immediately execute lookup."
-      />
     </Modal>
+
+    {/* Mobile / Tablet Camera Scanner */}
+    <CameraScannerModal
+      isOpen={isCameraOpen}
+      onClose={() => {
+        setIsCameraOpen(false);
+        setTimeout(() => {
+          inputRef.current?.focus();
+        }, 50);
+      }}
+      onScan={(serial, source) => handleCapturedSerial(serial, source)}
+      mode="single"
+      title="Serial Lookup — Camera Scanner"
+      subtitle="Align serial barcode or QR code to immediately execute lookup."
+    />
+  </>
   );
 }

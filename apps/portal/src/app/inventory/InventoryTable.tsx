@@ -1093,7 +1093,12 @@ export function InventoryTable({
       {/* Transfer Camera Scanner */}
       <CameraScannerModal
         isOpen={isTransferCameraOpen}
-        onClose={() => setIsTransferCameraOpen(false)}
+        onClose={() => {
+          setIsTransferCameraOpen(false);
+          setTimeout(() => {
+            transferSerialInputRef.current?.focus();
+          }, 50);
+        }}
         onScan={(serial, source) => handleTransferCapturedSerial(serial, source)}
         mode="continuous"
         title="Transfer Stock — Continuous Scanner"

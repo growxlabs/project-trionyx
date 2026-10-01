@@ -656,7 +656,12 @@ export function ReceiveStockModal({
       {/* Mobile / Tablet Camera Scanner */}
       <CameraScannerModal
         isOpen={isCameraOpen}
-        onClose={() => setIsCameraOpen(false)}
+        onClose={() => {
+          setIsCameraOpen(false);
+          setTimeout(() => {
+            serialInputRef.current?.focus();
+          }, 50);
+        }}
         onScan={(serial, source) => handleCapturedSerial(serial, source)}
         mode="continuous"
         title="Receive Stock — Continuous Scanner"
