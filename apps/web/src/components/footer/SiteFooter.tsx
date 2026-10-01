@@ -55,7 +55,7 @@ export function SiteFooter() {
           <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-x-14 sm:gap-y-12 lg:gap-x-20 lg:gap-y-12 xl:grid-cols-4 xl:gap-x-12 xl:gap-y-0 xl:flex-1 xl:max-w-[880px] 2xl:max-w-[960px]">
             <FooterColumn title="EXPLORE">
               <li><Link href="/#graphene" className={linkClass}>Products</Link></li>
-              <li><Link href="/dealer-access" className={linkClass}>Dealer Access</Link></li>
+              <li><Link href="/dealer-access" className={linkClass}>Distributor Portal</Link></li>
               <li><Link href="/warranty" className={linkClass}>Warranty</Link></li>
             </FooterColumn>
 
