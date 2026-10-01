@@ -5,8 +5,8 @@ import { redirect } from "next/navigation";
 import styles from "./dealer-access.module.css";
 
 export const metadata: Metadata = {
-  title: "Dealer Access | Trionyx",
-  description: "Sign in to the Trionyx dealer portal.",
+  title: "Distributor Access | Trionyx",
+  description: "Sign in to the Trionyx distributor workspace.",
 };
 
 export default function DealerAccessPage() {
@@ -44,16 +44,16 @@ export default function DealerAccessPage() {
               <span aria-hidden="true">←</span> Back to site
             </Link>
           </div>
-          <p className={styles.eyebrow}>PARTNER PORTAL</p>
+          <p className={styles.eyebrow}>DISTRIBUTOR ACCESS</p>
           <h1 id="dealer-access-title" className={styles.title}>
-            Dealer Access
+            Distributor Access
           </h1>
-          <p className={styles.intro}>The dealer portal is currently unavailable from this site.</p>
-          <section className={styles.formCard} aria-label="Dealer portal information">
-            <p>For account access, please contact your Trionyx distributor.</p>
+          <p className={styles.intro}>The distributor workspace is currently unavailable from this site.</p>
+          <section className={styles.formCard} aria-label="Distributor access information">
+            <p>For account access, please contact Trionyx headquarters.</p>
             <Link href="/contact" className={styles.contactLink}>Contact Trionyx →</Link>
           </section>
-          <p className={styles.accessNote}>FOR AUTHORISED TRIONYX DEALERS <span>·</span> INDIA</p>
+          <p className={styles.accessNote}>FOR AUTHORISED TRIONYX DISTRIBUTORS <span>·</span> INDIA</p>
         </div>
       </div>
       <div className={styles.visual}>

@@ -143,7 +143,7 @@ export const HeaderShell = () => {
                 size="sm"
                 className="px-5"
               >
-                Distributor Portal
+                Distributor
               </Button>
             </Link>
           </div>
@@ -270,7 +270,7 @@ export const HeaderShell = () => {
                   fullWidth
                   className="h-11 text-[15px] font-semibold tracking-[-0.01em]"
                 >
-                  Distributor Portal
+                  Distributor
                 </Button>
               </Link>
             </div>
