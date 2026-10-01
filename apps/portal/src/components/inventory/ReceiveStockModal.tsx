@@ -243,28 +243,28 @@ export function ReceiveStockModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
-      {/* Background Overlay: Even dark overlay, workspace remains visible behind dialog */}
+      {/* Background Overlay */}
       <div
         onClick={!isSubmitting ? onClose : undefined}
-        className="fixed inset-0 bg-[#171714]/40 transition-opacity animate-in fade-in duration-150"
+        className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-150"
         aria-hidden="true"
       />
 
-      {/* Dialog Card: Exactly 560px max width, 8px radius, white background, #E5E3DB border */}
+      {/* Dialog Card: Using design token variables for surface, border, and text */}
       <div
         ref={modalRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="relative w-full max-w-[560px] max-h-[85vh] bg-[#FFFFFF] border border-[#E5E3DB] rounded-[8px] p-6 shadow-[0_12px_32px_rgba(23,23,20,0.08)] z-10 flex flex-col overflow-hidden animate-in zoom-in-95 duration-150"
+        className="relative w-full max-w-[560px] max-h-[85vh] bg-[var(--surface-raised)] border border-[var(--border-strong)] rounded-[12px] p-6 shadow-2xl z-10 flex flex-col overflow-hidden text-[var(--text-primary)] animate-in zoom-in-95 duration-150"
       >
         {/* Header */}
-        <div className="flex items-start justify-between pb-4 mb-6 border-b border-[#E5E3DB] shrink-0">
+        <div className="flex items-start justify-between pb-4 mb-6 border-b border-[var(--border)] shrink-0">
           <div>
-            <h2 id={titleId} className="text-[20px] font-semibold text-[#171714] font-sans m-0 leading-tight">
+            <h2 id={titleId} className="text-[19px] sm:text-[20px] font-semibold text-[var(--text-primary)] m-0 leading-tight">
               Receive Serial Units
             </h2>
-            <p className="text-[13px] font-normal text-[#66645E] font-sans mt-1 m-0">
+            <p className="text-[13px] font-normal text-[var(--text-secondary)] mt-1 m-0">
               Register product serials into inventory.
             </p>
           </div>
@@ -273,7 +273,7 @@ export function ReceiveStockModal({
             onClick={onClose}
             disabled={isSubmitting}
             aria-label="Close dialog"
-            className="p-1 rounded text-[#66645E] hover:text-[#171714] hover:bg-[#F7F6F0] transition-colors cursor-pointer -mr-1 -mt-1 disabled:opacity-50"
+            className="p-1.5 rounded-[6px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)] transition-colors cursor-pointer -mr-1 -mt-1 disabled:opacity-50"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="18" y1="6" x2="6" y2="18" />
@@ -287,7 +287,7 @@ export function ReceiveStockModal({
           {error && (
             <div
               role="alert"
-              className="p-3 mb-4 rounded-[5px] bg-[#FEF2F2] border border-[#FCA5A5] text-[#991B1B] text-[13px] font-normal font-sans"
+              className="p-3 mb-4 rounded-[6px] bg-[var(--danger-soft)] border border-[var(--danger-border)] text-[var(--danger)] text-[13px] font-normal"
             >
               {error}
             </div>
@@ -296,8 +296,8 @@ export function ReceiveStockModal({
           <div className="space-y-4">
             {/* Field: Product */}
             <div>
-              <label htmlFor="receive-product-select" className="block text-[13px] font-medium text-[#171714] font-sans mb-[6px]">
-                Product <span className="text-[#D9362B]">*</span>
+              <label htmlFor="receive-product-select" className="block text-[13px] font-medium text-[var(--text-primary)] mb-[6px]">
+                Product <span className="text-[var(--accent)]">*</span>
               </label>
               <div className="relative">
                 <select
@@ -306,7 +306,7 @@ export function ReceiveStockModal({
                   required
                   value={productId}
                   onChange={(e) => setProductId(e.target.value)}
-                  className="w-full h-[40px] px-3 pr-8 rounded-[5px] border border-[#D8D6CF] bg-[#FFFFFF] text-[#171714] text-[14px] font-normal font-sans hover:border-[#A9A59C] focus:outline-none focus:border-[#171714] focus:ring-1 focus:ring-[#171714] appearance-none transition-colors cursor-pointer"
+                  className="w-full h-[40px] px-3 pr-8 rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text-primary)] text-[14px] font-normal hover:border-[var(--text-secondary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] appearance-none transition-colors cursor-pointer"
                 >
                   <option value="" disabled>Select product</option>
                   {products.map((p) => (
@@ -315,7 +315,7 @@ export function ReceiveStockModal({
                     </option>
                   ))}
                 </select>
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#66645E]">
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]">
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
@@ -325,8 +325,8 @@ export function ReceiveStockModal({
 
             {/* Field: Receiving Location */}
             <div>
-              <label htmlFor="receive-location-select" className="block text-[13px] font-medium text-[#171714] font-sans mb-[6px]">
-                Receiving Location <span className="text-[#D9362B]">*</span>
+              <label htmlFor="receive-location-select" className="block text-[13px] font-medium text-[var(--text-primary)] mb-[6px]">
+                Receiving Location <span className="text-[var(--accent)]">*</span>
               </label>
               <div className="relative">
                 <select
@@ -334,7 +334,7 @@ export function ReceiveStockModal({
                   required
                   value={locationId}
                   onChange={(e) => setLocationId(e.target.value)}
-                  className="w-full h-[40px] px-3 pr-8 rounded-[5px] border border-[#D8D6CF] bg-[#FFFFFF] text-[#171714] text-[14px] font-normal font-sans hover:border-[#A9A59C] focus:outline-none focus:border-[#171714] focus:ring-1 focus:ring-[#171714] appearance-none transition-colors cursor-pointer"
+                  className="w-full h-[40px] px-3 pr-8 rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text-primary)] text-[14px] font-normal hover:border-[var(--text-secondary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] appearance-none transition-colors cursor-pointer"
                 >
                   <option value="" disabled>Select location</option>
                   {locations.map((loc) => (
@@ -343,7 +343,7 @@ export function ReceiveStockModal({
                     </option>
                   ))}
                 </select>
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#66645E]">
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]">
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
@@ -353,8 +353,8 @@ export function ReceiveStockModal({
 
             {/* Field: Serial Numbers */}
             <div>
-              <label htmlFor="receive-serials-input" className="block text-[13px] font-medium text-[#171714] font-sans mb-[6px]">
-                Serial Numbers <span className="text-[#D9362B]">*</span>
+              <label htmlFor="receive-serials-input" className="block text-[13px] font-medium text-[var(--text-primary)] mb-[6px]">
+                Serial Numbers <span className="text-[var(--accent)]">*</span>
               </label>
               <textarea
                 id="receive-serials-input"
@@ -363,41 +363,41 @@ export function ReceiveStockModal({
                 value={serialsText}
                 onChange={(e) => setSerialsText(e.target.value)}
                 placeholder="Paste or scan one serial per line"
-                className="w-full min-h-[112px] max-h-[180px] p-3 rounded-[5px] border border-[#D8D6CF] bg-[#FFFFFF] text-[#171714] font-mono text-[14px] font-normal leading-relaxed hover:border-[#A9A59C] focus:outline-none focus:border-[#171714] focus:ring-1 focus:ring-[#171714] resize-y placeholder:text-[#A9A59C] placeholder:font-sans transition-colors"
+                className="w-full min-h-[112px] max-h-[180px] p-3 rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text-primary)] font-mono text-[14px] font-normal leading-relaxed hover:border-[var(--text-secondary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] resize-y placeholder:text-[var(--text-muted)] placeholder:font-sans transition-colors"
               />
 
               {/* Quiet inline feedback */}
               <div
-                className="mt-[6px] text-[12px] font-normal font-sans flex flex-wrap items-center gap-1.5 text-[#66645E]"
+                className="mt-[6px] text-[12px] font-normal flex flex-wrap items-center gap-1.5 text-[var(--text-secondary)]"
                 aria-live="polite"
               >
                 <span
                   className={
                     parsedSerials.length > 0 && duplicatesCount === 0 && conflictsCount === 0
-                      ? 'text-[#166534] font-medium'
-                      : 'text-[#66645E]'
+                      ? 'text-[var(--success)] font-medium'
+                      : 'text-[var(--text-secondary)]'
                   }
                 >
                   {parsedSerials.length} serial{parsedSerials.length === 1 ? '' : 's'} detected
                 </span>
-                <span className="text-[#D8D6CF]">·</span>
-                <span className={duplicatesCount > 0 ? 'text-[#B45309] font-medium' : 'text-[#66645E]'}>
+                <span className="text-[var(--border-strong)]">·</span>
+                <span className={duplicatesCount > 0 ? 'text-[var(--warning)] font-medium' : 'text-[var(--text-secondary)]'}>
                   {duplicatesCount} duplicate{duplicatesCount === 1 ? '' : 's'}
                 </span>
-                <span className="text-[#D8D6CF]">·</span>
-                <span className={conflictsCount > 0 ? 'text-[#DC2626] font-medium' : 'text-[#66645E]'}>
+                <span className="text-[var(--border-strong)]">·</span>
+                <span className={conflictsCount > 0 ? 'text-[var(--danger)] font-medium' : 'text-[var(--text-secondary)]'}>
                   {conflictsCount} conflict{conflictsCount === 1 ? '' : 's'}
                 </span>
               </div>
 
-              {/* Accessible non-color assistance if validation errors exist */}
+              {/* Accessible assistance if validation errors exist */}
               {duplicatesCount > 0 && (
-                <p className="text-[12px] text-[#B45309] font-sans mt-1 m-0">
+                <p className="text-[12px] text-[var(--warning)] mt-1 m-0">
                   Batch contains duplicate entries ({duplicateSerials.join(', ')}). Remove duplicates to proceed.
                 </p>
               )}
               {conflictsCount > 0 && (
-                <p className="text-[12px] text-[#DC2626] font-sans mt-1 m-0">
+                <p className="text-[12px] text-[var(--danger)] mt-1 m-0">
                   Conflicting serials already exist in inventory: {conflicts.join(', ')}.
                 </p>
               )}
@@ -405,7 +405,7 @@ export function ReceiveStockModal({
 
             {/* Field: Reference / Batch */}
             <div>
-              <label htmlFor="receive-reference-input" className="block text-[13px] font-medium text-[#171714] font-sans mb-[6px]">
+              <label htmlFor="receive-reference-input" className="block text-[13px] font-medium text-[var(--text-primary)] mb-[6px]">
                 Reference / Batch
               </label>
               <input
@@ -414,13 +414,13 @@ export function ReceiveStockModal({
                 value={reference}
                 onChange={(e) => setReference(e.target.value)}
                 placeholder="e.g. PO-88401, BATCH-G2"
-                className="w-full h-[40px] px-3 rounded-[5px] border border-[#D8D6CF] bg-[#FFFFFF] text-[#171714] font-mono text-[14px] font-normal hover:border-[#A9A59C] focus:outline-none focus:border-[#171714] focus:ring-1 focus:ring-[#171714] placeholder:text-[#A9A59C] placeholder:font-sans transition-colors"
+                className="w-full h-[40px] px-3 rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text-primary)] font-mono text-[14px] font-normal hover:border-[var(--text-secondary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] placeholder:text-[var(--text-muted)] transition-colors"
               />
             </div>
 
             {/* Field: Operator Notes */}
             <div>
-              <label htmlFor="receive-notes-input" className="block text-[13px] font-medium text-[#171714] font-sans mb-[6px]">
+              <label htmlFor="receive-notes-input" className="block text-[13px] font-medium text-[var(--text-primary)] mb-[6px]">
                 Operator Notes
               </label>
               <input
@@ -429,25 +429,25 @@ export function ReceiveStockModal({
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="e.g. Ingested from production line"
-                className="w-full h-[40px] px-3 rounded-[5px] border border-[#D8D6CF] bg-[#FFFFFF] text-[#171714] font-sans text-[14px] font-normal hover:border-[#A9A59C] focus:outline-none focus:border-[#171714] focus:ring-1 focus:ring-[#171714] placeholder:text-[#A9A59C] transition-colors"
+                className="w-full h-[40px] px-3 rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text-primary)] text-[14px] font-normal hover:border-[var(--text-secondary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] placeholder:text-[var(--text-muted)] transition-colors"
               />
             </div>
           </div>
 
-          {/* Footer: 1px divider, actions aligned right */}
-          <div className="pt-4 mt-6 border-t border-[#E5E3DB] flex items-center justify-end gap-3 shrink-0">
+          {/* Footer: divider, actions aligned right */}
+          <div className="pt-4 mt-6 border-t border-[var(--border)] flex items-center justify-end gap-3 shrink-0">
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="h-[40px] px-4 rounded-[5px] border border-[#D8D6CF] bg-[#FFFFFF] text-[#171714] text-[13px] font-medium font-sans hover:bg-[#F7F6F0] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#171714] transition-colors cursor-pointer disabled:opacity-50"
+              className="h-[40px] px-4 rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text-primary)] text-[13px] font-medium hover:bg-[var(--surface-subtle)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)] transition-colors cursor-pointer disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting || hasBlockingErrors}
-              className="h-[40px] px-5 rounded-[5px] bg-[#171714] text-[#FFFFFF] text-[13px] font-medium font-sans hover:bg-[#2D2C27] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#171714] transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-none"
+              className="h-[40px] px-5 rounded-[6px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] transition-opacity cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-xs"
             >
               {isSubmitting ? 'Receiving...' : 'Confirm Receipt'}
             </button>
