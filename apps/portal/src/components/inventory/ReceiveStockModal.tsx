@@ -349,24 +349,19 @@ export function ReceiveStockModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="relative w-full max-w-[560px] max-h-[85vh] bg-[var(--surface-raised)] border border-[var(--border-strong)] rounded-[12px] p-6 shadow-2xl z-10 flex flex-col overflow-hidden text-[var(--text-primary)] animate-in zoom-in-95 duration-150"
+        className="relative w-full max-w-[580px] max-h-[88vh] bg-[var(--surface-raised)] border border-[var(--border-strong)] rounded-[12px] shadow-2xl z-10 flex flex-col overflow-hidden text-[var(--text-primary)] animate-in zoom-in-95 duration-150"
       >
         {/* Header */}
-        <div className="flex items-start justify-between pb-4 mb-6 border-b border-[var(--border)] shrink-0">
-          <div>
-            <h2 id={titleId} className="text-[19px] sm:text-[20px] font-semibold text-[var(--text-primary)] m-0 leading-tight">
-              Receive Serial Units
-            </h2>
-            <p className="text-[13px] font-normal text-[var(--text-secondary)] mt-1 m-0">
-              Register product serials into inventory.
-            </p>
-          </div>
+        <div className="flex items-center justify-between px-6 py-4.5 border-b border-[var(--border)] bg-[var(--surface)] shrink-0">
+          <h2 id={titleId} className="text-[18px] sm:text-[19px] font-semibold text-[var(--text-primary)] m-0 leading-tight">
+            Receive Serial Units
+          </h2>
           <button
             type="button"
             onClick={onClose}
             disabled={isSubmitting}
             aria-label="Close dialog"
-            className="p-1.5 rounded-[6px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)] transition-colors cursor-pointer -mr-1 -mt-1 disabled:opacity-50"
+            className="p-1.5 rounded-[6px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)] transition-colors cursor-pointer disabled:opacity-50"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="18" y1="6" x2="6" y2="18" />
@@ -376,17 +371,17 @@ export function ReceiveStockModal({
         </div>
 
         {/* Scrollable Form Body */}
-        <form onSubmit={handleSubmit} className="overflow-y-auto flex-1 pr-0.5">
-          {error && (
-            <div
-              role="alert"
-              className="p-3 mb-4 rounded-[6px] bg-[var(--danger-soft)] border border-[var(--danger-border)] text-[var(--danger)] text-[13px] font-normal"
-            >
-              {error}
-            </div>
-          )}
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+          <div className="overflow-y-auto flex-1 px-6 py-5 space-y-4 [scrollbar-width:thin] [scrollbar-color:var(--border-strong)_transparent]">
+            {error && (
+              <div
+                role="alert"
+                className="p-3 rounded-[6px] bg-[var(--danger-soft)] border border-[var(--danger-border)] text-[var(--danger)] text-[13px] font-normal"
+              >
+                {error}
+              </div>
+            )}
 
-          <div className="space-y-4">
             {/* Field: Product */}
             <div>
               <label htmlFor="receive-product-select" className="block text-[13px] font-medium text-[var(--text-primary)] mb-[6px]">
@@ -399,7 +394,7 @@ export function ReceiveStockModal({
                   required
                   value={productId}
                   onChange={(e) => setProductId(e.target.value)}
-                  className="w-full h-[40px] px-3 pr-8 rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text-primary)] text-[14px] font-normal hover:border-[var(--text-secondary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] appearance-none transition-colors cursor-pointer"
+                  className="w-full h-[40px] px-3.5 pr-10 rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text-primary)] text-[13.5px] font-normal hover:border-[var(--text-secondary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] appearance-none transition-colors cursor-pointer truncate"
                 >
                   <option value="" disabled>Select product</option>
                   {products.map((p) => (
@@ -408,7 +403,7 @@ export function ReceiveStockModal({
                     </option>
                   ))}
                 </select>
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]">
+                <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]">
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
@@ -427,7 +422,7 @@ export function ReceiveStockModal({
                   required
                   value={locationId}
                   onChange={(e) => setLocationId(e.target.value)}
-                  className="w-full h-[40px] px-3 pr-8 rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text-primary)] text-[14px] font-normal hover:border-[var(--text-secondary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] appearance-none transition-colors cursor-pointer"
+                  className="w-full h-[40px] px-3.5 pr-10 rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text-primary)] text-[13.5px] font-normal hover:border-[var(--text-secondary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] appearance-none transition-colors cursor-pointer truncate"
                 >
                   <option value="" disabled>Select location</option>
                   {locations.map((loc) => (
@@ -436,13 +431,14 @@ export function ReceiveStockModal({
                     </option>
                   ))}
                 </select>
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]">
+                <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--text-secondary)]">
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
                 </span>
               </div>
             </div>
+
 
             {/* Field: Serial Numbers */}
             <div className="space-y-2">
@@ -593,10 +589,10 @@ export function ReceiveStockModal({
                   </div>
                 </div>
               ) : (
-                <div className="p-4 rounded-[6px] border border-dashed border-[var(--border-strong)] bg-[var(--surface-subtle)]/30 text-center">
-                  <p className="text-[12.5px] text-[var(--text-secondary)] m-0">
-                    No serial units captured yet. Scan with USB/Bluetooth scanner, open camera, or type and press Enter.
-                  </p>
+                <div className="py-3 px-4 rounded-[6px] border border-dashed border-[var(--border-strong)] bg-[var(--surface-subtle)]/20 text-center">
+                  <span className="text-[12px] text-[var(--text-muted)] font-medium">
+                    No serial units added yet
+                  </span>
                 </div>
               )}
             </div>
@@ -612,7 +608,7 @@ export function ReceiveStockModal({
                 value={reference}
                 onChange={(e) => setReference(e.target.value)}
                 placeholder="e.g. PO-88401, BATCH-G2"
-                className="w-full h-[40px] px-3 rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text-primary)] font-mono text-[14px] font-normal hover:border-[var(--text-secondary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] placeholder:text-[var(--text-muted)] transition-colors"
+                className="w-full h-[40px] px-3.5 rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text-primary)] font-mono text-[13.5px] font-normal hover:border-[var(--text-secondary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] placeholder:text-[var(--text-muted)] transition-colors"
               />
             </div>
 
@@ -627,25 +623,25 @@ export function ReceiveStockModal({
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="e.g. Ingested from production line"
-                className="w-full h-[40px] px-3 rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text-primary)] text-[14px] font-normal hover:border-[var(--text-secondary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] placeholder:text-[var(--text-muted)] transition-colors"
+                className="w-full h-[40px] px-3.5 rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text-primary)] text-[13.5px] font-normal hover:border-[var(--text-secondary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] placeholder:text-[var(--text-muted)] transition-colors"
               />
             </div>
           </div>
 
-          {/* Footer: divider, actions aligned right */}
-          <div className="pt-4 mt-6 border-t border-[var(--border)] flex items-center justify-end gap-3 shrink-0">
+          {/* Footer: Pinned at bottom, always visible */}
+          <div className="px-6 py-4 border-t border-[var(--border)] bg-[var(--surface)] flex items-center justify-end gap-3 shrink-0">
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="h-[40px] px-4 rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text-primary)] text-[13px] font-medium hover:bg-[var(--surface-subtle)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)] transition-colors cursor-pointer disabled:opacity-50"
+              className="h-[38px] px-4 rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text-primary)] text-[13px] font-medium hover:bg-[var(--surface-subtle)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)] transition-colors cursor-pointer disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting || hasBlockingErrors}
-              className="h-[40px] px-5 rounded-[6px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] transition-opacity cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-xs"
+              className="h-[38px] px-5 rounded-[6px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] transition-opacity cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-xs"
             >
               {isSubmitting ? 'Receiving...' : 'Confirm Receipt'}
             </button>
@@ -665,7 +661,6 @@ export function ReceiveStockModal({
         onScan={(serial, source) => handleCapturedSerial(serial, source)}
         mode="continuous"
         title="Receive Stock — Continuous Scanner"
-        subtitle="Point camera at product barcodes or QR codes. Scanned units add to queue automatically."
       />
     </div>
   );

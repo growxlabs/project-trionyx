@@ -634,7 +634,6 @@ export function WarrantyListView({
           setFormSuccess(null);
         }}
         title="Activate Warranty (Internal)"
-        subtitle="Register serial number warranty directly from Operations"
       >
         <div className="space-y-4">
           {formError && (
@@ -713,9 +712,6 @@ export function WarrantyListView({
                 </button>
               )}
             </div>
-            <p className="text-[11.5px] text-[var(--text-muted)] mt-1 m-0">
-              Enter the discrete serial number printed on the product packaging.
-            </p>
           </div>
 
           {/* Validated Details Banner */}
@@ -753,9 +749,6 @@ export function WarrantyListView({
               disabled={isActivating}
               className="w-full px-3.5 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--background)] text-[var(--text-primary)] text-[13.5px] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
             />
-            <p className="text-[11.5px] text-[var(--text-muted)] mt-1 m-0">
-              Warranty starts strictly on this date. Expiry date is derived automatically.
-            </p>
           </div>
 
           {/* Optional Dealer Assignment */}
@@ -816,7 +809,6 @@ export function WarrantyListView({
         onScan={(serial, source) => handleWarrantyCapturedSerial(serial, source)}
         mode="single"
         title="Activate Warranty — Camera Scanner"
-        subtitle="Align serial barcode or QR code on product label to verify immediately."
       />
     </div>
   );
