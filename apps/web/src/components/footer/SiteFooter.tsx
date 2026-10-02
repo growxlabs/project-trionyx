@@ -42,9 +42,6 @@ export function SiteFooter() {
             >
               <TrionyxLogo variant="light" size="md" priority={false} />
             </Link>
-            <p className="mb-0 mt-5 max-w-[320px] text-[15px] leading-[1.6] text-[#C5C2B9]">
-              Automotive protection, coating, care and related products.
-            </p>
           </div>
 
           {/* Navigation Columns:
@@ -85,7 +82,7 @@ export function SiteFooter() {
       {/* Bottom Sub-bar */}
       <div>
         <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-4 px-6 py-6 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-12">
-          <p className="m-0 text-[12px] leading-[1.4] text-[#B5B2A9]">
+          <p className="m-0 text-[15px] leading-[1.5] text-[#C5C2B9]">
             © {new Date().getFullYear()} Trionyx India Private Limited
           </p>
           <p className="m-0 text-[12px] leading-[1.4] text-[#B5B2A9] md:text-right">
