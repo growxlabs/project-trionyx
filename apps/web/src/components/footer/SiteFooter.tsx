@@ -4,7 +4,7 @@ import { TrionyxLogo } from '../ui/TrionyxLogo';
 import { companyContact } from '@/data/companyContact';
 
 const linkClass =
-  'inline-flex items-center text-[14px] text-[#C5C2B9] transition-colors duration-150 hover:text-[#F26522] focus-visible:rounded-[2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F26522]';
+  'inline-flex min-h-10 items-center text-[15px] leading-[1.5] text-[#C5C2B9] transition-colors duration-150 hover:text-[#F26522] focus-visible:rounded-[2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F26522]';
 
 function FooterColumn({
   title,
@@ -17,7 +17,7 @@ function FooterColumn({
 }) {
   return (
     <nav aria-label={title} className={className}>
-      <h2 className="mb-5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8C897E] sm:mb-6">
+      <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.13em] text-[#B5B2A9] sm:mb-5">
         {title}
       </h2>
       <ul className="m-0 list-none p-0 space-y-3 sm:space-y-3.5">
@@ -42,9 +42,6 @@ export function SiteFooter() {
             >
               <TrionyxLogo variant="light" size="md" priority={false} />
             </Link>
-            <p className="mb-0 mt-5 max-w-[320px] text-[14px] leading-[1.7] text-[#B5B2A9]">
-              Automotive protection, coating, care and related products.
-            </p>
           </div>
 
           {/* Navigation Columns:
@@ -73,9 +70,9 @@ export function SiteFooter() {
             <FooterColumn title="CONTACT">
               <li><a href={companyContact.phoneHref} className={linkClass}>{companyContact.phone}</a></li>
               <li><a href={companyContact.emailHref} className={linkClass}>{companyContact.email}</a></li>
-              <li className="pt-1 text-[14px] leading-relaxed text-[#C5C2B9]">
+              <li className="pt-1 text-[15px] leading-[1.5] text-[#C5C2B9]">
                 <span className="block whitespace-nowrap">{companyContact.location.city}, {companyContact.location.region}</span>
-                <span className="block text-[#8C897E]">{companyContact.location.country}</span>
+                <span className="block">{companyContact.location.country}</span>
               </li>
             </FooterColumn>
           </div>
@@ -83,24 +80,19 @@ export function SiteFooter() {
       </div>
 
       {/* Bottom Sub-bar */}
-      <div className="border-t border-white/[0.12]">
+      <div>
         <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-4 px-6 py-6 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-12">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 text-[11px] leading-5 text-[#8C897E]">
-            <p className="m-0">
-              © {new Date().getFullYear()} Trionyx India Private Limited
-            </p>
-            <nav aria-label="Legal footer links" className="flex items-center gap-3 text-[#8C897E]">
-              <Link href="/privacy" className="hover:text-[#F5F4EE] transition-colors">Privacy</Link>
-              <span>·</span>
-              <Link href="/terms" className="hover:text-[#F5F4EE] transition-colors">Terms</Link>
-              <span>·</span>
-              <Link href="/cookies" className="hover:text-[#F5F4EE] transition-colors">Cookies</Link>
-              <span>·</span>
-              <Link href="/warranty" className="hover:text-[#F5F4EE] transition-colors">Warranty</Link>
-            </nav>
-          </div>
-          <p className="m-0 text-[11px] leading-5 text-[#8C897E] md:text-right">
-            Technology &amp; Digital Partner by GrowxLabs
+          <p className="m-0 text-[15px] leading-[1.5] text-[#C5C2B9]">
+            © {new Date().getFullYear()} Trionyx India Private Limited
+          </p>
+          <p className="m-0 text-[15px] leading-[1.5] text-[#C5C2B9] md:text-right">
+            Technology &amp; Digital Partner by{' '}
+            <a
+              href="https://growxlabs.tech/"
+              className="transition-colors duration-150 hover:text-[#F26522] focus-visible:rounded-[2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F26522]"
+            >
+              GrowxLabs
+            </a>
           </p>
         </div>
       </div>
