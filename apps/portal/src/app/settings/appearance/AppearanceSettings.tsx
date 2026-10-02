@@ -4,24 +4,24 @@ import React from 'react';
 import { useThemePreference } from '../../../components/shell/ThemeProvider';
 import { accentThemes, type AccentTheme, type ThemePreference } from '../../../components/shell/theme-utils';
 
-const MODES: { id: ThemePreference; label: string; desc: string }[] = [
-  { id: 'system', label: 'System', desc: 'Sync with operating system' },
-  { id: 'light', label: 'Light', desc: 'Crisp high-contrast day palette' },
-  { id: 'dark', label: 'Dark', desc: 'Deep industrial night palette' },
+const MODES: { id: ThemePreference; label: string }[] = [
+  { id: 'system', label: 'System' },
+  { id: 'light', label: 'Light' },
+  { id: 'dark', label: 'Dark' },
 ];
 
-const ACCENTS: { id: AccentTheme; label: string; character: string }[] = [
-  { id: 'ember', label: 'Ember', character: 'Warm orange · Burnt copper' },
-  { id: 'plum', label: 'Plum', character: 'Muted violet · Deep plum' },
-  { id: 'rosewood', label: 'Rosewood', character: 'Muted rose · Deep burgundy' },
-  { id: 'moss', label: 'Moss', character: 'Subdued olive · Forest grey' },
-  { id: 'slate', label: 'Slate', character: 'Technical steel blue · Slate' },
-  { id: 'mono', label: 'Mono', character: 'Graphite · Neutral monochrome' },
+const ACCENTS: { id: AccentTheme; label: string }[] = [
+  { id: 'ember', label: 'Ember' },
+  { id: 'plum', label: 'Plum' },
+  { id: 'rosewood', label: 'Rosewood' },
+  { id: 'moss', label: 'Moss' },
+  { id: 'slate', label: 'Slate' },
+  { id: 'mono', label: 'Mono' },
 ];
 
-const DENSITIES: { id: 'comfortable' | 'compact'; label: string; desc: string }[] = [
-  { id: 'comfortable', label: 'Comfortable', desc: 'Standard spacious operational layout' },
-  { id: 'compact', label: 'Compact', desc: 'Condensed tables and higher data density' },
+const DENSITIES: { id: 'comfortable' | 'compact'; label: string }[] = [
+  { id: 'comfortable', label: 'Comfortable' },
+  { id: 'compact', label: 'Compact' },
 ];
 
 export function AppearanceSettings() {
@@ -29,12 +29,7 @@ export function AppearanceSettings() {
 
   return (
     <main className="flex-1 p-6 sm:p-10 max-w-4xl">
-      <div className="mb-8">
-        <div className="flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-[0.12em] text-[var(--text-muted)] mb-2">
-          <span>Settings</span>
-          <span className="text-[var(--border-strong)]">/</span>
-          <span className="text-[var(--text-secondary)]">Appearance</span>
-        </div>
+      <div className="mb-7">
         <h1 className="text-[24px] sm:text-[26px] font-semibold text-[var(--text-primary)] tracking-tight m-0">
           Appearance
         </h1>
@@ -52,7 +47,7 @@ export function AppearanceSettings() {
               return (
                 <label
                   key={m.id}
-                  className={`appearance-choice relative flex items-center justify-between p-3.5 rounded-[6px] border cursor-pointer transition-all select-none ${
+                  className={`appearance-choice relative flex items-center justify-between h-[44px] px-3.5 rounded-[6px] border cursor-pointer transition-all select-none ${
                     isChecked
                       ? 'border-[var(--accent-text)] bg-[var(--accent-subtle)] shadow-xs'
                       : 'border-[var(--border-strong)] bg-[var(--surface)] hover:border-[var(--text-secondary)]'
@@ -66,14 +61,9 @@ export function AppearanceSettings() {
                     onChange={() => setAppearance({ mode: m.id })}
                     className="sr-only"
                   />
-                  <div className="flex flex-col">
-                    <span className="text-[13.5px] font-medium text-[var(--text-primary)]">
-                      {m.label}
-                    </span>
-                    <span className="text-[11.5px] text-[var(--text-secondary)] mt-0.5">
-                      {m.desc}
-                    </span>
-                  </div>
+                  <span className="text-[13.5px] font-medium text-[var(--text-primary)]">
+                    {m.label}
+                  </span>
                   <span
                     className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-3 transition-colors ${
                       isChecked
@@ -100,7 +90,7 @@ export function AppearanceSettings() {
               return (
                 <label
                   key={acc.id}
-                  className={`appearance-choice relative flex items-center justify-between p-3.5 rounded-[6px] border cursor-pointer transition-all select-none ${
+                  className={`appearance-choice relative flex items-center justify-between h-[44px] px-3.5 rounded-[6px] border cursor-pointer transition-all select-none ${
                     isChecked
                       ? 'border-[var(--accent-text)] bg-[var(--accent-subtle)] shadow-xs'
                       : 'border-[var(--border-strong)] bg-[var(--surface)] hover:border-[var(--text-secondary)]'
@@ -114,20 +104,15 @@ export function AppearanceSettings() {
                     onChange={() => setAppearance({ accent: acc.id })}
                     className="sr-only"
                   />
-                  <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex items-center gap-2.5 min-w-0">
                     <i
                       aria-hidden="true"
                       className="appearance-swatch shrink-0 w-3.5 h-3.5 rounded-full ring-2 ring-black/10 dark:ring-white/10"
                       data-preview-accent={acc.id}
                     />
-                    <div className="flex flex-col min-w-0">
-                      <span className="text-[13.5px] font-medium text-[var(--text-primary)] truncate">
-                        {acc.label}
-                      </span>
-                      <span className="text-[11px] text-[var(--text-secondary)] truncate mt-0.5">
-                        {acc.character}
-                      </span>
-                    </div>
+                    <span className="text-[13.5px] font-medium text-[var(--text-primary)] truncate">
+                      {acc.label}
+                    </span>
                   </div>
                   <span
                     className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-2 transition-colors ${
@@ -155,7 +140,7 @@ export function AppearanceSettings() {
               return (
                 <label
                   key={den.id}
-                  className={`appearance-choice relative flex items-center justify-between p-3.5 rounded-[6px] border cursor-pointer transition-all select-none ${
+                  className={`appearance-choice relative flex items-center justify-between h-[44px] px-3.5 rounded-[6px] border cursor-pointer transition-all select-none ${
                     isChecked
                       ? 'border-[var(--accent-text)] bg-[var(--accent-subtle)] shadow-xs'
                       : 'border-[var(--border-strong)] bg-[var(--surface)] hover:border-[var(--text-secondary)]'
@@ -169,14 +154,9 @@ export function AppearanceSettings() {
                     onChange={() => setAppearance({ density: den.id })}
                     className="sr-only"
                   />
-                  <div className="flex flex-col">
-                    <span className="text-[13.5px] font-medium text-[var(--text-primary)]">
-                      {den.label}
-                    </span>
-                    <span className="text-[11.5px] text-[var(--text-secondary)] mt-0.5">
-                      {den.desc}
-                    </span>
-                  </div>
+                  <span className="text-[13.5px] font-medium text-[var(--text-primary)]">
+                    {den.label}
+                  </span>
                   <span
                     className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-3 transition-colors ${
                       isChecked
@@ -200,15 +180,10 @@ export function AppearanceSettings() {
           >
             ACCESSIBILITY
           </h2>
-          <label className="flex items-center justify-between p-3.5 rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] cursor-pointer hover:border-[var(--text-secondary)] transition-colors select-none">
-            <div className="flex flex-col">
-              <span className="text-[13.5px] font-medium text-[var(--text-primary)]">
-                Reduce Motion
-              </span>
-              <span className="text-[11.5px] text-[var(--text-secondary)] mt-0.5">
-                Disable non-essential transitions, animations, and smooth scrolling
-              </span>
-            </div>
+          <label className="flex items-center justify-between h-[48px] px-3.5 rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] cursor-pointer hover:border-[var(--text-secondary)] transition-colors select-none">
+            <span className="text-[13.5px] font-medium text-[var(--text-primary)]">
+              Reduce Motion
+            </span>
             <div className="flex items-center gap-3 shrink-0 ml-4">
               <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--text-muted)]">
                 {appearance.reduceMotion ? 'On' : 'Off'}
