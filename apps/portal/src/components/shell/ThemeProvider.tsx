@@ -1,77 +1,62 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useSyncExternalStore } from 'react';
-import { readThemePreference, resolveTheme, type ThemePreference } from './theme-utils';
+import { appearanceStorageKey, defaultAppearance, readAppearance, resolveTheme, type AppearancePreferences, type ThemePreference } from './theme-utils';
 
 interface ThemeContextValue {
   preference: ThemePreference;
-  setPreference: (preference: ThemePreference) => void;
+  appearance: AppearancePreferences;
+  setPreference: (mode: ThemePreference) => void;
+  setAppearance: (patch: Partial<AppearancePreferences>) => void;
 }
-
 const ThemeContext = createContext<ThemeContextValue | null>(null);
-const STORAGE_KEY = 'trionyx-ops-theme';
-let memoryPreference: ThemePreference | null = null;
-let storageUnavailable = false;
-
-function readPreference(): ThemePreference {
-  if (storageUnavailable) return memoryPreference ?? 'system';
-  try {
-    return readThemePreference(window.localStorage.getItem(STORAGE_KEY));
-  } catch {
-    storageUnavailable = true;
-    return 'system';
-  }
+const memory = new Map<string, string>();
+function read(key: string) {
+  if (memory.has(key)) return memory.get(key)!;
+  try { return localStorage.getItem(key); } catch { return null; }
 }
-
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const preference = useSyncExternalStore<ThemePreference>(subscribePreference, readPreference, () => 'system');
-  const setPreference = useCallback((next: ThemePreference) => {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, next);
-      storageUnavailable = false;
-      memoryPreference = null;
-    } catch {
-      // The in-memory preference still applies when storage is unavailable.
-      storageUnavailable = true;
-      memoryPreference = next;
-    }
-    const theme = resolveTheme(next, window.matchMedia('(prefers-color-scheme: dark)').matches);
-    document.documentElement.dataset.theme = theme;
-    document.documentElement.dataset.themePreference = next;
-    document.documentElement.style.colorScheme = theme;
-    document.dispatchEvent(new Event('trionyx-theme-change'));
-  }, []);
-
-  useEffect(() => {
-    // The head initializer already applied the stored choice. During hydration,
-    // wait until the external-store snapshot matches it instead of briefly
-    // replacing that choice with the server's deterministic `system` snapshot.
-    if (document.documentElement.dataset.themePreference !== preference) return;
-    const media = window.matchMedia('(prefers-color-scheme: dark)');
-    const apply = () => {
-      const theme = resolveTheme(preference, media.matches);
-      document.documentElement.dataset.theme = theme;
-      document.documentElement.dataset.themePreference = preference;
-      document.documentElement.style.colorScheme = theme;
-    };
-    apply();
-    media.addEventListener('change', apply);
-    return () => media.removeEventListener('change', apply);
-  }, [preference]);
-
-  const value = useMemo(() => ({ preference, setPreference }), [preference, setPreference]);
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+function apply(p: AppearancePreferences) {
+  const root = document.documentElement;
+  const theme = resolveTheme(p.mode, matchMedia('(prefers-color-scheme: dark)').matches);
+  root.dataset.theme = theme;
+  root.dataset.themePreference = p.mode;
+  root.dataset.accent = p.accent;
+  root.dataset.density = p.density;
+  root.dataset.reduceMotion = String(p.reduceMotion);
+  root.style.colorScheme = theme;
 }
-
-function subscribePreference(onChange: () => void) {
-  document.addEventListener('trionyx-theme-change', onChange);
+function subscribe(onChange: () => void) {
   window.addEventListener('storage', onChange);
+  document.addEventListener('trionyx-theme-change', onChange);
   return () => {
-    document.removeEventListener('trionyx-theme-change', onChange);
     window.removeEventListener('storage', onChange);
+    document.removeEventListener('trionyx-theme-change', onChange);
   };
 }
-
+export function ThemeProvider({ children, userId }: { children: React.ReactNode; userId: string | null }) {
+  const key = appearanceStorageKey(userId);
+  const snapshot = useSyncExternalStore(subscribe, () => read(key), () => null);
+  const appearance = useMemo(() => snapshot ? readAppearance(snapshot) : defaultAppearance, [snapshot]);
+  const setAppearance = useCallback((patch: Partial<AppearancePreferences>) => {
+    const next = readAppearance(JSON.stringify({ ...readAppearance(read(key)), ...patch }));
+    const serialized = JSON.stringify(next);
+    try { localStorage.setItem(key, serialized); memory.delete(key); } catch { memory.set(key, serialized); }
+    apply(next);
+    document.dispatchEvent(new Event('trionyx-theme-change'));
+  }, [key]);
+  useEffect(() => {
+    // Read the cache directly here, avoiding the server snapshot during hydration.
+    const update = () => apply(readAppearance(read(key)));
+    const media = matchMedia('(prefers-color-scheme: dark)');
+    update();
+    media.addEventListener('change', update);
+    window.addEventListener('storage', update);
+    return () => { media.removeEventListener('change', update); window.removeEventListener('storage', update); };
+  }, [key]);
+  const setPreference = useCallback((mode: ThemePreference) => setAppearance({ mode }), [setAppearance]);
+  const value = useMemo(() => ({ appearance, preference: appearance.mode, setPreference, setAppearance }), [appearance, setPreference, setAppearance]);
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+}
 export function useThemePreference() {
   const context = useContext(ThemeContext);
   if (!context) throw new Error('useThemePreference must be used within ThemeProvider');

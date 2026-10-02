@@ -507,14 +507,14 @@ export function ReceiveStockModal({
                 <button
                   type="button"
                   onClick={() => setIsCameraOpen(true)}
-                  className="px-3.5 h-[40px] rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[13px] font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+                  className="w-[40px] h-[40px] rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] flex items-center justify-center transition-colors cursor-pointer shrink-0"
                   title="Scan serial with mobile/tablet camera"
+                  aria-label="Scan serial with camera"
                 >
                   <svg className="w-4 h-4 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
                     <circle cx="12" cy="13" r="4" />
                   </svg>
-                  <span>Camera</span>
                 </button>
               </div>
 
@@ -641,7 +641,7 @@ export function ReceiveStockModal({
             <button
               type="submit"
               disabled={isSubmitting || hasBlockingErrors}
-              className="h-[38px] px-5 rounded-[6px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] transition-opacity cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-xs"
+              className="h-[38px] px-5 rounded-[6px] bg-[var(--accent)] hover:opacity-90 text-[var(--accent-foreground)] text-[13px] font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] transition-opacity cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-xs"
             >
               {isSubmitting ? 'Receiving...' : 'Confirm Receipt'}
             </button>

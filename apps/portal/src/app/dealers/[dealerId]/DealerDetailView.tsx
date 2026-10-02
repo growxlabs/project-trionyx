@@ -374,7 +374,7 @@ export function DealerDetailView({
           <div className="flex flex-wrap items-center gap-2 shrink-0">
             <button
               onClick={() => setIsRequestModalOpen(true)}
-              className="px-3.5 py-1.5 rounded-[4px] text-[13px] font-semibold bg-[var(--accent)] hover:opacity-90 text-white transition shadow-xs cursor-pointer"
+              className="px-3.5 py-1.5 rounded-[4px] text-[13px] font-semibold bg-[var(--accent)] hover:opacity-90 text-[var(--accent-foreground)] transition shadow-xs cursor-pointer"
             >
               + Log Request
             </button>

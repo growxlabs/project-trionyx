@@ -415,7 +415,7 @@ export function InventoryTable({
           <button
             type="button"
             onClick={() => openReceiveModal()}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity cursor-pointer shadow-xs"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-[var(--accent-foreground)] text-[13px] font-semibold transition-opacity cursor-pointer shadow-xs"
           >
             <svg className="w-4 h-4 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
@@ -696,7 +696,7 @@ export function InventoryTable({
                   <button
                     type="button"
                     onClick={() => openReceiveModal()}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium rounded-[3px] bg-[var(--accent)] text-white hover:opacity-90 transition-opacity shadow-xs cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium rounded-[3px] bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 transition-opacity shadow-xs cursor-pointer"
                   >
                     <svg className="w-3.5 h-3.5 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
@@ -974,14 +974,14 @@ export function InventoryTable({
               <button
                 type="button"
                 onClick={() => setIsTransferCameraOpen(true)}
-                className="px-3 h-[38px] rounded-[6px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[12.5px] font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+                className="w-[38px] h-[38px] rounded-[6px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] flex items-center justify-center transition-colors cursor-pointer shrink-0"
                 title="Scan serial with mobile/tablet camera"
+                aria-label="Scan serial with camera"
               >
                 <svg className="w-4 h-4 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
                   <circle cx="12" cy="13" r="4" />
                 </svg>
-                <span>Camera</span>
               </button>
             </div>
 

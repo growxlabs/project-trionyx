@@ -496,7 +496,7 @@ export function EnquiryDetailView({
                   <button
                     type="submit"
                     disabled={isAddingNote || !newNoteBody.trim()}
-                    className="px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-[var(--accent-foreground)] text-[13px] font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   >
                     {isAddingNote ? 'Adding...' : 'Add Note'}
                   </button>

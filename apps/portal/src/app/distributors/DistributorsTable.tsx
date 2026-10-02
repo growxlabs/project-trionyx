@@ -112,7 +112,7 @@ export function DistributorsTable({ initialDistributors, user }: DistributorsTab
           <div className="flex shrink-0 items-center gap-2">
             <Link
               href="/distributors/new"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-[var(--accent-foreground)] text-[13px] font-semibold transition-opacity shadow-xs"
             >
               + New Distributor
             </Link>
