@@ -89,7 +89,13 @@ export function SiteFooter() {
             © {new Date().getFullYear()} Trionyx India Private Limited
           </p>
           <p className="m-0 text-[12px] leading-[1.4] text-[#B5B2A9] md:text-right">
-            Technology &amp; Digital Partner by GrowxLabs
+            Technology &amp; Digital Partner by{' '}
+            <a
+              href="https://growxlabs.tech/"
+              className="transition-colors duration-150 hover:text-[#F26522] focus-visible:rounded-[2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F26522]"
+            >
+              GrowxLabs
+            </a>
           </p>
         </div>
       </div>
