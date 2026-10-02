@@ -202,7 +202,7 @@ export function OverviewCockpit({
               </h2>
               <Link
                 href="/inventory"
-                className="px-2.5 py-1 text-[12px] font-medium rounded-[3px] bg-[var(--accent)] text-white hover:opacity-90 transition-opacity"
+                className="px-2.5 py-1 text-[12px] font-medium rounded-[3px] bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 transition-opacity"
               >
                 + Receive Serials
               </Link>

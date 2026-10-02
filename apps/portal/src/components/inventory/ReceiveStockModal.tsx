@@ -641,7 +641,7 @@ export function ReceiveStockModal({
             <button
               type="submit"
               disabled={isSubmitting || hasBlockingErrors}
-              className="h-[38px] px-5 rounded-[6px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] transition-opacity cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-xs"
+              className="h-[38px] px-5 rounded-[6px] bg-[var(--accent)] hover:opacity-90 text-[var(--accent-foreground)] text-[13px] font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] transition-opacity cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-xs"
             >
               {isSubmitting ? 'Receiving...' : 'Confirm Receipt'}
             </button>

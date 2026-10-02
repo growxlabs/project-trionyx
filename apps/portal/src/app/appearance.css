@@ -1,0 +1,60 @@
+/* Personal workspace tokens. Brand and semantic status tokens remain independent. */
+:root { --brand-orange: #F26522; --brand-dark: #0A0A0A; --brand-light: #FAFAFA; }
+:root[data-theme="light"][data-accent="ember"] { --accent-primary: #BC450E; --accent-primary-hover: #A63D0C; --accent-primary-active: #91350A; --accent-text: #C8460A; --accent-foreground: #FFFFFF; }
+[data-theme="light"] [data-preview-accent="ember"] { background: #BC450E; }
+:root[data-theme="dark"][data-accent="ember"] { --accent-primary: #F26522; --accent-primary-hover: #FF854F; --accent-primary-active: #EF783F; --accent-text: #FF854F; --accent-foreground: #0A0A0A; }
+[data-theme="dark"] [data-preview-accent="ember"] { background: #F26522; }
+:root[data-theme="light"][data-accent="plum"] { --accent-primary: #73547E; --accent-primary-hover: #63476D; --accent-primary-active: #553B5E; --accent-text: #73547E; --accent-foreground: #FFFFFF; }
+[data-theme="light"] [data-preview-accent="plum"] { background: #73547E; }
+:root[data-theme="dark"][data-accent="plum"] { --accent-primary: #B69AC0; --accent-primary-hover: #C9AED2; --accent-primary-active: #A68AB1; --accent-text: #C6A7D0; --accent-foreground: #0A0A0A; }
+[data-theme="dark"] [data-preview-accent="plum"] { background: #B69AC0; }
+:root[data-theme="light"][data-accent="rosewood"] { --accent-primary: #895451; --accent-primary-hover: #774643; --accent-primary-active: #663B38; --accent-text: #895451; --accent-foreground: #FFFFFF; }
+[data-theme="light"] [data-preview-accent="rosewood"] { background: #895451; }
+:root[data-theme="dark"][data-accent="rosewood"] { --accent-primary: #CB9B94; --accent-primary-hover: #DDB1AA; --accent-primary-active: #BD8982; --accent-text: #D4A39C; --accent-foreground: #0A0A0A; }
+[data-theme="dark"] [data-preview-accent="rosewood"] { background: #CB9B94; }
+:root[data-theme="light"][data-accent="moss"] { --accent-primary: #536849; --accent-primary-hover: #45593D; --accent-primary-active: #394A32; --accent-text: #536849; --accent-foreground: #FFFFFF; }
+[data-theme="light"] [data-preview-accent="moss"] { background: #536849; }
+:root[data-theme="dark"][data-accent="moss"] { --accent-primary: #A4B694; --accent-primary-hover: #B9C8AB; --accent-primary-active: #94A684; --accent-text: #B2C4A1; --accent-foreground: #0A0A0A; }
+[data-theme="dark"] [data-preview-accent="moss"] { background: #A4B694; }
+:root[data-theme="light"][data-accent="slate"] { --accent-primary: #50677A; --accent-primary-hover: #42586B; --accent-primary-active: #374B5D; --accent-text: #50677A; --accent-foreground: #FFFFFF; }
+[data-theme="light"] [data-preview-accent="slate"] { background: #50677A; }
+:root[data-theme="dark"][data-accent="slate"] { --accent-primary: #9EB4C7; --accent-primary-hover: #B4C8D9; --accent-primary-active: #8FA5B8; --accent-text: #AEC3D5; --accent-foreground: #0A0A0A; }
+[data-theme="dark"] [data-preview-accent="slate"] { background: #9EB4C7; }
+:root[data-theme="light"][data-accent="mono"] { --accent-primary: #525252; --accent-primary-hover: #404040; --accent-primary-active: #303030; --accent-text: #525252; --accent-foreground: #FFFFFF; }
+[data-theme="light"] [data-preview-accent="mono"] { background: #525252; }
+:root[data-theme="dark"][data-accent="mono"] { --accent-primary: #D4D0CA; --accent-primary-hover: #E7E3DD; --accent-primary-active: #BCB8B2; --accent-text: #D4D0CA; --accent-foreground: #0A0A0A; }
+[data-theme="dark"] [data-preview-accent="mono"] { background: #D4D0CA; }
+
+:root[data-accent] {
+  --accent: var(--accent-primary);
+  --accent-hover: var(--accent-primary-hover);
+  --accent-subtle: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+  --accent-border: color-mix(in srgb, var(--accent-primary) 35%, transparent);
+  --accent-focus: var(--accent-text);
+  --accent-soft: var(--accent-subtle);
+  --accent-soft-border: var(--accent-border);
+  --focus-ring: var(--accent-focus);
+}
+.appearance-choice { position: relative; display: flex; align-items: center; gap: 8px; min-height: 40px; padding: 8px 12px; border: 1px solid var(--border-strong); border-radius: 4px; font-size: 13px; cursor: pointer; text-transform: capitalize; }
+.appearance-choice:has(input:checked) { border-color: var(--accent-text); background: var(--accent-subtle); }
+.appearance-choice:focus-within { outline: 2px solid var(--accent-focus); outline-offset: 2px; }
+.appearance-choice input { accent-color: var(--accent-text); }
+.appearance-swatch { width: 12px; height: 12px; border-radius: 50%; }
+.appearance-switch { appearance: none; width: 36px; height: 22px; border-radius: 12px; background: var(--surface-sunken); border: 1px solid var(--border-strong); cursor: pointer; }
+.appearance-switch::before { content: ''; display: block; width: 16px; height: 16px; margin: 2px; border-radius: 50%; background: var(--text-secondary); }
+.appearance-switch:checked { background: var(--accent-primary); }
+.appearance-switch:checked::before { transform: translateX(14px); background: var(--accent-foreground); }
+[data-density="compact"] :is(td, th) { padding-top: 6px; padding-bottom: 6px; }
+[data-density="compact"] :is(main, [role="dialog"]) :is(input:not([type="radio"]):not([type="checkbox"]), select) { padding-top: 4px; padding-bottom: 4px; min-height: 28px; }
+[data-density="compact"] .registry-toolbar { gap: 4px; }
+[data-density="compact"] :is(main, [role="dialog"]) button:not([aria-label]) { padding-top: 4px; padding-bottom: 4px; }
+[data-density="compact"] :is(main, [role="dialog"]) li { padding-block: 4px; }
+[data-reduce-motion="true"] *, [data-reduce-motion="true"] *::before, [data-reduce-motion="true"] *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0s !important; scroll-behavior: auto !important; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0s !important; scroll-behavior: auto !important; }
+}
+
+/* Accent-filled controls keep their icons readable in every palette. */
+[data-accent] .bg-\[var\(--accent\)\] .text-white { color: var(--accent-foreground); }
+[data-accent] .bg-\[var\(--accent\)\]:active { background-color: var(--accent-primary-active); }
+[data-accent] a[href="/settings/appearance"][aria-current="page"] { color: var(--accent-text); }

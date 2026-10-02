@@ -39,7 +39,7 @@ export function RegistryToolbar({
   const hasSearch = onSearchChange !== undefined;
 
   return (
-    <div className={`flex items-center flex-wrap gap-2 ${className}`}>
+    <div className={`registry-toolbar flex items-center flex-wrap gap-2 ${className}`}>
       {/* Search: a single icon that expands into the field on demand */}
       {hasSearch &&
         (searchOpen ? (

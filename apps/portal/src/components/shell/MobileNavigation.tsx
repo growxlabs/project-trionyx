@@ -234,12 +234,12 @@ export function MobileNavigation({ user }: MobileNavigationProps) {
                       onClick={() => setIsOpen(false)}
                       className={`flex items-center justify-between px-3 py-2.5 rounded-[4px] text-[13.5px] transition-colors ${
                         item.active
-                          ? 'bg-[var(--surface-subtle)] text-[#F26522] font-semibold border-l-2 border-[#F26522]'
+                          ? 'bg-[var(--surface-subtle)] text-[var(--accent-text)] font-semibold border-l-2 border-[var(--accent)]'
                           : 'text-[var(--text-secondary)] hover:bg-[var(--surface-subtle)] hover:text-[var(--text-primary)] font-medium'
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <span className={item.active ? 'text-[#F26522]' : 'text-[var(--text-secondary)]'}>
+                        <span className={item.active ? 'text-[var(--accent-text)]' : 'text-[var(--text-secondary)]'}>
                           {item.icon}
                         </span>
                         <span>{item.name}</span>
@@ -277,6 +277,7 @@ export function MobileNavigation({ user }: MobileNavigationProps) {
                 </span>
               </div>
 
+              <Link href="/settings/appearance" onClick={() => setIsOpen(false)} className="mb-3 block text-[13px] text-[var(--accent-text)]">Settings / Appearance</Link>
               <fieldset className="mb-3 border-0 p-0">
                 <legend className="mb-2 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]">Appearance</legend>
                 <div className="grid grid-cols-3 gap-1 rounded-[6px] bg-[var(--surface-subtle)] p-1">

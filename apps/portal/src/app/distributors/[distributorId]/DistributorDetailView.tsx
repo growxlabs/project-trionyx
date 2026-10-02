@@ -155,7 +155,7 @@ export function DistributorDetailView({
               </button>
               <Link
                 href={`/distributors/${distributor.id}/edit`}
-                className="px-3.5 py-1.5 rounded-[4px] text-[13px] font-semibold bg-[var(--accent)] hover:opacity-90 text-white transition shadow-xs"
+                className="px-3.5 py-1.5 rounded-[4px] text-[13px] font-semibold bg-[var(--accent)] hover:opacity-90 text-[var(--accent-foreground)] transition shadow-xs"
               >
                 Edit Distributor
               </Link>

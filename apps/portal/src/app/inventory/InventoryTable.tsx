@@ -415,7 +415,7 @@ export function InventoryTable({
           <button
             type="button"
             onClick={() => openReceiveModal()}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity cursor-pointer shadow-xs"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-[var(--accent-foreground)] text-[13px] font-semibold transition-opacity cursor-pointer shadow-xs"
           >
             <svg className="w-4 h-4 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
@@ -696,7 +696,7 @@ export function InventoryTable({
                   <button
                     type="button"
                     onClick={() => openReceiveModal()}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium rounded-[3px] bg-[var(--accent)] text-white hover:opacity-90 transition-opacity shadow-xs cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium rounded-[3px] bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 transition-opacity shadow-xs cursor-pointer"
                   >
                     <svg className="w-3.5 h-3.5 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />

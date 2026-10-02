@@ -4,7 +4,6 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { SafeUser } from '@trionyx/types';
-import { useThemePreference } from './ThemeProvider';
 import { UserMenu } from './UserMenu';
 
 import {
@@ -24,7 +23,6 @@ interface SidebarProps {
 
 export function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname();
-  const { preference, setPreference } = useThemePreference();
 
   // Custom Trionyx Operations Icon Family (24x24 canvas, 1.5px stroke, technical/industrial, squared)
   const navItems = [
@@ -116,15 +114,15 @@ export function Sidebar({ user }: SidebarProps) {
 
         {/* Settings / Industrial Control Sliders */}
         <div className="relative group flex items-center justify-center w-full">
-          <button
-            type="button"
-            onClick={() => setPreference(preference === 'dark' ? 'light' : 'dark')}
-            aria-label={`Switch to ${preference === 'dark' ? 'light' : 'dark'} theme`}
+          <Link
+            href="/settings/appearance"
+            aria-label="Settings: Appearance"
+            aria-current={pathname.startsWith("/settings") ? "page" : undefined}
             className="w-11 h-11 rounded-[5px] border border-transparent flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-subtle)] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2"
             title="Settings"
           >
             <ControlSlidersIcon className="w-6 h-6 shrink-0" />
-          </button>
+          </Link>
           <div role="tooltip" className="absolute left-[calc(100%+12px)] px-2.5 py-1.5 bg-[var(--surface-raised)] text-[var(--text-primary)] text-[11px] font-semibold tracking-wide rounded-[4px] border border-[var(--border)] shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-150 whitespace-nowrap z-50">
             Settings
           </div>

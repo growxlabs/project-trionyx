@@ -335,7 +335,7 @@ export function WarrantyListView({
                 setFormSuccess(null);
                 setIsModalOpen(true);
               }}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-white text-[13px] font-semibold transition-opacity cursor-pointer shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-[4px] bg-[var(--accent)] hover:opacity-90 text-[var(--accent-foreground)] text-[13px] font-semibold transition-opacity cursor-pointer shadow-xs"
             >
               + Activate Warranty
             </button>

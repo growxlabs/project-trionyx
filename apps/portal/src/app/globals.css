@@ -2,6 +2,7 @@
 @import "tailwindcss";
 @source "../../../packages/ui/src";
 @import "@trionyx/design-tokens/theme.css";
+@import "./appearance.css";
 
 @theme {
   --color-brand-orange: #F26522;
@@ -41,7 +42,7 @@
   --page-gutter: 32px;
 
   --foreground: var(--text-primary);
-  --brand-orange: var(--accent);
+  --brand-orange: #F26522;
   --brand-red: var(--status-danger);
   --brand-charcoal: var(--text-primary);
   --brand-warm-white: var(--background);

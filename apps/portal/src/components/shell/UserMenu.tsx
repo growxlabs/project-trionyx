@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { SafeUser } from '@trionyx/types';
 import { formatRoleLabel } from '@trionyx/types';
@@ -16,7 +17,7 @@ export function UserMenu({ user, compact = false }: UserMenuProps) {
   const [isSigningOut, setIsSigningOut] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const { preference, setPreference } = useThemePreference();
+  const { preference, setPreference, appearance } = useThemePreference();
 
   const roleLabel = formatRoleLabel(user.role);
 
@@ -173,6 +174,25 @@ export function UserMenu({ user, compact = false }: UserMenuProps) {
               })}
             </div>
           </fieldset>
+
+          {/* Settings / Appearance Link */}
+          <div className="p-1 border-b border-[var(--menu-divider)]">
+            <Link
+              href="/settings/appearance"
+              onClick={() => setIsOpen(false)}
+              className="w-full flex items-center justify-between px-3 py-1.5 rounded-[4px] text-[12.5px] font-medium text-[var(--menu-text-primary)] hover:bg-[var(--surface-subtle)] transition-colors duration-150"
+            >
+              <div className="flex items-center gap-2">
+                <svg className="w-3.5 h-3.5 text-[var(--text-secondary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                </svg>
+                <span>Appearance</span>
+              </div>
+              <span className="text-[11px] font-mono text-[var(--accent-text)] font-semibold uppercase">
+                {appearance.accent}
+              </span>
+            </Link>
+          </div>
 
           {/* Action: Sign Out */}
           <div className="p-1">
