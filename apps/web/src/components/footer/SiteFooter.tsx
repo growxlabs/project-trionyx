@@ -83,7 +83,7 @@ export function SiteFooter() {
       </div>
 
       {/* Bottom Sub-bar */}
-      <div className="border-t border-white/[0.12]">
+      <div>
         <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-4 px-6 py-6 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-12">
           <p className="m-0 text-[12px] leading-[1.4] text-[#B5B2A9]">
             © {new Date().getFullYear()} Trionyx India Private Limited
