@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useThemePreference } from '../../../components/shell/ThemeProvider';
 import { accentThemes, type AccentTheme, type ThemePreference } from '../../../components/shell/theme-utils';
 
@@ -24,6 +24,133 @@ const DENSITIES: { id: 'comfortable' | 'compact'; label: string }[] = [
   { id: 'compact', label: 'Compact' },
 ];
 
+interface AppearanceDropdownProps<T extends string> {
+  value: T;
+  options: { id: T; label: string }[];
+  onChange: (val: T) => void;
+  isAccent?: boolean;
+}
+
+function AppearanceDropdown<T extends string>({
+  value,
+  options,
+  onChange,
+  isAccent = false,
+}: AppearanceDropdownProps<T>) {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const selectedOption = options.find((o) => o.id === value) || options[0];
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
+
+  return (
+    <div className="relative w-full" ref={containerRef}>
+      <button
+        type="button"
+        onClick={() => setIsOpen((prev) => !prev)}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        className="w-full h-[40px] px-3.5 rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text-primary)] text-[13.5px] font-normal hover:border-[var(--text-secondary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition-colors cursor-pointer flex items-center justify-between select-none"
+      >
+        <div className="flex items-center gap-2.5 min-w-0">
+          {isAccent && (
+            <span
+              aria-hidden="true"
+              className="appearance-swatch shrink-0 w-3.5 h-3.5 rounded-full ring-2 ring-black/10 dark:ring-white/10"
+              data-preview-accent={value}
+            />
+          )}
+          <span className="font-medium truncate">{selectedOption?.label}</span>
+        </div>
+        <svg
+          className={`w-4 h-4 text-[var(--text-secondary)] shrink-0 ml-2 transition-transform duration-150 ${
+            isOpen ? 'rotate-180' : ''
+          }`}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {isOpen && (
+        <div
+          role="listbox"
+          className="absolute left-0 right-0 top-[calc(100%+4px)] z-50 bg-[var(--surface-raised)] border border-[var(--border-strong)] rounded-[6px] shadow-2xl py-1 overflow-hidden animate-in fade-in-0 zoom-in-95 duration-100"
+        >
+          {options.map((opt) => {
+            const isSelected = opt.id === value;
+            return (
+              <button
+                key={opt.id}
+                type="button"
+                role="option"
+                aria-selected={isSelected}
+                onClick={() => {
+                  onChange(opt.id);
+                  setIsOpen(false);
+                }}
+                className={`w-full flex items-center justify-between px-3.5 py-2 text-[13.5px] text-left cursor-pointer transition-colors ${
+                  isSelected
+                    ? 'bg-[var(--accent-subtle)] text-[var(--accent-text)] font-semibold'
+                    : 'text-[var(--text-primary)] hover:bg-[var(--surface-subtle)]'
+                }`}
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  {isAccent && (
+                    <span
+                      aria-hidden="true"
+                      className="appearance-swatch shrink-0 w-3.5 h-3.5 rounded-full ring-2 ring-black/10 dark:ring-white/10"
+                      data-preview-accent={opt.id}
+                    />
+                  )}
+                  <span className="truncate">{opt.label}</span>
+                </div>
+                {isSelected && (
+                  <svg
+                    className="w-4 h-4 text-[var(--accent-text)] shrink-0 ml-2"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function AppearanceSettings() {
   const { appearance, setAppearance } = useThemePreference();
 
@@ -35,156 +162,60 @@ export function AppearanceSettings() {
         </h1>
       </div>
 
-      <div className="divide-y divide-[var(--border)] border-t border-[var(--border)]">
+      <div className="max-w-2xl divide-y divide-[var(--border)] border-t border-b border-[var(--border)]">
         {/* MODE */}
-        <fieldset className="py-6 border-0 m-0 p-0">
-          <legend className="text-[11px] font-mono font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)] mb-3">
+        <div className="py-4.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <label className="text-[11px] font-mono font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)] select-none">
             MODE
-          </legend>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-            {MODES.map((m) => {
-              const isChecked = appearance.mode === m.id;
-              return (
-                <label
-                  key={m.id}
-                  className={`appearance-choice relative flex items-center justify-between h-[44px] px-3.5 rounded-[6px] border cursor-pointer transition-all select-none ${
-                    isChecked
-                      ? 'border-[var(--accent-text)] bg-[var(--accent-subtle)] shadow-xs'
-                      : 'border-[var(--border-strong)] bg-[var(--surface)] hover:border-[var(--text-secondary)]'
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="appearance-mode"
-                    value={m.id}
-                    checked={isChecked}
-                    onChange={() => setAppearance({ mode: m.id })}
-                    className="sr-only"
-                  />
-                  <span className="text-[13.5px] font-medium text-[var(--text-primary)]">
-                    {m.label}
-                  </span>
-                  <span
-                    className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-3 transition-colors ${
-                      isChecked
-                        ? 'border-[var(--accent-text)] bg-[var(--accent-text)]'
-                        : 'border-[var(--border-strong)] bg-transparent'
-                    }`}
-                  >
-                    {isChecked && <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-foreground)]" />}
-                  </span>
-                </label>
-              );
-            })}
+          </label>
+          <div className="w-full sm:w-[260px]">
+            <AppearanceDropdown
+              value={appearance.mode}
+              options={MODES}
+              onChange={(mode) => setAppearance({ mode })}
+            />
           </div>
-        </fieldset>
+        </div>
 
         {/* ACCENT */}
-        <fieldset className="py-6 border-0 m-0 p-0">
-          <legend className="text-[11px] font-mono font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)] mb-3">
+        <div className="py-4.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <label className="text-[11px] font-mono font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)] select-none">
             ACCENT
-          </legend>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
-            {ACCENTS.map((acc) => {
-              const isChecked = appearance.accent === acc.id;
-              return (
-                <label
-                  key={acc.id}
-                  className={`appearance-choice relative flex items-center justify-between h-[44px] px-3.5 rounded-[6px] border cursor-pointer transition-all select-none ${
-                    isChecked
-                      ? 'border-[var(--accent-text)] bg-[var(--accent-subtle)] shadow-xs'
-                      : 'border-[var(--border-strong)] bg-[var(--surface)] hover:border-[var(--text-secondary)]'
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="appearance-accent"
-                    value={acc.id}
-                    checked={isChecked}
-                    onChange={() => setAppearance({ accent: acc.id })}
-                    className="sr-only"
-                  />
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <i
-                      aria-hidden="true"
-                      className="appearance-swatch shrink-0 w-3.5 h-3.5 rounded-full ring-2 ring-black/10 dark:ring-white/10"
-                      data-preview-accent={acc.id}
-                    />
-                    <span className="text-[13.5px] font-medium text-[var(--text-primary)] truncate">
-                      {acc.label}
-                    </span>
-                  </div>
-                  <span
-                    className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-2 transition-colors ${
-                      isChecked
-                        ? 'border-[var(--accent-text)] bg-[var(--accent-text)]'
-                        : 'border-[var(--border-strong)] bg-transparent'
-                    }`}
-                  >
-                    {isChecked && <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-foreground)]" />}
-                  </span>
-                </label>
-              );
-            })}
+          </label>
+          <div className="w-full sm:w-[260px]">
+            <AppearanceDropdown
+              value={appearance.accent}
+              options={ACCENTS}
+              onChange={(accent) => setAppearance({ accent })}
+              isAccent
+            />
           </div>
-        </fieldset>
+        </div>
 
         {/* DENSITY */}
-        <fieldset className="py-6 border-0 m-0 p-0">
-          <legend className="text-[11px] font-mono font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)] mb-3">
+        <div className="py-4.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <label className="text-[11px] font-mono font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)] select-none">
             DENSITY
-          </legend>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            {DENSITIES.map((den) => {
-              const isChecked = appearance.density === den.id;
-              return (
-                <label
-                  key={den.id}
-                  className={`appearance-choice relative flex items-center justify-between h-[44px] px-3.5 rounded-[6px] border cursor-pointer transition-all select-none ${
-                    isChecked
-                      ? 'border-[var(--accent-text)] bg-[var(--accent-subtle)] shadow-xs'
-                      : 'border-[var(--border-strong)] bg-[var(--surface)] hover:border-[var(--text-secondary)]'
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="appearance-density"
-                    value={den.id}
-                    checked={isChecked}
-                    onChange={() => setAppearance({ density: den.id })}
-                    className="sr-only"
-                  />
-                  <span className="text-[13.5px] font-medium text-[var(--text-primary)]">
-                    {den.label}
-                  </span>
-                  <span
-                    className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-3 transition-colors ${
-                      isChecked
-                        ? 'border-[var(--accent-text)] bg-[var(--accent-text)]'
-                        : 'border-[var(--border-strong)] bg-transparent'
-                    }`}
-                  >
-                    {isChecked && <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-foreground)]" />}
-                  </span>
-                </label>
-              );
-            })}
+          </label>
+          <div className="w-full sm:w-[260px]">
+            <AppearanceDropdown
+              value={appearance.density}
+              options={DENSITIES}
+              onChange={(density) => setAppearance({ density })}
+            />
           </div>
-        </fieldset>
+        </div>
 
         {/* ACCESSIBILITY */}
-        <section className="py-6 border-b border-[var(--border)]" aria-labelledby="accessibility-heading">
-          <h2
-            id="accessibility-heading"
-            className="text-[11px] font-mono font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)] mb-3"
-          >
+        <div className="py-4.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <label className="text-[11px] font-mono font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)] select-none">
             ACCESSIBILITY
-          </h2>
-          <label className="flex items-center justify-between h-[48px] px-3.5 rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] cursor-pointer hover:border-[var(--text-secondary)] transition-colors select-none">
+          </label>
+          <div className="w-full sm:w-[260px] flex items-center justify-between h-[40px] px-3.5 rounded-[6px] border border-[var(--border-strong)] bg-[var(--surface)] select-none">
             <span className="text-[13.5px] font-medium text-[var(--text-primary)]">
               Reduce Motion
             </span>
-            <div className="flex items-center gap-3 shrink-0 ml-4">
+            <div className="flex items-center gap-2.5">
               <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--text-muted)]">
                 {appearance.reduceMotion ? 'On' : 'Off'}
               </span>
@@ -198,8 +229,8 @@ export function AppearanceSettings() {
                 onChange={(e) => setAppearance({ reduceMotion: e.target.checked })}
               />
             </div>
-          </label>
-        </section>
+          </div>
+        </div>
       </div>
     </main>
   );
