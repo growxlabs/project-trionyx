@@ -688,14 +688,14 @@ export function WarrantyListView({
                   <button
                     type="button"
                     onClick={() => setIsWarrantyCameraOpen(true)}
-                    className="px-3.5 py-2 rounded-[6px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] text-[13px] font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+                    className="w-[38px] h-[38px] rounded-[6px] border border-[var(--border)] bg-[var(--surface-raised)] hover:bg-[var(--surface-subtle)] text-[var(--text-primary)] flex items-center justify-center transition-colors cursor-pointer shrink-0"
                     title="Scan serial with mobile/tablet camera"
+                    aria-label="Scan serial with camera"
                   >
                     <svg className="w-4 h-4 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
                       <circle cx="12" cy="13" r="4" />
                     </svg>
-                    <span>Camera</span>
                   </button>
                 </>
               ) : (
