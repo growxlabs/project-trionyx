@@ -42,7 +42,6 @@ export default async function OverviewPage() {
     inProgressRequests,
     recentRequests,
     dealersResult,
-    activeDealerCount,
     products,
   ] = await Promise.all([
     dealerRequestsRepository.list({
@@ -63,7 +62,6 @@ export default async function OverviewPage() {
       distributorId: distributor.id,
       limit: 6,
     }),
-    dealersRepository.countActive(distributor.id),
     productsRepository.listDealerProducts(),
   ]);
 
@@ -77,13 +75,11 @@ export default async function OverviewPage() {
     <DistributorShell user={user} distributor={distributor}>
       <OverviewView
         distributor={distributor}
-        user={user}
         openCount={openRequests.total}
         inProgressCount={inProgressRequests.total}
         requestQueue={recentRequests.items}
         dealers={dealersResult.items}
         totalDealerCount={dealersResult.total}
-        activeDealerCount={activeDealerCount}
         productCounts={productCounts}
       />
     </DistributorShell>

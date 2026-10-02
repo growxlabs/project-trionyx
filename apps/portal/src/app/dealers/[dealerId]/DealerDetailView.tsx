@@ -15,6 +15,7 @@ import type {
   DealerRequestPriority,
   DealerUser,
 } from '@trionyx/types';
+import { StatusBadge } from '../../../components/workspace';
 
 interface DealerDetailViewProps {
   dealer: DealerWithRelations;
@@ -81,57 +82,8 @@ export function DealerDetailView({
   const canManage = user.role === 'MANAGING_DIRECTOR' || user.role === 'ADMIN';
   const canReassign = user.role === 'MANAGING_DIRECTOR' || user.role === 'ADMIN';
 
-  const getStatusBadge = (status: DealerStatus) => {
-    switch (status) {
-      case 'ACTIVE':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]">
-            Active
-          </span>
-        );
-      case 'INACTIVE':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--surface-subtle)] text-[var(--text-secondary)] border border-[var(--border)]">
-            Inactive
-          </span>
-        );
-      case 'SUSPENDED':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]">
-            Suspended
-          </span>
-        );
-    }
-  };
-
-  const getRequestStatusBadge = (status: DealerRequestStatus) => {
-    switch (status) {
-      case 'OPEN':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--status-info-soft)] text-[var(--status-info)] border border-[var(--status-info-border)]">
-            Open
-          </span>
-        );
-      case 'IN_PROGRESS':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]">
-            In Progress
-          </span>
-        );
-      case 'RESOLVED':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]">
-            Resolved
-          </span>
-        );
-      case 'CLOSED':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--surface-subtle)] text-[var(--text-secondary)] border border-[var(--border)]">
-            Closed
-          </span>
-        );
-    }
-  };
+  const getStatusBadge = (status: DealerStatus) => <StatusBadge status={status} />;
+  const getRequestStatusBadge = (status: DealerRequestStatus) => <StatusBadge status={status} />;
 
   const getPriorityBadge = (priority: DealerRequestPriority) => {
     switch (priority) {
@@ -616,7 +568,7 @@ export function DealerDetailView({
             )}
           </div>
 
-          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded overflow-hidden shadow-sm">
+          <div className="overflow-hidden">
             {history.length === 0 ? (
               <div className="p-8 text-center text-[var(--text-muted)] text-[13px]">
                 No distributor transitions recorded for this dealer.
@@ -624,7 +576,7 @@ export function DealerDetailView({
             ) : (
               <table className="w-full text-left border-collapse text-[14px]">
                 <thead>
-                  <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                  <tr className="border-b border-[var(--border)]/60 text-[12px] font-semibold text-[var(--text-secondary)]">
                     <th className="py-2.5 px-4">Date & Time</th>
                     <th className="py-2.5 px-4">Previous Distributor</th>
                     <th className="py-2.5 px-4">New Distributor</th>
@@ -854,7 +806,7 @@ export function DealerDetailView({
           </div>
 
           {/* Authorized Users Table */}
-          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded overflow-hidden shadow-sm">
+          <div className="overflow-hidden">
             {portalUsers.length === 0 ? (
               <div className="p-10 text-center text-[var(--text-muted)] text-[13px]">
                 <p className="font-medium text-[var(--text-primary)]">No portal users provisioned yet.</p>
@@ -865,7 +817,7 @@ export function DealerDetailView({
             ) : (
               <table className="w-full text-left border-collapse text-[14px]">
                 <thead>
-                  <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                  <tr className="border-b border-[var(--border)]/60 text-[12px] font-semibold text-[var(--text-secondary)]">
                     <th className="py-2.5 px-4">User</th>
                     <th className="py-2.5 px-4">Email</th>
                     <th className="py-2.5 px-4">Status</th>

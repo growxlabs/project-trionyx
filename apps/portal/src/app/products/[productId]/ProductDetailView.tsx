@@ -15,6 +15,7 @@ import type {
 import { ConfirmDialog } from '../../../components/ui/ConfirmDialog';
 import { Modal } from '../../../components/ui/Modal';
 import { SerialNumberLookupModal } from '../../../components/inventory/SerialNumberLookupModal';
+import { StatusBadge } from '../../../components/workspace';
 
 interface ProductDetailViewProps {
   product: ProductWithRelations;
@@ -599,10 +600,10 @@ export function ProductDetailView({
               No serial numbers match the selected criteria.
             </div>
           ) : (
-            <div className="overflow-x-auto border border-[var(--border)] rounded-[4px]">
+            <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-[14px]">
                 <thead>
-                  <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                  <tr className="border-b border-[var(--border)]/60 text-[12px] font-semibold text-[var(--text-secondary)]">
                     <th className="py-2.5 px-4 w-40">Serial Number</th>
                     <th className="py-2.5 px-4">Current Location</th>
                     <th className="py-2.5 px-4 text-center w-28">Status</th>
@@ -621,9 +622,7 @@ export function ProductDetailView({
                         <span className="font-mono text-[12px] text-[var(--text-muted)]">{s.location?.code}</span>
                       </td>
                       <td className="py-2.5 px-4 text-center">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium capitalize ${statusBadge(s.status)}`}>
-                          {s.status.toLowerCase()}
-                        </span>
+                        <StatusBadge status={s.status} />
                       </td>
                       <td className="py-2.5 px-4 text-[var(--text-muted)] text-[12px] whitespace-nowrap">
                         {new Date(s.receivedAt).toLocaleDateString(undefined, {
@@ -825,10 +824,10 @@ export function ProductDetailView({
               No stock movements recorded for this product yet.
             </div>
           ) : (
-            <div className="overflow-x-auto border border-[var(--border)] rounded-[4px]">
+            <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-[14px]">
                 <thead>
-                  <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                  <tr className="border-b border-[var(--border)]/60 text-[12px] font-semibold text-[var(--text-secondary)]">
                     <th className="py-2.5 px-4 w-36">Timestamp</th>
                     <th className="py-2.5 px-4 w-28">Type</th>
                     <th className="py-2.5 px-4 w-40">Serial Number</th>
@@ -847,17 +846,10 @@ export function ProductDetailView({
                         })}
                       </td>
                       <td className="py-2.5 px-4">
-                        <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium capitalize ${
-                            m.type === 'RECEIVED'
-                              ? 'bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]'
-                              : m.type === 'TRANSFERRED'
-                              ? 'bg-[var(--status-info-soft)] text-[var(--status-info)] border border-[var(--status-info-border)]'
-                              : 'bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]'
-                          }`}
-                        >
-                          {m.type.toLowerCase()}
-                        </span>
+                        <StatusBadge
+                          status={m.type}
+                          tone={m.type === 'RECEIVED' ? 'success' : m.type === 'TRANSFERRED' ? 'info' : 'warning'}
+                        />
                       </td>
                       <td className="py-2.5 px-4 font-mono font-medium text-[12px] text-[var(--text-primary)]">
                         {m.serialNumber || '—'}

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { Warranty, SafeUser } from '@trionyx/types';
 import { Modal } from '../../../components/ui/Modal';
+import { StatusBadge } from '../../../components/workspace';
 
 interface WarrantyDetailViewProps {
   warranty: Warranty;
@@ -77,27 +78,12 @@ export function WarrantyDetailView({
     }
   };
 
-  const statusBadge = () => {
-    if (warranty.status === 'VOID') {
-      return (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]">
-          Voided
-        </span>
-      );
-    }
-    if (warranty.derivedStatus === 'EXPIRED') {
-      return (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--surface-subtle)] text-[var(--text-muted)] border border-[var(--border)]">
-          Expired
-        </span>
-      );
-    }
-    return (
-      <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]">
-        Active Warranty
-      </span>
-    );
-  };
+  const statusBadge = () => (
+    <StatusBadge
+      status={warranty.status === 'VOID' ? 'VOIDED' : warranty.derivedStatus === 'EXPIRED' ? 'EXPIRED' : 'ACTIVE'}
+      label={warranty.status === 'VOID' ? 'Voided' : warranty.derivedStatus === 'EXPIRED' ? 'Expired' : 'Active Warranty'}
+    />
+  );
 
   return (
     <div className="space-y-6">
@@ -305,10 +291,10 @@ export function WarrantyDetailView({
             No audit records found for this warranty.
           </div>
         ) : (
-          <div className="overflow-x-auto border border-[var(--border)] rounded-[4px]">
+          <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-[14px]">
               <thead>
-                <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                <tr className="border-b border-[var(--border)]/60 text-[12px] font-semibold text-[var(--text-secondary)]">
                   <th className="py-2.5 px-4 w-40">Timestamp</th>
                   <th className="py-2.5 px-4 w-36">Event</th>
                   <th className="py-2.5 px-4">Operator / Actor</th>

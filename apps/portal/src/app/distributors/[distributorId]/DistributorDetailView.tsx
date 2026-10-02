@@ -10,6 +10,7 @@ import type {
   SafeUser,
   DistributorStatus,
 } from '@trionyx/types';
+import { StatusBadge } from '../../../components/workspace';
 
 interface DistributorDetailViewProps {
   distributor: DistributorWithRelations;
@@ -42,28 +43,7 @@ export function DistributorDetailView({
 
   const canManage = user.role === 'MANAGING_DIRECTOR' || user.role === 'ADMIN';
 
-  const getStatusBadge = (status: DistributorStatus) => {
-    switch (status) {
-      case 'ACTIVE':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]">
-            Active
-          </span>
-        );
-      case 'INACTIVE':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--surface-subtle)] text-[var(--text-secondary)] border border-[var(--border)]">
-            Inactive
-          </span>
-        );
-      case 'SUSPENDED':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]">
-            Suspended
-          </span>
-        );
-    }
-  };
+  const getStatusBadge = (status: DistributorStatus) => <StatusBadge status={status} />;
 
   const handleStatusUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -253,7 +233,7 @@ export function DistributorDetailView({
             )}
           </div>
 
-          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden shadow-sm">
+          <div className="overflow-hidden">
             {dealers.length === 0 ? (
               <div className="p-8 text-center text-[var(--text-muted)] text-[13px]">
                 No dealers currently assigned to this distributor.
@@ -261,7 +241,7 @@ export function DistributorDetailView({
             ) : (
               <table className="w-full text-left border-collapse text-[14px]">
                 <thead>
-                  <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                  <tr className="border-b border-[var(--border)]/60 text-[12px] font-semibold text-[var(--text-secondary)]">
                     <th className="py-2.5 px-4">Dealer Code</th>
                     <th className="py-2.5 px-4">Business Name</th>
                     <th className="py-2.5 px-4">Contact Person</th>

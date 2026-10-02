@@ -22,10 +22,7 @@ export default async function DealersPage() {
 
   return (
     <DistributorShell user={user} distributor={distributor}>
-      <DealersView
-        initialDealers={dealersResult.items}
-        distributor={distributor}
-      />
+      <DealersView initialDealers={dealersResult.items} />
     </DistributorShell>
   );
 }

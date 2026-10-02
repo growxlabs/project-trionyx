@@ -3,8 +3,8 @@ packages:
   - "packages/*"
 
 allowBuilds:
-  '@carbon/icon-helpers': set this to true or false
-  '@carbon/icons-react': set this to true or false
+  '@carbon/icon-helpers': false
+  '@carbon/icons-react': false
   esbuild: true
   unrs-resolver: true
 

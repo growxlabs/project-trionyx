@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { InventoryLocation, SafeUser } from '@trionyx/types';
 import { Modal } from '../../../components/ui/Modal';
+import { StatusBadge } from '../../../components/workspace';
 
 export interface LocationWithStats extends InventoryLocation {
   productCount: number;
@@ -122,11 +123,11 @@ export function LocationsTable({ locations: initialLocations, user }: LocationsT
       </div>
 
       {/* Locations Table */}
-      <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
+      <div className="overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-[14px]">
             <thead>
-              <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+              <tr className="border-b border-[var(--border)]/60 text-[12px] font-semibold text-[var(--text-secondary)]">
                 <th className="py-2.5 px-4 w-36">Location Code</th>
                 <th className="py-2.5 px-4">Facility Name</th>
                 <th className="py-2.5 px-4 text-center w-28">Status</th>
@@ -146,15 +147,7 @@ export function LocationsTable({ locations: initialLocations, user }: LocationsT
                     {loc.name}
                   </td>
                   <td className="py-2.5 px-4 text-center">
-                    <span
-                      className={`inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium ${
-                        loc.status === 'ACTIVE'
-                          ? 'bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]'
-                          : 'bg-[var(--surface-subtle)] text-[var(--text-secondary)] border border-[var(--border)]'
-                      }`}
-                    >
-                      {loc.status === 'ACTIVE' ? 'Active' : 'Inactive'}
-                    </span>
+                    <StatusBadge status={loc.status} />
                   </td>
                   <td className="py-2.5 px-4 text-right text-[13px] text-[var(--text-secondary)]">
                     {loc.productCount} products

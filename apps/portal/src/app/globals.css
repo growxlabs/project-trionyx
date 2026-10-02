@@ -135,8 +135,73 @@ body {
 [data-theme] input::placeholder,
 [data-theme] textarea::placeholder { color: var(--text-muted); }
 [data-theme] option { background: var(--surface-raised); color: var(--text-primary); }
-[data-theme] table thead { background-color: var(--surface-subtle); color: var(--text-secondary); }
-[data-theme] table tbody tr:hover { background-color: var(--surface-subtle); }
+
+/* Clean, modern borderless table styling matching design reference (tabel.png) */
+[data-theme] table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: transparent !important;
+  border: none !important;
+}
+
+[data-theme] table thead,
+[data-theme] table thead tr,
+[data-theme] table thead th {
+  background-color: transparent !important;
+}
+
+[data-theme] table tr {
+  height: auto !important;
+}
+
+[data-theme] table thead tr {
+  border-bottom: 1px solid var(--border) !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+}
+
+[data-theme] table thead th {
+  color: var(--text-primary) !important;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding-top: 14px;
+  padding-bottom: 14px;
+  padding-left: 16px;
+  padding-right: 16px;
+  border: none !important;
+}
+
+[data-theme] table tbody {
+  background-color: transparent;
+}
+
+[data-theme] table tbody.divide-y > :not([hidden]) ~ :not([hidden]) {
+  border-top: none !important;
+}
+
+[data-theme] table tbody tr {
+  background-color: transparent;
+  border-bottom: 1px solid var(--border) !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  transition: background-color 150ms ease;
+}
+
+[data-theme] table tbody tr:hover {
+  background-color: var(--surface-subtle);
+}
+
+[data-theme] table tbody td {
+  padding-top: 14px;
+  padding-bottom: 14px;
+  padding-left: 16px;
+  padding-right: 16px;
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  border: none !important;
+}
 [data-theme] ::selection { background: var(--accent-soft); color: var(--text-primary); }
 
 .theme-logo-light { display: block; }
@@ -144,3 +209,92 @@ body {
 [data-theme="dark"] .theme-logo-light { display: none; }
 [data-theme="dark"] .theme-logo-dark { display: block; }
 .theme-choice:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ======================================================== */
+/* UNIFIED PILL BADGE SYSTEM                                */
+/* Darker background with lighter shade of the same color   */
+/* ======================================================== */
+.unified-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px !important;
+  border-width: 1px;
+  border-style: solid;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.unified-pill-badge.size-sm {
+  padding: 3.5px 9px;
+  font-size: 11.5px;
+}
+
+.unified-pill-badge.size-md {
+  padding: 4.5px 12px;
+  font-size: 12.5px;
+}
+
+/* Default / Dark Theme: darker background, lighter text of the same color */
+.unified-pill-badge.tone-success {
+  background-color: #062814 !important;
+  border-color: #088139 !important;
+  color: #4ADE80 !important;
+}
+
+.unified-pill-badge.tone-danger {
+  background-color: #2A0808 !important;
+  border-color: #991B1B !important;
+  color: #F87171 !important;
+}
+
+.unified-pill-badge.tone-warning {
+  background-color: #2A1704 !important;
+  border-color: #92400E !important;
+  color: #FBBF24 !important;
+}
+
+.unified-pill-badge.tone-info {
+  background-color: #08172E !important;
+  border-color: #1E40AF !important;
+  color: #60A5FA !important;
+}
+
+.unified-pill-badge.tone-neutral {
+  background-color: #18181B !important;
+  border-color: #3F3F46 !important;
+  color: #D4D4D8 !important;
+}
+
+/* Light Theme adjustments */
+[data-theme="light"] .unified-pill-badge.tone-success {
+  background-color: #E8F5E9 !important;
+  border-color: #A5D6A7 !important;
+  color: #088139 !important;
+}
+
+[data-theme="light"] .unified-pill-badge.tone-danger {
+  background-color: #FEE2E2 !important;
+  border-color: #FECACA !important;
+  color: #991B1B !important;
+}
+
+[data-theme="light"] .unified-pill-badge.tone-warning {
+  background-color: #FEF3C7 !important;
+  border-color: #FDE68A !important;
+  color: #92400E !important;
+}
+
+[data-theme="light"] .unified-pill-badge.tone-info {
+  background-color: #DBEAFE !important;
+  border-color: #BFDBFE !important;
+  color: #1D4ED8 !important;
+}
+
+[data-theme="light"] .unified-pill-badge.tone-neutral {
+  background-color: #F4F4F5 !important;
+  border-color: #E4E4E7 !important;
+  color: #52525B !important;
+}
+

@@ -249,7 +249,7 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
               )}
 
               {/* Working Table */}
-              <div className={`overflow-hidden ${filteredProducts.length === 0 ? '' : 'bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px]'}`}>
+              <div className="overflow-hidden">
                 {filteredProducts.length === 0 ? (
                   <ProductEmptyState
                     kind="registry"
@@ -280,7 +280,7 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                       <thead>
-                        <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                        <tr className="border-b border-[var(--border)]/60 text-[12px] font-semibold text-[var(--text-secondary)]">
                           <th className="py-2.5 px-4 w-32">Product Code</th>
                           <th className="py-2.5 px-4">Formula / Name</th>
                           <th className="py-2.5 px-4">Category</th>
@@ -320,39 +320,25 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
                                 </span>
                               </td>
                               <td className="py-2.5 px-4 text-center">
-                                <span
-                                  className={`inline-flex items-center px-2 py-0.5 rounded text-[12px] font-medium ${
-                                    units === 0
-                                      ? 'bg-[var(--status-danger-soft)] text-[var(--status-danger)] border border-[var(--status-danger-border)]'
-                                      : units < 5
-                                      ? 'bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]'
-                                      : 'bg-[var(--surface-subtle)] text-[var(--status-success)] border border-[var(--border)]'
-                                  }`}
-                                >
-                                  {units} {units === 1 ? 'unit' : 'units'}
-                                </span>
+                                <StatusBadge
+                                  status={units === 0 ? 'OUT_OF_STOCK' : units < 5 ? 'LOW' : 'AVAILABLE'}
+                                  label={`${units} ${units === 1 ? 'unit' : 'units'}`}
+                                  tone={units === 0 ? 'danger' : units < 5 ? 'warning' : 'neutral'}
+                                />
                               </td>
                               <td className="py-2.5 px-4">
-                                <span
-                                  className={`inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium ${
-                                    p.dealerVisibility
-                                      ? 'bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]'
-                                      : 'bg-[var(--surface-subtle)] text-[var(--text-muted)] border border-[var(--border)]'
-                                  }`}
-                                >
-                                  {p.dealerVisibility ? 'Available' : 'Restricted'}
-                                </span>
+                                <StatusBadge
+                                  status={p.dealerVisibility ? 'AVAILABLE' : 'PRIVATE'}
+                                  label={p.dealerVisibility ? 'Available' : 'Restricted'}
+                                  tone={p.dealerVisibility ? 'success' : 'neutral'}
+                                />
                               </td>
                               <td className="py-2.5 px-4">
-                                <span
-                                  className={`inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium capitalize ${
-                                    p.publicVisibility === 'PUBLIC'
-                                      ? 'bg-[var(--status-info-soft)] text-[var(--status-info)] border border-[var(--status-info-border)]'
-                                      : 'bg-[var(--surface-subtle)] text-[var(--text-muted)] border border-[var(--border)]'
-                                  }`}
-                                >
-                                  {p.publicVisibility.toLowerCase()}
-                                </span>
+                                <StatusBadge
+                                  status={p.publicVisibility}
+                                  label={p.publicVisibility.toLowerCase()}
+                                  tone={p.publicVisibility === 'PUBLIC' ? 'info' : 'neutral'}
+                                />
                               </td>
                               <td className="py-2.5 px-4">
                                 <StatusBadge status={p.status} />

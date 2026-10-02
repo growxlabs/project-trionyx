@@ -21,19 +21,19 @@ interface AvailabilityViewProps {
 const groups: Array<{ status: DealerProductAvailability; title: string; empty: string; actionLabel: string }> = [
   {
     status: 'AVAILABLE',
-    title: 'AVAILABLE NOW',
+    title: 'Available now',
     empty: 'No products currently marked available.',
     actionLabel: 'Ask about stock →',
   },
   {
     status: 'LIMITED',
-    title: 'LIMITED AVAILABILITY',
+    title: 'Limited availability',
     empty: 'No products currently marked limited.',
     actionLabel: 'Ask about stock →',
   },
   {
     status: 'UNAVAILABLE',
-    title: 'UNAVAILABLE',
+    title: 'Unavailable',
     empty: 'No products currently marked unavailable.',
     actionLabel: 'Ask when available →',
   },
@@ -55,19 +55,16 @@ export function AvailabilityView({ initialItems, categories }: AvailabilityViewP
   }, [initialItems, search, selectedCategory]);
 
   return (
-    <div className="space-y-8 text-[#171714]">
+    <div className="space-y-8 text-[#171717]">
       {/* 1. Header */}
       <div>
         <h1 className="text-[26px] sm:text-[30px] font-semibold tracking-[-0.03em] m-0">
           Product Availability
         </h1>
-        <p className="mt-1 text-[13.5px] text-[#68665F] m-0">
-          Check current availability before requesting stock.
-        </p>
       </div>
 
       {/* 2. Compact Search & Filter */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 border-y border-[#171714]/10 py-3.5">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 border-y border-[#171717]/10 py-3.5">
         <div className="relative flex-1 max-w-md">
           <input
             type="search"
@@ -75,7 +72,7 @@ export function AvailabilityView({ initialItems, categories }: AvailabilityViewP
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search product..."
             aria-label="Search products"
-            className="w-full px-3 py-1.5 rounded-[4px] border border-[#171714]/15 bg-white text-[13px] text-[#171714] placeholder-[#68665F]/60 focus:border-[#F26522] focus:outline-none"
+            className="w-full px-3 py-1.5 rounded-[4px] border border-[#171717]/15 bg-white text-[13px] text-[#171717] placeholder-[#737373]/60 focus:border-[#F26522] focus:outline-none"
           />
         </div>
         <div className="w-full sm:w-56">
@@ -83,7 +80,7 @@ export function AvailabilityView({ initialItems, categories }: AvailabilityViewP
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
             aria-label="Filter by category"
-            className="w-full px-3 py-1.5 rounded-[4px] border border-[#171714]/15 bg-white text-[13px] text-[#171714] focus:border-[#F26522] focus:outline-none"
+            className="w-full px-3 py-1.5 rounded-[4px] border border-[#171717]/15 bg-white text-[13px] text-[#171717] focus:border-[#F26522] focus:outline-none"
           >
             <option value="ALL">All Categories</option>
             {categories.map((c) => (
@@ -113,20 +110,20 @@ export function AvailabilityView({ initialItems, categories }: AvailabilityViewP
           const items = filteredItems.filter((item) => item.availability === group.status);
           return (
             <section key={group.status} aria-labelledby={`stock-${group.status.toLowerCase()}`}>
-              <div className="flex items-baseline justify-between border-b border-[#171714]/10 pb-2.5">
+              <div className="flex items-baseline justify-between border-b border-[#171717]/10 pb-2.5">
                 <h2
                   id={`stock-${group.status.toLowerCase()}`}
-                  className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] m-0"
+                  className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0"
                 >
                   {group.title}
                 </h2>
-                <span className="font-mono text-[12px] font-semibold text-[#68665F]">
+                <span className="font-mono text-[12px] font-semibold text-[#737373]">
                   {items.length}
                 </span>
               </div>
 
               {items.length > 0 ? (
-                <div className="divide-y divide-[#171714]/08">
+                <div className="divide-y divide-[#171717]/08">
                   {items.map((item) => (
                     <div
                       key={item.id}
@@ -135,11 +132,11 @@ export function AvailabilityView({ initialItems, categories }: AvailabilityViewP
                       <div>
                         <Link
                           href={`/products/${item.id}`}
-                          className="font-semibold text-[15px] text-[#171714] hover:text-[#F26522] block leading-snug"
+                          className="font-semibold text-[15px] text-[#171717] hover:text-[#F26522] block leading-snug"
                         >
                           {item.name}
                         </Link>
-                        <div className="flex items-center gap-2 mt-1 text-[12px] text-[#68665F]">
+                        <div className="flex items-center gap-2 mt-1 text-[12px] text-[#737373]">
                           <span>{item.categoryName}</span>
                           <span>·</span>
                           <span className="font-mono text-[11.5px]">{item.productCode}</span>
@@ -176,7 +173,7 @@ export function AvailabilityView({ initialItems, categories }: AvailabilityViewP
                   ))}
                 </div>
               ) : (
-                <p className="py-5 text-[13px] text-[#68665F] m-0">
+                <p className="py-5 text-[13px] text-[#737373] m-0">
                   {search || selectedCategory !== 'ALL'
                     ? 'No matching products in this group.'
                     : group.empty}

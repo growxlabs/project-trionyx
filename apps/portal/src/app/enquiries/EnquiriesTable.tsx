@@ -236,7 +236,7 @@ export function EnquiriesTable({ initialEnquiries, internalUsers, user }: Enquir
               )}
 
               {/* Table */}
-              <div className={`overflow-hidden ${filteredEnquiries.length === 0 ? '' : 'bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px]'}`}>
+              <div className="overflow-hidden">
                 {filteredEnquiries.length === 0 ? (
                   <EnquiryEmptyState
                     kind="registry"
@@ -268,7 +268,7 @@ export function EnquiriesTable({ initialEnquiries, internalUsers, user }: Enquir
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse text-[14px]">
                       <thead>
-                        <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                        <tr className="border-b border-[var(--border)]/60 text-[12px] font-semibold text-[var(--text-secondary)]">
                           <th className="py-2.5 px-4 w-36">Code</th>
                           <th className="py-2.5 px-4">Type</th>
                           <th className="py-2.5 px-4">Name / Business</th>

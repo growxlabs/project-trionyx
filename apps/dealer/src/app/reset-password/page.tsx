@@ -70,7 +70,7 @@ function ResetPasswordForm() {
         </div>
         <Link
           href="/login"
-          className="block w-full py-2.5 px-4 text-center rounded bg-[#171714] text-white font-semibold text-[13.5px] hover:bg-black transition-colors"
+          className="block w-full py-2.5 px-4 text-center rounded bg-[#171717] text-white font-semibold text-[13.5px] hover:bg-black transition-colors"
         >
           Sign In Now
         </Link>
@@ -87,7 +87,7 @@ function ResetPasswordForm() {
       )}
 
       <div>
-        <label className="block text-[12.5px] font-semibold text-[#171714] mb-1">
+        <label className="block text-[12.5px] font-semibold text-[#171717] mb-1">
           New Password
         </label>
         <input
@@ -97,12 +97,12 @@ function ResetPasswordForm() {
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
           placeholder="Minimum 8 characters"
-          className="w-full px-3.5 py-2.5 rounded border border-[#171714]/20 bg-white text-[14px] text-[#171714] placeholder-[#68665F]/50 focus:outline-none focus:border-[#F26522] focus:ring-1 focus:ring-[#F26522] transition-colors"
+          className="w-full px-3.5 py-2.5 rounded border border-[#171717]/20 bg-white text-[14px] text-[#171717] placeholder-[#737373]/50 focus:outline-none focus:border-[#F26522] focus:ring-1 focus:ring-[#F26522] transition-colors"
         />
       </div>
 
       <div>
-        <label className="block text-[12.5px] font-semibold text-[#171714] mb-1">
+        <label className="block text-[12.5px] font-semibold text-[#171717] mb-1">
           Confirm New Password
         </label>
         <input
@@ -112,14 +112,14 @@ function ResetPasswordForm() {
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           placeholder="Repeat new password"
-          className="w-full px-3.5 py-2.5 rounded border border-[#171714]/20 bg-white text-[14px] text-[#171714] placeholder-[#68665F]/50 focus:outline-none focus:border-[#F26522] focus:ring-1 focus:ring-[#F26522] transition-colors"
+          className="w-full px-3.5 py-2.5 rounded border border-[#171717]/20 bg-white text-[14px] text-[#171717] placeholder-[#737373]/50 focus:outline-none focus:border-[#F26522] focus:ring-1 focus:ring-[#F26522] transition-colors"
         />
       </div>
 
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full py-2.5 px-4 rounded bg-[#171714] text-white font-semibold text-[14px] hover:bg-black transition-colors disabled:opacity-50"
+        className="w-full py-2.5 px-4 rounded bg-[#171717] text-white font-semibold text-[14px] hover:bg-black transition-colors disabled:opacity-50"
       >
         {isLoading ? 'Updating...' : 'Set New Password'}
       </button>
@@ -129,21 +129,21 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <div className="min-h-screen bg-[#F5F5EE] flex flex-col justify-center items-center px-4 py-12">
-      <div className="w-full max-w-[420px] bg-[#FCFBF7] border border-[#171714]/10 rounded-lg p-8 shadow-[0_4px_24px_rgba(23,23,20,0.04)]">
+    <div className="min-h-screen bg-[#F5F5F5] flex flex-col justify-center items-center px-4 py-12">
+      <div className="w-full max-w-[420px] bg-[#FFFFFF] border border-[#171717]/10 rounded-lg p-8 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
         <div className="text-center mb-8">
-          <div className="inline-flex w-10 h-10 rounded bg-[#171714] text-white font-bold text-base items-center justify-center mb-3">
+          <div className="inline-flex w-10 h-10 rounded bg-[#171717] text-white font-bold text-base items-center justify-center mb-3">
             TRX
           </div>
-          <span className="block text-[11px] font-bold tracking-[0.16em] uppercase text-[#68665F]">
+          <span className="block text-[11px] font-bold tracking-[0.16em] text-[#737373]">
             TRIONYX AUTOMOTIVE
           </span>
-          <h1 className="text-[22px] font-bold text-[#171714] mt-1 tracking-tight">
+          <h1 className="text-[22px] font-bold text-[#171717] mt-1 tracking-tight">
             Create New Password
           </h1>
         </div>
 
-        <Suspense fallback={<div className="text-center text-sm text-[#68665F]">Loading...</div>}>
+        <Suspense fallback={<div className="text-center text-sm text-[#737373]">Loading...</div>}>
           <ResetPasswordForm />
         </Suspense>
       </div>

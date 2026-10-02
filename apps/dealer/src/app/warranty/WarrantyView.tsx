@@ -283,16 +283,13 @@ export function WarrantyView({
   }, [warranties]);
 
   return (
-    <div className="space-y-8 text-[#171714]">
+    <div className="space-y-8 text-[#171717]">
       {/* 1. Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-[26px] sm:text-[30px] font-semibold tracking-[-0.03em] m-0 text-[#171714]">
+          <h1 className="text-[26px] sm:text-[30px] font-semibold tracking-[-0.03em] m-0 text-[#171717]">
             Warranty
           </h1>
-          <p className="mt-1 text-[13.5px] text-[#68665F] m-0">
-            Verify serial eligibility and register warranties on behalf of authorized territory dealers.
-          </p>
         </div>
 
         <button
@@ -312,9 +309,9 @@ export function WarrantyView({
       </div>
 
       {/* 2. Check Warranty Tool */}
-      <section aria-labelledby="check-warranty-heading" className="border-t border-[#171714]/10 pt-5 space-y-3">
+      <section aria-labelledby="check-warranty-heading" className="border-t border-[#171717]/10 pt-5 space-y-3">
         <div className="flex items-center justify-between">
-          <h2 id="check-warranty-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] m-0">
+          <h2 id="check-warranty-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
             CHECK WARRANTY ELIGIBILITY
           </h2>
           {checkResult.status !== 'IDLE' && (
@@ -324,7 +321,7 @@ export function WarrantyView({
                 setCheckResult({ status: 'IDLE', serialNumber: '' });
                 setCheckSerial('');
               }}
-              className="text-[11px] text-[#68665F] hover:text-[#171714] underline cursor-pointer"
+              className="text-[11px] text-[#737373] hover:text-[#171717] underline cursor-pointer"
             >
               Clear
             </button>
@@ -338,13 +335,13 @@ export function WarrantyView({
               placeholder="Enter serial number (e.g. TRX-BR-2609-000001)..."
               value={checkSerial}
               onChange={(e) => setCheckSerial(e.target.value.toUpperCase())}
-              className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/15 bg-white font-mono text-[13px] text-[#171714] placeholder:font-sans placeholder:text-[#68665F]/60 focus:border-[#F26522] focus:outline-none uppercase"
+              className="w-full px-3 py-2 rounded-[4px] border border-[#171717]/15 bg-white font-mono text-[13px] text-[#171717] placeholder:font-sans placeholder:text-[#737373]/60 focus:border-[#F26522] focus:outline-none"
             />
           </div>
           <button
             type="submit"
             disabled={isChecking || !checkSerial.trim()}
-            className="px-4 py-2 rounded-[4px] border border-[#171714]/15 bg-white hover:bg-[#171714]/05 text-[#171714] text-[13px] font-semibold transition-colors cursor-pointer disabled:opacity-50 shrink-0"
+            className="px-4 py-2 rounded-[4px] border border-[#171717]/15 bg-white hover:bg-[#171717]/05 text-[#171717] text-[13px] font-semibold transition-colors cursor-pointer disabled:opacity-50 shrink-0"
           >
             {isChecking ? 'Checking...' : 'Check Status'}
           </button>
@@ -352,29 +349,29 @@ export function WarrantyView({
 
         {/* 4 Discrete States Display */}
         {checkResult.status !== 'IDLE' && (
-          <div className="p-4 rounded-[4px] bg-[#FCFBF7] border border-[#171714]/12 text-[13px] max-w-xl space-y-2">
+          <div className="p-4 rounded-[4px] bg-[#FFFFFF] border border-[#171717]/12 text-[13px] max-w-xl space-y-2">
             {/* State 1: Warranty Active */}
             {checkResult.status === 'ACTIVE' && checkResult.warranty && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono font-bold text-[14px] text-[#171714]">
+                  <span className="font-mono font-bold text-[14px] text-[#171717]">
                     {checkResult.serialNumber}
                   </span>
-                  <span className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]">
+                  <span className="text-[11px] font-bold tracking-wider px-2 py-0.5 rounded bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]">
                     ● Warranty Active
                   </span>
                 </div>
-                <div className="text-[13px] font-semibold text-[#171714]">
+                <div className="text-[13px] font-semibold text-[#171717]">
                   {checkResult.warranty.productName || checkResult.productName}
                 </div>
-                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#171714]/08 text-[12px] text-[#68665F]">
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#171717]/08 text-[12px] text-[#737373]">
                   <div>
-                    <span className="block text-[10.5px] uppercase tracking-wider text-[#68665F]/80">Installed Dealer</span>
-                    <span className="font-medium text-[#171714]">{checkResult.warranty.dealerName || 'Direct Studio'}</span>
+                    <span className="block text-[10.5px] tracking-wider text-[#737373]/80">Installed Dealer</span>
+                    <span className="font-medium text-[#171717]">{checkResult.warranty.dealerName || 'Direct Studio'}</span>
                   </div>
                   <div>
-                    <span className="block text-[10.5px] uppercase tracking-wider text-[#68665F]/80">Valid Coverage Until</span>
-                    <span className="font-medium text-[#171714]">
+                    <span className="block text-[10.5px] tracking-wider text-[#737373]/80">Valid Coverage Until</span>
+                    <span className="font-medium text-[#171717]">
                       {dateFormatter.format(new Date(checkResult.warranty.warrantyEndDate))}
                     </span>
                   </div>
@@ -386,19 +383,19 @@ export function WarrantyView({
             {checkResult.status === 'EXPIRED' && checkResult.warranty && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono font-bold text-[14px] text-[#68665F]">
+                  <span className="font-mono font-bold text-[14px] text-[#737373]">
                     {checkResult.serialNumber}
                   </span>
-                  <span className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#F4F4F5] text-[#71717A] border border-[#E4E4E7]">
+                  <span className="text-[11px] font-bold tracking-wider px-2 py-0.5 rounded bg-[#F5F5F5] text-[#737373] border border-[#E0E0E0]">
                     Warranty Expired
                   </span>
                 </div>
-                <div className="text-[13px] font-medium text-[#171714]">
+                <div className="text-[13px] font-medium text-[#171717]">
                   {checkResult.warranty.productName || checkResult.productName}
                 </div>
-                <div className="pt-2 border-t border-[#171714]/08 text-[12px] text-[#68665F]">
+                <div className="pt-2 border-t border-[#171717]/08 text-[12px] text-[#737373]">
                   Coverage ended on {dateFormatter.format(new Date(checkResult.warranty.warrantyEndDate))}. Installed by{' '}
-                  <span className="font-medium text-[#171714]">{checkResult.warranty.dealerName || 'Dealer'}</span>.
+                  <span className="font-medium text-[#171717]">{checkResult.warranty.dealerName || 'Dealer'}</span>.
                 </div>
               </div>
             )}
@@ -407,23 +404,23 @@ export function WarrantyView({
             {checkResult.status === 'VALID_NOT_ACTIVATED' && (
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono font-bold text-[14px] text-[#171714]">
+                  <span className="font-mono font-bold text-[14px] text-[#171717]">
                     {checkResult.serialNumber}
                   </span>
-                  <span className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]">
+                  <span className="text-[11px] font-bold tracking-wider px-2 py-0.5 rounded bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE]">
                     Eligible for Warranty
                   </span>
                 </div>
                 <div>
-                  <div className="font-semibold text-[#171714] text-[13.5px]">
+                  <div className="font-semibold text-[#171717] text-[13.5px]">
                     {checkResult.productName}
                   </div>
-                  <div className="text-[12px] text-[#68665F] mt-0.5">
-                    Product Code: <span className="font-mono font-medium text-[#171714]">{checkResult.productCode}</span> ·
-                    Standard Policy: <span className="font-medium text-[#171714]">{checkResult.policyDurationMonths} Months</span>
+                  <div className="text-[12px] text-[#737373] mt-0.5">
+                    Product Code: <span className="font-mono font-medium text-[#171717]">{checkResult.productCode}</span> ·
+                    Standard Policy: <span className="font-medium text-[#171717]">{checkResult.policyDurationMonths} Months</span>
                   </div>
                 </div>
-                <div className="pt-2 border-t border-[#171714]/08 flex items-center justify-between">
+                <div className="pt-2 border-t border-[#171717]/08 flex items-center justify-between">
                   <span className="text-[12px] text-[#065F46] font-medium">
                     ✓ Valid inventory serial — no active registration.
                   </span>
@@ -445,11 +442,11 @@ export function WarrantyView({
                   <span className="font-mono font-semibold text-[#B91C1C]">
                     {checkResult.serialNumber}
                   </span>
-                  <span className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#FEF2F2] text-[#B91C1C] border border-[#FECACA]">
+                  <span className="text-[11px] font-bold tracking-wider px-2 py-0.5 rounded bg-[#FEF2F2] text-[#B91C1C] border border-[#FECACA]">
                     Serial Not Found
                   </span>
                 </div>
-                <p className="text-[12.5px] text-[#68665F] m-0 pt-1">
+                <p className="text-[12.5px] text-[#737373] m-0 pt-1">
                   {checkResult.message}
                 </p>
               </div>
@@ -459,17 +456,17 @@ export function WarrantyView({
       </section>
 
       {/* 3. Warranty Records Table */}
-      <section aria-labelledby="warranty-records-heading" className="border-t border-[#171714]/10 pt-5 space-y-4">
+      <section aria-labelledby="warranty-records-heading" className="border-t border-[#171717]/10 pt-5 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 id="warranty-records-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] m-0">
+            <h2 id="warranty-records-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
               WARRANTY RECORDS ({statusCounts.all})
             </h2>
           </div>
 
           {/* Status Tabs & Search */}
           <div className="flex flex-wrap items-center gap-2">
-            <div className="inline-flex rounded-[4px] border border-[#171714]/15 p-0.5 bg-white text-[12px]">
+            <div className="inline-flex rounded-[4px] border border-[#171717]/15 p-0.5 bg-white text-[12px]">
               {(['ALL', 'ACTIVE', 'EXPIRED', 'VOID'] as const).map((tab) => (
                 <button
                   key={tab}
@@ -477,8 +474,8 @@ export function WarrantyView({
                   onClick={() => setStatusFilter(tab)}
                   className={`px-2.5 py-1 rounded-[3px] font-semibold cursor-pointer transition-colors ${
                     statusFilter === tab
-                      ? 'bg-[#171714] text-white'
-                      : 'text-[#68665F] hover:text-[#171714]'
+                      ? 'bg-[#171717] text-white'
+                      : 'text-[#737373] hover:text-[#171717]'
                   }`}
                 >
                   {tab === 'ALL'
@@ -497,20 +494,20 @@ export function WarrantyView({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search serial, product, or dealer..."
-              className="w-full sm:w-60 px-3 py-1 rounded-[4px] border border-[#171714]/15 bg-white text-[12.5px] text-[#171714] placeholder-[#68665F]/60 focus:border-[#F26522] focus:outline-none"
+              className="w-full sm:w-60 px-3 py-1 rounded-[4px] border border-[#171717]/15 bg-white text-[12.5px] text-[#171717] placeholder-[#737373]/60 focus:border-[#F26522] focus:outline-none"
             />
           </div>
         </div>
 
         {/* Table or Empty State */}
         {filteredWarranties.length === 0 ? (
-          <div className="p-8 rounded-[4px] bg-[#FCFBF7] border border-[#171714]/10 text-center space-y-2 text-[13.5px]">
-            <p className="font-semibold text-[#171714] m-0">
+          <div className="p-8 rounded-[4px] bg-[#FFFFFF] border border-[#171717]/10 text-center space-y-2 text-[13.5px]">
+            <p className="font-semibold text-[#171717] m-0">
               {warranties.length === 0
                 ? 'No warranty records registered yet.'
                 : 'No warranty records match your filter criteria.'}
             </p>
-            <p className="text-[#68665F] text-[13px] m-0 max-w-md mx-auto">
+            <p className="text-[#737373] text-[13px] m-0 max-w-md mx-auto">
               {warranties.length === 0
                 ? 'When dealers in your territory install eligible Trionyx products, register the warranty using the product serial number.'
                 : 'Try adjusting your search query or switching to All status tab.'}
@@ -533,10 +530,10 @@ export function WarrantyView({
             )}
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-[4px] border border-[#171714]/10 bg-white">
+          <div className="overflow-x-auto rounded-[4px] border border-[#171717]/10 bg-white">
             <table className="w-full text-left text-[13px] border-collapse">
               <thead>
-                <tr className="border-b border-[#171714]/10 bg-[#FCFBF7] text-[11px] font-semibold uppercase tracking-wider text-[#68665F]">
+                <tr className="border-b border-[#171717]/10 bg-[#FFFFFF] text-[11px] font-semibold tracking-wider text-[#737373]">
                   <th className="py-2.5 px-3.5">Serial Number</th>
                   <th className="py-2.5 px-3.5">Product</th>
                   <th className="py-2.5 px-3.5">Installing Dealer</th>
@@ -545,38 +542,38 @@ export function WarrantyView({
                   <th className="py-2.5 px-3.5">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#171714]/08">
+              <tbody className="divide-y divide-[#171717]/08">
                 {filteredWarranties.map((w) => {
                   const derived = w.derivedStatus || w.status;
                   return (
-                    <tr key={w.id} className="hover:bg-[#FCFBF7]/50 transition-colors">
-                      <td className="py-3 px-3.5 font-mono font-semibold text-[#171714]">
+                    <tr key={w.id} className="hover:bg-[#FFFFFF]/50 transition-colors">
+                      <td className="py-3 px-3.5 font-mono font-semibold text-[#171717]">
                         {w.serialNumber}
                       </td>
                       <td className="py-3 px-3.5">
-                        <div className="font-medium text-[#171714]">{w.productName}</div>
+                        <div className="font-medium text-[#171717]">{w.productName}</div>
                         {w.productCode && (
-                          <div className="text-[11px] font-mono text-[#68665F]">{w.productCode}</div>
+                          <div className="text-[11px] font-mono text-[#737373]">{w.productCode}</div>
                         )}
                       </td>
-                      <td className="py-3 px-3.5 text-[#171714]">
+                      <td className="py-3 px-3.5 text-[#171717]">
                         {w.dealerName || (
-                          <span className="text-[#68665F] italic">Direct Registration</span>
+                          <span className="text-[#737373] italic">Direct Registration</span>
                         )}
                       </td>
-                      <td className="py-3 px-3.5 text-[#68665F]">
+                      <td className="py-3 px-3.5 text-[#737373]">
                         {dateFormatter.format(new Date(w.installationDate))}
                       </td>
-                      <td className="py-3 px-3.5 text-[#68665F]">
+                      <td className="py-3 px-3.5 text-[#737373]">
                         {dateFormatter.format(new Date(w.warrantyEndDate))}
                       </td>
                       <td className="py-3 px-3.5">
                         <span
-                          className={`inline-block text-[10.5px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${
+                          className={`inline-block text-[10.5px] font-bold tracking-wider px-2 py-0.5 rounded border ${
                             w.status === 'VOID'
                               ? 'bg-[#FEF2F2] text-[#B91C1C] border-[#FECACA]'
                               : derived === 'EXPIRED'
-                              ? 'bg-[#F4F4F5] text-[#71717A] border-[#E4E4E7]'
+                              ? 'bg-[#F5F5F5] text-[#737373] border-[#E0E0E0]'
                               : 'bg-[#ECFDF5] text-[#065F46] border-[#A7F3D0]'
                           }`}
                         >
@@ -595,20 +592,17 @@ export function WarrantyView({
       {/* 4. Registration Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
-          <div className="bg-[#FCFBF7] border border-[#171714]/15 rounded-[4px] p-6 max-w-lg w-full space-y-4 shadow-xl text-[#171714]">
-            <div className="flex items-center justify-between border-b border-[#171714]/10 pb-3">
+          <div className="bg-[#FFFFFF] border border-[#171717]/15 rounded-[4px] p-6 max-w-lg w-full space-y-4 shadow-xl text-[#171717]">
+            <div className="flex items-center justify-between border-b border-[#171717]/10 pb-3">
               <div>
-                <h2 className="text-[16px] font-bold text-[#171714] m-0">
+                <h2 className="text-[16px] font-bold text-[#171717] m-0">
                   Register Product Warranty
                 </h2>
-                <p className="text-[12px] text-[#68665F] m-0 mt-0.5">
-                  Activate warranty coverage on behalf of an authorized territory dealer.
-                </p>
               </div>
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="text-[#68665F] hover:text-[#171714] text-[18px] cursor-pointer"
+                className="text-[#737373] hover:text-[#171717] text-[18px] cursor-pointer"
               >
                 ✕
               </button>
@@ -628,7 +622,7 @@ export function WarrantyView({
 
             {/* Step 1: Serial Input */}
             <div className="space-y-1.5">
-              <label className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F]">
+              <label className="block text-[11px] font-semibold tracking-[0.14em] text-[#737373]">
                 Product Serial Number *
               </label>
               <div className="flex gap-2">
@@ -642,14 +636,14 @@ export function WarrantyView({
                   }}
                   placeholder="e.g. TRX-BR-2609-000001"
                   disabled={isActivating || !!validatedData}
-                  className="flex-1 px-3 py-1.5 rounded-[4px] border border-[#171714]/15 bg-white font-mono text-[13px] uppercase text-[#171714] focus:border-[#F26522] focus:outline-none disabled:opacity-60"
+                  className="flex-1 px-3 py-1.5 rounded-[4px] border border-[#171717]/15 bg-white font-mono text-[13px] text-[#171717] focus:border-[#F26522] focus:outline-none disabled:opacity-60"
                 />
                 {!validatedData ? (
                   <button
                     type="button"
                     onClick={() => void handleValidateModalSerial()}
                     disabled={isValidating || !modalSerial.trim()}
-                    className="px-4 py-1.5 rounded-[4px] bg-[#171714] hover:opacity-90 disabled:opacity-50 text-white text-[13px] font-semibold transition-opacity cursor-pointer shrink-0"
+                    className="px-4 py-1.5 rounded-[4px] bg-[#171717] hover:opacity-90 disabled:opacity-50 text-white text-[13px] font-semibold transition-opacity cursor-pointer shrink-0"
                   >
                     {isValidating ? 'Verifying...' : 'Verify Serial'}
                   </button>
@@ -660,7 +654,7 @@ export function WarrantyView({
                       setValidatedData(null);
                       setModalSerial('');
                     }}
-                    className="px-3 py-1.5 rounded-[4px] border border-[#171714]/15 text-[#68665F] hover:text-[#171714] text-[12px] cursor-pointer"
+                    className="px-3 py-1.5 rounded-[4px] border border-[#171717]/15 text-[#737373] hover:text-[#171717] text-[12px] cursor-pointer"
                   >
                     Change
                   </button>
@@ -670,15 +664,15 @@ export function WarrantyView({
 
             {/* Step 2: Validated Data Preview */}
             {validatedData && (
-              <div className="p-3.5 rounded-[4px] bg-white border border-[#171714]/10 space-y-1 text-[13px]">
-                <div className="flex items-center justify-between text-[11px] text-[#68665F]">
+              <div className="p-3.5 rounded-[4px] bg-white border border-[#171717]/10 space-y-1 text-[13px]">
+                <div className="flex items-center justify-between text-[11px] text-[#737373]">
                   <span>Product Verified</span>
                   <span className="font-mono font-semibold text-[#F26522]">{validatedData.productCode}</span>
                 </div>
-                <div className="font-semibold text-[#171714] text-[14px]">
+                <div className="font-semibold text-[#171717] text-[14px]">
                   {validatedData.productName}
                 </div>
-                <div className="text-[12px] text-[#065F46] font-medium pt-1 border-t border-[#171714]/08 flex items-center justify-between">
+                <div className="text-[12px] text-[#065F46] font-medium pt-1 border-t border-[#171717]/08 flex items-center justify-between">
                   <span>Coverage Term:</span>
                   <span>{validatedData.policyDurationMonths} Months</span>
                 </div>
@@ -688,7 +682,7 @@ export function WarrantyView({
             {/* Step 3: Dealer Selection */}
             {validatedData && (
               <div className="space-y-1.5">
-                <label className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F]">
+                <label className="block text-[11px] font-semibold tracking-[0.14em] text-[#737373]">
                   Installing Authorized Dealer
                 </label>
                 {dealers.length > 0 ? (
@@ -696,7 +690,7 @@ export function WarrantyView({
                     value={selectedDealerId}
                     onChange={(e) => setSelectedDealerId(e.target.value)}
                     disabled={isActivating}
-                    className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/15 bg-white text-[13px] text-[#171714] focus:border-[#F26522] focus:outline-none"
+                    className="w-full px-3 py-2 rounded-[4px] border border-[#171717]/15 bg-white text-[13px] text-[#171717] focus:border-[#F26522] focus:outline-none"
                   >
                     <option value="">-- Direct Distributor Installation (No Specific Dealer) --</option>
                     {dealers.map((d) => (
@@ -706,7 +700,7 @@ export function WarrantyView({
                     ))}
                   </select>
                 ) : (
-                  <div className="p-2.5 rounded-[4px] bg-[#FCFBF7] border border-[#171714]/10 text-[12px] text-[#68665F]">
+                  <div className="p-2.5 rounded-[4px] bg-[#FFFFFF] border border-[#171717]/10 text-[12px] text-[#737373]">
                     No territory dealers assigned yet. Warranty will be registered under your regional distributor record.
                   </div>
                 )}
@@ -716,7 +710,7 @@ export function WarrantyView({
             {/* Step 4: Installation Date */}
             {validatedData && (
               <div className="space-y-1.5">
-                <label className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F]">
+                <label className="block text-[11px] font-semibold tracking-[0.14em] text-[#737373]">
                   Installation Date *
                 </label>
                 <input
@@ -724,18 +718,18 @@ export function WarrantyView({
                   value={installationDate}
                   onChange={(e) => setInstallationDate(e.target.value)}
                   disabled={isActivating}
-                  className="w-full px-3 py-1.5 rounded-[4px] border border-[#171714]/15 bg-white text-[13px] text-[#171714] focus:border-[#F26522] focus:outline-none"
+                  className="w-full px-3 py-1.5 rounded-[4px] border border-[#171717]/15 bg-white text-[13px] text-[#171717] focus:border-[#F26522] focus:outline-none"
                 />
               </div>
             )}
 
             {/* Actions */}
-            <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-[#171714]/10">
+            <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-[#171717]/10">
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
                 disabled={isActivating}
-                className="px-3.5 py-1.5 rounded-[4px] border border-[#171714]/15 text-[#68665F] hover:text-[#171714] text-[13px] cursor-pointer"
+                className="px-3.5 py-1.5 rounded-[4px] border border-[#171717]/15 text-[#737373] hover:text-[#171717] text-[13px] cursor-pointer"
               >
                 Cancel
               </button>

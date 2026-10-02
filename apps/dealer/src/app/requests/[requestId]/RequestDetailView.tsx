@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import type { DealerRequest, DealerRequestMessage } from '@trionyx/types';
+import { humanize } from '@/lib/format';
 
 interface RequestDetailViewProps {
   request: DealerRequest;
@@ -66,12 +67,12 @@ export function RequestDetailView({
   };
 
   return (
-    <div className="max-w-3xl space-y-6 text-[#171714]">
+    <div className="max-w-3xl space-y-6 text-[#171717]">
       {/* Back Link */}
       <div>
         <Link
           href="/requests"
-          className="text-[12.5px] font-semibold text-[#68665F] hover:text-[#171714] inline-flex items-center gap-1 transition-colors"
+          className="text-[12.5px] font-semibold text-[#737373] hover:text-[#171717] inline-flex items-center gap-1 transition-colors"
         >
           ← Back to My Requests
         </Link>
@@ -83,11 +84,11 @@ export function RequestDetailView({
           {request.requestCode}
         </div>
         <div className="flex flex-wrap items-center gap-2 pt-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-[2px] bg-[#171714]/05 text-[#171714]">
-            {request.type.replace('_', ' ')}
+          <span className="text-[11px] font-bold tracking-wider px-2 py-0.5 rounded-[2px] bg-[#171717]/05 text-[#171717]">
+            {humanize(request.type)}
           </span>
           <span
-            className={`text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-[2px] ${
+            className={`text-[11px] font-bold tracking-wider px-2 py-0.5 rounded-[2px] ${
               request.status === 'OPEN'
                 ? 'bg-[#EFF6FF] text-[#1D4ED8]'
                 : request.status === 'IN_PROGRESS'
@@ -95,14 +96,14 @@ export function RequestDetailView({
                 : 'bg-[#ECFDF5] text-[#065F46]'
             }`}
           >
-            {request.status}
+            {humanize(request.status)}
           </span>
         </div>
-        <h1 className="text-[22px] font-bold text-[#171714] tracking-tight pt-1 m-0">
+        <h1 className="text-[22px] font-bold text-[#171717] tracking-tight pt-1 m-0">
           {request.subject}
         </h1>
         {request.productName && (
-          <div className="text-[13.5px] text-[#68665F]">
+          <div className="text-[13.5px] text-[#737373]">
             {request.productId ? (
               <Link href={`/products/${request.productId}`} className="text-[#F26522] hover:underline font-medium">
                 {request.productName}
@@ -115,24 +116,24 @@ export function RequestDetailView({
       </div>
 
       {/* Section 1: YOUR REQUEST */}
-      <section aria-labelledby="your-request-heading" className="border-t border-[#171714]/10 pt-5 space-y-3">
-        <h2 id="your-request-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] m-0">
+      <section aria-labelledby="your-request-heading" className="border-t border-[#171717]/10 pt-5 space-y-3">
+        <h2 id="your-request-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
           YOUR REQUEST
         </h2>
-        <div className="text-[12.5px] text-[#68665F]">
+        <div className="text-[12.5px] text-[#737373]">
           Submitted: {shortDateFormatter.format(new Date(request.createdAt))}
         </div>
-        <div className="text-[13.5px] text-[#171714] leading-relaxed whitespace-pre-wrap">
+        <div className="text-[13.5px] text-[#171717] leading-relaxed whitespace-pre-wrap">
           {request.description}
         </div>
       </section>
 
       {/* Section 2: STATUS */}
-      <section aria-labelledby="request-status-heading" className="border-t border-[#171714]/10 pt-5 space-y-2 text-[13px]">
-        <h2 id="request-status-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] m-0">
+      <section aria-labelledby="request-status-heading" className="border-t border-[#171717]/10 pt-5 space-y-2 text-[13px]">
+        <h2 id="request-status-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
           STATUS
         </h2>
-        <div className="font-semibold text-[#171714]">
+        <div className="font-semibold text-[#171717]">
           {request.status === 'OPEN'
             ? 'Open — Pending review'
             : request.status === 'IN_PROGRESS'
@@ -149,18 +150,18 @@ export function RequestDetailView({
       </section>
 
       {/* Section 3: UPDATES / CONVERSATION */}
-      <section aria-labelledby="updates-heading" className="border-t border-[#171714]/10 pt-5 space-y-4">
-        <h2 id="updates-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] m-0">
+      <section aria-labelledby="updates-heading" className="border-t border-[#171717]/10 pt-5 space-y-4">
+        <h2 id="updates-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
           UPDATES
         </h2>
 
         <div className="space-y-4">
           {/* Initial creation entry */}
-          <div className="text-[13px] border-l-2 border-[#171714]/15 pl-3 space-y-0.5">
-            <div className="text-[11.5px] font-medium text-[#68665F]">
+          <div className="text-[13px] border-l-2 border-[#171717]/15 pl-3 space-y-0.5">
+            <div className="text-[11.5px] font-medium text-[#737373]">
               {shortDateFormatter.format(new Date(request.createdAt))}
             </div>
-            <div className="font-medium text-[#171714]">
+            <div className="font-medium text-[#171717]">
               Request created by dealership
             </div>
           </div>
@@ -174,19 +175,19 @@ export function RequestDetailView({
               <div
                 key={msg.id}
                 className={`text-[13px] border-l-2 pl-3 py-1 space-y-1 ${
-                  isDealer ? 'border-[#171714]/30' : 'border-[#F26522]'
+                  isDealer ? 'border-[#171717]/30' : 'border-[#F26522]'
                 }`}
               >
-                <div className="flex items-center justify-between text-[11.5px] text-[#68665F]">
+                <div className="flex items-center justify-between text-[11.5px] text-[#737373]">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-[#171714]">{msg.senderName}</span>
+                    <span className="font-bold text-[#171717]">{msg.senderName}</span>
                     <span className="text-[10.5px]">
                       {isDealer ? (isCurrentUser ? '(You)' : '(Dealer Team)') : '(Trionyx Operations)'}
                     </span>
                   </div>
                   <span>{dateFormatter.format(new Date(msg.createdAt))}</span>
                 </div>
-                <div className="text-[#171714] whitespace-pre-wrap leading-relaxed">
+                <div className="text-[#171717] whitespace-pre-wrap leading-relaxed">
                   {msg.body}
                 </div>
               </div>
@@ -197,8 +198,8 @@ export function RequestDetailView({
 
       {/* Section 4: ADD MESSAGE */}
       {request.status !== 'CLOSED' ? (
-        <section aria-labelledby="add-message-heading" className="border-t border-[#171714]/10 pt-5 space-y-3">
-          <h2 id="add-message-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] m-0">
+        <section aria-labelledby="add-message-heading" className="border-t border-[#171717]/10 pt-5 space-y-3">
+          <h2 id="add-message-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
             ADD MESSAGE
           </h2>
 
@@ -214,14 +215,14 @@ export function RequestDetailView({
               onChange={(e) => setNewReply(e.target.value)}
               placeholder="Enter message or additional query details..."
               rows={3}
-              className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/15 bg-white text-[13px] text-[#171714] placeholder-[#68665F]/60 focus:border-[#F26522] focus:outline-none"
+              className="w-full px-3 py-2 rounded-[4px] border border-[#171717]/15 bg-white text-[13px] text-[#171717] placeholder-[#737373]/60 focus:border-[#F26522] focus:outline-none"
               required
             />
             <div>
               <button
                 type="submit"
                 disabled={submitting || !newReply.trim()}
-                className="px-4 py-2 rounded-[4px] bg-[#171714] hover:opacity-90 disabled:opacity-50 text-white font-semibold text-[13px] transition-opacity cursor-pointer shadow-xs"
+                className="px-4 py-2 rounded-[4px] bg-[#171717] hover:opacity-90 disabled:opacity-50 text-white font-semibold text-[13px] transition-opacity cursor-pointer shadow-xs"
               >
                 {submitting ? 'Sending...' : 'Send Message'}
               </button>
@@ -229,7 +230,7 @@ export function RequestDetailView({
           </form>
         </section>
       ) : (
-        <div className="border-t border-[#171714]/10 pt-4 text-[12.5px] text-[#68665F]">
+        <div className="border-t border-[#171717]/10 pt-4 text-[12.5px] text-[#737373]">
           This request is closed. To raise a new inquiry, use &ldquo;New Request&rdquo;.
         </div>
       )}

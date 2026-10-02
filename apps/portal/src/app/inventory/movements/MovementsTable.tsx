@@ -8,6 +8,7 @@ import type {
   SerialMovementType,
 } from '@trionyx/types';
 import { SerialNumberLookupModal } from '../../../components/inventory/SerialNumberLookupModal';
+import { StatusBadge } from '../../../components/workspace';
 
 interface MovementsTableProps {
   initialMovements: SerialMovementWithDetails[];
@@ -155,7 +156,7 @@ export function MovementsTable({ initialMovements, locations }: MovementsTablePr
       </div>
 
       {/* Ledger Table */}
-      <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
+      <div className="overflow-hidden">
         {filteredMovements.length === 0 ? (
           <div className="p-12 text-center text-[var(--text-muted)]">
             <p className="text-[14px] font-medium text-[var(--text-primary)] mb-1">No movement entries match criteria</p>
@@ -165,7 +166,7 @@ export function MovementsTable({ initialMovements, locations }: MovementsTablePr
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-[14px]">
               <thead>
-                <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                <tr className="border-b border-[var(--border)]/60 text-[12px] font-semibold text-[var(--text-secondary)]">
                   <th className="py-2.5 px-4 w-36">Timestamp</th>
                   <th className="py-2.5 px-4 w-28">Type</th>
                   <th className="py-2.5 px-4 w-40">Serial Number</th>
@@ -185,9 +186,10 @@ export function MovementsTable({ initialMovements, locations }: MovementsTablePr
                       })}
                     </td>
                     <td className="py-2.5 px-4">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium capitalize ${typeBadge(m.type)}`}>
-                        {m.type.toLowerCase()}
-                      </span>
+                      <StatusBadge
+                        status={m.type}
+                        tone={m.type === 'RECEIVED' ? 'success' : m.type === 'TRANSFERRED' ? 'info' : 'warning'}
+                      />
                     </td>
                     <td className="py-2.5 px-4">
                       <button

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import type { DealerWithRelations, SafeDealerUser, DealerUser } from '@trionyx/types';
+import { humanize } from '@/lib/format';
 
 interface AccountViewProps {
   dealer: DealerWithRelations;
@@ -115,11 +116,11 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
   };
 
   return (
-    <div className="space-y-8 text-[#171714]">
+    <div className="space-y-8 text-[#171717]">
       {/* 1. Header & Identity */}
       <div>
-        <div className="flex flex-wrap items-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F]">
-          <span>MY DEALERSHIP</span>
+        <div className="flex flex-wrap items-center gap-2.5 text-[11px] font-semibold tracking-[0.14em] text-[#737373]">
+          <span>My Dealership</span>
           <span>•</span>
           <span className="font-mono">{dealer.dealerCode}</span>
           <span>•</span>
@@ -131,47 +132,41 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
         <h1 className="text-[26px] sm:text-[30px] font-semibold tracking-[-0.03em] m-0 mt-1">
           {dealer.businessName}
         </h1>
-        <p className="mt-1 text-[13.5px] text-[#68665F] m-0">
-          Official dealership records, dispatch destination, authorized studio personnel, and credentials.
-        </p>
       </div>
 
       {/* 2. Business Record (Official, Read-Only) */}
-      <section aria-labelledby="business-record-heading" className="border-t border-[#171714]/10 pt-6 space-y-4">
+      <section aria-labelledby="business-record-heading" className="border-t border-[#171717]/10 pt-6 space-y-4">
         <div>
-          <h2 id="business-record-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] m-0">
+          <h2 id="business-record-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
             BUSINESS RECORD
           </h2>
-          <p className="text-[12.5px] text-[#68665F] mt-0.5 m-0">
-            Official commercial registration and distribution assignment certified by Trionyx.
-          </p>
         </div>
 
-        <div className="border border-[#171714]/10 rounded-[4px] bg-[#FCFBF7] p-5 divide-y divide-[#171714]/08">
+        <div className="border border-[#171717]/10 rounded-[4px] bg-[#FFFFFF] p-5 divide-y divide-[#171717]/08">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 pb-5 text-[13px]">
             <div>
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#68665F] block">
+              <span className="text-[11px] font-semibold tracking-wider text-[#737373] block">
                 Legal Entity Name
               </span>
-              <span className="font-medium text-[#171714] mt-1 block">
+              <span className="font-medium text-[#171717] mt-1 block">
                 {dealer.legalName || dealer.businessName}
               </span>
             </div>
 
             <div>
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#68665F] block">
+              <span className="text-[11px] font-semibold tracking-wider text-[#737373] block">
                 Dealer Code
               </span>
-              <span className="font-mono font-medium text-[#171714] mt-1 block">
+              <span className="font-mono font-medium text-[#171717] mt-1 block">
                 {dealer.dealerCode}
               </span>
             </div>
 
             <div>
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#68665F] block">
+              <span className="text-[11px] font-semibold tracking-wider text-[#737373] block">
                 GSTIN / Tax ID
               </span>
-              <span className="font-mono font-medium text-[#171714] mt-1 block">
+              <span className="font-mono font-medium text-[#171717] mt-1 block">
                 {dealer.gstin || 'Not registered / On file'}
               </span>
             </div>
@@ -179,25 +174,25 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 pt-5 text-[13px]">
             <div>
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#68665F] block">
+              <span className="text-[11px] font-semibold tracking-wider text-[#737373] block">
                 Assigned Distributor
               </span>
-              <span className="font-medium text-[#171714] mt-1 block">
+              <span className="font-medium text-[#171717] mt-1 block">
                 {dealer.distributor?.businessName || 'Trionyx Direct / Central Operations'}
               </span>
             </div>
 
             <div>
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#68665F] block">
+              <span className="text-[11px] font-semibold tracking-wider text-[#737373] block">
                 Operating Territory
               </span>
-              <span className="font-medium text-[#171714] mt-1 block">
+              <span className="font-medium text-[#171717] mt-1 block">
                 {dealer.city}, {dealer.state}
               </span>
             </div>
 
             <div>
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#68665F] block">
+              <span className="text-[11px] font-semibold tracking-wider text-[#737373] block">
                 Account Status
               </span>
               <span className="font-medium text-[#065F46] mt-1 block">
@@ -207,7 +202,7 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
           </div>
         </div>
 
-        <p className="text-[12px] text-[#68665F] m-0">
+        <p className="text-[12px] text-[#737373] m-0">
           These official records are maintained by Trionyx Operations. To amend your registered entity name, GSTIN, or
           regional distributor assignment, please{' '}
           <Link href="/requests/new?type=SUPPORT" className="text-[#F26522] hover:underline font-medium">
@@ -217,15 +212,12 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
       </section>
 
       {/* 3. Contact & Delivery (Editable) */}
-      <section aria-labelledby="contact-heading" className="border-t border-[#171714]/10 pt-6 space-y-4">
+      <section aria-labelledby="contact-heading" className="border-t border-[#171717]/10 pt-6 space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 id="contact-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] m-0">
+            <h2 id="contact-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
               CONTACT & DISPATCH DETAILS
             </h2>
-            <p className="text-[12.5px] text-[#68665F] mt-0.5 m-0">
-              Used for fulfillment communication, freight dispatches, and emergency operational contact.
-            </p>
           </div>
 
           {!isEditingContact && (
@@ -236,7 +228,7 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
                 setProfileSuccess(null);
                 setProfileError(null);
               }}
-              className="px-3 py-1.5 rounded-[4px] border border-[#171714]/20 hover:border-[#171714] bg-white text-[12.5px] font-medium text-[#171714] transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-[4px] border border-[#171717]/20 hover:border-[#171717] bg-white text-[12.5px] font-medium text-[#171717] transition-colors cursor-pointer"
             >
               Edit Contact Details
             </button>
@@ -256,49 +248,49 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
 
         {!isEditingContact ? (
           /* View Mode */
-          <div className="border border-[#171714]/10 rounded-[4px] bg-[#FCFBF7] p-5 divide-y divide-[#171714]/08">
+          <div className="border border-[#171717]/10 rounded-[4px] bg-[#FFFFFF] p-5 divide-y divide-[#171717]/08">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 pb-5 text-[13px]">
               <div>
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-[#68665F] block">
+                <span className="text-[11px] font-semibold tracking-wider text-[#737373] block">
                   Primary Contact
                 </span>
-                <span className="font-medium text-[#171714] mt-1 block">{contactPerson || '—'}</span>
+                <span className="font-medium text-[#171717] mt-1 block">{contactPerson || '—'}</span>
               </div>
               <div>
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-[#68665F] block">
+                <span className="text-[11px] font-semibold tracking-wider text-[#737373] block">
                   Primary Phone
                 </span>
-                <span className="font-mono font-medium text-[#171714] mt-1 block">{phone || '—'}</span>
+                <span className="font-mono font-medium text-[#171717] mt-1 block">{phone || '—'}</span>
               </div>
               <div>
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-[#68665F] block">
+                <span className="text-[11px] font-semibold tracking-wider text-[#737373] block">
                   Alternate Phone
                 </span>
-                <span className="font-mono text-[#171714] mt-1 block">{alternatePhone || 'None'}</span>
+                <span className="font-mono text-[#171717] mt-1 block">{alternatePhone || 'None'}</span>
               </div>
               <div>
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-[#68665F] block">
+                <span className="text-[11px] font-semibold tracking-wider text-[#737373] block">
                   Contact Email
                 </span>
-                <span className="font-mono text-[#171714] mt-1 block">{email || '—'}</span>
+                <span className="font-mono text-[#171717] mt-1 block">{email || '—'}</span>
               </div>
             </div>
 
             <div className="pt-5 text-[13px]">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#68665F] block">
+              <span className="text-[11px] font-semibold tracking-wider text-[#737373] block">
                 Dispatch / Studio Address
               </span>
-              <p className="font-medium text-[#171714] mt-1 m-0">
+              <p className="font-medium text-[#171717] mt-1 m-0">
                 {[addressLine1, addressLine2, city, state, postalCode].filter(Boolean).join(', ') || 'No address registered'}
               </p>
             </div>
           </div>
         ) : (
           /* Edit Mode */
-          <form onSubmit={handleSaveProfile} className="border border-[#171714]/15 rounded-[4px] bg-[#FCFBF7] p-5 space-y-4">
+          <form onSubmit={handleSaveProfile} className="border border-[#171717]/15 rounded-[4px] bg-[#FFFFFF] p-5 space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#68665F] mb-1">
+                <label className="block text-[11px] font-semibold tracking-wider text-[#737373] mb-1">
                   Primary Contact Person <span className="text-[#DC2626]">*</span>
                 </label>
                 <input
@@ -306,26 +298,26 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
                   value={contactPerson}
                   onChange={(e) => setContactPerson(e.target.value)}
                   required
-                  className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/20 bg-white text-[13px] text-[#171714] focus:outline-none focus:border-[#F26522]"
+                  className="w-full px-3 py-2 rounded-[4px] border border-[#171717]/20 bg-white text-[13px] text-[#171717] focus:outline-none focus:border-[#F26522]"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#68665F] mb-1">
+                <label className="block text-[11px] font-semibold tracking-wider text-[#737373] mb-1">
                   Official Email
                 </label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/20 bg-white text-[13px] text-[#171714] focus:outline-none focus:border-[#F26522]"
+                  className="w-full px-3 py-2 rounded-[4px] border border-[#171717]/20 bg-white text-[13px] text-[#171717] focus:outline-none focus:border-[#F26522]"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#68665F] mb-1">
+                <label className="block text-[11px] font-semibold tracking-wider text-[#737373] mb-1">
                   Phone Number <span className="text-[#DC2626]">*</span>
                 </label>
                 <input
@@ -333,25 +325,25 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   required
-                  className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/20 bg-white text-[13px] text-[#171714] focus:outline-none focus:border-[#F26522]"
+                  className="w-full px-3 py-2 rounded-[4px] border border-[#171717]/20 bg-white text-[13px] text-[#171717] focus:outline-none focus:border-[#F26522]"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#68665F] mb-1">
+                <label className="block text-[11px] font-semibold tracking-wider text-[#737373] mb-1">
                   Alternate Phone
                 </label>
                 <input
                   type="tel"
                   value={alternatePhone}
                   onChange={(e) => setAlternatePhone(e.target.value)}
-                  className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/20 bg-white text-[13px] text-[#171714] focus:outline-none focus:border-[#F26522]"
+                  className="w-full px-3 py-2 rounded-[4px] border border-[#171717]/20 bg-white text-[13px] text-[#171717] focus:outline-none focus:border-[#F26522]"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#68665F] mb-1">
+              <label className="block text-[11px] font-semibold tracking-wider text-[#737373] mb-1">
                 Premises / Street Address
               </label>
               <input
@@ -359,12 +351,12 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
                 value={addressLine1}
                 onChange={(e) => setAddressLine1(e.target.value)}
                 placeholder="Unit, Floor, Building or Street"
-                className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/20 bg-white text-[13px] text-[#171714] focus:outline-none focus:border-[#F26522]"
+                className="w-full px-3 py-2 rounded-[4px] border border-[#171717]/20 bg-white text-[13px] text-[#171717] focus:outline-none focus:border-[#F26522]"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#68665F] mb-1">
+              <label className="block text-[11px] font-semibold tracking-wider text-[#737373] mb-1">
                 Area / Landmark
               </label>
               <input
@@ -372,13 +364,13 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
                 value={addressLine2}
                 onChange={(e) => setAddressLine2(e.target.value)}
                 placeholder="Locality, Landmark or Industrial Estate"
-                className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/20 bg-white text-[13px] text-[#171714] focus:outline-none focus:border-[#F26522]"
+                className="w-full px-3 py-2 rounded-[4px] border border-[#171717]/20 bg-white text-[13px] text-[#171717] focus:outline-none focus:border-[#F26522]"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#68665F] mb-1">
+                <label className="block text-[11px] font-semibold tracking-wider text-[#737373] mb-1">
                   City <span className="text-[#DC2626]">*</span>
                 </label>
                 <input
@@ -386,12 +378,12 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   required
-                  className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/20 bg-white text-[13px] text-[#171714] focus:outline-none focus:border-[#F26522]"
+                  className="w-full px-3 py-2 rounded-[4px] border border-[#171717]/20 bg-white text-[13px] text-[#171717] focus:outline-none focus:border-[#F26522]"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#68665F] mb-1">
+                <label className="block text-[11px] font-semibold tracking-wider text-[#737373] mb-1">
                   State <span className="text-[#DC2626]">*</span>
                 </label>
                 <input
@@ -399,28 +391,28 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
                   value={state}
                   onChange={(e) => setState(e.target.value)}
                   required
-                  className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/20 bg-white text-[13px] text-[#171714] focus:outline-none focus:border-[#F26522]"
+                  className="w-full px-3 py-2 rounded-[4px] border border-[#171717]/20 bg-white text-[13px] text-[#171717] focus:outline-none focus:border-[#F26522]"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#68665F] mb-1">
+                <label className="block text-[11px] font-semibold tracking-wider text-[#737373] mb-1">
                   Postal Code
                 </label>
                 <input
                   type="text"
                   value={postalCode}
                   onChange={(e) => setPostalCode(e.target.value)}
-                  className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/20 bg-white text-[13px] text-[#171714] focus:outline-none focus:border-[#F26522]"
+                  className="w-full px-3 py-2 rounded-[4px] border border-[#171717]/20 bg-white text-[13px] text-[#171717] focus:outline-none focus:border-[#F26522]"
                 />
               </div>
             </div>
 
-            <div className="pt-3 border-t border-[#171714]/10 flex items-center justify-end gap-3">
+            <div className="pt-3 border-t border-[#171717]/10 flex items-center justify-end gap-3">
               <button
                 type="button"
                 onClick={() => setIsEditingContact(false)}
-                className="px-4 py-2 rounded-[4px] text-[13px] font-medium text-[#68665F] hover:text-[#171714] transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-[4px] text-[13px] font-medium text-[#737373] hover:text-[#171717] transition-colors cursor-pointer"
               >
                 Cancel
               </button>
@@ -437,40 +429,37 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
       </section>
 
       {/* 4. Portal Access & Studio Personnel */}
-      <section aria-labelledby="portal-access-heading" className="border-t border-[#171714]/10 pt-6 space-y-4">
+      <section aria-labelledby="portal-access-heading" className="border-t border-[#171717]/10 pt-6 space-y-4">
         <div>
-          <h2 id="portal-access-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] m-0">
+          <h2 id="portal-access-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
             PORTAL ACCESS ({initialUsers.length} AUTHORIZED)
           </h2>
-          <p className="text-[12.5px] text-[#68665F] mt-0.5 m-0">
-            Personnel authorized to view availability, submit stock requests, and activate customer warranties.
-          </p>
         </div>
 
-        <div className="border border-[#171714]/10 rounded-[4px] bg-[#FCFBF7] overflow-hidden">
+        <div className="border border-[#171717]/10 rounded-[4px] bg-[#FFFFFF] overflow-hidden">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-[#171714]/10 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] bg-[#171714]/[0.02]">
+              <tr className="border-b border-[#171717]/10 text-[11px] font-semibold tracking-[0.14em] text-[#737373] bg-[#171717]/[0.02]">
                 <th className="py-2.5 px-4">Authorized User</th>
                 <th className="py-2.5 px-4">Email</th>
                 <th className="py-2.5 px-4">Status</th>
                 <th className="py-2.5 px-4">Last Activity</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#171714]/08 text-[13px]">
+            <tbody className="divide-y divide-[#171717]/08 text-[13px]">
               {initialUsers.map((u) => {
                 const isCurrent = u.id === currentUser.id;
                 return (
                   <tr key={u.id} className="hover:bg-white/60 transition-colors">
-                    <td className="py-3 px-4 font-medium text-[#171714]">
+                    <td className="py-3 px-4 font-medium text-[#171717]">
                       {u.name}
                       {isCurrent && (
-                        <span className="ml-2 px-1.5 py-0.5 rounded-[4px] text-[10px] font-bold bg-[#EFECE3] text-[#68665F]">
+                        <span className="ml-2 px-1.5 py-0.5 rounded-[4px] text-[10px] font-bold bg-[#EBEBEB] text-[#737373]">
                           You
                         </span>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-[#68665F] font-mono text-[12.5px]">{u.email}</td>
+                    <td className="py-3 px-4 text-[#737373] font-mono text-[12.5px]">{u.email}</td>
                     <td className="py-3 px-4">
                       <span
                         className={`inline-flex items-center px-2 py-0.5 rounded-[4px] text-[11px] font-semibold ${
@@ -481,10 +470,10 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
                             : 'bg-[#FEF2F2] text-[#B91C1C] border border-[#FECACA]'
                         }`}
                       >
-                        {u.status}
+                        {humanize(u.status)}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-[#68665F] text-[12.5px]">
+                    <td className="py-3 px-4 text-[#737373] text-[12.5px]">
                       {u.lastLoginAt
                         ? new Date(u.lastLoginAt).toLocaleDateString('en-IN', {
                             dateStyle: 'medium',
@@ -499,7 +488,7 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
           </table>
         </div>
 
-        <p className="text-[12px] text-[#68665F] m-0">
+        <p className="text-[12px] text-[#737373] m-0">
           To onboard additional technicians or revoke portal access for former studio employees, please{' '}
           <Link href="/requests/new?type=SUPPORT" className="text-[#F26522] hover:underline font-medium">
             submit an access request →
@@ -508,15 +497,12 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
       </section>
 
       {/* 5. Security & Credentials */}
-      <section aria-labelledby="security-heading" className="border-t border-[#171714]/10 pt-6 space-y-4">
+      <section aria-labelledby="security-heading" className="border-t border-[#171717]/10 pt-6 space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 id="security-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] m-0">
+            <h2 id="security-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
               SECURITY & CREDENTIALS
             </h2>
-            <p className="text-[12.5px] text-[#68665F] mt-0.5 m-0">
-              Personal password credentials for your dealer session.
-            </p>
           </div>
 
           {!isChangingPassword && (
@@ -527,7 +513,7 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
                 setPasswordSuccess(null);
                 setPasswordError(null);
               }}
-              className="px-3 py-1.5 rounded-[4px] border border-[#171714]/20 hover:border-[#171714] bg-white text-[12.5px] font-medium text-[#171714] transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-[4px] border border-[#171717]/20 hover:border-[#171717] bg-white text-[12.5px] font-medium text-[#171717] transition-colors cursor-pointer"
             >
               Change Password
             </button>
@@ -546,10 +532,10 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
         )}
 
         {!isChangingPassword ? (
-          <div className="border border-[#171714]/10 rounded-[4px] bg-[#FCFBF7] p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-[13px]">
+          <div className="border border-[#171717]/10 rounded-[4px] bg-[#FFFFFF] p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-[13px]">
             <div>
-              <span className="font-medium text-[#171714] block">Account Password Active</span>
-              <span className="text-[#68665F] text-[12.5px] block mt-0.5">
+              <span className="font-medium text-[#171717] block">Account Password Active</span>
+              <span className="text-[#737373] text-[12.5px] block mt-0.5">
                 Signed in as {currentUser.email}. To keep your dealership records secure, ensure you use a strong, unique password.
               </span>
             </div>
@@ -559,9 +545,9 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
             </span>
           </div>
         ) : (
-          <form onSubmit={handleSavePassword} className="border border-[#171714]/15 rounded-[4px] bg-[#FCFBF7] p-5 space-y-4 max-w-xl">
+          <form onSubmit={handleSavePassword} className="border border-[#171717]/15 rounded-[4px] bg-[#FFFFFF] p-5 space-y-4 max-w-xl">
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#68665F] mb-1">
+              <label className="block text-[11px] font-semibold tracking-wider text-[#737373] mb-1">
                 Current Password <span className="text-[#DC2626]">*</span>
               </label>
               <input
@@ -569,12 +555,12 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 required
-                className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/20 bg-white text-[13px] text-[#171714] focus:outline-none focus:border-[#F26522]"
+                className="w-full px-3 py-2 rounded-[4px] border border-[#171717]/20 bg-white text-[13px] text-[#171717] focus:outline-none focus:border-[#F26522]"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#68665F] mb-1">
+              <label className="block text-[11px] font-semibold tracking-wider text-[#737373] mb-1">
                 New Password (Minimum 8 Characters) <span className="text-[#DC2626]">*</span>
               </label>
               <input
@@ -583,12 +569,12 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
                 onChange={(e) => setNewPassword(e.target.value)}
                 required
                 minLength={8}
-                className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/20 bg-white text-[13px] text-[#171714] focus:outline-none focus:border-[#F26522]"
+                className="w-full px-3 py-2 rounded-[4px] border border-[#171717]/20 bg-white text-[13px] text-[#171717] focus:outline-none focus:border-[#F26522]"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#68665F] mb-1">
+              <label className="block text-[11px] font-semibold tracking-wider text-[#737373] mb-1">
                 Confirm New Password <span className="text-[#DC2626]">*</span>
               </label>
               <input
@@ -597,11 +583,11 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 minLength={8}
-                className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/20 bg-white text-[13px] text-[#171714] focus:outline-none focus:border-[#F26522]"
+                className="w-full px-3 py-2 rounded-[4px] border border-[#171717]/20 bg-white text-[13px] text-[#171717] focus:outline-none focus:border-[#F26522]"
               />
             </div>
 
-            <div className="pt-3 border-t border-[#171714]/10 flex items-center justify-end gap-3">
+            <div className="pt-3 border-t border-[#171717]/10 flex items-center justify-end gap-3">
               <button
                 type="button"
                 onClick={() => {
@@ -610,14 +596,14 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
                   setNewPassword('');
                   setConfirmPassword('');
                 }}
-                className="px-4 py-2 rounded-[4px] text-[13px] font-medium text-[#68665F] hover:text-[#171714] transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-[4px] text-[13px] font-medium text-[#737373] hover:text-[#171717] transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={savingPassword}
-                className="px-5 py-2 rounded-[4px] bg-[#171714] hover:bg-black text-white text-[13px] font-semibold disabled:opacity-50 transition-colors cursor-pointer"
+                className="px-5 py-2 rounded-[4px] bg-[#171717] hover:bg-black text-white text-[13px] font-semibold disabled:opacity-50 transition-colors cursor-pointer"
               >
                 {savingPassword ? 'Updating...' : 'Update Password'}
               </button>

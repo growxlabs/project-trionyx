@@ -1,10 +1,15 @@
 import React from 'react';
 
+export type BadgeTone = 'success' | 'danger' | 'warning' | 'info' | 'neutral';
+
 export type OperationalStatus =
   | 'ACTIVE'
   | 'AVAILABLE'
   | 'HEALTHY'
   | 'RESOLVED'
+  | 'VALID'
+  | 'NORMAL'
+  | 'AUDITED'
   | 'PENDING'
   | 'LOW'
   | 'UNASSIGNED'
@@ -14,19 +19,25 @@ export type OperationalStatus =
   | 'HIGH'
   | 'MEDIUM'
   | 'OUT_OF_STOCK'
+  | 'OUT'
   | 'SUSPENDED'
   | 'VOIDED'
   | 'FAILED'
   | 'EXPIRED'
   | 'INACTIVE'
+  | 'CRITICAL'
+  | 'CRITICAL LOW'
+  | 'CRITICAL_LOW'
   | 'CLOSED'
   | 'DRAFT'
   | 'PRIVATE'
   | 'PUBLIC'
+  | 'ARCHIVED'
   | string;
 
-interface StatusBadgeProps {
+export interface StatusBadgeProps {
   status: OperationalStatus;
+  tone?: BadgeTone;
   label?: string;
   size?: 'sm' | 'md';
   className?: string;
@@ -34,6 +45,7 @@ interface StatusBadgeProps {
 
 export function StatusBadge({
   status,
+  tone,
   label,
   size = 'sm',
   className = '',
@@ -42,34 +54,56 @@ export function StatusBadge({
   const raw = norm.replace(/_/g, ' ');
   const displayLabel = label || (raw.charAt(0).toUpperCase() + raw.slice(1).toLowerCase());
 
-  let style = 'bg-[var(--surface-subtle)] text-[var(--text-secondary)] border-[var(--border)]';
+  let computedTone: BadgeTone = tone || 'neutral';
 
-  // Green / Healthy / Active
-  if (['ACTIVE', 'AVAILABLE', 'HEALTHY', 'RESOLVED', 'PUBLIC', 'VALID'].includes(norm)) {
-    style = 'bg-[var(--status-success-soft)] text-[var(--status-success)] border-[var(--status-success-border)]';
+  if (!tone) {
+    if (['ACTIVE', 'AVAILABLE', 'HEALTHY', 'RESOLVED', 'VALID', 'NORMAL', 'AUDITED', 'STABLE'].includes(norm)) {
+      computedTone = 'success';
+    } else if (
+      [
+        'PENDING',
+        'LOW',
+        'UNASSIGNED',
+        'IN_PROGRESS',
+        'REVIEW',
+        'LIMITED',
+        'MEDIUM',
+        'WARN',
+        'REQUIRES TRIAGE',
+        'REQUIRES_TRIAGE',
+        'NO HUB',
+      ].includes(norm)
+    ) {
+      computedTone = 'warning';
+    } else if (
+      [
+        'OUT_OF_STOCK',
+        'OUT',
+        'SUSPENDED',
+        'VOIDED',
+        'FAILED',
+        'EXPIRED',
+        'INACTIVE',
+        'HIGH',
+        'CRITICAL',
+        'CRITICAL LOW',
+        'CRITICAL_LOW',
+      ].includes(norm)
+    ) {
+      computedTone = 'danger';
+    } else if (['PUBLIC', 'INFO', 'DISPATCH', 'CONTACTED', 'CONVERTED'].includes(norm)) {
+      computedTone = 'info';
+    } else {
+      computedTone = 'neutral';
+    }
   }
-  // Amber / Pending / Low / Unassigned / In Progress / Medium priority
-  else if (['PENDING', 'LOW', 'UNASSIGNED', 'IN_PROGRESS', 'REVIEW', 'LIMITED', 'MEDIUM', 'WARN'].includes(norm)) {
-    style = 'bg-[var(--status-warning-soft)] text-[var(--status-warning)] border-[var(--status-warning-border)]';
-  }
-  // Red / Out of Stock / Inactive / Suspended / High priority / Failed
-  else if (['OUT_OF_STOCK', 'OUT', 'SUSPENDED', 'VOIDED', 'FAILED', 'EXPIRED', 'INACTIVE', 'HIGH', 'CRITICAL'].includes(norm)) {
-    style = 'bg-[var(--status-danger-soft)] text-[var(--status-danger)] border-[var(--status-danger-border)]';
-  }
-  // Neutral / Closed / Private / Draft
-  else if (['CLOSED', 'PRIVATE', 'DRAFT', 'ARCHIVED'].includes(norm)) {
-    style = 'bg-[var(--surface-subtle)] text-[var(--text-muted)] border-[var(--border)]';
-  }
-
-  const sizeClass = size === 'sm' 
-    ? 'text-[11px] px-2 py-0.5' 
-    : 'text-[12px] px-2.5 py-1';
 
   return (
     <span
-      className={`inline-flex items-center font-medium rounded-[2px] border ${sizeClass} ${style} ${className}`}
+      className={`unified-pill-badge rounded-full size-${size} tone-${computedTone} ${className}`}
     >
       {displayLabel}
     </span>
   );
 }
+

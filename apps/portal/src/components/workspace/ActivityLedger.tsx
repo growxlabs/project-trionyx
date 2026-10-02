@@ -33,7 +33,7 @@ export function ActivityLedger({
         </span>
       </div>
 
-      <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
+      <div className="overflow-hidden">
         {activities.length === 0 ? (
           <div className="p-3 text-center text-[13px] text-[var(--text-secondary)]">
             No operational events logged for this session yet.
@@ -42,7 +42,7 @@ export function ActivityLedger({
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-[13px]">
               <thead>
-                <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                <tr className="border-b border-[var(--border)]/60 text-[12px] font-semibold text-[var(--text-secondary)]">
                   <th className="py-2 px-3.5 w-24">Time</th>
                   <th className="py-2 px-3.5 w-48">Event</th>
                   <th className="py-2 px-3.5">Record</th>

@@ -68,20 +68,17 @@ export function NewRequestForm({
   };
 
   return (
-    <div className="max-w-2xl space-y-6 text-[#171714]">
+    <div className="max-w-2xl space-y-6 text-[#171717]">
       <div>
         <Link
           href="/requests"
-          className="text-[12.5px] font-semibold text-[#68665F] hover:text-[#171714] inline-flex items-center gap-1 transition-colors mb-2"
+          className="text-[12.5px] font-semibold text-[#737373] hover:text-[#171717] inline-flex items-center gap-1 transition-colors mb-2"
         >
           ← Back to My Requests
         </Link>
         <h1 className="text-[26px] font-semibold tracking-[-0.03em] m-0">
           New Request
         </h1>
-        <p className="text-[13.5px] text-[#68665F] mt-1 m-0">
-          Submit an inquiry, stock allocation question, or technical query directly to your operations desk.
-        </p>
       </div>
 
       {error && (
@@ -90,16 +87,16 @@ export function NewRequestForm({
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="border-t border-[#171714]/10 pt-5 space-y-5">
+      <form onSubmit={handleSubmit} className="border-t border-[#171717]/10 pt-5 space-y-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] mb-1.5">
+            <label className="block text-[11px] font-semibold tracking-[0.14em] text-[#737373] mb-1.5">
               Request Type *
             </label>
             <select
               value={type}
               onChange={(e) => setType(e.target.value as DealerRequestType)}
-              className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/15 bg-white text-[13.5px] text-[#171714] focus:outline-none focus:border-[#F26522]"
+              className="w-full px-3 py-2 rounded-[4px] border border-[#171717]/15 bg-white text-[13.5px] text-[#171717] focus:outline-none focus:border-[#F26522]"
               required
             >
               <option value="PRODUCT_ENQUIRY">Product Enquiry</option>
@@ -110,13 +107,13 @@ export function NewRequestForm({
           </div>
 
           <div>
-            <label className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] mb-1.5">
+            <label className="block text-[11px] font-semibold tracking-[0.14em] text-[#737373] mb-1.5">
               Priority
             </label>
             <select
               value={priority}
               onChange={(e) => setPriority(e.target.value as DealerRequestPriority)}
-              className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/15 bg-white text-[13.5px] text-[#171714] focus:outline-none focus:border-[#F26522]"
+              className="w-full px-3 py-2 rounded-[4px] border border-[#171717]/15 bg-white text-[13.5px] text-[#171717] focus:outline-none focus:border-[#F26522]"
             >
               <option value="LOW">Low</option>
               <option value="MEDIUM">Medium</option>
@@ -127,13 +124,13 @@ export function NewRequestForm({
         </div>
 
         <div>
-          <label className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] mb-1.5">
-            Product <span className="font-normal lowercase text-[#68665F]/80">(optional)</span>
+          <label className="block text-[11px] font-semibold tracking-[0.14em] text-[#737373] mb-1.5">
+            Product <span className="font-normal lowercase text-[#737373]/80">(optional)</span>
           </label>
           <select
             value={productId}
             onChange={(e) => setProductId(e.target.value)}
-            className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/15 bg-white text-[13.5px] text-[#171714] focus:outline-none focus:border-[#F26522]"
+            className="w-full px-3 py-2 rounded-[4px] border border-[#171717]/15 bg-white text-[13.5px] text-[#171717] focus:outline-none focus:border-[#F26522]"
           >
             <option value="">None / General Inquiry</option>
             {products.map((p) => (
@@ -145,7 +142,7 @@ export function NewRequestForm({
         </div>
 
         <div>
-          <label className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] mb-1.5">
+          <label className="block text-[11px] font-semibold tracking-[0.14em] text-[#737373] mb-1.5">
             Subject *
           </label>
           <input
@@ -153,7 +150,7 @@ export function NewRequestForm({
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
             placeholder="Brief summary of your request"
-            className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/15 bg-white text-[13.5px] text-[#171714] placeholder-[#68665F]/50 focus:outline-none focus:border-[#F26522]"
+            className="w-full px-3 py-2 rounded-[4px] border border-[#171717]/15 bg-white text-[13.5px] text-[#171717] placeholder-[#737373]/50 focus:outline-none focus:border-[#F26522]"
             required
             minLength={3}
             maxLength={200}
@@ -161,7 +158,7 @@ export function NewRequestForm({
         </div>
 
         <div>
-          <label className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] mb-1.5">
+          <label className="block text-[11px] font-semibold tracking-[0.14em] text-[#737373] mb-1.5">
             Message *
           </label>
           <textarea
@@ -169,7 +166,7 @@ export function NewRequestForm({
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Provide specific details, quantity requirements, or application questions..."
             rows={5}
-            className="w-full px-3 py-2 rounded-[4px] border border-[#171714]/15 bg-white text-[13.5px] text-[#171714] placeholder-[#68665F]/50 focus:outline-none focus:border-[#F26522]"
+            className="w-full px-3 py-2 rounded-[4px] border border-[#171717]/15 bg-white text-[13.5px] text-[#171717] placeholder-[#737373]/50 focus:outline-none focus:border-[#F26522]"
             required
             minLength={5}
             maxLength={2000}

@@ -169,7 +169,7 @@ export function DistributorsTable({ initialDistributors, user }: DistributorsTab
               )}
 
               {/* Working Table */}
-              <div className={`overflow-hidden ${filteredDistributors.length === 0 ? '' : 'bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px]'}`}>
+              <div className="overflow-hidden">
                 {filteredDistributors.length === 0 ? (
                   <DistributorEmptyState
                     kind="registry"
@@ -199,7 +199,7 @@ export function DistributorsTable({ initialDistributors, user }: DistributorsTab
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse text-[14px]">
                       <thead>
-                        <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                        <tr className="border-b border-[var(--border)]/60 text-[12px] font-semibold text-[var(--text-secondary)]">
                           <th className="py-2.5 px-4 w-36">Distributor Code</th>
                           <th className="py-2.5 px-4">Business Name & Territory</th>
                           <th className="py-2.5 px-4">Contact</th>
@@ -239,10 +239,11 @@ export function DistributorsTable({ initialDistributors, user }: DistributorsTab
                               <div className="text-[12px] text-[var(--text-muted)]">{d.state}</div>
                             </td>
                             <td className="py-2.5 px-4 text-center">
-                              <span className="inline-flex items-center px-2 py-0.5 rounded bg-[var(--surface-subtle)] border border-[var(--border)] text-[12px] font-sans font-medium text-[var(--text-primary)]">
-                                {d.activeDealerCount ?? 0}
-                                <span className="text-[var(--text-muted)] ml-1">/ {d.dealerCount ?? 0}</span>
-                              </span>
+                              <StatusBadge
+                                status="ACTIVE"
+                                label={`${d.activeDealerCount ?? 0} / ${d.dealerCount ?? 0}`}
+                                tone="neutral"
+                              />
                             </td>
                             <td className="py-2.5 px-4">
                               <StatusBadge status={d.status} />

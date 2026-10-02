@@ -210,7 +210,7 @@ export function DealersTable({ initialDealers, totalCount, distributors, user }:
               )}
 
               {/* Working Table */}
-              <div className={`overflow-hidden ${filteredDealers.length === 0 ? '' : 'bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px]'}`}>
+              <div className="overflow-hidden">
                 {filteredDealers.length === 0 ? (
                   <DealerEmptyState
                     kind="registry"
@@ -241,7 +241,7 @@ export function DealersTable({ initialDealers, totalCount, distributors, user }:
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                       <thead>
-                        <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                        <tr className="border-b border-[var(--border)]/60 text-[12px] font-semibold text-[var(--text-secondary)]">
                           <th className="py-2.5 px-4 w-32">Dealer Code</th>
                           <th className="py-2.5 px-4">Studio / Dealer Name</th>
                           <th className="py-2.5 px-4">Contact</th>
@@ -294,9 +294,7 @@ export function DealersTable({ initialDealers, totalCount, distributors, user }:
                                   </span>
                                 </div>
                               ) : (
-                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]">
-                                  Unassigned
-                                </span>
+                                <StatusBadge status="UNASSIGNED" label="Unassigned" tone="warning" />
                               )}
                             </td>
                             <td className="py-2.5 px-4">

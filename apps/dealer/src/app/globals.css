@@ -5,28 +5,28 @@
 @theme {
   --color-brand-orange: #F26522;
   --color-brand-red: #D9362B;
-  --color-brand-charcoal: #171714;
-  --color-brand-graphite: #171714;
-  --color-brand-warm-white: #F5F5EE;
-  --color-brand-light-gray: #EFECE3;
-  --color-brand-body-gray: #68665F;
+  --color-brand-charcoal: #171717;
+  --color-brand-graphite: #171717;
+  --color-brand-warm-white: #F5F5F5;
+  --color-brand-light-gray: #EBEBEB;
+  --color-brand-body-gray: #737373;
 
-  --color-surface-default: #F5F5EE;
-  --color-surface-subtle: #EFECE3;
-  --color-surface-muted: #EFECE3;
-  --color-surface-elevated: #FCFBF7;
+  --color-surface-default: #F5F5F5;
+  --color-surface-subtle: #EBEBEB;
+  --color-surface-muted: #EBEBEB;
+  --color-surface-elevated: #FFFFFF;
 
-  --color-text-primary: #171714;
-  --color-text-secondary: #68665F;
-  --color-text-muted: #68665F;
-  --color-text-inverse: #FCFBF7;
+  --color-text-primary: #171717;
+  --color-text-secondary: #737373;
+  --color-text-muted: #737373;
+  --color-text-inverse: #FFFFFF;
 
-  --color-border-subtle: rgba(23, 23, 20, 0.07);
-  --color-border-default: rgba(23, 23, 20, 0.07);
-  --color-border-strong: rgba(23, 23, 20, 0.12);
+  --color-border-subtle: rgba(0, 0, 0, 0.07);
+  --color-border-default: rgba(0, 0, 0, 0.07);
+  --color-border-strong: rgba(0, 0, 0, 0.12);
 
   --font-sans: 'Instrument Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: monospace;
+  --font-mono: 'Instrument Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
   --radius-xs: 2px;
   --radius-sm: 4px;
@@ -38,24 +38,24 @@
 :root {
   --page-max: 1440px;
   --page-gutter: 32px;
-  --frame-border: rgba(23, 23, 20, 0.07);
+  --frame-border: rgba(0, 0, 0, 0.07);
 
-  --background: #F5F5EE;
-  --foreground: #171714;
+  --background: #F5F5F5;
+  --foreground: #171717;
   --brand-orange: #F26522;
   --brand-red: #D9362B;
-  --brand-charcoal: #171714;
-  --brand-warm-white: #F5F5EE;
-  --brand-elevated: #FCFBF7;
-  --brand-secondary: #EFECE3;
-  --brand-border: rgba(23, 23, 20, 0.07);
-  --brand-body-gray: #68665F;
+  --brand-charcoal: #171717;
+  --brand-warm-white: #F5F5F5;
+  --brand-elevated: #FFFFFF;
+  --brand-secondary: #EBEBEB;
+  --brand-border: rgba(0, 0, 0, 0.07);
+  --brand-body-gray: #737373;
 }
 
 html,
 body {
-  background-color: #F5F5EE;
-  color: #171714;
+  background-color: #F5F5F5;
+  color: #171717;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -64,4 +64,14 @@ body {
 :focus-visible {
   outline: 2px solid #F26522;
   outline-offset: 2px;
+}
+
+/* Editorial overview textures */
+.ops-hero-grid {
+  background-image: radial-gradient(rgba(23, 23, 20, 0.18) 0.7px, transparent 0.7px);
+  background-size: 16px 16px;
+}
+.ops-hero-fade {
+  -webkit-mask-image: linear-gradient(115deg, #000 0%, rgba(0, 0, 0, 0.35) 46%, transparent 74%);
+  mask-image: linear-gradient(115deg, #000 0%, rgba(0, 0, 0, 0.35) 46%, transparent 74%);
 }

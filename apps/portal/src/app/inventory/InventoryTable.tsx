@@ -556,7 +556,7 @@ export function InventoryTable({
               )}
 
               {/* Main Table */}
-              <div className={`overflow-hidden ${filteredSummaries.length === 0 ? '' : 'bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px]'}`}>
+              <div className="overflow-hidden">
                 {filteredSummaries.length === 0 ? (
                   <EmptyState
                     icon={<WorkshopFrontageIcon className="w-20 h-20 text-[var(--text-muted)]" />}
@@ -567,7 +567,7 @@ export function InventoryTable({
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                       <thead>
-                        <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                        <tr className="border-b border-[var(--border)]/60 text-[12px] font-semibold text-[var(--text-secondary)]">
                           <th className="py-2.5 px-4">Product</th>
                           <th className="py-2.5 px-4">Facility / Location</th>
                           <th className="py-2.5 px-4 text-right">Available Serials</th>
@@ -715,11 +715,11 @@ export function InventoryTable({
                   description="All positions meet safety threshold levels."
                 />
               ) : (
-                <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
+                <div className="overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                       <thead>
-                        <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                        <tr className="border-b border-[var(--border)]/60 text-[12px] font-semibold text-[var(--text-secondary)]">
                           <th className="py-2.5 px-4">Product</th>
                           <th className="py-2.5 px-4">Location</th>
                           <th className="py-2.5 px-4 w-28">State</th>
@@ -787,11 +787,11 @@ export function InventoryTable({
                   description="Serial transfers will appear here."
                 />
               ) : (
-                <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
+                <div className="overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                       <thead>
-                        <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                        <tr className="border-b border-[var(--border)]/60 text-[12px] font-semibold text-[var(--text-secondary)]">
                           <th className="py-2.5 px-4 w-20">Time</th>
                           <th className="py-2.5 px-4 w-36">Serial</th>
                           <th className="py-2.5 px-4">Product</th>
@@ -999,13 +999,9 @@ export function InventoryTable({
                       </div>
                       <div className="flex items-center gap-2">
                         {item.status === 'READY' ? (
-                          <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[var(--status-success-soft)] text-[var(--status-success)] border border-[var(--status-success-border)]">
-                            Ready
-                          </span>
+                          <StatusBadge status="ACTIVE" label="Ready" tone="success" />
                         ) : (
-                          <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]">
-                            Duplicate
-                          </span>
+                          <StatusBadge status="WARN" label="Duplicate" tone="warning" />
                         )}
                         <button
                           type="button"

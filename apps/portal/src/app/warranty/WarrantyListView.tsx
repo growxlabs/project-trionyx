@@ -429,11 +429,11 @@ export function WarrantyListView({
             </h2>
           </div>
 
-          <div className="bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px] overflow-hidden">
+          <div className="overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                  <tr className="border-b border-[var(--border)]/60 text-[12px] font-semibold text-[var(--text-secondary)]">
                     <th className="py-2.5 px-4 w-44">Serial</th>
                     <th className="py-2.5 px-4">Product</th>
                     <th className="py-2.5 px-4">Dealer / Channel</th>
@@ -526,7 +526,7 @@ export function WarrantyListView({
         />
 
       {/* Warranties Table */}
-      <div className={`overflow-hidden ${filteredWarranties.length === 0 ? '' : 'bg-[var(--surface-raised)] border border-[var(--border)] rounded-[4px]'}`}>
+      <div className="overflow-hidden">
         {filteredWarranties.length === 0 ? (
           <EmptyState
             icon={<VerifiedShieldIcon className="w-20 h-20 text-[var(--text-muted)]" />}
@@ -553,7 +553,7 @@ export function WarrantyListView({
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-[var(--border)]/60 bg-[var(--surface-subtle)] text-[12px] font-semibold text-[var(--text-secondary)]">
+                <tr className="border-b border-[var(--border)]/60 text-[12px] font-semibold text-[var(--text-secondary)]">
                   <th className="py-2.5 px-4">Serial Number</th>
                   <th className="py-2.5 px-4">Product</th>
                   <th className="py-2.5 px-4">Channel / Dealer</th>
@@ -589,9 +589,7 @@ export function WarrantyListView({
                           {w.dealerName}
                         </span>
                       ) : (
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium bg-[var(--surface-subtle)] text-[var(--text-secondary)] border border-[var(--border)]">
-                          Internal Direct
-                        </span>
+                        <StatusBadge status="INTERNAL" label="Internal Direct" tone="neutral" />
                       )}
                     </td>
 

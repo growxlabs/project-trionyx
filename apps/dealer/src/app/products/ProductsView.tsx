@@ -32,21 +32,18 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
   }, [products, search, selectedCategory]);
 
   return (
-    <div className="space-y-8 text-[#171714]">
+    <div className="space-y-8 text-[#171717]">
       {/* 1. Header */}
       <div>
         <h1 className="text-[26px] sm:text-[30px] font-semibold tracking-[-0.03em] m-0">
           Products
         </h1>
-        <p className="mt-1 text-[13.5px] text-[#68665F] m-0">
-          Trionyx products available to your dealership.
-        </p>
       </div>
 
       {/* 2. Product Families (Section 6) */}
       {categories.length > 0 && (
-        <section aria-labelledby="product-families-heading" className="border-t border-[#171714]/10 pt-5 space-y-3">
-          <h2 id="product-families-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] m-0">
+        <section aria-labelledby="product-families-heading" className="border-t border-[#171717]/10 pt-5 space-y-3">
+          <h2 id="product-families-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
             PRODUCT FAMILIES
           </h2>
           <div className="flex flex-wrap gap-2">
@@ -55,8 +52,8 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
               onClick={() => setSelectedCategory('ALL')}
               className={`px-3 py-1 rounded-[4px] text-[12.5px] font-medium border transition-colors cursor-pointer ${
                 selectedCategory === 'ALL'
-                  ? 'bg-[#171714] text-white border-[#171714]'
-                  : 'bg-white text-[#171714] border-[#171714]/15 hover:border-[#171714]/30'
+                  ? 'bg-[#171717] text-white border-[#171717]'
+                  : 'bg-white text-[#171717] border-[#171717]/15 hover:border-[#171717]/30'
               }`}
             >
               All Families
@@ -70,8 +67,8 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
                   onClick={() => setSelectedCategory(isSelected ? 'ALL' : c.id)}
                   className={`px-3 py-1 rounded-[4px] text-[12.5px] font-medium border transition-colors cursor-pointer ${
                     isSelected
-                      ? 'bg-[#171714] text-white border-[#171714]'
-                      : 'bg-white text-[#171714] border-[#171714]/15 hover:border-[#171714]/30'
+                      ? 'bg-[#171717] text-white border-[#171717]'
+                      : 'bg-white text-[#171717] border-[#171717]/15 hover:border-[#171717]/30'
                   }`}
                 >
                   {c.name}
@@ -83,7 +80,7 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
       )}
 
       {/* 3. Search & Filter Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 border-y border-[#171714]/10 py-3.5">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 border-y border-[#171717]/10 py-3.5">
         <div className="relative flex-1 max-w-md">
           <input
             type="search"
@@ -91,7 +88,7 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search products..."
             aria-label="Search products"
-            className="w-full px-3 py-1.5 rounded-[4px] border border-[#171714]/15 bg-white text-[13px] text-[#171714] placeholder-[#68665F]/60 focus:border-[#F26522] focus:outline-none"
+            className="w-full px-3 py-1.5 rounded-[4px] border border-[#171717]/15 bg-white text-[13px] text-[#171717] placeholder-[#737373]/60 focus:border-[#F26522] focus:outline-none"
           />
         </div>
         <div className="w-full sm:w-56">
@@ -99,7 +96,7 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
             aria-label="Filter by category"
-            className="w-full px-3 py-1.5 rounded-[4px] border border-[#171714]/15 bg-white text-[13px] text-[#171714] focus:border-[#F26522] focus:outline-none"
+            className="w-full px-3 py-1.5 rounded-[4px] border border-[#171717]/15 bg-white text-[13px] text-[#171717] focus:border-[#F26522] focus:outline-none"
           >
             <option value="ALL">All Categories</option>
             {categories.map((c) => (
@@ -125,14 +122,14 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
 
       {/* 4. Editorial Products List */}
       <section aria-labelledby="products-list-heading">
-        <div className="flex items-baseline justify-between border-b border-[#171714]/10 pb-2.5">
-          <h2 id="products-list-heading" className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#68665F] m-0">
+        <div className="flex items-baseline justify-between border-b border-[#171717]/10 pb-2.5">
+          <h2 id="products-list-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
             PRODUCTS ({filteredProducts.length})
           </h2>
         </div>
 
         {filteredProducts.length > 0 ? (
-          <div className="divide-y divide-[#171714]/10">
+          <div className="divide-y divide-[#171717]/10">
             {filteredProducts.map((p) => {
               const availabilityLabel =
                 p.availability === 'AVAILABLE'
@@ -150,33 +147,33 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
 
               return (
                 <div key={p.id} className="py-5 space-y-2 text-[13px]">
-                  <div className="text-[11px] font-semibold uppercase tracking-wider text-[#68665F]">
-                    {p.categoryName || 'GENERAL'} / COATING
+                  <div className="text-[11px] font-semibold tracking-wider text-[#737373]">
+                    {p.categoryName || 'General'} / Coating
                   </div>
 
                   <div>
                     <Link
                       href={`/products/${p.id}`}
-                      className="text-[16px] font-semibold text-[#171714] hover:text-[#F26522] block leading-snug"
+                      className="text-[16px] font-semibold text-[#171717] hover:text-[#F26522] block leading-snug"
                     >
                       {p.name}
                     </Link>
                     {p.shortDescription && (
-                      <p className="mt-1 text-[13px] text-[#68665F] max-w-2xl leading-relaxed m-0">
+                      <p className="mt-1 text-[13px] text-[#737373] max-w-2xl leading-relaxed m-0">
                         {p.shortDescription}
                       </p>
                     )}
                   </div>
 
                   <div className="text-[12.5px]">
-                    <span className="text-[#68665F]">Availability: </span>
+                    <span className="text-[#737373]">Availability: </span>
                     <span className={`font-semibold ${availabilityColor}`}>{availabilityLabel}</span>
                   </div>
 
                   <div className="flex items-center gap-4 pt-1">
                     <Link
                       href={`/products/${p.id}`}
-                      className="text-[12.5px] font-semibold text-[#171714] hover:text-[#F26522] hover:underline"
+                      className="text-[12.5px] font-semibold text-[#171717] hover:text-[#F26522] hover:underline"
                     >
                       View product →
                     </Link>
@@ -194,7 +191,7 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
             })}
           </div>
         ) : (
-          <div className="py-8 text-[13px] text-[#68665F]">
+          <div className="py-8 text-[13px] text-[#737373]">
             {search || selectedCategory !== 'ALL'
               ? 'No products match your search or filter.'
               : 'No products are currently available for this dealership.'}

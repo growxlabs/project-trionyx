@@ -14,8 +14,8 @@ export default function LoginPage() {
     : 'http://localhost:3000/contact';
 
   return (
-    <div className="min-h-screen bg-[#F7F6F0] flex flex-col justify-center items-center px-4 py-12">
-      <div className="w-full max-w-[420px] bg-[#FCFBF7] border border-[#E5E3DB] rounded-lg p-8 shadow-[0_4px_24px_rgba(23,23,20,0.04)]">
+    <div className="min-h-screen bg-[#F5F5F5] flex flex-col justify-center items-center px-4 py-12">
+      <div className="w-full max-w-[420px] bg-[#FFFFFF] border border-[#E0E0E0] rounded-lg p-8 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
         {/* Header */}
         <div className="text-center mb-8">
           <Image
@@ -26,7 +26,7 @@ export default function LoginPage() {
             priority
             className="mx-auto mb-5 h-14 w-auto object-contain"
           />
-          <h1 className="text-[22px] font-bold text-[#171714] tracking-tight">
+          <h1 className="text-[22px] font-bold text-[#171717] tracking-tight">
             Distributor Login
           </h1>
         </div>
@@ -35,11 +35,11 @@ export default function LoginPage() {
         <LoginForm />
 
         {/* Footer */}
-        <div className="mt-6 text-center text-[12.5px] text-[#68665F]">
+        <div className="mt-6 text-center text-[12.5px] text-[#737373]">
           Need access?{' '}
           <a
             href={contactUrl}
-            className="font-medium text-[#171714] hover:text-[#F26522] transition-colors underline underline-offset-2"
+            className="font-medium text-[#171717] hover:text-[#F26522] transition-colors underline underline-offset-2"
           >
             Contact Trionyx
           </a>

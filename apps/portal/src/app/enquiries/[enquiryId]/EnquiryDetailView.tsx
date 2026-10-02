@@ -10,6 +10,7 @@ import type {
   SafeUser,
   User,
 } from '@trionyx/types';
+import { StatusBadge } from '../../../components/workspace';
 
 interface EnquiryDetailViewProps {
   enquiry: ContactEnquiry;
@@ -132,28 +133,7 @@ export function EnquiryDetailView({
     }
   };
 
-  const getStatusBadge = (status: ContactEnquiryStatus) => {
-    switch (status) {
-      case 'NEW':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--status-info-soft)] text-[var(--status-info)] border border-[var(--status-info-border)]">
-            New
-          </span>
-        );
-      case 'IN_PROGRESS':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--status-warning-soft)] text-[var(--status-warning)] border border-[var(--status-warning-border)]">
-            In Progress
-          </span>
-        );
-      case 'CLOSED':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[11px] font-medium bg-[var(--surface-subtle)] text-[var(--text-secondary)] border border-[var(--border)]">
-            Closed
-          </span>
-        );
-    }
-  };
+  const getStatusBadge = (status: ContactEnquiryStatus) => <StatusBadge status={status} />;
 
   const formatDate = (isoString: string) => {
     try {
