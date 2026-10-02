@@ -85,7 +85,7 @@ export function SiteFooter() {
           <p className="m-0 text-[15px] leading-[1.5] text-[#C5C2B9]">
             © {new Date().getFullYear()} Trionyx India Private Limited
           </p>
-          <p className="m-0 text-[12px] leading-[1.4] text-[#B5B2A9] md:text-right">
+          <p className="m-0 text-[15px] leading-[1.5] text-[#C5C2B9] md:text-right">
             Technology &amp; Digital Partner by{' '}
             <a
               href="https://growxlabs.tech/"
