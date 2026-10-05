@@ -99,7 +99,7 @@ export default function InternalLoginPage() {
           )}
 
           {/* Authentication Form */}
-          <form onSubmit={handleSubmit} noValidate className="space-y-5">
+          <form method="post" onSubmit={handleSubmit} noValidate className="space-y-5">
             {/* Email Field */}
             <div>
               <label

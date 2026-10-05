@@ -8,8 +8,6 @@
 - Real dealer_distributor_history stores initial assignment and reassignments, previous/new IDs, changed_at, changed_by and reason. Actor names and reason are omitted from tool results. Deleted distributor references may be NULL; historical names cannot be reconstructed.
 - Stored location fields: address_line1/2, city, district, state, postal_code, country. Distributor territory exists but is excluded from this capability.
 - Existing pagination is page/limit with a count, not cursors. Extend filters for exact ID/code, city, name matching, assignment presence and hasDealers.
-- Existing business audit logs remain separate from agent_execution_logs. Extend execution response constraint through a new migration, preserving old rows.
-- Existing runtime uses getModel('trix'), five Phase 01/02 tools, fresh authorization per call, two calls per request, one model step, summary-only telemetry.
 - Missing prerequisite document: TRIX-02-INVENTORY-BACKEND.md is absent. PHASE-02-INVENTORY-BACKEND-REPORT.md and existing implementation/tests serve as inspection evidence; live acceptance of prior phases is not established by the report alone.
 
 ## Planned changes

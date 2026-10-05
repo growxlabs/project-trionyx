@@ -19,8 +19,6 @@
 .answer { margin-top: 28px; }
 .working, .message { margin: 0; font-size: 15px; line-height: 25px; }
 .working, .muted { color: var(--text-secondary); }
-.serial { max-width: 680px; }
-.serial h2 { margin: 0 0 18px; font-family: var(--font-mono); font-size: 20px; line-height: 28px; font-weight: 600; overflow-wrap: anywhere; }
 .productRow { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
 .productRow > p { margin: 0; font-size: 15px; line-height: 24px; }
 .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 24px 0; }
@@ -32,6 +30,23 @@
 .activity ol { list-style: none; margin: 16px 0 0; padding: 0; }
 .activity li + li { margin-top: 20px; }
 .activity p, .technical p { margin: 0; }
+.card { max-width: 680px; }
+.card h2 { margin: 0 0 12px; font-size: 16px; line-height: 24px; font-weight: 600; }
+.cardTotal { margin: 0 0 8px; font-size: 14px; font-weight: 500; }
+.rows { list-style: none; margin: 8px 0 0; padding: 0; max-height: 360px; overflow-y: auto; }
+.row { padding: 10px 0; border-bottom: 1px solid var(--border); }
+.rowMain { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.rowTitle { font-size: 14px; line-height: 22px; font-weight: 500; color: var(--text-primary); text-decoration: none; overflow-wrap: anywhere; }
+a.rowTitle:hover { text-decoration: underline; }
+.rowSub { margin: 2px 0 0; font-size: 12px; line-height: 18px; color: var(--text-secondary); overflow-wrap: anywhere; }
+.countRow { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+.countRow span:last-child { font-family: var(--font-mono); font-weight: 600; }
+.storedMessage { margin: 0 0 20px; padding: 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; line-height: 22px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.progress { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 14px; line-height: 22px; }
+.progressDone { color: var(--text-secondary); }
+.progressActive { color: var(--text-primary); animation: trixPulse 1.4s ease-in-out infinite; }
+@keyframes trixPulse { 50% { opacity: 0.55; } }
+@media (prefers-reduced-motion: reduce) { .progressActive { animation: none; } }
 .toolName { font-weight: 500; color: var(--text-primary); }
 .activity dl { margin: 14px 0 0 16px; display: grid; gap: 14px; }
 .activity dd { margin: 0; max-width: 520px; }

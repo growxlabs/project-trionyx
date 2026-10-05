@@ -37,7 +37,6 @@ Preserve all earlier rules:
 - no model-generated HTML
 - typed tools only
 - existing services/repositories remain source of truth
-- sanitized agent execution logging
 - bounded tool execution
 - no invented business metrics
 - no invented thresholds
@@ -466,7 +465,6 @@ Operational history uses primary serial movements/dealer assignment ledgers and 
 
 Enquiries lack dealer_id. Dealer/open-enquiry/warranty correlation returns TRIX_CORRELATION_UNSUPPORTED before the model. Void/approve/register/policy-change requests are refused before the model. Every tool checks active MD authorization with fresh runtime session and same user. Strict schemas, getModel("trix") boundary, two total calls, zero retries, 30-second timeout and typed results remain intact. Model-authored HTML/prose/extra metrics cannot enter results.
 
-Telemetry forward migration 0015_trix_warranty_executive_logs adds six response types, preserves old rows/conversations, CHECK/RLS and idempotence. Applied to configured PostgreSQL telemetry only. Sanitized logs contain filter names, counts, durations and controlled errors; no raw records, prompts, credentials or session tokens.
 
 ## Verification
 

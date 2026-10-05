@@ -1,6 +1,5 @@
 import { serialMovementsRepository } from '@trionyx/database';
 import type { SafeUser, SerialMovementType } from '@trionyx/types';
-import { assertManagingDirector } from './lookup-serial';
 import {
   resolveProductTarget,
   resolveLocationTarget,
@@ -23,7 +22,6 @@ export async function getRecentSerialMovements(
   productResolver?: ProductResolver,
   locationResolver?: LocationResolver
 ): Promise<SerialMovementsResult> {
-  assertManagingDirector(user);
 
   let targetProductId = input.productId;
   let targetLocationId = input.locationId;

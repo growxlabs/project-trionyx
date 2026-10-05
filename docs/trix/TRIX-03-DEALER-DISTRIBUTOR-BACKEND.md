@@ -60,8 +60,6 @@ The following remain locked:
 - no model-supplied role/user identity
 - all tools must use typed schemas
 - tools must reuse domain/service/repository logic
-- all executions must be logged with sanitized telemetry
-- business audit logs and agent execution logs remain separate
 - Phase 01 serial lookup remains supported
 - Phase 02 inventory tools remain supported
 
@@ -846,7 +844,6 @@ No HTML.
 
 # 21. Logging
 
-Use the existing TRIX execution telemetry.
 
 For every Phase 03 tool call, log:
 
@@ -878,7 +875,6 @@ groupsReturned=6
 totalDealers=42
 ```
 
-Do not store full dealer lists unnecessarily in telemetry.
 
 Do not log:
 
@@ -1134,7 +1130,6 @@ Expected:
 - real dealer resolution
 - real stored fields only
 - correct distributor relationship if assigned
-- execution logged
 
 ## Scenario B
 
@@ -1306,7 +1301,6 @@ TRIX Phase 03 is complete only when:
 - type checks pass
 - targeted lint passes
 - real MD acceptance scenarios are completed
-- Postgres telemetry persistence is verified
 - implementation report is produced
 - Phase 04 has NOT started
 

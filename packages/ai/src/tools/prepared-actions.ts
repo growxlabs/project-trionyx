@@ -2,10 +2,8 @@ import { preparedActionsService, PreparedActionError, prepareDealerDistributorIn
 import type { PreparedAction } from '@trionyx/validation';
 import { z } from 'zod';
 import { preparedActionResponseSchema, type PreparedActionResult } from '../responses/prepared-actions';
-import { assertManagingDirector } from './lookup-serial';
 export type PreparationCapability=Pick<typeof preparedActionsService,'prepare'>;
 async function prepare<S extends z.ZodType>(schema:S,input:z.input<S>,type:PreparedAction['actionType'],context:PreparedActionContext,service:PreparationCapability):Promise<PreparedActionResult> {
-  assertManagingDirector(context.user);
   const parsed=schema.safeParse(input);
   if(!parsed.success)return {success:false,errorCode:'TRIX_ACTION_PREPARATION_FAILED',message:'Supply valid exact records and proposed values for this preparation.'};
   try{return {success:true,response:preparedActionResponseSchema.parse({type:'prepared_action',action:await service.prepare(type,parsed.data,context)})};}

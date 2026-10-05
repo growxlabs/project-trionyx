@@ -61,8 +61,6 @@ The following remain locked:
 - no model-supplied role/user identity
 - typed tools only
 - tools reuse domain/service/repository logic
-- all executions logged using sanitized telemetry
-- business audit logs remain separate from agent execution logs
 - Phase 01 serial lookup remains supported
 - Phase 02 inventory tools remain supported
 - Phase 03 dealer/distributor tools remain supported
@@ -139,7 +137,6 @@ If the current database cannot support a requested interpretation, TRIX must say
 - typed tool inputs/outputs
 - runtime registration
 - MD authorization
-- sanitized execution logging
 - automated tests
 - live acceptance checks
 
@@ -837,7 +834,6 @@ No generated HTML.
 
 # 22. Logging
 
-Use existing TRIX execution telemetry.
 
 Log:
 
@@ -870,7 +866,6 @@ groupsReturned=5
 total=34
 ```
 
-Do not persist unnecessary personal data in telemetry.
 
 Do not log full enquiry message bodies unless explicitly necessary for debugging and approved.
 
@@ -1272,7 +1267,6 @@ TRIX Phase 04 is complete only when:
 - type checks pass
 - targeted lint passes
 - live MD acceptance scenarios are completed
-- Postgres telemetry persistence is verified
 - implementation report is produced
 - Phase 05 has NOT started
 

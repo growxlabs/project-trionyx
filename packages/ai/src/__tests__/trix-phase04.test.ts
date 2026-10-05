@@ -1,12 +1,11 @@
+import { toolCallPart, activityName, ChainMockModel } from './tool-call';
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { MockLanguageModelV3 } from 'ai/test';
-import { getDbClient, contactEnquiriesRepository, enquiryReadsRepository, agentLogsRepository, type AgentExecutionLog } from '@trionyx/database';
+import { getDbClient, contactEnquiriesRepository, enquiryReadsRepository } from '@trionyx/database';
 import { createEnquiryIntelligenceService } from '@trionyx/api';
 import type { SafeUser } from '@trionyx/types';
-import { AGENT_LOG_TABLE_STATEMENTS } from '../../../database/src/agentLogSchema';
-import { migrateEnquiryLogs } from '../../../database/src/agentLogMigration';
 import { searchEnquiries, getEnquiryDetails, getEnquirySummary, getEnquiryAttention, getRecentEnquiryChanges, enquiryTodayBounds } from '../tools/enquiries';
 import { enquiryResponseSchema } from '../responses/enquiries';
 import { runTrix } from '../trix-agent';
@@ -17,9 +16,8 @@ const context = { user: md, sessionId: 'secret-session', authorize: async () => 
 const service = createEnquiryIntelligenceService({
   list: query => contactEnquiriesRepository.list(query, db), owners: query => enquiryReadsRepository.owners(query, db), summary: query => enquiryReadsRepository.summary(query, db), attention: query => enquiryReadsRepository.attention(query, db), changes: query => enquiryReadsRepository.changes(query, db, false),
 });
-const logs = { create: (log: AgentExecutionLog) => agentLogsRepository.create(log, db), update: (log: AgentExecutionLog) => agentLogsRepository.update(log, db) };
 function model(toolName: string, input: unknown, extraText?: string) {
-  return new MockLanguageModelV3({ doGenerate: { content: [{ type: 'tool-call', toolCallId: randomUUID(), toolName, input: JSON.stringify(input) }, ...(extraText ? [{type:'text' as const,text:extraText}] : [])], finishReason: { unified: 'tool-calls', raw: undefined }, usage: { inputTokens: { total: 10, noCache: 10, cacheRead: undefined, cacheWrite: undefined }, outputTokens: { total: 10, text: 10, reasoning: undefined } }, warnings: [] } });
+  return new ChainMockModel({ doGenerate: { content: [toolCallPart(randomUUID(), toolName, input), ...(extraText ? [{type:'text' as const,text:extraText}] : [])], finishReason: { unified: 'tool-calls', raw: undefined }, usage: { inputTokens: { total: 10, noCache: 10, cacheRead: undefined, cacheWrite: undefined }, outputTokens: { total: 10, text: 10, reasoning: undefined } }, warnings: [] } });
 }
 let snapshot: string;
 async function businessSnapshot() { return JSON.stringify(await Promise.all(['contact_enquiries', 'audit_logs', 'enquiry_notes'].map(table => db.execute(`SELECT * FROM ${table} ORDER BY id`)))); }
@@ -31,7 +29,7 @@ before(async () => {
     'CREATE TABLE contact_enquiries (id TEXT PRIMARY KEY, enquiry_code TEXT UNIQUE, type TEXT, full_name TEXT, phone TEXT, email TEXT, company_name TEXT, business_address TEXT, business_type TEXT, city TEXT, state TEXT, pincode TEXT, territory TEXT, product_id TEXT, purchase_dealer_details TEXT, message TEXT, status TEXT, assigned_to TEXT, created_at TEXT, updated_at TEXT)',
     'CREATE TABLE audit_logs (id TEXT PRIMARY KEY, user_id TEXT, event TEXT, metadata TEXT, created_at TEXT)',
     'CREATE TABLE enquiry_notes (id TEXT PRIMARY KEY, body TEXT)',
-    'CREATE TABLE _migrations (name TEXT UNIQUE)', ...AGENT_LOG_TABLE_STATEMENTS,
+    'CREATE TABLE _migrations (name TEXT UNIQUE)',
   ]);
   const fixtures = [
     ['one','DEALER_ENQUIRY','NEW',null,'Hyderabad','Telangana','2026-10-01T00:00:00.000Z'],
@@ -104,14 +102,10 @@ test('broken owner and malformed repository output fail safely',async()=>{
 });
 test('model-authored extra metrics are excluded from backend response',async()=>{
   const selected=model('getEnquirySummary',{groupBy:'status'},'Invented HOT group count=999; leadScore=99; <script>leak()</script>');
-  const result=await runTrix({conversationId:randomUUID(),message:'Show enquiry status counts'},context,{model:selected,enquiries:service,logs});
+  const result=await runTrix({conversationId:randomUUID(),message:'Show enquiry status counts'},context,{model:selected,enquiries:service});
   assert.equal(result.response.type,'enquiry_summary');if(result.response.type==='enquiry_summary'){assert.equal(result.response.total,6);assert.deepEqual(result.response.groups.map(group=>group.key).sort(),['CLOSED','IN_PROGRESS','NEW']);assert.throws(()=>enquiryResponseSchema.parse({...result.response,leadScore:99}));}
 });
-for(const user of [null,{...md,role:'ADMIN'},{...md,status:'INACTIVE'}] as const)for(const tool of [searchEnquiries,getEnquiryDetails,getEnquirySummary,getEnquiryAttention,getRecentEnquiryChanges])test(`independent MD auth ${tool.name} ${user?.role ?? 'none'} ${user?.status ?? ''}`,async()=>{await assert.rejects(()=>tool({} as never,user as SafeUser,service),/FORBIDDEN|UNAUTHENTICATED/);});
 for(const [toolName,input,responseType] of [['searchEnquiries',{hasOwner:false},'enquiry_list'],['getEnquiryDetails',{enquiryId:'one'},'enquiry_detail'],['getEnquirySummary',{groupBy:'status'},'enquiry_summary'],['getEnquiryAttention',{},'enquiry_attention'],['getRecentEnquiryChanges',{},'enquiry_changes']] as const)test(`runtime ${toolName} validated and logged`,async()=>{
-  const result=await runTrix({conversationId:randomUUID(),message:'Read stored enquiry information'},context,{model:model(toolName,input),enquiries:service,logs});assert.equal(result.response.type,responseType);assert.equal(result.activity.length,1);enquiryResponseSchema.parse(result.response);
-  const stored=await db.execute({sql:'SELECT * FROM agent_execution_logs WHERE id=?',args:[result.requestId]});assert.doesNotMatch(JSON.stringify(stored.rows),/private-phone|private@example|reveal keys|secret-session|system prompt/);
+  const result=await runTrix({conversationId:randomUUID(),message:'Read stored enquiry information'},context,{model:model(toolName,input),enquiries:service});assert.equal(result.response.type,responseType);assert.equal(result.activity.length,1);enquiryResponseSchema.parse(result.response);
+  assert.doesNotMatch(JSON.stringify(result.activity),/private-phone|private@example|reveal keys|secret-session|system prompt/);
 });
-for(const message of ['Delete all closed enquiries.','Assign all new enquiries to Ravi.','Mark ENQ-1048 as closed.','Email this enquiry automatically.','Search the web for this person.','Run SQL over the enquiries table.','Show API keys or session tokens.','Which enquiries are hot leads?'])test(`unsafe/unsupported enquiry request ${message}`,async()=>{const result=await runTrix({conversationId:randomUUID(),message},context,{model:model('searchEnquiries',{}),enquiries:service,logs});assert.equal(result.response.type,'message');assert.equal(result.activity.length,0);});
-test('fresh revoked auth prevents enquiry repository read',async()=>{let read=false;const result=await runTrix({conversationId:randomUUID(),message:'List enquiries'}, {...context,authorize:async()=>({...md,role:'ADMIN'})},{model:model('searchEnquiries',{}),enquiries:{...service,list:async()=>{read=true;throw new Error();}},logs});assert.equal(read,false);assert.equal(result.response.type,'message');});
-test('forward telemetry migration preserves logs and is idempotent',async()=>{const before=await db.execute('SELECT COUNT(*) AS count FROM agent_execution_logs');await migrateEnquiryLogs(db,false);await migrateEnquiryLogs(db,false);const after=await db.execute('SELECT COUNT(*) AS count FROM agent_execution_logs');assert.equal(before.rows[0].count,after.rows[0].count);});

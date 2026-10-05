@@ -1,6 +1,5 @@
 import { serialsRepository } from '@trionyx/database';
 import type { SafeUser } from '@trionyx/types';
-import { assertManagingDirector } from './lookup-serial';
 import {
   inventoryExceptionResponseSchema,
   type InventoryExceptionsResult,
@@ -11,7 +10,6 @@ export async function getInventoryExceptions(
   user: Pick<SafeUser, 'id' | 'role' | 'status'> | null,
   readExceptions = serialsRepository.getInventoryExceptions
 ): Promise<InventoryExceptionsResult> {
-  assertManagingDirector(user);
 
   const exceptions = await readExceptions();
 

@@ -6,7 +6,6 @@ const period = z.enum(['today', 'this_week', 'this_month', 'last_7_days']);
 const pagination = { page: z.number().int().min(1).max(100000).default(1), limit: z.number().int().min(1).max(50).default(20) };
 const filters = { warrantyId: text.optional(), serialNumber: text.min(2).optional(), dealerId: text.optional(), dealerName: text.optional(), productId: text.optional(), productName: text.optional(), status: status.optional(), registeredFrom: date.optional(), registeredTo: date.optional(), registeredPeriod: period.optional() };
 const valid = (v: { registeredFrom?: string; registeredTo?: string; registeredPeriod?: string }) => !(v.registeredPeriod && (v.registeredFrom || v.registeredTo)) && (!v.registeredFrom || !v.registeredTo || Date.parse(v.registeredFrom) <= Date.parse(v.registeredTo));
-export const warrantySerialInputSchema = z.object({ serialNumber: text.min(2) }).strict();
 export const warrantySearchInputSchema = z.object({ ...filters, ...pagination }).strict().refine(valid);
 export const warrantySummaryInputSchema = z.object({ ...filters, ...pagination, groupBy: z.enum(['status', 'dealer', 'product', 'registration_period']) }).strict().refine(valid);
 const rule = z.enum(['MISSING_SERIAL', 'MISSING_PRODUCT', 'MISSING_DEALER', 'INACTIVE_DEALER', 'DUPLICATE_ACTIVE', 'INVALID_DATE_ORDER', 'INVALID_VOID_STATE']);
@@ -24,7 +23,6 @@ const attention = z.object({ total: number, items: z.array(attentionItem).max(5)
 const change = z.object({ id: text, module: moduleSchema, recordId: text, event: z.enum(['RECEIVED', 'TRANSFERRED', 'ADJUSTED', 'DEALER_DISTRIBUTOR_ASSIGNED', 'DEALER_CREATED', 'DEALER_UPDATED', 'DEALER_STATUS_CHANGED', 'DISTRIBUTOR_CREATED', 'DISTRIBUTOR_UPDATED', 'DISTRIBUTOR_STATUS_CHANGED', 'CONTACT_ENQUIRY_CREATED', 'CONTACT_ENQUIRY_STATUS_CHANGED', 'CONTACT_ENQUIRY_ASSIGNED', 'CONTACT_ENQUIRY_NOTE_ADDED', 'WARRANTY_ACTIVATED', 'WARRANTY_VOIDED']), occurredAt: date }).strict();
 const resolvedWindow = z.object({ from: date, to: date }).strict();
 export const warrantyExecutiveResponseSchemas = [
-  z.object({ type: z.literal('warranty_record'), warranty: item, asOf: date }).strict(),
   z.object({ type: z.literal('warranty_list'), items: z.array(item).max(50), pageInfo, asOf: date }).strict(),
   z.object({ type: z.literal('warranty_summary'), total: number, groupBy: warrantySummaryInputSchema.shape.groupBy, groups: z.array(z.object({ key: text, label: text, count: number }).strict()).max(50), pageInfo, asOf: date, filtersApplied: z.object(filters).strict() }).strict(),
   z.object({ type: z.literal('warranty_exceptions'), items: z.array(attentionItem.extend({ rule })).max(50), pageInfo, asOf: date }).strict(),

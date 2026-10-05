@@ -1,9 +1,8 @@
 import { warrantyExecutiveService, WarrantyExecutiveReadError } from '@trionyx/api';
 import type { SafeUser } from '@trionyx/types';
 import { z } from 'zod';
-import { assertManagingDirector } from './lookup-serial';
 import { normalizeSerial } from '../responses/schema';
-import { warrantySerialInputSchema, warrantySearchInputSchema, warrantySummaryInputSchema, warrantyExceptionsInputSchema, executiveInputSchema, operationalChangesInputSchema, warrantyExecutiveResponseSchema, type WarrantyExecutiveResult } from '../responses/warranty-executive';
+import { warrantySearchInputSchema, warrantySummaryInputSchema, warrantyExceptionsInputSchema, executiveInputSchema, operationalChangesInputSchema, warrantyExecutiveResponseSchema, type WarrantyExecutiveResult } from '../responses/warranty-executive';
 export type WarrantyExecutiveService = typeof warrantyExecutiveService;
 type User = Pick<SafeUser, 'id' | 'role' | 'status'> | null;
 type Period = 'today' | 'this_week' | 'this_month' | 'last_7_days';
@@ -22,7 +21,6 @@ export function operationalWindow(query: { from?: string; to?: string; period?: 
 function dateBound(value: string, end = false) { return value.length === 10 ? `${value}T${end ? '23:59:59.999' : '00:00:00.000'}Z` : new Date(value).toISOString(); }
 const pageInfo = (total: number, query: { page: number; limit: number }) => ({ total, page: query.page, limit: query.limit, hasMore: query.page * query.limit < total });
 async function validated<S extends z.ZodType>(schema: S, input: z.input<S>, user: User, read: (query: z.output<S>) => Promise<unknown>): Promise<WarrantyExecutiveResult> {
-  assertManagingDirector(user);
   const parsed = schema.safeParse(input);
   if (!parsed.success) return { success: false, errorCode: 'TRIX_INVALID_REQUEST', message: 'The warranty or operational filters are invalid.' };
   try { return { success: true, response: warrantyExecutiveResponseSchema.parse(await read(parsed.data)) }; }
@@ -36,14 +34,6 @@ async function filters(query: z.output<typeof warrantySearchInputSchema> | z.out
   const product = query.productId || query.productName ? await service.resolveTarget({ id: query.productId, name: query.productName }, 'product') : undefined;
   const period = query.registeredPeriod ? operationalWindow({ period: query.registeredPeriod }, now) : undefined;
   return { warrantyId: query.warrantyId, serialNumber: query.serialNumber ? normalizeSerial(query.serialNumber) : undefined, dealerId: dealer?.id, productId: product?.id, status: query.status, registeredFrom: period?.from ?? (query.registeredFrom ? dateBound(query.registeredFrom) : undefined), registeredTo: period?.to ?? (query.registeredTo ? dateBound(query.registeredTo, true) : undefined), asOfDate: now.toISOString().slice(0, 10), page: query.page, limit: query.limit };
-}
-export async function getWarrantyBySerial(input: z.input<typeof warrantySerialInputSchema>, user: User, service = warrantyExecutiveService, now = new Date()) {
-  return validated(warrantySerialInputSchema, input, user, async query => {
-    const result = await service.list({ serialNumber: normalizeSerial(query.serialNumber), asOfDate: now.toISOString().slice(0, 10), limit: 2 });
-    if (!result.total) throw new WarrantyExecutiveReadError('TRIX_WARRANTY_NOT_FOUND', 'No warranty exists for that serial number.');
-    if (result.total !== 1) throw new WarrantyExecutiveReadError('TRIX_WARRANTY_RELATIONSHIP_INVALID', 'Multiple warranties reference this serial. Use warranty exceptions to inspect the stored relationship.');
-    return { type: 'warranty_record', warranty: result.items[0], asOf: now.toISOString() };
-  });
 }
 export async function searchWarranties(input: z.input<typeof warrantySearchInputSchema>, user: User, service = warrantyExecutiveService, now = new Date()) {
   return validated(warrantySearchInputSchema, input, user, async query => {

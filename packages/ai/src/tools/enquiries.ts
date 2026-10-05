@@ -1,7 +1,6 @@
 import { enquiryIntelligenceService, EnquiryReadError } from '@trionyx/api';
 import type { ContactEnquiry, SafeUser } from '@trionyx/types';
 import { z } from 'zod';
-import { assertManagingDirector } from './lookup-serial';
 import { searchEnquiriesInputSchema, enquiryDetailsInputSchema, enquirySummaryInputSchema, enquiryAttentionInputSchema, enquiryChangesInputSchema, enquiryResponseSchema, type EnquiryResponse, type EnquiryResult } from '../responses/enquiries';
 export type EnquiryIntelligenceService = typeof enquiryIntelligenceService;
 type User = Pick<SafeUser, 'id' | 'role' | 'status'> | null;
@@ -27,7 +26,6 @@ async function filters(query: z.output<typeof searchEnquiriesInputSchema> | z.ou
   return { type: query.type, status: query.status, assignedTo: owner?.id, hasOwner: query.hasOwner, city: query.city, state: query.state, pincode: query.pincode, createdFrom: today?.from ?? bound(query.createdFrom), createdTo: today?.to ?? bound(query.createdTo, true), createdBefore: query.olderThanHours === undefined ? undefined : new Date(now.getTime() - query.olderThanHours * 3600000).toISOString(), page: query.page, limit: query.limit };
 }
 async function validated<S extends z.ZodType>(schema: S, input: z.input<S>, user: User, read: (query: z.output<S>) => Promise<EnquiryResponse>): Promise<EnquiryResult> {
-  assertManagingDirector(user);
   const parsed = schema.safeParse(input);
   if (!parsed.success) return { success: false, errorCode: 'TRIX_INVALID_REQUEST', message: 'The enquiry filters or identifiers are invalid.' };
   try { return { success: true, response: enquiryResponseSchema.parse(await read(parsed.data)) }; }

@@ -1,6 +1,5 @@
 export * from '@trionyx/types';
 export * from './db';
-export * from './repositories/agentLogs';
 export * from './repositories/users';
 export * from './repositories/sessions';
 export * from './repositories/audit';

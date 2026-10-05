@@ -1,5 +1,5 @@
 import { randomUUID, createHash } from 'node:crypto';
-import { ensureDatabaseReady, withDatabaseTransaction, preparedActionsRepository as repository, agentLogsRepository, type DatabaseClient, type ActionRecordKind } from '@trionyx/database';
+import { ensureDatabaseReady, withDatabaseTransaction, preparedActionsRepository as repository, type DatabaseClient, type ActionRecordKind } from '@trionyx/database';
 import { preparedActionSchema, actionSnapshotSchema, prepareDealerDistributorInputSchema, prepareEnquiryAssignmentInputSchema, prepareEnquiryStatusInputSchema, prepareInventoryTransferInputSchema, confirmPreparedActionSchema, cancelPreparedActionSchema, type PreparedAction, type ActionReference, type ActionSnapshot } from '@trionyx/validation';
 import type { SafeUser } from '@trionyx/types';
 import { dealersService } from './dealers';
@@ -54,11 +54,6 @@ export function createPreparedActionsService(deps: {
     if(action.actionType==='ENQUIRY_STATUS_CHANGE'&&first.status===action.proposedChange.status)fail('TRIX_ACTION_PREPARATION_FAILED','The enquiry already has this status.');
     if(action.actionType==='INVENTORY_TRANSFER'&&(action.currentState.some(record=>record.status!=='AVAILABLE'||!record.locationId||record.locationId!==first.locationId)||first.locationId===destination?.id))fail('TRIX_ACTION_PREPARATION_FAILED','All serials must be AVAILABLE at one source different from the destination.');
   }
-  async function log(context:PreparedActionContext,action:PreparedAction,event:string,errorCode:string|null,db:DatabaseClient,durationMs?:number) {
-    await agentLogsRepository.create({id:randomUUID(),userId:context.user.id,sessionId:createHash('sha256').update(`${context.sessionId}:${action.conversationId}`).digest('hex'),conversationId:action.conversationId,modelProvider:'application',modelName:'prepared-action-lifecycle',timestamp:now().toISOString(),requestSummary:'trix_action_lifecycle',responseType:'prepared_action',errorCode,
-      metrics:durationMs===undefined?undefined:{requestDurationMs:durationMs,modelDurationMs:0,inputTokens:null,outputTokens:null,estimatedCostUsd:null},
-      toolEvents:[{toolName:event,toolStatus:errorCode?'failed':'succeeded',toolDurationMs:durationMs??0,inputSummary:`actionType=${action.actionType}`,resultSummary:`state=${action.state};confirmationRequired=true;confirmationOccurred=${event==='confirmPreparedAction'};resultCount=${action.target.records.length}`,errorCode}]},db);
-  }
   async function load(id:string,context:PreparedActionContext,db:DatabaseClient,lock=false) {
     const row=await repository.get(id,context.user.id,db,lock,deps.postgres);
     if(!row)fail('TRIX_ACTION_NOT_FOUND','This preparation was not found.');
@@ -70,7 +65,7 @@ export function createPreparedActionsService(deps: {
   async function expire(action:PreparedAction,context:PreparedActionContext,db:DatabaseClient) {
     if(action.state==='PREPARED'&&Date.parse(action.expiresAt)<=now().getTime()) {
       await repository.transition(action.preparationId,context.user.id,'PREPARED','EXPIRED','TRIX_ACTION_EXPIRED',now().toISOString(),db);
-      action.state='EXPIRED';action.errorCode='TRIX_ACTION_EXPIRED';await log(context,action,'expirePreparedAction',action.errorCode,db);
+      action.state='EXPIRED';action.errorCode='TRIX_ACTION_EXPIRED';
     }
     return action;
   }
@@ -87,7 +82,7 @@ export function createPreparedActionsService(deps: {
         const action = {preparationId:randomUUID(),actionType,requestedBy:context.user.id,conversationId:context.conversationId,createdAt:now().toISOString(),expiresAt:new Date(now().getTime()+lifetime).toISOString(),state:'PREPARED' as const,title:{DEALER_DISTRIBUTOR_ASSIGNMENT:'Change dealer distributor',ENQUIRY_ASSIGNMENT:'Assign enquiry owner',ENQUIRY_STATUS_CHANGE:'Change enquiry status',INVENTORY_TRANSFER:'Transfer inventory serials'}[actionType],target:{kind,records:records.map(({id,label})=>({id,label}))},currentState:records,proposedChange:{destination,status,reason},confirmationRequired:true as const,errorCode:null,consequences:actionType==='INVENTORY_TRANSFER'?'All listed serials move together to the destination. Movement history and a business audit event will be recorded.':'Only the displayed assignment or status changes. The normal business audit records the previous and new values.'};
         validPlan(action);
         const prepared=preparedActionSchema.parse({...action,previewDigest:digest(action)});
-        await repository.create(prepared,JSON.stringify(prepared),db);await log(context,prepared,'prepareAction',null,db);
+        await repository.create(prepared,JSON.stringify(prepared),db);
         return prepared;
       });}catch(error){if(error instanceof PreparedActionError)throw error;return fail('TRIX_ACTION_PREPARATION_FAILED','The action could not be safely prepared. No business records were changed.');}
     },
@@ -99,12 +94,11 @@ export function createPreparedActionsService(deps: {
       await auth(context);const query=cancelPreparedActionSchema.parse(input);
       return transaction(await client(),async db=>{
         const action=await expire(await load(query.preparationId,context,db,true),context,db);
-        if(action.state==='PREPARED') {await repository.transition(action.preparationId,context.user.id,'PREPARED','CANCELLED',null,now().toISOString(),db);action.state='CANCELLED';await log(context,action,'cancelPreparedAction',null,db);}
+        if(action.state==='PREPARED') {await repository.transition(action.preparationId,context.user.id,'PREPARED','CANCELLED',null,now().toISOString(),db);action.state='CANCELLED';}
         return action;
       });
     },
     async confirm(input:unknown,context:PreparedActionContext) {
-      const started=Date.now();
       await auth(context);const query=confirmPreparedActionSchema.safeParse(input);
       if(!query.success)fail('TRIX_ACTION_CONFIRMATION_REQUIRED','Use the application confirmation control for the exact displayed preparation.');
       const database=await client();
@@ -129,7 +123,7 @@ export function createPreparedActionsService(deps: {
           else if(action.actionType==='ENQUIRY_ASSIGNMENT')await mutations.owner(action,context.user.id,db);
           else if(action.actionType==='ENQUIRY_STATUS_CHANGE')await mutations.status(action,context.user.id,db);
           else await mutations.inventory(action,context.user.id,db);
-          await repository.transition(action.preparationId,context.user.id,'CONFIRMED','EXECUTED',null,now().toISOString(),db);action.state='EXECUTED';await log(context,action,'confirmPreparedAction',null,db,Math.max(0,Date.now()-started));
+          await repository.transition(action.preparationId,context.user.id,'CONFIRMED','EXECUTED',null,now().toISOString(),db);action.state='EXECUTED';
           return {action,error:null};
         });
         if(result.error)fail(result.error,result.error==='TRIX_ACTION_ALREADY_EXECUTED'?'This action was already executed. No second mutation occurred.':'This preparation has expired or is no longer available for confirmation.');
@@ -140,7 +134,7 @@ export function createPreparedActionsService(deps: {
           // A failed business transaction is rolled back before workflow failure is recorded.
           await transaction(database,async db=>{
             const row=await repository.get(query.data!.preparationId,context.user.id,db,true,deps.postgres);
-            if(row?.state==='PREPARED'){const action=await load(query.data!.preparationId,context,db);const terminal=code==='TRIX_ACTION_EXPIRED'?'EXPIRED':'FAILED';await repository.transition(action.preparationId,context.user.id,'PREPARED',terminal,code,now().toISOString(),db);action.state=terminal;action.errorCode=code;await log(context,action,'confirmPreparedAction',code,db,Math.max(0,Date.now()-started));}
+            if(row?.state==='PREPARED'){const action=await load(query.data!.preparationId,context,db);const terminal=code==='TRIX_ACTION_EXPIRED'?'EXPIRED':'FAILED';await repository.transition(action.preparationId,context.user.id,'PREPARED',terminal,code,now().toISOString(),db);action.state=terminal;action.errorCode=code;}
           });
         }
         if(error instanceof PreparedActionError)throw error;

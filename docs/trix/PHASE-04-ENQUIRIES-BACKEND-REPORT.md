@@ -55,11 +55,9 @@ MAX_TOOL_CALLS remains 2 total across all inventory/network/enquiry tools; looku
 
 Mutations including assignment, status marking/closure and email actions are refused; no write/email/web/SQL/shell tools exist. Enquiry SQL execution requests are explicitly refused while the earlier safe serial-lookup behavior remains supported. Hot-lead/scoring/conversion and secret requests return an explicit unsupported explanation without model/tool calls. Stored enquiry messages are treated as untrusted data.
 
-Sanitized telemetry retains execution/conversation association, authenticated MD ID, hashed session, provider/model/time, tool status/duration, filter names, counts/group dimensions and controlled errors. No raw query/owner name, message, contact values, raw session or system prompt is logged. Logging failure remains TRIX_LOGGING_FAILED and blocks unlogged execution. Business audit logs remain separate.
 
 ## Migration and efficiency
 
-0014_trix_enquiry_logs extends only the execution response CHECK constraint. PostgreSQL uses transactional ALTER/RLS/marker operations; SQLite transactionally rebuilds only telemetry and preserves old rows. The readiness path invokes this forward migration after Phase 03. Prior migration files were unchanged. The live PostgreSQL migration was explicitly applied through the verification script; enquiry_summary support was verified. No business-table migration, analytics datastore, new index, environment variable or provider change was added.
 
 Real PostgreSQL EXPLAIN inspected the four aggregates, createdAt cutoff search, unassigned search, attention and audit history. Current population is one enquiry and two audit events; inexpensive scans/aggregates and existing createdAt/user/product/audit-event indexes are used. No evidence justifies another index at this size; larger populations should be re-profiled. Owner joins avoid application N+1 reads. Lists, previews, groups and events are bounded.
 
@@ -69,19 +67,14 @@ Real PostgreSQL EXPLAIN inspected the four aggregates, createdAt cutoff search, 
 - docs/trix/PHASE-04-ARCHITECTURE.md
 - docs/trix/PHASE-04-ENQUIRIES-BACKEND-REPORT.md
 - packages/database/src/repositories/enquiryReads.ts
-- packages/database/migrations/0014_trix_enquiry_logs.sql
 - packages/api/src/services/enquiryIntelligence.ts
 - packages/ai/src/responses/enquiries.ts
 - packages/ai/src/tools/enquiries.ts
 - packages/ai/src/__tests__/trix-phase04.test.ts
-- scripts/verify-trix-phase04.ts
 
 ## Files modified
 
 - packages/database/src/repositories/contactEnquiries.ts
-- packages/database/src/repositories/agentLogs.ts
-- packages/database/src/agentLogSchema.ts
-- packages/database/src/agentLogMigration.ts
 - packages/database/src/db.ts
 - packages/database/src/index.ts
 - packages/api/src/services/contactEnquiries.ts

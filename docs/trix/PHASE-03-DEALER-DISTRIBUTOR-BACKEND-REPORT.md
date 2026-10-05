@@ -57,11 +57,9 @@ The existing POST /api/v1/internal/trix verifies the real server session and MD 
 
 MAX_TOOL_CALLS remains 2 total across all inventory/network tools, with lookupSerial still limited to 1. Normal requests stop after one model step. Named history requests may use a second model step only after one successful dealer/distributor detail resolution; a hard two-step cap and the two-call counter remain authoritative. Retries remain zero; the existing 30-second abort remains. Invalid/unsupported/excess calls are logged. Unsupported tool names are logged as 'unsupported', avoiding model-supplied text in telemetry.
 
-Execution telemetry records authenticated user ID, hashed session association, explicit conversation ID, provider/model, timestamp, tool statuses/duration, allowed filter names and result counts/group totals. It does not persist raw prompts, query text, contact data or full business lists. Telemetry creation/update failure produces TRIX_LOGGING_FAILED and blocks unlogged execution. The API returns a sanitized 503 for logging failure. Business audit logs remain separate.
 
 ## Migration and query efficiency
 
-0013_trix_dealer_network_logs expands the telemetry CHECK constraint and adds nullable conversation_id. PostgreSQL uses transactional ALTER statements; SQLite rebuilds only the telemetry table transactionally and preserves all old rows. The readiness path applies the forward migration once, with a migration marker. The old Phase 02 migration file is unchanged. No environment variables or business-data migrations were added.
 
 No new indexes were added. Existing distributor/status/history indexes are available. Real Postgres EXPLAIN checks completed for all four aggregates and exception queries. With 5 dealers and 1 distributor, plans use inexpensive scans/hash aggregates/joins and existing status indexing where useful; evidence does not justify another index. No application-level N+1 relationship lookup was added. Summary groups, history, record lists and exceptions are bounded. Distributor details use one bounded dealer-preview query.
 
@@ -72,12 +70,9 @@ No new indexes were added. Existing distributor/status/history indexes are avail
 - docs/trix/PHASE-03-DEALER-DISTRIBUTOR-BACKEND-REPORT.md
 - packages/api/src/services/dealerNetwork.ts
 - packages/database/src/repositories/dealerNetwork.ts
-- packages/database/src/agentLogMigration.ts
-- packages/database/migrations/0013_trix_dealer_network_logs.sql
 - packages/ai/src/responses/dealer-network.ts
 - packages/ai/src/tools/dealer-network.ts
 - packages/ai/src/__tests__/trix-phase03.test.ts
-- scripts/verify-trix-phase03.ts — sanitized engineering verification; optional --migrate is telemetry-only.
 - eslint.trix.config.mjs — repository-root lint configuration reusing the portal rules for backend paths; disables only the irrelevant pages-link rule for this backend check.
 
 ## Files modified
@@ -89,14 +84,11 @@ No new indexes were added. Existing distributor/status/history indexes are avail
 - packages/database/src/db.ts
 - packages/database/src/repositories/dealers.ts
 - packages/database/src/repositories/distributors.ts
-- packages/database/src/agentLogSchema.ts
-- packages/database/src/repositories/agentLogs.ts
 - packages/ai/src/index.ts
 - packages/ai/src/responses/schema.ts
 - packages/ai/src/trix-agent.ts
 - packages/ai/src/provider.ts — working Sonnet 4.6 fallback after the configured Sonnet 3.5 returned HTTP 404.
 - .env.example — same supported model setting; existing local TRIX_MODEL values were updated in .env, .env.local, apps/portal/.env and apps/portal/.env.local without changing credentials or adding variables.
-- packages/ai/src/logging/agent-log.ts
 - packages/ai/src/__tests__/trix.test.ts — updated controlled logging failure expectation; existing security checks retained.
 - packages/ai/src/__tests__/trix-phase02.test.ts — external-data restriction wording accepts inventory-specific or multi-module text.
 - apps/portal/src/app/api/v1/internal/trix/route.ts — request guidance and controlled logging error.
@@ -110,9 +102,7 @@ Pre-existing uncommitted workspace changes were preserved. No final TRIX rendere
 - Changed package typechecks: database, API, AI and portal passed.
 - Targeted ESLint on new backend files, shared runtime/response/logging code, API route, Phase 03 tests and verification script: passed, no warnings.
 - Full workspace typecheck initially failed in pre-existing generated apps/dealer/.next/dev/types/routes.d.ts and validator.ts (malformed duplicate trailing content). Changed packages were checked separately; no unrelated source edits were made to mask this.
-- Isolated fixture snapshots confirm no dealer/distributor/history mutation across all Phase 03 tests. Migration tests verify old telemetry preservation and idempotency.
 - Real Postgres engineering reads: 5 dealers, 1 distributor, 0 history entries, 0 unassigned dealers, 0 deterministic exceptions, 1 active MD. All four groupings report totalDealers=5. Query plans inspected.
-- Live Postgres telemetry schema verification: new response types supported; conversation_id column present.
 - Local portal check: /trix redirects to /login without a session, preserving the access boundary.
 
 ## Authenticated live acceptance

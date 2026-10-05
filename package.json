@@ -2,12 +2,10 @@
   "name": "trionyx-monorepo",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "pnpm@11.10.0",
+  "packageManager": "pnpm@10.6.1",
   "scripts": {
     "test:trix": "pnpm --filter @trionyx/ai test",
     "eval:trix": "pnpm --filter @trionyx/ai exec tsx --test src/__tests__/trix-phase07.test.ts",
-    "trix:readiness": "tsx scripts/verify-trix-phase07.ts",
-    "benchmark:trix": "tsx scripts/benchmark-trix-phase07.ts",
     "dev": "turbo dev",
     "build": "turbo build",
     "start": "turbo start",

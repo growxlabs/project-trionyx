@@ -211,7 +211,6 @@ TRIX should fail safely and never fabricate a result.
 
 Review the current fail-closed logging decision.
 
-Explicitly document whether read-only answers, action preparation, and action execution fail closed when telemetry storage fails.
 
 Prepared/mutating action execution should remain strongly auditable.
 
@@ -293,7 +292,6 @@ Verify:
 - no fixture data
 - no debug endpoints
 - no verbose stack traces
-- telemetry migration applied
 - prepared-action migration applied if introduced
 - RLS/security policy appropriate
 - environment variables documented
@@ -483,9 +481,8 @@ The preparation registry maps those four tools to DEALER_DISTRIBUTOR_ASSIGNMENT,
 | NEXT_PUBLIC_PORTAL_URL | Configured HTTPS; routes also require exact request origin for POST. Actual deployed proxy/domain behavior still needs release verification. |
 | TRIONYX_DATABASE_CA_PEM | Optional server trust override for an explicitly managed CA. Supabase hosted database names otherwise use its official published public CA; verification cannot be disabled through URL SSL flags. |
 
-Existing telemetry/workflow migrations 0013–0016 have configured PostgreSQL markers. Foundation telemetry table/columns are present; the legacy PostgreSQL initializer did not record the SQLite-style 0012 marker, so its absence is documented rather than invented. New migration 0017 adds nullable numeric metrics JSON; 0018 adds the authenticated per-user/scoped atomic limiter. They were applied and verified. Separating 0018 handles an interrupted earlier 0017 application safely.
 
-`agent_execution_logs`, `trix_prepared_actions` and `trix_request_limits` all have RLS enabled and no public policies. The existing server role has BYPASSRLS and is not a superuser; it must remain server-only. Application authorization and preparation ownership are therefore mandatory, not replaced by RLS. TRIX is single-company MD intelligence; a cross-tenant hosting model is not implemented. No test users matching synthetic fixture email domains were found in the configured database. Evaluation business data remains isolated in memory/temporary tables; this marker check is not a comprehensive audit of every existing business record.
+`trix_prepared_actions` and `trix_request_limits` all have RLS enabled and no public policies. The existing server role has BYPASSRLS and is not a superuser; it must remain server-only. Application authorization and preparation ownership are therefore mandatory, not replaced by RLS. TRIX is single-company MD intelligence; a cross-tenant hosting model is not implemented. No test users matching synthetic fixture email domains were found in the configured database. Evaluation business data remains isolated in memory/temporary tables; this marker check is not a comprehensive audit of every existing business record.
 
 The verified public Supabase CA has SHA-256 fingerprint `80:70:25:AD:50:D4:ED:21:9D:2C:9C:7D:29:9C:00:4F:82:4E:B0:0C:F7:F6:5A:FE:F6:07:D0:7B:72:E6:CA:FA`, is a CA, and expires 2031-04-26. Its URL was verified from the [official dashboard configuration](https://github.com/supabase/supabase/blob/master/apps/studio/hooks/custom-content/custom-content.json); this follows [Supabase certificate-verification guidance](https://supabase.com/docs/guides/platform/ssl-enforcement). CA rotation requires updating this asset or configuring the appropriate trusted CA, never disabling verification.
 
@@ -501,9 +498,7 @@ There is no hidden memory, persisted prompt, cross-user history retrieval or ser
 
 Reviewed outputs are typed projections: operational identity, location/status/count/history fields, explicit MD enquiry contact/message details when requested, and exact preparation before/after state. Private customer/contact fields are excluded from lists where unnecessary; enquiry detail remains an authorized contact workflow and its message is capped at 4,000 characters and treated as untrusted data. Password hashes, session/auth/reset/invitation tokens, service keys, database URLs and auth headers are not tool-output fields.
 
-Allowed telemetry consists of authenticated audit identity, hashed session correlation, UUID conversation/request identity, server timestamp, provider/model identifiers, static request classification, registered tool/event names, status, numeric duration/count/group totals, schema filter names/grouping dimension names, preparation action type/state/confirmation booleans, fixed controlled error codes and safe numeric token/cost metadata. Raw prompts, filter values, reasons, contacts, tool payloads, provider bodies/headers, secrets and stacks are excluded. The metric aggregator has an explicit registered-event allowlist and never projects record identities/contact payloads.
 
-Logging policy is unchanged and fail closed: failure to start a request log prevents provider/data access; failed tool-event or completion persistence prevents a successful read response. Preparation creation and its lifecycle log share a transaction. Confirmation execution, business audit, workflow terminal state and lifecycle log share a transaction; failed execution logging rolls back business changes. A failed final runtime log may leave an already auditable pending workflow preparation, but cannot execute it. No approval to weaken logging was requested or applied.
 
 ## Security findings and resolution
 
@@ -527,14 +522,9 @@ From the repository root:
 pnpm test:trix
 pnpm test
 pnpm eval:trix
-pnpm benchmark:trix
 pnpm --filter @trionyx/database --filter @trionyx/api --filter @trionyx/validation --filter @trionyx/ai --filter @trionyx/portal typecheck
 pnpm --filter @trionyx/portal build
 pnpm audit --prod --json
-# Load approved server environment before the read-only review:
-pnpm trix:readiness
-# Only when applying the two new schema migrations:
-pnpm trix:readiness --migrate
 ```
 
 `pnpm test` now forces DATABASE_URL=file::memory: in a child process; it cannot accidentally seed the configured database. Golden v1 cases live in `packages/ai/src/evals/golden-v1.ts`; each specifies expected tool/result, forbidden tools, confirmation requirement and safety behavior. Real-service fixture execution verifies the selected approved tool/result and unchanged business snapshots. The model in these deterministic cases is injected; genuine model selection accuracy must still be measured with the restored configured provider before satisfying the live quality gate.

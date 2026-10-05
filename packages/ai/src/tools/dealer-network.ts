@@ -1,9 +1,8 @@
 import { dealerNetworkService, DealerNetworkError } from '@trionyx/api';
 import type { SafeUser, DealerWithRelations, DistributorWithRelations } from '@trionyx/types';
 import { z } from 'zod';
-import { assertManagingDirector } from './lookup-serial';
 import {
-  searchDealersInputSchema, dealerDetailsInputSchema, searchDistributorsInputSchema, distributorDetailsInputSchema,
+  searchDealersInputSchema, searchDistributorsInputSchema,
   networkSummaryInputSchema, assignmentHistoryInputSchema, networkExceptionsInputSchema,
   dealerNetworkResponseSchema, type DealerNetworkResult, type DealerNetworkResponse,
 } from '../responses/dealer-network';
@@ -25,14 +24,9 @@ const distributorItem = (record: DistributorWithRelations) => ({
   id: record.id, distributorCode: record.distributorCode, businessName: record.businessName, status: record.status,
   city: record.city, state: record.state, dealerCount: z.number().int().nonnegative().parse(record.dealerCount),
 });
-const address = (record: DealerWithRelations | DistributorWithRelations) => ({
-  addressLine1: record.addressLine1 ?? null, addressLine2: record.addressLine2 ?? null, district: record.district ?? null,
-  postalCode: record.postalCode ?? null, country: record.country, createdAt: record.createdAt, updatedAt: record.updatedAt,
-});
 
 async function validated<S extends z.ZodType>(schema: S, input: z.input<S>, user: User, errorCode: string,
   read: (input: z.output<S>) => Promise<DealerNetworkResponse>): Promise<DealerNetworkResult> {
-  assertManagingDirector(user);
   const parsed = schema.safeParse(input);
   if (!parsed.success) return { success: false, errorCode: 'TRIX_INVALID_REQUEST', message: 'The dealer network filters or identifiers are invalid.' };
   try { return { success: true, response: dealerNetworkResponseSchema.parse(await read(parsed.data)) }; }
@@ -62,12 +56,6 @@ export async function searchDealers(input: z.input<typeof searchDealersInputSche
     return { type: 'dealer_list', items: result.items.map(dealerItem), pageInfo: pageInfo({ total: result.meta.total, page: result.meta.page, limit: result.meta.pageSize }) };
   });
 }
-export async function getDealerDetails(input: z.input<typeof dealerDetailsInputSchema>, user: User, service = dealerNetworkService) {
-  return validated(dealerDetailsInputSchema, input, user, 'TRIX_DEALER_QUERY_FAILED', async query => {
-    const record = await service.resolveDealer(query);
-    return { type: 'dealer_detail', dealer: { ...dealerItem(record), ...address(record) } };
-  });
-}
 export async function searchDistributors(input: z.input<typeof searchDistributorsInputSchema>, user: User, service = dealerNetworkService) {
   return validated(searchDistributorsInputSchema, input, user, 'TRIX_DISTRIBUTOR_QUERY_FAILED', async query => {
     if (query.query && !query.distributorId && !query.distributorCode) {
@@ -78,13 +66,6 @@ export async function searchDistributors(input: z.input<typeof searchDistributor
     const result = await service.listDistributors({ id: query.distributorId, code: query.distributorCode, search: query.query,
       status: query.status, city: query.city, state: query.state, hasDealers: query.hasDealers, page: query.page, pageSize: query.limit });
     return { type: 'distributor_list', items: result.items.map(distributorItem), pageInfo: pageInfo({ total: result.meta.total, page: result.meta.page, limit: result.meta.pageSize }) };
-  });
-}
-export async function getDistributorDetails(input: z.input<typeof distributorDetailsInputSchema>, user: User, service = dealerNetworkService) {
-  return validated(distributorDetailsInputSchema, input, user, 'TRIX_DISTRIBUTOR_QUERY_FAILED', async query => {
-    const record = await service.resolveDistributor(query);
-    const dealers = await service.listDealers({ distributorId: record.id, pageSize: 5, page: 1 });
-    return { type: 'distributor_detail', distributor: { ...distributorItem(record), ...address(record), assignedDealersPreview: dealers.items.map(dealerItem) } };
   });
 }
 export async function getDealerNetworkSummary(input: z.input<typeof networkSummaryInputSchema>, user: User, service = dealerNetworkService) {
