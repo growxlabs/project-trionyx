@@ -70,6 +70,20 @@ body {
   outline-offset: 2px;
 }
 
+/* Form controls and composer inputs manage their own border focus without global outline rings */
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible,
+form:focus,
+form:focus-visible,
+form:focus-within {
+  outline: none !important;
+  outline-offset: 0 !important;
+}
+
 /* Legacy neutral utility classes, scoped to the internal portal. */
 [data-theme] .bg-white,
 [data-theme] .bg-\[\#FCFBF7\] { background-color: var(--legacy-raised); }

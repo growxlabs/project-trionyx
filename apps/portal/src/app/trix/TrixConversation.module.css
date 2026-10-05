@@ -72,13 +72,31 @@ a.rowTitle:hover { text-decoration: underline; }
 .failureTitle { margin: 0 0 8px; font-size: 15px; font-weight: 500; }
 .failure > .muted { margin: 0 0 16px; font-size: 14px; line-height: 23px; }
 .footer { flex: none; padding: 16px 0 24px; }
+.footer form,
+.footer form:focus,
+.footer form:focus-within,
+.footer form:focus-visible,
+.footer textarea,
+.footer textarea:focus,
+.footer textarea:focus-within,
+.footer textarea:focus-visible {
+  outline: none !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+}
+.footer button:focus,
+.footer button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
 .composer { min-height: 56px; display: flex; align-items: flex-end; gap: 10px; padding: 6px 6px 6px 16px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface-raised); box-sizing: border-box; }
-.composer:focus-within { border-color: var(--border-strong); }
-.composer textarea { display: block; flex: 1; width: 100%; min-width: 0; min-height: 42px; max-height: 160px; padding: 11px 0 9px; border: 0; outline: none; resize: none; background: transparent; color: var(--text-primary); font: inherit; font-size: 14px; line-height: 22px; box-sizing: border-box; }
+.composer:focus-within { border-color: var(--border-strong); outline: none !important; }
+.composer textarea { display: block; flex: 1; width: 100%; min-width: 0; min-height: 42px; max-height: 160px; padding: 11px 0 9px; border: 0; outline: none !important; resize: none; background: transparent; color: var(--text-primary); font: inherit; font-size: 14px; line-height: 22px; box-sizing: border-box; }
 .composer textarea::placeholder { color: var(--text-muted); }
 .send { display: flex; align-items: center; justify-content: center; flex: none; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 6px; background: var(--accent); color: var(--accent-foreground, var(--background)); cursor: pointer; }
 .send:disabled { background: var(--surface-subtle); color: var(--text-muted); cursor: default; }
 .workspace button:focus-visible, .workspace a:focus-visible, .workspace summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.footer button:focus-visible { outline: none !important; }
 .workspace button:disabled { cursor: default; }
 @media (min-width: 640px) {
   .workspace { margin: -20px -24px; }

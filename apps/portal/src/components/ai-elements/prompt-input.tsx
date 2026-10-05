@@ -20,8 +20,9 @@ export const PromptInput = ({
 }: PromptInputProps) => {
   return (
     <form
+      style={{ outline: 'none' }}
       className={cn(
-        'relative flex items-end gap-2 p-2 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] focus-within:border-[var(--border-strong)] shadow-sm transition-all',
+        'relative flex items-end gap-2 p-2 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] focus-within:border-[var(--border-strong)] transition-all outline-none focus:outline-none focus-visible:outline-none focus-within:outline-none',
         className
       )}
       onSubmit={(e) => {
@@ -97,8 +98,9 @@ export const PromptInputTextarea = React.forwardRef<HTMLTextAreaElement, PromptI
         onChange={onChange}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
+        style={{ outline: 'none' }}
         className={cn(
-          'flex-1 min-h-[40px] max-h-[160px] py-2 px-3 bg-transparent text-[var(--text-primary)] placeholder:text-[var(--text-muted)] text-sm leading-relaxed border-0 outline-none resize-none font-sans',
+          'flex-1 min-h-[40px] max-h-[160px] py-2 px-3 bg-transparent text-[var(--text-primary)] placeholder:text-[var(--text-muted)] text-sm leading-relaxed border-0 outline-none focus:outline-none focus-visible:outline-none resize-none font-sans',
           className
         )}
         {...props}
@@ -130,8 +132,9 @@ export const PromptInputSubmit = ({
       disabled={!isBusy && disabled}
       onClick={isBusy && onStop ? (e) => { e.preventDefault(); onStop(); } : undefined}
       aria-label={isBusy ? 'Stop generation' : 'Send message'}
+      style={{ outline: 'none' }}
       className={cn(
-        'flex items-center justify-center shrink-0 size-9 rounded-lg transition-colors cursor-pointer',
+        'flex items-center justify-center shrink-0 size-9 rounded-lg transition-colors cursor-pointer outline-none focus:outline-none focus-visible:outline-none',
         isBusy
           ? 'bg-[var(--text-secondary)] text-[var(--background)] hover:bg-[var(--text-primary)]'
           : 'bg-[var(--accent,#F26522)] text-white hover:opacity-90 disabled:bg-[var(--surface-subtle)] disabled:text-[var(--text-muted)] disabled:cursor-not-allowed',
