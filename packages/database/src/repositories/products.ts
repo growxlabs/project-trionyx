@@ -464,5 +464,22 @@ export const productsRepository = {
       lastUpdated: String(row.last_updated),
     };
   },
+
+  async findMatching(term: string, client: Client = getDbClient()): Promise<Product[]> {
+    const clean = term.trim();
+    if (!clean) return [];
+    const exact = await client.execute({
+      sql: `SELECT * FROM products WHERE LOWER(name) = LOWER(?) OR LOWER(slug) = LOWER(?) OR LOWER(product_code) = LOWER(?)`,
+      args: [clean, clean, clean],
+    });
+    if (exact.rows.length > 0) return exact.rows.map(mapProductRow);
+
+    const pattern = `%${clean}%`;
+    const partial = await client.execute({
+      sql: `SELECT * FROM products WHERE (LOWER(name) LIKE LOWER(?) OR LOWER(slug) LIKE LOWER(?) OR LOWER(product_code) LIKE LOWER(?)) ORDER BY name ASC`,
+      args: [pattern, pattern, pattern],
+    });
+    return partial.rows.map(mapProductRow);
+  },
 };
 

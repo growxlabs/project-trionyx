@@ -17,6 +17,11 @@ export const distributorsService = {
       search?: string;
       status?: DistributorStatus;
       state?: string;
+      city?: string;
+      id?: string;
+      code?: string;
+      exactName?: string;
+      hasDealers?: boolean;
       page?: number;
       pageSize?: number;
     },
@@ -39,6 +44,11 @@ export const distributorsService = {
     }
 
     const result = await distributorsRepository.list({
+      city: query.city,
+      id: query.id,
+      code: query.code,
+      exactName: query.exactName,
+      hasDealers: query.hasDealers,
       search: query.search,
       status: query.status,
       state: query.state,

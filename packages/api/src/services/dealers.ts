@@ -1,3 +1,5 @@
+import type { DatabaseClient as Client } from '@trionyx/database';
+import { getDbClient } from '@trionyx/database';
 import {
   dealersRepository,
   internalNotesRepository,
@@ -19,6 +21,11 @@ export const dealersService = {
       search?: string;
       status?: DealerStatus;
       state?: string;
+      city?: string;
+      id?: string;
+      code?: string;
+      exactName?: string;
+      hasDistributor?: boolean;
       distributorId?: string;
       page?: number;
       pageSize?: number;
@@ -32,6 +39,11 @@ export const dealersService = {
     const effectiveDistributorId = distributorScope || query.distributorId;
 
     const result = await dealersRepository.list({
+      city: query.city,
+      id: query.id,
+      code: query.code,
+      exactName: query.exactName,
+      hasDistributor: distributorScope ? true : query.hasDistributor,
       search: query.search,
       status: query.status,
       state: query.state,
@@ -148,8 +160,8 @@ export const dealersService = {
     return updated;
   },
 
-  async assignDistributor(id: string, input: ReassignDealerDistributorInput, actorId: string) {
-    const existing = await dealersRepository.findById(id);
+  async assignDistributor(id: string, input: ReassignDealerDistributorInput, actorId: string, client: Client = getDbClient()) {
+    const existing = await dealersRepository.findById(id, client);
     if (!existing) {
       const err = new Error('Dealer not found');
       (err as any).statusCode = 404;
@@ -162,7 +174,7 @@ export const dealersService = {
       id,
       newDistributorId,
       input.reason,
-      actorId
+      actorId, client
     );
 
     await auditLogsRepository.recordEvent({
@@ -174,7 +186,7 @@ export const dealersService = {
         newDistributorId,
         reason: input.reason,
       },
-    });
+    }, client);
 
     return result.dealer;
   },

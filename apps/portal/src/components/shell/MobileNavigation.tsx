@@ -32,37 +32,33 @@ export function MobileNavigation({ user }: MobileNavigationProps) {
   const userInitial = user.name ? user.name.charAt(0).toUpperCase() : 'O';
 
   const navItems = [
+    ...(user.role === 'MANAGING_DIRECTOR' ? [{ name: 'TRIX', href: '/trix', active: pathname.startsWith('/trix'), icon: <ControlBoardIcon className="w-5 h-5 shrink-0" /> }] : []),
     {
       name: 'Overview',
-      operationalMeaning: 'Control Board',
       href: '/overview',
       active: pathname === '/overview',
       icon: <ControlBoardIcon className="w-5 h-5 shrink-0" />,
     },
     {
       name: 'Studios',
-      operationalMeaning: 'Workshop Frontage',
       href: '/dealers',
       active: pathname.startsWith('/dealers'),
       icon: <LayeredCoatingSheetsIcon className="w-5 h-5 shrink-0" />,
     },
     {
       name: 'Inventory',
-      operationalMeaning: 'Serial Stock Trays',
       href: '/inventory',
       active: pathname.startsWith('/inventory'),
       icon: <WorkshopFrontageIcon className="w-5 h-5 shrink-0" />,
     },
     {
       name: 'Products',
-      operationalMeaning: 'Layered Coating Sheets',
       href: '/products',
       active: pathname.startsWith('/products'),
       icon: <SerialStockTraysIcon className="w-5 h-5 shrink-0" />,
     },
     {
       name: 'Distributor Hub',
-      operationalMeaning: 'Connected Nodes',
       href: '/distributors',
       active: pathname.startsWith('/distributors'),
       icon: <ConnectedNodesIcon className="w-5 h-5 shrink-0" />,
@@ -71,20 +67,29 @@ export function MobileNavigation({ user }: MobileNavigationProps) {
       ? [
           {
             name: 'Warranty',
-            operationalMeaning: 'Verified Shield',
             href: '/warranty',
             active: pathname.startsWith('/warranty'),
             icon: <VerifiedShieldIcon className="w-5 h-5 shrink-0" />,
           },
           {
             name: 'Records / Logs',
-            operationalMeaning: 'Operational Ledger',
             href: '/enquiries',
             active: pathname.startsWith('/enquiries'),
             icon: <OperationalLedgerIcon className="w-5 h-5 shrink-0" />,
           },
         ]
       : []),
+    {
+      name: 'User Guide',
+      href: '/guide',
+      active: pathname.startsWith('/guide'),
+      icon: (
+        <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+        </svg>
+      ),
+    },
   ];
 
   const roleBadgeStyles: Record<string, string> = {
@@ -244,9 +249,6 @@ export function MobileNavigation({ user }: MobileNavigationProps) {
                         </span>
                         <span>{item.name}</span>
                       </div>
-                      <span className="font-mono text-[10px] text-[var(--text-muted)] tracking-wider">
-                        {item.operationalMeaning}
-                      </span>
                     </Link>
                   ))}
                 </nav>

@@ -321,6 +321,11 @@ export const distributorsRepository = {
       search?: string;
       status?: DistributorStatus;
       state?: string;
+      city?: string;
+      id?: string;
+      code?: string;
+      exactName?: string;
+      hasDealers?: boolean;
       page?: number;
       limit?: number;
     } = {},
@@ -332,6 +337,16 @@ export const distributorsRepository = {
 
     const whereClauses: string[] = [];
     const args: InValue[] = [];
+
+    for (const [column, value] of [['id', params.id], ['distributor_code', params.code], ['city', params.city], ['business_name', params.exactName]] as const) {
+      if (value !== undefined) {
+        whereClauses.push(`LOWER(d.${column}) = LOWER(?)`);
+        args.push(value.trim());
+      }
+    }
+    if (params.hasDealers !== undefined) {
+      whereClauses.push(`${params.hasDealers ? '' : 'NOT '}EXISTS (SELECT 1 FROM dealers dl WHERE dl.distributor_id = d.id)`);
+    }
 
     if (params.status) {
       whereClauses.push('d.status = ?');
@@ -377,7 +392,7 @@ export const distributorsRepository = {
             LEFT JOIN users u1 ON d.created_by = u1.id
             LEFT JOIN users u2 ON d.updated_by = u2.id
             ${whereSql}
-            ORDER BY d.created_at DESC
+            ORDER BY d.created_at DESC, d.id ASC
             LIMIT ? OFFSET ?`,
       args: queryArgs,
     });

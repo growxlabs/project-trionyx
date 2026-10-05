@@ -201,7 +201,7 @@ export const dealersRepository = {
 
     return {
       ...dealer,
-      distributor: row.distributor_id
+      distributor: row.distributor_id && row.dst_code
         ? {
             id: String(row.distributor_id),
             distributorCode: String(row.dst_code),
@@ -242,7 +242,7 @@ export const dealersRepository = {
 
     return {
       ...dealer,
-      distributor: row.distributor_id
+      distributor: row.distributor_id && row.dst_code
         ? {
             id: String(row.distributor_id),
             distributorCode: String(row.dst_code),
@@ -492,6 +492,11 @@ export const dealersRepository = {
       search?: string;
       status?: DealerStatus;
       state?: string;
+      city?: string;
+      id?: string;
+      code?: string;
+      exactName?: string;
+      hasDistributor?: boolean;
       distributorId?: string | null;
       unassignedOnly?: boolean;
       page?: number;
@@ -505,6 +510,16 @@ export const dealersRepository = {
 
     const whereClauses: string[] = [];
     const args: InValue[] = [];
+
+    for (const [column, value] of [['id', params.id], ['dealer_code', params.code], ['city', params.city], ['business_name', params.exactName]] as const) {
+      if (value !== undefined) {
+        whereClauses.push(`LOWER(dl.${column}) = LOWER(?)`);
+        args.push(value.trim());
+      }
+    }
+    if (params.hasDistributor !== undefined) {
+      whereClauses.push(`dl.distributor_id IS ${params.hasDistributor ? 'NOT ' : ''}NULL`);
+    }
 
     if (params.status) {
       whereClauses.push('dl.status = ?');
@@ -566,14 +581,14 @@ export const dealersRepository = {
             LEFT JOIN users u1 ON dl.created_by = u1.id
             LEFT JOIN users u2 ON dl.updated_by = u2.id
             ${whereSql}
-            ORDER BY dl.created_at DESC
+            ORDER BY dl.created_at DESC, dl.id ASC
             LIMIT ? OFFSET ?`,
       args: queryArgs,
     });
 
     const items: DealerWithRelations[] = result.rows.map((row) => ({
       ...mapDealerRow(row),
-      distributor: row.distributor_id
+      distributor: row.distributor_id && row.dst_code
         ? {
             id: String(row.distributor_id),
             distributorCode: String(row.dst_code),

@@ -1,3 +1,4 @@
+import type { DatabaseClient as Client } from '@trionyx/database';
 import {
   ensureDatabaseReady,
   contactEnquiriesRepository,
@@ -59,15 +60,7 @@ export const contactEnquiriesService = {
     return contactEnquiriesRepository.findById(id, client);
   },
 
-  async list(filter?: {
-    type?: ContactEnquiryType | 'ALL';
-    status?: ContactEnquiryStatus | 'ALL';
-    state?: string;
-    assignedTo?: string;
-    search?: string;
-    page?: number;
-    limit?: number;
-  }): Promise<{ items: ContactEnquiry[]; total: number }> {
+  async list(filter?: Parameters<typeof contactEnquiriesRepository.list>[0]): Promise<{ items: ContactEnquiry[]; total: number }> {
     const client = await ensureDatabaseReady();
     return contactEnquiriesRepository.list(filter, client);
   },
@@ -75,9 +68,10 @@ export const contactEnquiriesService = {
   async updateStatus(
     id: string,
     status: ContactEnquiryStatus,
-    operatorId: string
+    operatorId: string,
+    transactionClient?: Client
   ): Promise<ContactEnquiry> {
-    const client = await ensureDatabaseReady();
+    const client = transactionClient ?? await ensureDatabaseReady();
     const existing = await contactEnquiriesRepository.findById(id, client);
     if (!existing) {
       throw new Error('Enquiry not found');
@@ -110,9 +104,10 @@ export const contactEnquiriesService = {
   async assign(
     id: string,
     assignedTo: string | null,
-    operatorId: string
+    operatorId: string,
+    transactionClient?: Client
   ): Promise<ContactEnquiry> {
-    const client = await ensureDatabaseReady();
+    const client = transactionClient ?? await ensureDatabaseReady();
     const existing = await contactEnquiriesRepository.findById(id, client);
     if (!existing) {
       throw new Error('Enquiry not found');

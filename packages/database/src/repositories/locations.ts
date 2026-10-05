@@ -124,4 +124,21 @@ export const locationsRepository = {
     const result = await client.execute('SELECT COUNT(*) as count FROM inventory_locations');
     return Number(result.rows[0]?.count ?? 0);
   },
+
+  async findMatching(term: string, client: Client = getDbClient()): Promise<InventoryLocation[]> {
+    const clean = term.trim();
+    if (!clean) return [];
+    const exact = await client.execute({
+      sql: `SELECT * FROM inventory_locations WHERE LOWER(name) = LOWER(?) OR LOWER(code) = LOWER(?)`,
+      args: [clean, clean],
+    });
+    if (exact.rows.length > 0) return exact.rows.map(mapLocationRow);
+
+    const pattern = `%${clean}%`;
+    const partial = await client.execute({
+      sql: `SELECT * FROM inventory_locations WHERE (LOWER(name) LIKE LOWER(?) OR LOWER(code) LIKE LOWER(?)) ORDER BY name ASC`,
+      args: [pattern, pattern],
+    });
+    return partial.rows.map(mapLocationRow);
+  },
 };

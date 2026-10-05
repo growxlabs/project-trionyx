@@ -33,11 +33,19 @@ export const specificationsRepository = {
       const id = randomUUID();
       const sortOrder = s.sortOrder !== undefined ? s.sortOrder : i;
 
-      await client.execute({
-        sql: `INSERT INTO product_specifications (id, product_id, group_name, name, label, value, sort_order)
-              VALUES (?, ?, 'General', ?, ?, ?, ?)`,
-        args: [id, productId, s.label.trim(), s.label.trim(), s.value.trim(), sortOrder],
-      });
+      try {
+        await client.execute({
+          sql: `INSERT INTO product_specifications (id, product_id, group_name, name, label, value, sort_order)
+                VALUES (?, ?, 'General', ?, ?, ?, ?)`,
+          args: [id, productId, s.label.trim(), s.label.trim(), s.value.trim(), sortOrder],
+        });
+      } catch {
+        await client.execute({
+          sql: `INSERT INTO product_specifications (id, product_id, label, value, sort_order)
+                VALUES (?, ?, ?, ?, ?)`,
+          args: [id, productId, s.label.trim(), s.value.trim(), sortOrder],
+        });
+      }
 
       created.push({
         id,
@@ -52,10 +60,18 @@ export const specificationsRepository = {
   },
 
   async listByProduct(productId: string, client: Client = getDbClient()): Promise<ProductSpecification[]> {
-    const result = await client.execute({
-      sql: 'SELECT id, product_id, COALESCE(label, name, \'\') as label, value, sort_order FROM product_specifications WHERE product_id = ? ORDER BY sort_order ASC, label ASC',
-      args: [productId],
-    });
+    let result;
+    try {
+      result = await client.execute({
+        sql: 'SELECT id, product_id, label, value, sort_order FROM product_specifications WHERE product_id = ? ORDER BY sort_order ASC, label ASC',
+        args: [productId],
+      });
+    } catch {
+      result = await client.execute({
+        sql: 'SELECT id, product_id, name as label, value, sort_order FROM product_specifications WHERE product_id = ? ORDER BY sort_order ASC, name ASC',
+        args: [productId],
+      });
+    }
     return result.rows.map(mapSpecRow);
   },
 };

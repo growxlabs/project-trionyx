@@ -3,6 +3,9 @@ import { Pool } from 'pg';
 import * as path from 'path';
 import * as fs from 'fs';
 import { POSTGRES_TABLE_STATEMENTS } from './postgresSchema';
+import { AGENT_LOG_TABLE_STATEMENTS } from './agentLogSchema';
+import {SUPABASE_PROD_CA} from './supabaseCa';
+import { migrateDealerNetworkLogs, migrateEnquiryLogs, migrateWarrantyExecutiveLogs, migratePreparedActionLogs, migrateTrixMetrics } from './agentLogMigration';
 
 let globalClient: Client | null = null;
 let globalPostgresAdapter: PostgresClientAdapter | null = null;
@@ -45,14 +48,14 @@ export class PostgresClientAdapter {
   private pool: Pool;
 
   constructor(connectionString: string) {
-    const isLocalhost = connectionString.includes('localhost') || connectionString.includes('127.0.0.1');
-    // Strip sslmode parameter so pg driver does not override rejectUnauthorized: false with verify-full
-    const cleanedConnectionString = connectionString
-      .replace(/[?&]sslmode=[^&]+/gi, '')
-      .replace(/\?$/, '');
+    const parsedConnection = new URL(connectionString);
+    const isLocalhost = ['localhost','127.0.0.1','[::1]'].includes(parsedConnection.hostname);
+    const trustedCa=process.env.TRIONYX_DATABASE_CA_PEM??(/\.(?:pooler\.supabase\.com|supabase\.co)$/.test(parsedConnection.hostname)?SUPABASE_PROD_CA:undefined);
+    // URL SSL flags must not override certificate verification. Trust an explicit CA when required.
+    for(const option of ['sslmode','sslcert','sslkey','sslrootcert'])parsedConnection.searchParams.delete(option);
     this.pool = new Pool({
-      connectionString: cleanedConnectionString,
-      ssl: isLocalhost ? false : { rejectUnauthorized: false },
+      connectionString: parsedConnection.toString(),
+      ssl: isLocalhost ? false : { rejectUnauthorized: true, ...(trustedCa ? {ca:trustedCa} : {}) },
       max: 10,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 10000,
@@ -101,6 +104,22 @@ export class PostgresClientAdapter {
     } finally {
       client.release();
     }
+  }
+
+  async withTransaction<T>(run: (client: Client) => Promise<T>): Promise<T> {
+    const connection = await this.pool.connect();
+    const execute = async (statement: string | { sql: string; args?: unknown[] }) => {
+      const sql = typeof statement === 'string' ? statement : statement.sql;
+      const args = typeof statement === 'string' ? [] : statement.args ?? [];
+      const result = await connection.query(translateSqliteToPostgres(sql), args);
+      return { rows: result.rows, rowsAffected: result.rowCount ?? 0, columns: result.fields.map(field => field.name) };
+    };
+    const client = { execute, batch: async (statements: Array<string | {sql:string;args?:unknown[]}>) => {
+      const results = []; for (const statement of statements) results.push(await execute(statement)); return results;
+    } } as unknown as Client;
+    try { await connection.query('BEGIN'); const result = await run(client); await connection.query('COMMIT'); return result; }
+    catch (error) { await connection.query('ROLLBACK'); throw error; }
+    finally { connection.release(); }
   }
 
   async close(): Promise<void> {
@@ -157,7 +176,27 @@ export async function ensureDatabaseReady(client: Client = getDbClient()): Promi
     migrationPromise = runMigrations(client);
   }
   await migrationPromise;
+  await ensureAgentLogSchema(client);
   return client;
+}
+
+let agentLogMigrationPromise: Promise<void> | null = null;
+async function ensureAgentLogSchema(client: Client): Promise<void> {
+  if (!agentLogMigrationPromise) {
+    agentLogMigrationPromise = (async () => {
+      for (const statement of AGENT_LOG_TABLE_STATEMENTS) await client.execute(statement);
+      await migrateDealerNetworkLogs(client, isPostgresUrl(getDatabaseUrl()));
+      await migrateEnquiryLogs(client, isPostgresUrl(getDatabaseUrl()));
+      await migrateWarrantyExecutiveLogs(client, isPostgresUrl(getDatabaseUrl()));
+      await migratePreparedActionLogs(client, isPostgresUrl(getDatabaseUrl()));
+      await migrateTrixMetrics(client, isPostgresUrl(getDatabaseUrl()));
+      if (isPostgresUrl(getDatabaseUrl())) {
+        // No public Supabase policy: telemetry is accessible only through the server DB role.
+        await client.execute('ALTER TABLE agent_execution_logs ENABLE ROW LEVEL SECURITY');
+      }
+    })().catch((error) => { agentLogMigrationPromise = null; throw error; });
+  }
+  await agentLogMigrationPromise;
 }
 
 export async function runPostgresMigrations(client: Client = getDbClient()): Promise<void> {
@@ -909,4 +948,45 @@ export async function runMigrations(client: Client = getDbClient()): Promise<voi
         'write'
       );
     }
+
+    // Migration 0012: TRIX agent execution logs
+    const existingAgentLogsMigration = await client.execute({
+      sql: 'SELECT name FROM _migrations WHERE name = ?',
+      args: ['0012_trix_execution_logs'],
+    });
+
+    if (existingAgentLogsMigration.rows.length === 0) {
+      await client.batch(
+        [
+          `CREATE TABLE IF NOT EXISTS agent_execution_logs (
+            id TEXT PRIMARY KEY,
+            session_id TEXT NOT NULL,
+            user_id TEXT NOT NULL REFERENCES users(id),
+            agent_name TEXT NOT NULL CHECK (agent_name = 'TRIX'),
+            model_provider TEXT NOT NULL,
+            model_name TEXT NOT NULL,
+            timestamp TEXT NOT NULL,
+            request_summary TEXT NOT NULL,
+            tool_events TEXT NOT NULL,
+            response_type TEXT NOT NULL CHECK (response_type IN ('pending', 'serial_record', 'inventory_list', 'inventory_summary', 'serial_movements', 'inventory_exceptions', 'message')),
+            error_code TEXT,
+            error_summary TEXT
+          );`,
+          `CREATE INDEX IF NOT EXISTS idx_agent_execution_user_timestamp ON agent_execution_logs(user_id, timestamp);`,
+          {
+            sql: 'INSERT INTO _migrations (name) VALUES (?)',
+            args: ['0012_trix_execution_logs'],
+          },
+        ],
+        'write'
+      );
+    }
   }
+
+export async function withDatabaseTransaction<T>(client: Client, run: (transaction: Client) => Promise<T>): Promise<T> {
+  if (client instanceof PostgresClientAdapter) return client.withTransaction(run);
+  const transaction = await client.transaction('write');
+  try { const result = await run(transaction as unknown as Client); await transaction.commit(); return result; }
+  catch (error) { await transaction.rollback(); throw error; }
+  finally { transaction.close(); }
+}

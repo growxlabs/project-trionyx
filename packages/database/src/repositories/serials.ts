@@ -1,3 +1,4 @@
+import { inventoryExceptionSources } from './inventoryAttention';
 import type { Client } from '@libsql/client';
 import type {
   SerialNumberRecord,
@@ -509,7 +510,8 @@ export const serialsRepository = {
         p.category_id as product_category_id,
         l.code as location_code,
         l.name as location_name,
-        l.status as location_status
+        l.status as location_status,
+        (SELECT MAX(sm.created_at) FROM serial_movements sm WHERE sm.serial_record_id = s.id) as last_movement_at
       FROM serial_numbers s
       JOIN products p ON s.product_id = p.id
       JOIN inventory_locations l ON s.location_id = l.id
@@ -582,6 +584,7 @@ export const serialsRepository = {
         name: String(row.location_name),
         status: row.location_status as 'ACTIVE' | 'INACTIVE',
       },
+      lastMovementAt: row.last_movement_at ? String(row.last_movement_at) : null,
     }));
 
     return {
@@ -676,5 +679,193 @@ export const serialsRepository = {
       args: [productId],
     });
     return Number(res.rows[0]?.count ?? 0);
+  },
+
+  /**
+   * Aggregate inventory summary by product, location, or status.
+   */
+  async getInventorySummary(
+    filter: {
+      productId?: string;
+      locationId?: string;
+      status?: SerialStatus;
+      groupBy: 'product' | 'location' | 'status';
+    },
+    client: Client = getDbClient()
+  ): Promise<{
+    total: number;
+    groupBy: 'product' | 'location' | 'status';
+    groups: Array<{ key: string; label: string; count: number }>;
+  }> {
+    let whereClauses = 'WHERE 1=1';
+    const whereArgs: (string | number)[] = [];
+
+    if (filter.productId) {
+      whereClauses += ' AND s.product_id = ?';
+      whereArgs.push(filter.productId);
+    }
+    if (filter.locationId) {
+      whereClauses += ' AND s.location_id = ?';
+      whereArgs.push(filter.locationId);
+    }
+    if (filter.status) {
+      whereClauses += ' AND s.status = ?';
+      whereArgs.push(filter.status);
+    }
+
+    let groupSql = '';
+    const groupArgs: (string | number)[] = [];
+
+    if (filter.groupBy === 'product') {
+      let joinConditions = '';
+      if (filter.locationId) {
+        joinConditions += ' AND s.location_id = ?';
+        groupArgs.push(filter.locationId);
+      }
+      if (filter.status) {
+        joinConditions += ' AND s.status = ?';
+        groupArgs.push(filter.status);
+      }
+
+      let whereCondition = '';
+      if (filter.productId) {
+        whereCondition = 'WHERE p.id = ?';
+        groupArgs.push(filter.productId);
+      }
+
+      groupSql = `
+        SELECT p.id as key, p.name as label, COUNT(s.id) as count
+        FROM products p
+        LEFT JOIN serial_numbers s ON s.product_id = p.id ${joinConditions}
+        ${whereCondition}
+        GROUP BY p.id, p.name
+        ORDER BY count DESC, p.name ASC
+      `;
+    } else if (filter.groupBy === 'location') {
+      let joinConditions = '';
+      if (filter.productId) {
+        joinConditions += ' AND s.product_id = ?';
+        groupArgs.push(filter.productId);
+      }
+      if (filter.status) {
+        joinConditions += ' AND s.status = ?';
+        groupArgs.push(filter.status);
+      }
+
+      let whereCondition = '';
+      if (filter.locationId) {
+        whereCondition = 'WHERE l.id = ?';
+        groupArgs.push(filter.locationId);
+      }
+
+      groupSql = `
+        SELECT l.id as key, l.name as label, COUNT(s.id) as count
+        FROM inventory_locations l
+        LEFT JOIN serial_numbers s ON s.location_id = l.id ${joinConditions}
+        ${whereCondition}
+        GROUP BY l.id, l.name
+        ORDER BY count DESC, l.name ASC
+      `;
+    } else {
+      groupSql = `
+        SELECT s.status as key, s.status as label, COUNT(s.id) as count
+        FROM serial_numbers s
+        ${whereClauses}
+        GROUP BY s.status
+        ORDER BY count DESC
+      `;
+      groupArgs.push(...whereArgs);
+    }
+
+    const totalSql = `
+      SELECT COUNT(s.id) as count
+      FROM serial_numbers s
+      ${whereClauses}
+    `;
+
+    const [groupsResult, totalResult] = await Promise.all([
+      client.execute({ sql: groupSql, args: groupArgs }),
+      client.execute({ sql: totalSql, args: whereArgs }),
+    ]);
+
+    const groups = groupsResult.rows.map((row) => ({
+      key: String(row.key ?? 'unknown'),
+      label: String(row.label ?? 'Unknown'),
+      count: Number(row.count ?? 0),
+    }));
+
+    const total = Number(totalResult.rows[0]?.count ?? 0);
+
+    return {
+      total,
+      groupBy: filter.groupBy,
+      groups,
+    };
+  },
+
+  /**
+   * Deterministic inventory exceptions based on objective domain rules.
+   */
+  async getInventoryExceptions(client: Client = getDbClient()): Promise<Array<{
+    type: 'ZERO_AVAILABLE_STOCK' | 'INACTIVE_LOCATION_STOCK' | 'ORPHAN_SERIAL_LOCATION';
+    severity: 'INFO' | 'WARNING' | 'CRITICAL';
+    label: string;
+    description: string;
+    recordType: 'product' | 'location' | 'serial';
+    recordId: string;
+    count?: number;
+  }>> {
+    const items: Array<{
+      type: 'ZERO_AVAILABLE_STOCK' | 'INACTIVE_LOCATION_STOCK' | 'ORPHAN_SERIAL_LOCATION';
+      severity: 'INFO' | 'WARNING' | 'CRITICAL';
+      label: string;
+      description: string;
+      recordType: 'product' | 'location' | 'serial';
+      recordId: string;
+      count?: number;
+    }> = [];
+
+    // Rule 1: Active products with zero available serials
+    const zeroStock = await client.execute(inventoryExceptionSources.ZERO_AVAILABLE_STOCK + ' ORDER BY p.name ASC');
+    for (const row of zeroStock.rows) {
+      items.push({
+        type: 'ZERO_AVAILABLE_STOCK',
+        severity: 'WARNING',
+        label: 'Zero available stock',
+        description: `Active product "${row.name}" (${row.product_code}) has 0 available serials in inventory.`,
+        recordType: 'product',
+        recordId: String(row.id),
+        count: 0,
+      });
+    }
+
+    // Rule 2: Inactive location containing available serials
+    const inactiveLocation = await client.execute(inventoryExceptionSources.INACTIVE_LOCATION_STOCK + ' ORDER BY count DESC');
+    for (const row of inactiveLocation.rows) {
+      items.push({
+        type: 'INACTIVE_LOCATION_STOCK',
+        severity: 'CRITICAL',
+        label: 'Stock in inactive location',
+        description: `Inactive location "${row.name}" (${row.code}) contains ${row.count} available serial(s).`,
+        recordType: 'location',
+        recordId: String(row.id),
+        count: Number(row.count),
+      });
+    }
+
+    // Rule 3: Serials referencing missing location records
+    const orphanSerials = await client.execute(inventoryExceptionSources.ORPHAN_SERIAL_LOCATION);
+    for (const row of orphanSerials.rows) {
+      items.push({
+        type: 'ORPHAN_SERIAL_LOCATION',
+        severity: 'CRITICAL',
+        label: 'Serial missing location record',
+        description: `Serial "${row.serial_number}" references a missing location.`,
+        recordType: 'serial',
+        recordId: String(row.id),
+      });
+    }
+
+    return items;
   },
 };

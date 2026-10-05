@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   transpilePackages: [
+    '@trionyx/ai',
     '@trionyx/ui',
     '@trionyx/design-tokens',
     '@trionyx/types',

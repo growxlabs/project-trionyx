@@ -4,6 +4,10 @@
   "private": true,
   "packageManager": "pnpm@11.10.0",
   "scripts": {
+    "test:trix": "pnpm --filter @trionyx/ai test",
+    "eval:trix": "pnpm --filter @trionyx/ai exec tsx --test src/__tests__/trix-phase07.test.ts",
+    "trix:readiness": "tsx scripts/verify-trix-phase07.ts",
+    "benchmark:trix": "tsx scripts/benchmark-trix-phase07.ts",
     "dev": "turbo dev",
     "build": "turbo build",
     "start": "turbo start",
@@ -11,10 +15,10 @@
     "typecheck": "turbo typecheck",
     "internal-user:create": "tsx scripts/create-internal-user.ts",
     "db:migrate-to-supabase": "tsx scripts/migrate-sqlite-to-supabase.ts",
-    "test": "tsx --test --test-concurrency=1 packages/auth/src/__tests__/*.test.ts"
+    "test": "tsx scripts/test-platform.ts"
   },
   "dependencies": {
-    "next": "16.3.5",
+    "next": "16.3.6",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
