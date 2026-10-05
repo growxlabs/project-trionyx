@@ -21,7 +21,7 @@ export const PromptInput = ({
   return (
     <form
       className={cn(
-        'relative flex items-end gap-2 p-2 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] focus-within:border-[var(--accent,#F26522)] shadow-sm transition-all',
+        'relative flex items-end gap-2 p-2 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] focus-within:border-[var(--border-strong)] shadow-sm transition-all',
         className
       )}
       onSubmit={(e) => {
