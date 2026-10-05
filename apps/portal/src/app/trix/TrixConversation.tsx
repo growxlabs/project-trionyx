@@ -3,7 +3,7 @@ import { PreparedActionCard } from './PreparedActionCard';
 import { TrixResultCard } from './TrixResultCards';
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { Add, Restart } from '@carbon/icons-react';
+import { Add, Close, Restart, Time, TrashCan } from '@carbon/icons-react';
 import { responseSchema, type TrixExecution, type TrixProgress, type TrixStreamEvent } from '@trionyx/ai/responses';
 import {
   Conversation,
@@ -25,6 +25,36 @@ import styles from './TrixConversation.module.css';
 
 type Failure = { title: string; description: string; code: string };
 export type TrixEntry = { id: string; question: string; steps?: TrixProgress[]; result?: TrixExecution; failure?: Failure };
+export type StoredTrixConversation = {
+  id: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+  messageCount?: number;
+};
+
+function formatRelativeTime(dateString?: string): string {
+  if (!dateString) return '';
+  try {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    if (diffMs < 0 || isNaN(diffMs)) return 'Just now';
+    const diffSec = Math.floor(diffMs / 1000);
+    const diffMin = Math.floor(diffSec / 60);
+    const diffHours = Math.floor(diffMin / 60);
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffSec < 60) return 'Just now';
+    if (diffMin < 60) return `${diffMin}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  } catch {
+    return '';
+  }
+}
 
 function failureFor(status: number, code?: unknown, message?: unknown): Failure {
   if (status === 401 || code === 'UNAUTHENTICATED') return { title: 'Your session has expired.', description: 'Sign in again to use TRIX.', code: 'UNAUTHENTICATED' };
@@ -43,18 +73,120 @@ export function TrixConversation() {
   const [message, setMessage] = useState('');
   const [entries, setEntries] = useState<TrixEntry[]>([]);
   const [busy, setBusy] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [conversations, setConversations] = useState<StoredTrixConversation[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+
   const conversationId = useRef<string | null>(null);
   const controller = useRef<AbortController | null>(null);
   const generation = useRef(0);
+
   useEffect(() => () => controller.current?.abort(), []);
-  function newConversation() {
-    generation.current++; controller.current?.abort(); conversationId.current = null;
-    setEntries([]); setMessage(''); setBusy(false);
+
+  useEffect(() => {
+    if (!historyOpen) return;
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setHistoryOpen(false);
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [historyOpen]);
+
+  async function fetchHistory() {
+    setLoadingHistory(true);
+    try {
+      const res = await fetch('/api/v1/internal/trix/conversations');
+      if (res.ok) {
+        const body = await res.json();
+        setConversations(body?.data?.conversations ?? []);
+      }
+    } catch {
+      // Ignore network errors on listing
+    } finally {
+      setLoadingHistory(false);
+    }
   }
+
+  function toggleHistory() {
+    if (!historyOpen) {
+      setHistoryOpen(true);
+      void fetchHistory();
+    } else {
+      setHistoryOpen(false);
+    }
+  }
+
+  function newConversation() {
+    generation.current++;
+    controller.current?.abort();
+    conversationId.current = null;
+    setActiveConversationId(null);
+    setEntries([]);
+    setMessage('');
+    setBusy(false);
+    setHistoryOpen(false);
+  }
+
+  async function selectConversation(id: string) {
+    if (id === activeConversationId && entries.length > 0) {
+      setHistoryOpen(false);
+      return;
+    }
+    generation.current++;
+    controller.current?.abort();
+    const currentGeneration = generation.current;
+    setBusy(true);
+    try {
+      const res = await fetch(`/api/v1/internal/trix/conversations/${encodeURIComponent(id)}`);
+      if (res.ok) {
+        const body = await res.json();
+        const conv = body?.data?.conversation;
+        if (conv && generation.current === currentGeneration) {
+          conversationId.current = conv.id;
+          setActiveConversationId(conv.id);
+          setEntries(conv.entries ?? []);
+          setMessage('');
+          setHistoryOpen(false);
+        }
+      }
+    } catch {
+      // Network error handled gracefully
+    } finally {
+      if (generation.current === currentGeneration) {
+        setBusy(false);
+      }
+    }
+  }
+
+  async function deleteConversation(id: string, event: React.MouseEvent) {
+    event.stopPropagation();
+    try {
+      const res = await fetch(`/api/v1/internal/trix/conversations/${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        setConversations(prev => prev.filter(c => c.id !== id));
+        if (conversationId.current === id) {
+          newConversation();
+        }
+      }
+    } catch {
+      // Deletion error handled gracefully
+    }
+  }
+
   async function send(question: string, retryId?: string) {
     if (busy || !question.trim()) return;
     const id = retryId ?? crypto.randomUUID(), currentGeneration = generation.current;
-    conversationId.current ??= crypto.randomUUID(); controller.current = new AbortController();
+    if (!conversationId.current) {
+      const newId = crypto.randomUUID();
+      conversationId.current = newId;
+      setActiveConversationId(newId);
+    }
+    controller.current = new AbortController();
     setEntries(previous => retryId ? previous.map(entry => entry.id === id ? { id, question } : entry) : [...previous, { id, question }]);
     setMessage(''); setBusy(true);
     function update(change: Partial<TrixEntry> | ((entry: TrixEntry) => Partial<TrixEntry>)) {
@@ -93,21 +225,88 @@ export function TrixConversation() {
       update({ failure: { title: "TRIX couldn't connect.", description: 'The AI service is temporarily unavailable.', code: 'CONNECTION_ERROR' } });
     } finally { if (generation.current === currentGeneration) setBusy(false); }
   }
-  return <TrixWorkspace message={message} onMessageChange={setMessage} entries={entries} busy={busy}
-    onSend={() => void send(message.trim())} onRetry={entry => void send(entry.question, entry.id)} onNewConversation={newConversation} />;
+  return (
+    <TrixWorkspace
+      message={message}
+      onMessageChange={setMessage}
+      entries={entries}
+      busy={busy}
+      onSend={() => void send(message.trim())}
+      onRetry={entry => void send(entry.question, entry.id)}
+      onNewConversation={newConversation}
+      historyOpen={historyOpen}
+      conversations={conversations}
+      loadingHistory={loadingHistory}
+      activeConversationId={activeConversationId}
+      onToggleHistory={toggleHistory}
+      onCloseHistory={() => setHistoryOpen(false)}
+      onSelectConversation={selectConversation}
+      onDeleteConversation={deleteConversation}
+    />
+  );
 }
 
-type WorkspaceProps = { message: string; onMessageChange: (value: string) => void; entries: TrixEntry[]; busy: boolean;
-  onSend: () => void; onRetry: (entry: TrixEntry) => void; onNewConversation: () => void };
-export function TrixWorkspace({ message, onMessageChange, entries, busy, onSend, onRetry, onNewConversation }: WorkspaceProps) {
+type WorkspaceProps = {
+  message: string;
+  onMessageChange: (value: string) => void;
+  entries: TrixEntry[];
+  busy: boolean;
+  onSend: () => void;
+  onRetry: (entry: TrixEntry) => void;
+  onNewConversation: () => void;
+  historyOpen: boolean;
+  conversations: StoredTrixConversation[];
+  loadingHistory: boolean;
+  activeConversationId: string | null;
+  onToggleHistory: () => void;
+  onCloseHistory: () => void;
+  onSelectConversation: (id: string) => void;
+  onDeleteConversation: (id: string, e: React.MouseEvent) => void;
+};
+export function TrixWorkspace({
+  message,
+  onMessageChange,
+  entries,
+  busy,
+  onSend,
+  onRetry,
+  onNewConversation,
+  historyOpen,
+  conversations,
+  loadingHistory,
+  activeConversationId,
+  onToggleHistory,
+  onCloseHistory,
+  onSelectConversation,
+  onDeleteConversation,
+}: WorkspaceProps) {
   const input = useRef<HTMLTextAreaElement>(null);
   function suggest(query: string) { onMessageChange(query); input.current?.focus(); }
   return <section className={styles.workspace} aria-label="TRIX workspace"><div className={styles.frame}>
     <header className={styles.header}>
       <div><h1>TRIX</h1><p>Ask across Trionyx</p></div>
-      <button type="button" className={styles.newConversation} onClick={() => { onNewConversation(); input.current?.focus(); }} aria-label="New conversation">
-        <span>New conversation</span><Add size={20} className={styles.mobileAdd} />
-      </button>
+      <div className={styles.headerActions}>
+        <button
+          type="button"
+          className={`${styles.historyButton} ${historyOpen ? styles.historyButtonActive : ''}`}
+          onClick={onToggleHistory}
+          aria-label="Conversation history"
+          title="Conversation history"
+        >
+          <Time size={18} />
+          <span>History</span>
+        </button>
+        <button
+          type="button"
+          className={styles.newConversation}
+          onClick={() => { onNewConversation(); input.current?.focus(); }}
+          aria-label="New conversation"
+          title="New conversation"
+        >
+          <span>New conversation</span>
+          <Add size={20} className={styles.mobileAdd} />
+        </button>
+      </div>
     </header>
     <Conversation className={styles.conversation} aria-busy={busy}>
       <ConversationContent className={styles.entries}>
@@ -170,7 +369,89 @@ export function TrixWorkspace({ message, onMessageChange, entries, busy, onSend,
         />
       </PromptInput>
     </footer>
-  </div></section>;
+  </div>
+  {historyOpen && (
+    <div className={styles.historyBackdrop} onClick={onCloseHistory}>
+      <aside
+        className={styles.historyDrawer}
+        onClick={event => event.stopPropagation()}
+        aria-label="Conversation history"
+      >
+        <div className={styles.historyDrawerHeader}>
+          <div className={styles.historyHeaderTitle}>
+            <Time size={18} />
+            <h2>Past Conversations</h2>
+            {conversations.length > 0 && (
+              <span className={styles.historyCount}>{conversations.length}</span>
+            )}
+          </div>
+          <button
+            type="button"
+            className={styles.historyCloseButton}
+            onClick={onCloseHistory}
+            aria-label="Close history"
+            title="Close history"
+          >
+            <Close size={18} />
+          </button>
+        </div>
+
+        <div className={styles.historyContent}>
+          {loadingHistory ? (
+            <div className={styles.historyLoading}>
+              <Shimmer className={styles.historyShimmer}>Loading history…</Shimmer>
+            </div>
+          ) : conversations.length === 0 ? (
+            <div className={styles.historyEmpty}>
+              <Time size={32} className={styles.historyEmptyIcon} />
+              <p className={styles.historyEmptyTitle}>No history yet</p>
+              <p className={styles.historyEmptyText}>
+                Your conversations with TRIX will appear here so you can review or resume them anytime.
+              </p>
+            </div>
+          ) : (
+            <ul className={styles.historyList}>
+              {conversations.map(conv => (
+                <li
+                  key={conv.id}
+                  className={`${styles.historyItem} ${conv.id === activeConversationId ? styles.historyItemActive : ''}`}
+                  onClick={() => onSelectConversation(conv.id)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={event => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      onSelectConversation(conv.id);
+                    }
+                  }}
+                >
+                  <div className={styles.historyItemInfo}>
+                    <span className={styles.historyItemTitle} title={conv.title}>
+                      {conv.title}
+                    </span>
+                    <span className={styles.historyItemMeta}>
+                      {formatRelativeTime(conv.updatedAt)}
+                      {conv.messageCount ? ` · ${conv.messageCount} ${conv.messageCount === 1 ? 'message' : 'messages'}` : ''}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    className={styles.historyDeleteButton}
+                    onClick={event => onDeleteConversation(conv.id, event)}
+                    aria-label={`Delete conversation ${conv.title}`}
+                    title="Delete conversation"
+                  >
+                    <TrashCan size={16} />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </aside>
+    </div>
+  )}
+</section>;
 }
 
 function ConnectionFailure({ failure, onRetry, disabled }: { failure: NonNullable<TrixEntry['failure']>; onRetry: () => void; disabled: boolean }) {

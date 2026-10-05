@@ -32,3 +32,4 @@ export * from './repositories/operationalChanges';
 export * from './repositories/preparedActions';
 export type { Client as DatabaseClient } from '@libsql/client';
 export {consumeTrixRateLimit} from './repositories/trixRateLimits';
+export * from './repositories/trixConversations';
