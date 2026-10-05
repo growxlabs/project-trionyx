@@ -16,6 +16,7 @@ import {
   VerifiedShieldIcon,
   OperationalLedgerIcon,
 } from './OperationsIcons';
+import { TrixNavIcon } from './TrixNavIcon';
 
 interface MobileNavigationProps {
   user: SafeUser;
@@ -32,7 +33,7 @@ export function MobileNavigation({ user }: MobileNavigationProps) {
   const userInitial = user.name ? user.name.charAt(0).toUpperCase() : 'O';
 
   const navItems = [
-    ...(user.role === 'MANAGING_DIRECTOR' ? [{ name: 'TRIX', href: '/trix', active: pathname.startsWith('/trix'), icon: <ControlBoardIcon className="w-5 h-5 shrink-0" /> }] : []),
+    ...(user.role === 'MANAGING_DIRECTOR' ? [{ name: 'TRIX', href: '/trix', active: pathname.startsWith('/trix'), icon: <TrixNavIcon className="w-5 h-5 shrink-0" /> }] : []),
     {
       name: 'Overview',
       href: '/overview',

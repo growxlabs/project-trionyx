@@ -518,3 +518,4 @@ export const CalibrationTuningIcon = ControlSlidersIcon;
 
 export { TrionyxOpsMark, TrionyxOpsMarkAnimated } from '@trionyx/ui';
 export type { TrionyxOpsMarkProps } from '@trionyx/ui';
+export { TrixNavIcon } from './TrixNavIcon';
