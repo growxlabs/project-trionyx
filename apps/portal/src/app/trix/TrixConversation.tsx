@@ -3,10 +3,24 @@ import { PreparedActionCard } from './PreparedActionCard';
 import { TrixResultCard } from './TrixResultCards';
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { Add, ArrowUp } from '@carbon/icons-react';
+import { Add, Restart } from '@carbon/icons-react';
 import { responseSchema, type TrixExecution, type TrixProgress, type TrixStreamEvent } from '@trionyx/ai/responses';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import {
+  Conversation,
+  ConversationContent,
+  ConversationEmptyState,
+  ConversationScrollButton,
+  Message,
+  MessageContent,
+  MessageResponse,
+  MessageActions,
+  MessageAction,
+  MessageCopyAction,
+  PromptInput,
+  PromptInputTextarea,
+  PromptInputSubmit,
+  Shimmer,
+} from '@/components/ai-elements';
 import styles from './TrixConversation.module.css';
 
 type Failure = { title: string; description: string; code: string };
@@ -24,6 +38,7 @@ function withStep(steps: TrixProgress[] = [], step: TrixProgress): TrixProgress[
   const index = steps.map(s => s.toolName === step.toolName && s.status === 'started').lastIndexOf(true);
   return index < 0 ? [...steps, step] : steps.map((s, i) => i === index ? step : s);
 }
+
 export function TrixConversation() {
   const [message, setMessage] = useState('');
   const [entries, setEntries] = useState<TrixEntry[]>([]);
@@ -85,12 +100,7 @@ export function TrixConversation() {
 type WorkspaceProps = { message: string; onMessageChange: (value: string) => void; entries: TrixEntry[]; busy: boolean;
   onSend: () => void; onRetry: (entry: TrixEntry) => void; onNewConversation: () => void };
 export function TrixWorkspace({ message, onMessageChange, entries, busy, onSend, onRetry, onNewConversation }: WorkspaceProps) {
-  const input = useRef<HTMLTextAreaElement>(null), end = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (!input.current) return;
-    input.current.style.height = 'auto'; input.current.style.height = `${Math.min(input.current.scrollHeight, 160)}px`;
-  }, [message]);
-  useEffect(() => { end.current?.scrollIntoView({ block: 'nearest' }); }, [entries, busy]);
+  const input = useRef<HTMLTextAreaElement>(null);
   function suggest(query: string) { onMessageChange(query); input.current?.focus(); }
   return <section className={styles.workspace} aria-label="TRIX workspace"><div className={styles.frame}>
     <header className={styles.header}>
@@ -99,31 +109,66 @@ export function TrixWorkspace({ message, onMessageChange, entries, busy, onSend,
         <span>New conversation</span><Add size={20} className={styles.mobileAdd} />
       </button>
     </header>
-    <div className={styles.conversation} role="log" aria-label="TRIX conversation" aria-live="polite" aria-busy={busy}>
-      {!entries.length ? <div className={styles.empty}>
-        <h2>What do you want to know?</h2><p>Search, analyse and navigate Trionyx operations.</p>
-        <div className={styles.suggestions}>
-          <button type="button" onClick={() => suggest('Where is serial ')}>Find a serial</button>
-          <button type="button" onClick={() => suggest('Check inventory availability.')}>Check inventory</button>
-          <button type="button" onClick={() => suggest('Review enquiries.')}>Review enquiries</button>
-        </div>
-      </div> : <div className={styles.entries}>{entries.map(entry => <article key={entry.id} className={styles.entry}>
-        <div className={styles.userMessage}><p className={styles.speaker}>You</p><p>{entry.question}</p></div>
-        <div className={styles.answer}><p className={styles.speaker}>TRIX</p>
-          {entry.failure ? <ConnectionFailure failure={entry.failure} onRetry={() => onRetry(entry)} disabled={busy} />
-            : entry.result ? <TrixAnswer entry={entry} onRetry={() => onRetry(entry)} disabled={busy} />
-            : <TrixThinking />}
-        </div>
-      </article>)}</div>}
-      <div ref={end} />
-    </div>
+    <Conversation className={styles.conversation} aria-busy={busy}>
+      <ConversationContent className={styles.entries}>
+        {!entries.length ? (
+          <ConversationEmptyState
+            title="What do you want to know?"
+            description="Search, analyse and navigate Trionyx operations."
+            suggestions={[
+              { label: 'Find a serial', prompt: 'Where is serial ', onClick: () => suggest('Where is serial ') },
+              { label: 'Check inventory', prompt: 'Check inventory availability.', onClick: () => suggest('Check inventory availability.') },
+              { label: 'Review enquiries', prompt: 'Review enquiries.', onClick: () => suggest('Review enquiries.') },
+            ]}
+          />
+        ) : (
+          entries.map(entry => (
+            <article key={entry.id} className={styles.entry}>
+              <Message from="user">
+                <p className={styles.speaker}>You</p>
+                <MessageContent>
+                  <p className="whitespace-pre-wrap break-words">{entry.question}</p>
+                </MessageContent>
+              </Message>
+
+              <Message from="assistant" className="mt-4">
+                <p className={styles.speaker}>TRIX</p>
+                <MessageContent>
+                  {entry.failure ? (
+                    <ConnectionFailure failure={entry.failure} onRetry={() => onRetry(entry)} disabled={busy} />
+                  ) : entry.result ? (
+                    <TrixAnswer entry={entry} onRetry={() => onRetry(entry)} disabled={busy} />
+                  ) : (
+                    <TrixThinking />
+                  )}
+                </MessageContent>
+              </Message>
+            </article>
+          ))
+        )}
+      </ConversationContent>
+      <ConversationScrollButton />
+    </Conversation>
     <footer className={styles.footer}>
-      <form className={styles.composer} onSubmit={event => { event.preventDefault(); if (!busy && message.trim()) onSend(); }}>
-        <textarea ref={input} aria-label="Message TRIX" placeholder="Ask TRIX anything about Trionyx..." rows={1}
-          value={message} onChange={event => onMessageChange(event.target.value)} maxLength={2000} disabled={busy}
-          onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); if (!busy && message.trim()) onSend(); } }} />
-        <button type="submit" className={styles.send} disabled={busy || !message.trim()} aria-label="Send message"><ArrowUp size={20} /></button>
-      </form>
+      <PromptInput
+        onSubmit={({ text }) => {
+          if (!busy && text.trim()) onSend();
+        }}
+      >
+        <PromptInputTextarea
+          ref={input}
+          aria-label="Message TRIX"
+          placeholder="Ask TRIX anything about Trionyx..."
+          value={message}
+          onChange={event => onMessageChange(event.target.value)}
+          maxLength={2000}
+          disabled={busy}
+        />
+        <PromptInputSubmit
+          status={busy ? 'streaming' : 'ready'}
+          disabled={busy || !message.trim()}
+        />
+      </PromptInput>
     </footer>
   </div></section>;
 }
@@ -136,38 +181,72 @@ function ConnectionFailure({ failure, onRetry, disabled }: { failure: NonNullabl
   </div>;
 }
 
-function MarkdownView({ content }: { content: string }) {
-  return (
-    <div className={styles.markdown}>
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
-    </div>
-  );
-}
-
 function TrixAnswer({ entry, onRetry, disabled }: { entry: TrixEntry; onRetry: () => void; disabled: boolean }) {
   const result = entry.result!, response = result.response;
   const providerFailure = response.type === 'message' && ['PROVIDER_ERROR', 'PROVIDER_NOT_CONFIGURED', 'PROVIDER_LIMIT_REACHED'].includes(response.errorCode ?? '');
-  return <>
-    {result.answer && !providerFailure && <MarkdownView content={result.answer} />}
-    {providerFailure ? <ConnectionFailure failure={{ title: response.type === 'message' && response.errorCode === 'PROVIDER_LIMIT_REACHED' ? 'TRIX reached the AI provider limit.' : "TRIX couldn't connect.", description: response.type === 'message' && response.errorCode === 'PROVIDER_LIMIT_REACHED' ? response.summary : 'The AI service is temporarily unavailable.', code: response.type === 'message' ? response.errorCode! : 'PROVIDER_ERROR' }} onRetry={onRetry} disabled={disabled} />
-      : response.type === 'message' ? (!result.answer ? <MarkdownView content={response.summary} /> : null)
-      : response.type === 'prepared_action' ? <PreparedActionCard key={response.action.preparationId} initial={response.action} />
-      : <TrixResultCard response={response} />}
-    <details className={styles.activity}><summary>Activity · {result.activity.length} {result.activity.length === 1 ? 'step' : 'steps'}</summary>
-      <ol>{result.activity.map((step, index) => <li key={index}>
-        <p className={styles.toolName}>{step.status === 'succeeded' ? '✓' : '—'} {step.toolName}</p>
-        <p className={styles.muted}>{step.status === 'succeeded' ? 'Completed' : 'Failed'} · {step.durationMs} ms</p>
-        <dl><div><dt>Looked up</dt><dd>{step.inputSummary}</dd></div><div><dt>Result</dt><dd>{step.resultSummary}</dd></div></dl>
-      </li>)}</ol>
-      {!result.activity.length && <p className={styles.muted}>No data tool was used.</p>}
-    </details>
-  </>;
+  const messageText = result.answer || (response.type === 'message' ? response.summary : null);
+
+  return (
+    <>
+      {messageText && !providerFailure && (
+        <MessageResponse isAnimating={false}>
+          {messageText}
+        </MessageResponse>
+      )}
+
+      {providerFailure ? (
+        <ConnectionFailure
+          failure={{
+            title: response.type === 'message' && response.errorCode === 'PROVIDER_LIMIT_REACHED'
+              ? 'TRIX reached the AI provider limit.'
+              : "TRIX couldn't connect.",
+            description: response.type === 'message' && response.errorCode === 'PROVIDER_LIMIT_REACHED'
+              ? response.summary
+              : 'The AI service is temporarily unavailable.',
+            code: response.type === 'message' ? response.errorCode! : 'PROVIDER_ERROR',
+          }}
+          onRetry={onRetry}
+          disabled={disabled}
+        />
+      ) : response.type === 'message' ? null : response.type === 'prepared_action' ? (
+        <PreparedActionCard key={response.action.preparationId} initial={response.action} />
+      ) : (
+        <TrixResultCard response={response} />
+      )}
+
+      {messageText && !providerFailure && (
+        <MessageActions>
+          <MessageCopyAction content={messageText} />
+          <MessageAction label="Retry" onClick={onRetry} disabled={disabled}>
+            <Restart size={14} />
+          </MessageAction>
+        </MessageActions>
+      )}
+
+      <details className={styles.activity}>
+        <summary>Activity · {result.activity.length} {result.activity.length === 1 ? 'step' : 'steps'}</summary>
+        <ol>
+          {result.activity.map((step, index) => (
+            <li key={index}>
+              <p className={styles.toolName}>{step.status === 'succeeded' ? '✓' : '—'} {step.toolName}</p>
+              <p className={styles.muted}>{step.status === 'succeeded' ? 'Completed' : 'Failed'} · {step.durationMs} ms</p>
+              <dl>
+                <div><dt>Looked up</dt><dd>{step.inputSummary}</dd></div>
+                <div><dt>Result</dt><dd>{step.resultSummary}</dd></div>
+              </dl>
+            </li>
+          ))}
+        </ol>
+        {!result.activity.length && <p className={styles.muted}>No data tool was used.</p>}
+      </details>
+    </>
+  );
 }
 
 function TrixThinking() {
   return (
-    <p className={styles.working} role="status">
+    <Shimmer className={styles.working}>
       Thinking…
-    </p>
+    </Shimmer>
   );
 }

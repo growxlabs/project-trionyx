@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
     '@trionyx/auth',
     '@trionyx/validation',
     '@trionyx/database',
+    'streamdown',
+    '@streamdown/code',
+    'shiki',
   ],
   serverExternalPackages: ['@libsql/client', '@node-rs/argon2', 'pg'],
   images: {
