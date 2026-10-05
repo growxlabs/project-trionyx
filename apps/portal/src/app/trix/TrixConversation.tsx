@@ -5,6 +5,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Add, ArrowUp } from '@carbon/icons-react';
 import { responseSchema, type TrixExecution, type TrixProgress, type TrixStreamEvent } from '@trionyx/ai/responses';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import styles from './TrixConversation.module.css';
 
 type Failure = { title: string; description: string; code: string };
@@ -133,13 +135,22 @@ function ConnectionFailure({ failure, onRetry, disabled }: { failure: NonNullabl
     <details className={styles.technical}><summary>Technical details</summary><p>Request status: {failure.code}</p><p>No operational result was returned.</p></details>
   </div>;
 }
+
+function MarkdownView({ content }: { content: string }) {
+  return (
+    <div className={styles.markdown}>
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+    </div>
+  );
+}
+
 function TrixAnswer({ entry, onRetry, disabled }: { entry: TrixEntry; onRetry: () => void; disabled: boolean }) {
   const result = entry.result!, response = result.response;
   const providerFailure = response.type === 'message' && ['PROVIDER_ERROR', 'PROVIDER_NOT_CONFIGURED', 'PROVIDER_LIMIT_REACHED'].includes(response.errorCode ?? '');
   return <>
-    {result.answer && !providerFailure && <p className={styles.message}>{result.answer}</p>}
+    {result.answer && !providerFailure && <MarkdownView content={result.answer} />}
     {providerFailure ? <ConnectionFailure failure={{ title: response.type === 'message' && response.errorCode === 'PROVIDER_LIMIT_REACHED' ? 'TRIX reached the AI provider limit.' : "TRIX couldn't connect.", description: response.type === 'message' && response.errorCode === 'PROVIDER_LIMIT_REACHED' ? response.summary : 'The AI service is temporarily unavailable.', code: response.type === 'message' ? response.errorCode! : 'PROVIDER_ERROR' }} onRetry={onRetry} disabled={disabled} />
-      : response.type === 'message' ? <p className={styles.message}>{response.summary}</p>
+      : response.type === 'message' ? <MarkdownView content={response.summary} />
       : response.type === 'prepared_action' ? <PreparedActionCard key={response.action.preparationId} initial={response.action} />
       : <TrixResultCard response={response} />}
     <details className={styles.activity}><summary>Activity · {result.activity.length} {result.activity.length === 1 ? 'step' : 'steps'}</summary>
