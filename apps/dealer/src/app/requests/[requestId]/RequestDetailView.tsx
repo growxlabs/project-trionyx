@@ -118,7 +118,7 @@ export function RequestDetailView({
       {/* Section 1: YOUR REQUEST */}
       <section aria-labelledby="your-request-heading" className="border-t border-[#171717]/10 pt-5 space-y-3">
         <h2 id="your-request-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
-          YOUR REQUEST
+          Your Request
         </h2>
         <div className="text-[12.5px] text-[#737373]">
           Submitted: {shortDateFormatter.format(new Date(request.createdAt))}
@@ -200,7 +200,7 @@ export function RequestDetailView({
       {request.status !== 'CLOSED' ? (
         <section aria-labelledby="add-message-heading" className="border-t border-[#171717]/10 pt-5 space-y-3">
           <h2 id="add-message-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
-            ADD MESSAGE
+            Add Message
           </h2>
 
           {replyError && (

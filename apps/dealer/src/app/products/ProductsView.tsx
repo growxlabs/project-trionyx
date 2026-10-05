@@ -44,7 +44,7 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
       {categories.length > 0 && (
         <section aria-labelledby="product-families-heading" className="border-t border-[#171717]/10 pt-5 space-y-3">
           <h2 id="product-families-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
-            PRODUCT FAMILIES
+            Product Families
           </h2>
           <div className="flex flex-wrap gap-2">
             <button

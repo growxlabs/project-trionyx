@@ -85,7 +85,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
       {/* 3. Product Overview */}
       <section aria-labelledby="overview-heading" className="space-y-3">
         <h2 id="overview-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
-          PRODUCT OVERVIEW
+          Product Overview
         </h2>
         <div className="text-[14px] leading-relaxed text-[#171717] whitespace-pre-line max-w-3xl">
           {product.description || product.shortDescription || (
@@ -120,7 +120,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
       {/* 5. Application & Handling */}
       <section aria-labelledby="application-heading" className="border-t border-[#171717]/10 pt-6 space-y-3">
         <h2 id="application-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
-          APPLICATION & HANDLING GUIDELINES
+          Application & Handling Guidelines
         </h2>
         <div className="p-4 rounded-[4px] border border-[#171717]/10 bg-[#FFFFFF] space-y-2 max-w-3xl text-[13px] text-[#171717]">
           <p className="font-semibold text-[#171717] m-0">Professional Installation Only</p>
@@ -135,7 +135,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
       {/* 6. Documents & Technical Data */}
       <section aria-labelledby="documents-heading" className="border-t border-[#171717]/10 pt-6 space-y-4">
         <h2 id="documents-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
-          TECHNICAL DATA & COLLATERALS
+          Technical Data & Collaterals
         </h2>
         {documents.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
@@ -169,7 +169,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
         {mediaImages.length > 0 && (
           <div className="pt-4 space-y-3">
             <h3 className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
-              APPROVED ASSETS
+              Approved Assets
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {mediaImages.map((img) => (
