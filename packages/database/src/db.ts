@@ -3,9 +3,8 @@ import { Pool } from 'pg';
 import * as path from 'path';
 import * as fs from 'fs';
 import { POSTGRES_TABLE_STATEMENTS } from './postgresSchema';
-import { AGENT_LOG_TABLE_STATEMENTS } from './agentLogSchema';
+import { TRIX_TABLE_STATEMENTS } from './trixSchema';
 import {SUPABASE_PROD_CA} from './supabaseCa';
-import { migrateDealerNetworkLogs, migrateEnquiryLogs, migrateWarrantyExecutiveLogs, migratePreparedActionLogs, migrateTrixMetrics } from './agentLogMigration';
 
 let globalClient: Client | null = null;
 let globalPostgresAdapter: PostgresClientAdapter | null = null;
@@ -176,27 +175,22 @@ export async function ensureDatabaseReady(client: Client = getDbClient()): Promi
     migrationPromise = runMigrations(client);
   }
   await migrationPromise;
-  await ensureAgentLogSchema(client);
+  await ensureTrixSchema(client);
   return client;
 }
 
-let agentLogMigrationPromise: Promise<void> | null = null;
-async function ensureAgentLogSchema(client: Client): Promise<void> {
-  if (!agentLogMigrationPromise) {
-    agentLogMigrationPromise = (async () => {
-      for (const statement of AGENT_LOG_TABLE_STATEMENTS) await client.execute(statement);
-      await migrateDealerNetworkLogs(client, isPostgresUrl(getDatabaseUrl()));
-      await migrateEnquiryLogs(client, isPostgresUrl(getDatabaseUrl()));
-      await migrateWarrantyExecutiveLogs(client, isPostgresUrl(getDatabaseUrl()));
-      await migratePreparedActionLogs(client, isPostgresUrl(getDatabaseUrl()));
-      await migrateTrixMetrics(client, isPostgresUrl(getDatabaseUrl()));
+let trixSchemaPromise: Promise<void> | null = null;
+async function ensureTrixSchema(client: Client): Promise<void> {
+  if (!trixSchemaPromise) {
+    trixSchemaPromise = (async () => {
+      for (const statement of TRIX_TABLE_STATEMENTS) await client.execute(statement);
       if (isPostgresUrl(getDatabaseUrl())) {
-        // No public Supabase policy: telemetry is accessible only through the server DB role.
-        await client.execute('ALTER TABLE agent_execution_logs ENABLE ROW LEVEL SECURITY');
+        // No public Supabase policy: these tables are accessible only through the server DB role.
+        for (const table of ['trix_prepared_actions', 'trix_request_limits']) await client.execute(`ALTER TABLE ${table} ENABLE ROW LEVEL SECURITY`);
       }
-    })().catch((error) => { agentLogMigrationPromise = null; throw error; });
+    })().catch((error) => { trixSchemaPromise = null; throw error; });
   }
-  await agentLogMigrationPromise;
+  await trixSchemaPromise;
 }
 
 export async function runPostgresMigrations(client: Client = getDbClient()): Promise<void> {
@@ -943,39 +937,6 @@ export async function runMigrations(client: Client = getDbClient()): Promise<voi
           {
             sql: 'INSERT INTO _migrations (name) VALUES (?)',
             args: ['0010_warranties_and_policies'],
-          },
-        ],
-        'write'
-      );
-    }
-
-    // Migration 0012: TRIX agent execution logs
-    const existingAgentLogsMigration = await client.execute({
-      sql: 'SELECT name FROM _migrations WHERE name = ?',
-      args: ['0012_trix_execution_logs'],
-    });
-
-    if (existingAgentLogsMigration.rows.length === 0) {
-      await client.batch(
-        [
-          `CREATE TABLE IF NOT EXISTS agent_execution_logs (
-            id TEXT PRIMARY KEY,
-            session_id TEXT NOT NULL,
-            user_id TEXT NOT NULL REFERENCES users(id),
-            agent_name TEXT NOT NULL CHECK (agent_name = 'TRIX'),
-            model_provider TEXT NOT NULL,
-            model_name TEXT NOT NULL,
-            timestamp TEXT NOT NULL,
-            request_summary TEXT NOT NULL,
-            tool_events TEXT NOT NULL,
-            response_type TEXT NOT NULL CHECK (response_type IN ('pending', 'serial_record', 'inventory_list', 'inventory_summary', 'serial_movements', 'inventory_exceptions', 'message')),
-            error_code TEXT,
-            error_summary TEXT
-          );`,
-          `CREATE INDEX IF NOT EXISTS idx_agent_execution_user_timestamp ON agent_execution_logs(user_id, timestamp);`,
-          {
-            sql: 'INSERT INTO _migrations (name) VALUES (?)',
-            args: ['0012_trix_execution_logs'],
           },
         ],
         'write'

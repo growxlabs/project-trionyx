@@ -7,29 +7,12 @@ import { z } from 'zod';
 import { dealerNetworkResponseSchemas } from './dealer-network';
 export * from './dealer-network';
 
-export const serialInputSchema = z.object({ serialNumber: z.string().max(256) }).strict();
-
 // Match the existing repository's normalization, without inventing a serial format.
 export function normalizeSerial(value: string): string {
   const serial = value.trim().toUpperCase();
   if (serial.length < 2 || serial.length > 256 || /[\u0000-\u001f\u007f]/.test(serial)) throw new Error('INVALID_SERIAL');
   return serial;
 }
-
-export const serialRecordSchema = z.object({
-  id: z.string().max(4000).min(1),
-  serialNumber: z.string().max(4000).min(1),
-  productName: z.string().max(4000),
-  status: z.enum(['AVAILABLE', 'TRANSFERRED', 'INACTIVE']),
-  locationName: z.string().max(4000).nullable(),
-  lastMovementAt: z.string().max(4000).nullable(),
-}).strict();
-
-export const actionSchema = z.object({
-  type: z.literal('open_serial'),
-  serialId: z.string().max(4000).min(1),
-  label: z.literal('Open serial'),
-}).strict();
 
 export const searchInventoryInputSchema = z.object({
   query: z.string().max(4000).trim().max(100).optional(),
@@ -66,12 +49,6 @@ export const recentSerialMovementsInputSchema = z.object({
 export const inventoryExceptionsInputSchema = z.object({}).strict();
 
 // Response Subschemas
-export const serialRecordResponseSchema = z.object({
-  type: z.literal('serial_record'),
-  serialRecord: serialRecordSchema,
-  actions: z.array(actionSchema).length(1),
-}).strict();
-
 export const inventoryItemSchema = z.object({
   id: z.string().max(4000),
   serialNumber: z.string().max(4000),
@@ -153,7 +130,6 @@ export const messageResponseSchema = z.object({
 }).strict();
 
 export const responseSchema = z.discriminatedUnion('type', [
-  serialRecordResponseSchema,
   inventoryListResponseSchema,
   inventorySummaryResponseSchema,
   serialMovementResponseSchema,
@@ -166,16 +142,10 @@ export const responseSchema = z.discriminatedUnion('type', [
 ]);
 
 export type TrixResponse = z.infer<typeof responseSchema>;
-export type SerialRecord = z.infer<typeof serialRecordSchema>;
 export type InventoryItem = z.infer<typeof inventoryItemSchema>;
 export type SummaryGroup = z.infer<typeof summaryGroupSchema>;
 export type MovementItem = z.infer<typeof movementItemSchema>;
 export type ExceptionItem = z.infer<typeof exceptionItemSchema>;
-
-export type LookupResult =
-  | { found: true; serial: SerialRecord }
-  | { found: false; serialNumber: string }
-  | { errorCode: string };
 
 export type SearchInventoryResult =
   | { success: true; response: z.infer<typeof inventoryListResponseSchema> }
@@ -202,10 +172,21 @@ export type ActivityStep = {
   resultSummary: string;
 };
 
+/** Live step event while a request runs. Tool names only; never parameters or data. */
+export type TrixProgress = { toolName: string; status: 'started' | 'succeeded' | 'failed' };
+
+/** Streamed response lines (NDJSON): any number of progress events, then exactly one result or error. */
+export type TrixStreamEvent =
+  | { type: 'progress'; step: TrixProgress }
+  | { type: 'result'; data: TrixExecution }
+  | { type: 'error'; code: string; message: string };
+
 export type TrixExecution = {
   requestId: string;
   conversationId: string;
   response: TrixResponse;
+  /** The model's final text, shown with the last typed result. Untrusted: render as plain text. */
+  answer?: string;
   activity: ActivityStep[];
 };
 
@@ -213,20 +194,3 @@ export const requestSchema = z.object({
   conversationId: z.string().max(4000).uuid(),
   message: z.string().max(4000).trim().min(1).max(2000),
 }).strict();
-
-export function serialRoute(action: unknown, record: SerialRecord): string {
-  const parsed = actionSchema.parse(action);
-  if (parsed.serialId !== record.id) throw new Error('INVALID_ACTION');
-  return `/inventory/serials/${encodeURIComponent(parsed.serialId)}`;
-}
-
-export function responseFromLookup(result: LookupResult): TrixResponse {
-  if ('errorCode' in result) return { type: 'message', summary: 'TRIX could not check that serial right now. Try again.', errorCode: result.errorCode };
-  if (!result.found) return { type: 'message', summary: `No inventory record was found for serial ${result.serialNumber}.`, errorCode: 'SERIAL_NOT_FOUND' };
-  const serialRecord = serialRecordSchema.parse(result.serial);
-  return responseSchema.parse({
-    type: 'serial_record',
-    serialRecord,
-    actions: [{ type: 'open_serial', serialId: serialRecord.id, label: 'Open serial' }],
-  });
-}

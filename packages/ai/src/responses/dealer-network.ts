@@ -3,19 +3,15 @@ import { z } from 'zod';
 const text = z.string().trim().min(1).max(120).regex(/^[^\u0000-\u001f\u007f]*$/);
 export const networkStatusSchema = z.enum(['ACTIVE', 'INACTIVE', 'SUSPENDED']);
 const pagination = { limit: z.number().int().min(1).max(50).default(20), page: z.number().int().min(1).max(100000).default(1) };
-const dealerTarget = { dealerId: text.optional(), dealerCode: text.optional(), dealerName: text.optional() };
-const distributorTarget = { distributorId: text.optional(), distributorCode: text.optional(), distributorName: text.optional() };
 export const searchDealersInputSchema = z.object({
   query: text.optional(), dealerId: text.optional(), dealerCode: text.optional(),
   distributorId: text.optional(), distributorName: text.optional(), status: networkStatusSchema.optional(),
   city: text.optional(), state: text.optional(), hasDistributor: z.boolean().optional(), ...pagination,
 }).strict().refine(value => !(value.hasDistributor === false && (value.distributorId || value.distributorName)), 'An unassigned filter cannot include a distributor.');
-export const dealerDetailsInputSchema = z.object(dealerTarget).strict().refine(value => !!(value.dealerId || value.dealerCode || value.dealerName), 'Supply a dealer identifier.');
 export const searchDistributorsInputSchema = z.object({
   query: text.optional(), distributorId: text.optional(), distributorCode: text.optional(),
   status: networkStatusSchema.optional(), city: text.optional(), state: text.optional(), hasDealers: z.boolean().optional(), ...pagination,
 }).strict();
-export const distributorDetailsInputSchema = z.object(distributorTarget).strict().refine(value => !!(value.distributorId || value.distributorCode || value.distributorName), 'Supply a distributor identifier.');
 export const networkSummaryInputSchema = z.object({
   dealerStatus: networkStatusSchema.optional(), distributorId: text.optional(), state: text.optional(),
   groupBy: z.enum(['distributor', 'dealer_status', 'state', 'assignment_status']), ...pagination,
@@ -32,11 +28,8 @@ const pageInfo = z.object({ total: z.number().int().nonnegative(), page: z.numbe
 const assignedDistributor = z.object({ id: text, businessName: text }).strict().nullable();
 export const dealerItemSchema = z.object({ id: text, dealerCode: text, businessName: text, status: networkStatusSchema, city: z.string(), state: z.string(), assignedDistributor }).strict();
 export const distributorItemSchema = z.object({ id: text, distributorCode: text, businessName: text, status: networkStatusSchema, city: z.string(), state: z.string(), dealerCount: z.number().int().nonnegative() }).strict();
-const address = { addressLine1: z.string().nullable(), addressLine2: z.string().nullable(), district: z.string().nullable(), postalCode: z.string().nullable(), country: z.string(), createdAt: z.string(), updatedAt: z.string() };
 export const dealerListResponseSchema = z.object({ type: z.literal('dealer_list'), items: z.array(dealerItemSchema).max(50), pageInfo }).strict();
-export const dealerDetailResponseSchema = z.object({ type: z.literal('dealer_detail'), dealer: dealerItemSchema.extend(address).strict() }).strict();
 export const distributorListResponseSchema = z.object({ type: z.literal('distributor_list'), items: z.array(distributorItemSchema).max(50), pageInfo }).strict();
-export const distributorDetailResponseSchema = z.object({ type: z.literal('distributor_detail'), distributor: distributorItemSchema.extend({ ...address, assignedDealersPreview: z.array(dealerItemSchema).max(5) }).strict() }).strict();
 export const dealerNetworkSummaryResponseSchema = z.object({
   type: z.literal('dealer_network_summary'), totalDealers: z.number().int().nonnegative(), totalDistributors: z.number().int().nonnegative(),
   distributorCountScope: z.literal('all_distributors_or_selected_id'), groupBy: networkSummaryInputSchema.shape.groupBy,
@@ -54,7 +47,7 @@ export const dealerNetworkExceptionResponseSchema = z.object({
   items: z.array(z.object({ type: networkExceptionTypeSchema, severity: z.enum(['WARNING', 'CRITICAL']), label: z.string(), description: z.string(), recordType: z.literal('dealer'), recordId: text }).strict()).max(50), pageInfo,
 }).strict();
 
-export const dealerNetworkResponseSchemas = [dealerListResponseSchema, dealerDetailResponseSchema, distributorListResponseSchema, distributorDetailResponseSchema, dealerNetworkSummaryResponseSchema, dealerAssignmentHistoryResponseSchema, dealerNetworkExceptionResponseSchema] as const;
+export const dealerNetworkResponseSchemas = [dealerListResponseSchema, distributorListResponseSchema, dealerNetworkSummaryResponseSchema, dealerAssignmentHistoryResponseSchema, dealerNetworkExceptionResponseSchema] as const;
 export const dealerNetworkResponseSchema = z.discriminatedUnion('type', dealerNetworkResponseSchemas);
 export type DealerNetworkResponse = z.infer<typeof dealerNetworkResponseSchema>;
 export type DealerNetworkResult = { success: true; response: DealerNetworkResponse } | { success: false; errorCode: string; message: string };

@@ -1,6 +1,6 @@
 # Base Node.js image with pnpm
 FROM node:20-alpine AS base
-RUN corepack enable && corepack prepare pnpm@11.10.0 --activate
+RUN corepack enable && corepack prepare pnpm@10.6.1 --activate
 WORKDIR /app
 
 # Dependencies installation stage
@@ -36,7 +36,7 @@ RUN pnpm build
 FROM node:20-alpine AS runner
 WORKDIR /app
 RUN npm install -g pm2
-RUN corepack enable && corepack prepare pnpm@11.10.0 --activate
+RUN corepack enable && corepack prepare pnpm@10.6.1 --activate
 
 ENV NODE_ENV=production
 

@@ -1,13 +1,27 @@
 'use client';
 import { PreparedActionCard } from './PreparedActionCard';
+import { TrixResultCard } from './TrixResultCards';
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Add, ArrowUp } from '@carbon/icons-react';
-import { responseSchema, serialRoute, type TrixExecution } from '@trionyx/ai/responses';
-import { StatusBadge } from '../../components/workspace/StatusBadge';
+import { responseSchema, type TrixExecution, type TrixProgress, type TrixStreamEvent } from '@trionyx/ai/responses';
 import styles from './TrixConversation.module.css';
 
-export type TrixEntry = { id: string; question: string; result?: TrixExecution; failure?: { title: string; description: string; code: string } };
+type Failure = { title: string; description: string; code: string };
+export type TrixEntry = { id: string; question: string; steps?: TrixProgress[]; result?: TrixExecution; failure?: Failure };
+
+function failureFor(status: number, code?: unknown, message?: unknown): Failure {
+  if (status === 401 || code === 'UNAUTHENTICATED') return { title: 'Your session has expired.', description: 'Sign in again to use TRIX.', code: 'UNAUTHENTICATED' };
+  if (status === 403 || code === 'FORBIDDEN') return { title: 'TRIX access is restricted.', description: 'Sign in with your Managing Director account.', code: 'FORBIDDEN' };
+  if (typeof code === 'string' && typeof message === 'string') return { title: "TRIX couldn't complete the request.", description: message.slice(0, 300), code: code.slice(0, 100) };
+  return { title: "TRIX couldn't connect.", description: 'The AI service is temporarily unavailable.', code: 'SERVICE_UNAVAILABLE' };
+}
+/** A finished event replaces the most recent matching started step; a started event adds a step. */
+function withStep(steps: TrixProgress[] = [], step: TrixProgress): TrixProgress[] {
+  if (step.status === 'started') return [...steps, step];
+  const index = steps.map(s => s.toolName === step.toolName && s.status === 'started').lastIndexOf(true);
+  return index < 0 ? [...steps, step] : steps.map((s, i) => i === index ? step : s);
+}
 export function TrixConversation() {
   const [message, setMessage] = useState('');
   const [entries, setEntries] = useState<TrixEntry[]>([]);
@@ -26,19 +40,37 @@ export function TrixConversation() {
     conversationId.current ??= crypto.randomUUID(); controller.current = new AbortController();
     setEntries(previous => retryId ? previous.map(entry => entry.id === id ? { id, question } : entry) : [...previous, { id, question }]);
     setMessage(''); setBusy(true);
-    function update(update: Partial<TrixEntry>) {
-      if (generation.current === currentGeneration) setEntries(previous => previous.map(entry => entry.id === id ? { ...entry, ...update } : entry));
+    function update(change: Partial<TrixEntry> | ((entry: TrixEntry) => Partial<TrixEntry>)) {
+      if (generation.current === currentGeneration) setEntries(previous => previous.map(entry => entry.id === id ? { ...entry, ...(typeof change === 'function' ? change(entry) : change) } : entry));
     }
+    function finish(data: TrixExecution) { update({ result: { ...data, response: responseSchema.parse(data.response) } }); }
     try {
-      const res = await fetch('/api/v1/internal/trix', { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: controller.current.signal,
+      const res = await fetch('/api/v1/internal/trix', { method: 'POST', signal: controller.current.signal,
+        headers: { 'Content-Type': 'application/json', Accept: 'application/x-ndjson' },
         body: JSON.stringify({ conversationId: conversationId.current, message: question }) });
-      const body = await res.json();
-      if (!res.ok) {
-        update({ failure: res.status === 401 ? { title: 'Your session has expired.', description: 'Sign in again to use TRIX.', code: 'UNAUTHENTICATED' }
-          : res.status === 403 ? { title: 'TRIX access is restricted.', description: 'Sign in with your Managing Director account.', code: 'FORBIDDEN' }
-          : { title: "TRIX couldn't connect.", description: 'The AI service is temporarily unavailable.', code: 'SERVICE_UNAVAILABLE' } }); return;
+      if (!res.ok || !res.body || !res.headers.get('content-type')?.includes('application/x-ndjson')) {
+        const body = await res.json().catch(() => null);
+        if (res.ok && body?.data) finish(body.data);
+        else update({ failure: failureFor(res.status, body?.error?.code, body?.error?.message) });
+        return;
       }
-      update({ result: { ...body.data, response: responseSchema.parse(body.data.response) } });
+      // Progress steps arrive one JSON line at a time, then the result or an error.
+      const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
+      let buffer = '', settled = false;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += value;
+        const lines = buffer.split('\n'); buffer = lines.pop() ?? '';
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          const event = JSON.parse(line) as TrixStreamEvent;
+          if (event.type === 'progress') update(entry => ({ steps: withStep(entry.steps, event.step) }));
+          else if (event.type === 'result') { settled = true; finish(event.data); }
+          else { settled = true; update({ failure: failureFor(res.status, event.code, event.message) }); }
+        }
+      }
+      if (!settled) update({ failure: failureFor(0) });
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') return;
       update({ failure: { title: "TRIX couldn't connect.", description: 'The AI service is temporarily unavailable.', code: 'CONNECTION_ERROR' } });
@@ -78,7 +110,7 @@ export function TrixWorkspace({ message, onMessageChange, entries, busy, onSend,
         <div className={styles.answer}><p className={styles.speaker}>TRIX</p>
           {entry.failure ? <ConnectionFailure failure={entry.failure} onRetry={() => onRetry(entry)} disabled={busy} />
             : entry.result ? <TrixAnswer entry={entry} onRetry={() => onRetry(entry)} disabled={busy} />
-            : <p className={styles.working} role="status">Checking your request…</p>}
+            : <TrixProgressSteps steps={entry.steps ?? []} />}
         </div>
       </article>)}</div>}
       <div ref={end} />
@@ -105,92 +137,50 @@ function TrixAnswer({ entry, onRetry, disabled }: { entry: TrixEntry; onRetry: (
   const result = entry.result!, response = result.response;
   const providerFailure = response.type === 'message' && ['PROVIDER_ERROR', 'PROVIDER_NOT_CONFIGURED', 'PROVIDER_LIMIT_REACHED'].includes(response.errorCode ?? '');
   return <>
+    {result.answer && !providerFailure && <p className={styles.message}>{result.answer}</p>}
     {providerFailure ? <ConnectionFailure failure={{ title: response.type === 'message' && response.errorCode === 'PROVIDER_LIMIT_REACHED' ? 'TRIX reached the AI provider limit.' : "TRIX couldn't connect.", description: response.type === 'message' && response.errorCode === 'PROVIDER_LIMIT_REACHED' ? response.summary : 'The AI service is temporarily unavailable.', code: response.type === 'message' ? response.errorCode! : 'PROVIDER_ERROR' }} onRetry={onRetry} disabled={disabled} />
       : response.type === 'message' ? <p className={styles.message}>{response.summary}</p>
       : response.type === 'prepared_action' ? <PreparedActionCard key={response.action.preparationId} initial={response.action} />
-      : response.type === 'serial_record' ? <div className={styles.serial}>
-        <h2>{response.serialRecord.serialNumber}</h2>
-        <div className={styles.productRow}><p>{response.serialRecord.productName}</p><StatusBadge status={response.serialRecord.status} label={response.serialRecord.status} /></div>
-        <dl className={styles.fields}>
-          <div><dt>Current location</dt><dd>{response.serialRecord.locationName ?? 'Not recorded'}</dd></div>
-          <div><dt>Last movement</dt><dd>{response.serialRecord.lastMovementAt ? formatMovementDate(response.serialRecord.lastMovementAt) : 'Not recorded'}</dd></div>
-        </dl>
-        <Link href={serialRoute(response.actions[0], response.serialRecord)} className={styles.recordAction}>Open serial</Link>
-      </div>
-      : response.type === 'inventory_summary' ? <div className={styles.serial}>
-        <h2>Inventory Summary</h2>
-        <p className="font-semibold text-base mt-2">Total: {response.total} units (grouped by {response.groupBy})</p>
-        <ul className="mt-3 space-y-2">
-          {response.groups.map(g => (
-            <li key={g.key} className="flex justify-between py-1.5 border-b border-white/10 text-sm">
-              <span>{g.label}</span>
-              <span className="font-mono font-bold">{g.count}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-      : response.type === 'inventory_list' ? <div className={styles.serial}>
-        <h2>Inventory Serials ({response.items.length} of {response.pageInfo.total})</h2>
-        <ul className="mt-3 space-y-2 max-h-80 overflow-y-auto">
-          {response.items.map(item => (
-            <li key={item.id} className="py-2 border-b border-white/10 flex justify-between items-center text-sm">
-              <div>
-                <p className="font-mono font-semibold">{item.serialNumber}</p>
-                <p className="text-xs opacity-70">{item.product.name} · {item.location?.name ?? 'No location'}</p>
-              </div>
-              <StatusBadge status={item.status} label={item.status} />
-            </li>
-          ))}
-        </ul>
-      </div>
-      : response.type === 'serial_movements' ? <div className={styles.serial}>
-        <h2>Recent Movements ({response.items.length})</h2>
-        <ul className="mt-3 space-y-2 max-h-80 overflow-y-auto">
-          {response.items.map(item => (
-            <li key={item.id} className="py-2 border-b border-white/10 text-sm">
-              <div className="flex justify-between items-center">
-                <span className="font-mono font-semibold">{item.serialNumber}</span>
-                <span className="text-xs font-mono uppercase px-2 py-0.5 rounded bg-white/10">{item.movementType}</span>
-              </div>
-              <p className="text-xs opacity-70 mt-1">
-                {item.fromLocationName ? `${item.fromLocationName} → ` : ''}{item.toLocationName ?? 'N/A'} · {formatMovementDate(item.occurredAt)}
-              </p>
-            </li>
-          ))}
-        </ul>
-      </div>
-      : response.type === 'inventory_exceptions' ? <div className={styles.serial}>
-        <h2>Inventory Exceptions ({response.totalExceptions})</h2>
-        {response.totalExceptions === 0 ? (
-          <p className="text-sm opacity-80 mt-2">No inventory exceptions found. All records meet deterministic rules.</p>
-        ) : (
-          <ul className="mt-3 space-y-2 max-h-80 overflow-y-auto">
-            {response.items.map((item, idx) => (
-              <li key={idx} className="p-3 rounded border border-white/10 text-sm">
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold">{item.label}</span>
-                  <span className="text-xs font-mono uppercase px-1.5 py-0.5 rounded bg-white/10">{item.severity}</span>
-                </div>
-                <p className="text-xs opacity-80 mt-1">{item.description}</p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-      : null}
+      : <TrixResultCard response={response} />}
     <details className={styles.activity}><summary>Activity · {result.activity.length} {result.activity.length === 1 ? 'step' : 'steps'}</summary>
       <ol>{result.activity.map((step, index) => <li key={index}>
         <p className={styles.toolName}>{step.status === 'succeeded' ? '✓' : '—'} {step.toolName}</p>
         <p className={styles.muted}>{step.status === 'succeeded' ? 'Completed' : 'Failed'} · {step.durationMs} ms</p>
         <dl><div><dt>Looked up</dt><dd>{step.inputSummary}</dd></div><div><dt>Result</dt><dd>{step.resultSummary}</dd></div></dl>
       </li>)}</ol>
-      {!result.activity.length && <p className={styles.muted}>No inventory tool was executed.</p>}
+      {!result.activity.length && <p className={styles.muted}>No data tool was used.</p>}
     </details>
   </>;
 }
-function formatMovementDate(value: string) {
-  const date = new Date(value); if (Number.isNaN(date.getTime())) return 'Not recorded';
-  const day = new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', timeZone: 'Asia/Kolkata' }).format(date);
-  const time = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Kolkata' }).format(date);
-  return `${day} · ${time}`;
+
+const STEP_LABELS: Record<string, [string, string]> = {
+  verifyAccess: ['Verifying Managing Director access', 'Verified Managing Director access'],
+  checkRequest: ['Checking your request', 'Checked your request'],
+  connectData: ['Connecting to Trionyx data', 'Connected to Trionyx data'],
+  checkLimit: ['Checking the request limit', 'Within the request limit'],
+  searchInventory: ['Searching inventory', 'Searched inventory'],
+  searchDealers: ['Searching dealers', 'Searched dealers'],
+  searchDistributors: ['Searching distributors', 'Searched distributors'],
+  searchEnquiries: ['Searching enquiries', 'Searched enquiries'],
+  searchWarranties: ['Searching warranties', 'Searched warranties'],
+  changes: ['Reading recent changes', 'Read recent changes'],
+  attention: ['Checking what needs attention', 'Checked what needs attention'],
+  overview: ['Building the overview', 'Built the overview'],
+  prepareChange: ['Preparing the change for your confirmation', 'Prepared the change for your confirmation'],
+};
+const GATE_STEPS = new Set(['verifyAccess', 'checkRequest', 'connectData', 'checkLimit']);
+function TrixProgressSteps({ steps }: { steps: TrixProgress[] }) {
+  const running = steps.some(step => step.status === 'started') || steps.some(step => step.status === 'failed');
+  const gatesPassed = steps.some(step => step.toolName === 'checkLimit' && step.status === 'succeeded');
+  const usedData = steps.some(step => !GATE_STEPS.has(step.toolName));
+  return <ol className={styles.progress} role="status" aria-label="TRIX progress">
+    {!steps.length && <li className={styles.progressActive}>Sending your request…</li>}
+    {steps.map((step, index) => {
+      const [active, done] = STEP_LABELS[step.toolName] ?? ['Checking Trionyx data', 'Checked Trionyx data'];
+      return <li key={index} className={step.status === 'started' ? styles.progressActive : styles.progressDone}>
+        {step.status === 'started' ? `${active}…` : step.status === 'failed' ? `— Couldn't finish: ${active.toLowerCase()}` : `✓ ${done}`}
+      </li>;
+    })}
+    {gatesPassed && !running && <li className={styles.progressActive}>{usedData ? 'Writing the answer…' : 'Reading your question…'}</li>}
+  </ol>;
 }

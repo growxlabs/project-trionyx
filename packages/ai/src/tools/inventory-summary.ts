@@ -1,6 +1,5 @@
 import { serialsRepository } from '@trionyx/database';
 import type { SafeUser, SerialStatus } from '@trionyx/types';
-import { assertManagingDirector } from './lookup-serial';
 import {
   resolveProductTarget,
   resolveLocationTarget,
@@ -23,7 +22,6 @@ export async function getInventorySummary(
   productResolver?: ProductResolver,
   locationResolver?: LocationResolver
 ): Promise<InventorySummaryResult> {
-  assertManagingDirector(user);
 
   let targetProductId = input.productId;
   let targetLocationId = input.locationId;

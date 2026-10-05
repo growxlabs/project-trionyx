@@ -18,9 +18,7 @@ API services live in `packages/api/src/services`; repositories and Postgres acce
 
 The `/trix` page, versioned POST route, runtime and tool check MD authorization. Tool execution revalidates the server session. Tool arguments cannot provide user identity. POST requires same-origin requests and bounded validated input; operational requests require Postgres configuration. There is no client-supplied model, system prompt, tool result, arbitrary URL or SQL.
 
-Execution logs persist an initial row, each tool start/completion (including blocked calls), and final response/error outcome. Request and result summaries use fixed allowlisted labels; raw prompts, raw errors, secrets, tokens and cookies are omitted. Conversation IDs are client UUIDs, bound to the authenticated server session through a SHA-256 association. A request has its own execution ID. There is no persisted conversation content, memory, background work or cross-user history.
 
-`agent_execution_logs` has no Supabase public access policies and has RLS enabled. The existing server Postgres role performs telemetry writes. If logging fails, no successful operational response is delivered. Existing database initialization ensures the additive log schema; the SQL migration is also supplied for provisioning. Runtime logging is distinct from the model's tool permissions.
 
 Desktop/mobile navigation shows TRIX only for MD. The UI keeps conversation state locally, renders approved serial/message blocks, exposes collapsed Activity details, and validates Open serial actions against the returned record. Navigation is `/inventory/serials/<encoded record ID>`. That page resolves the real serial ID and reuses `SerialNumberLookupModal` for existing record details and lineage.
 
@@ -30,7 +28,6 @@ Desktop/mobile navigation shows TRIX only for MD. The UI keeps conversation stat
 - There was no canonical addressable serial page; Phase 01 adds one to the existing Inventory workspace.
 - The existing write guard includes ADMIN and is unsuitable for TRIX; explicit MD role checks are used.
 - Supabase is accessed through the existing `pg` adapter rather than a new Supabase SDK inventory client. SQLite remains available for isolated tests; TRIX operational API requires Postgres.
-- “No direct database writes” applies to model tools and business data. Application-owned sanitized execution logging necessarily writes telemetry. Existing session validation also touches session activity.
 - OpenRouter key/model configuration was absent during implementation. Live model acceptance cannot be claimed until those values are configured.
 - Existing uncommitted guide, warranty and navigation edits were preserved.
 
@@ -57,6 +54,5 @@ Phase 02 is excluded.
 - Type checks passed for `@trionyx/ai`, `@trionyx/portal` and `@trionyx/database`.
 - Targeted ESLint passed for TRIX pages/API, serial pages and modified navigation components.
 - Local unauthenticated `POST /api/v1/internal/trix` returned HTTP 401 with a sanitized error. Guest `/trix` redirected to `/login`.
-- Live OpenRouter intent evaluation, authenticated MD browser review, authenticated non-MD HTTP verification, and Supabase telemetry migration/persistence remain unverified until provider configuration and a user session are available. Automated fixture results do not replace these acceptance checks.
 
 The revised brief adds explicit input/result summaries to Activity and persisted tool events. Summaries use allowlisted labels and omit serial values, preventing a secret supplied as a purported serial from entering telemetry. Activity reports Completed/Failed, latency, sanitized input and found/not-found/failure result summaries. An explicit injection test attempts an unregistered SQL tool and verifies that the SDK advertises only `lookupSerial`, no inventory read occurs, and neither SQL nor secret arguments enter logs.

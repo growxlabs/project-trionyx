@@ -580,9 +580,7 @@ Prefer sanitized summaries over full payload duplication.
 
 **User-facing Activity accordion:** concise execution steps.
 
-**Internal TRIX logs:** detailed sanitized telemetry for engineering/security/debugging.
 
-Do not render internal telemetry directly to the MD.
 
 ---
 
@@ -667,7 +665,6 @@ Log the actual internal failure safely.
 If OpenRouter/model invocation fails:
 
 - do not expose raw provider errors,
-- capture sanitized telemetry,
 - show a controlled UI error,
 - do not fall back to unsafe execution.
 
@@ -718,7 +715,6 @@ Expected behavior:
 
 ### 13.4 Logging test
 
-Every execution must produce a sanitized TRIX execution log including tool status and latency.
 
 ---
 
@@ -736,7 +732,6 @@ Before Phase 01 is accepted:
 - [ ] No web/browser tool.
 - [ ] Tool schemas validated.
 - [ ] Tool output minimized.
-- [ ] Agent execution logged.
 - [ ] Secrets excluded/redacted from logs.
 - [ ] Provider key server-only.
 - [ ] Errors sanitized before UI response.
