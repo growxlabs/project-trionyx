@@ -1,18 +1,13 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const DISTRIBUTOR_COOKIE_NAME = 'trionyx_distributor_session';
-const PORTAL_COOKIE_NAME = 'trionyx_portal_session';
-const DEALER_COOKIE_NAME = 'trionyx_dealer_session';
+const AUTH_COOKIE_NAME = 'trionyx_portal_session';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const token =
-    request.cookies.get(DISTRIBUTOR_COOKIE_NAME)?.value ||
-    request.cookies.get(PORTAL_COOKIE_NAME)?.value ||
-    request.cookies.get(DEALER_COOKIE_NAME)?.value;
+  const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
 
-  // Static assets and API routes are exempt
+  // Static assets and API routes are exempt from page redirects
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/brand') ||
@@ -32,14 +27,9 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  // 2. Logged-in user visiting /login -> redirect to /overview
-  if (token && isLoginPage) {
-    return NextResponse.redirect(new URL('/overview', request.url));
-  }
-
   const response = NextResponse.next();
 
-  // Prevent caching for all protected distributor workspace pages
+  // Prevent caching for all internal portal pages
   if (!isLoginPage) {
     response.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate');
     response.headers.set('Pragma', 'no-cache');
@@ -50,6 +40,13 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    /*
+     * Match all request paths except for:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder files
+     */
     '/((?!_next/static|_next/image|favicon.ico).*)',
   ],
 };
