@@ -39,7 +39,7 @@ export default function ForgotPasswordPage() {
             TRX
           </div>
           <span className="block text-[11px] font-bold tracking-[0.16em] text-[#737373]">
-            TRIONYX AUTOMOTIVE
+            Trionyx Automotive
           </span>
           <h1 className="text-[22px] font-bold text-[#171717] mt-1 tracking-tight">
             Reset Password

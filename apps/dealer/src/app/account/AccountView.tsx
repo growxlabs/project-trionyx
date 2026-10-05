@@ -126,7 +126,7 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
           <span>•</span>
           <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] text-[11px] font-bold bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
-            ACTIVE DEALER
+            Active Dealer
           </span>
         </div>
         <h1 className="text-[26px] sm:text-[30px] font-semibold tracking-[-0.03em] m-0 mt-1">
@@ -138,7 +138,7 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
       <section aria-labelledby="business-record-heading" className="border-t border-[#171717]/10 pt-6 space-y-4">
         <div>
           <h2 id="business-record-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
-            BUSINESS RECORD
+            Business Record
           </h2>
         </div>
 
@@ -432,7 +432,7 @@ export function AccountView({ dealer, currentUser, initialUsers }: AccountViewPr
       <section aria-labelledby="portal-access-heading" className="border-t border-[#171717]/10 pt-6 space-y-4">
         <div>
           <h2 id="portal-access-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
-            PORTAL ACCESS ({initialUsers.length} AUTHORIZED)
+            Portal Access ({initialUsers.length} authorized)
           </h2>
         </div>
 

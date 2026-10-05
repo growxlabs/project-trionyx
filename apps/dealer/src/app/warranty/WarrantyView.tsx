@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import type { Warranty, Dealer } from '@trionyx/types';
+import { humanize } from '@/lib/format';
 
 interface WarrantyViewProps {
   initialWarranties: Warranty[];
@@ -312,7 +313,7 @@ export function WarrantyView({
       <section aria-labelledby="check-warranty-heading" className="border-t border-[#171717]/10 pt-5 space-y-3">
         <div className="flex items-center justify-between">
           <h2 id="check-warranty-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
-            CHECK WARRANTY ELIGIBILITY
+            Check Warranty Eligibility
           </h2>
           {checkResult.status !== 'IDLE' && (
             <button
@@ -460,7 +461,7 @@ export function WarrantyView({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h2 id="warranty-records-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
-              WARRANTY RECORDS ({statusCounts.all})
+              Warranty Records ({statusCounts.all})
             </h2>
           </div>
 
@@ -577,7 +578,7 @@ export function WarrantyView({
                               : 'bg-[#ECFDF5] text-[#065F46] border-[#A7F3D0]'
                           }`}
                         >
-                          {derived}
+                          {humanize(derived)}
                         </span>
                       </td>
                     </tr>
