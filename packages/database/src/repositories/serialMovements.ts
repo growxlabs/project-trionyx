@@ -9,6 +9,8 @@ export const serialMovementsRepository = {
       serialRecordId?: string;
       type?: SerialMovementType;
       locationId?: string;
+      fromDate?: string;
+      toDate?: string;
       search?: string;
       limit?: number;
       offset?: number;
@@ -51,6 +53,14 @@ export const serialMovementsRepository = {
     if (filter?.locationId) {
       sql += ' AND (m.from_location_id = ? OR m.to_location_id = ?)';
       args.push(filter.locationId, filter.locationId);
+    }
+    if (filter?.fromDate) {
+      sql += ' AND m.created_at >= ?';
+      args.push(filter.fromDate);
+    }
+    if (filter?.toDate) {
+      sql += ' AND m.created_at <= ?';
+      args.push(filter.toDate);
     }
     if (filter?.search) {
       sql += ` AND (
@@ -97,5 +107,79 @@ export const serialMovementsRepository = {
       toLocationCode: row.to_location_code ? String(row.to_location_code) : undefined,
       actorName: row.actor_name ? String(row.actor_name) : 'Operator',
     }));
+  },
+
+  async listWithDetailsAndCount(
+    filter?: {
+      productId?: string;
+      serialRecordId?: string;
+      type?: SerialMovementType;
+      locationId?: string;
+      fromDate?: string;
+      toDate?: string;
+      search?: string;
+      page?: number;
+      limit?: number;
+    },
+    client: Client = getDbClient()
+  ): Promise<{ items: SerialMovementWithDetails[]; total: number }> {
+    const page = Math.max(1, filter?.page || 1);
+    const limit = Math.min(100, Math.max(1, filter?.limit || 20));
+    const offset = (page - 1) * limit;
+
+    let countSql = `
+      SELECT COUNT(*) as count
+      FROM serial_movements m
+      JOIN serial_numbers s ON m.serial_record_id = s.id
+      JOIN products p ON m.product_id = p.id
+      LEFT JOIN inventory_locations from_l ON m.from_location_id = from_l.id
+      LEFT JOIN inventory_locations to_l ON m.to_location_id = to_l.id
+      WHERE 1=1
+    `;
+    const countArgs: (string | number)[] = [];
+
+    if (filter?.productId) {
+      countSql += ' AND m.product_id = ?';
+      countArgs.push(filter.productId);
+    }
+    if (filter?.serialRecordId) {
+      countSql += ' AND m.serial_record_id = ?';
+      countArgs.push(filter.serialRecordId);
+    }
+    if (filter?.type) {
+      countSql += ' AND m.type = ?';
+      countArgs.push(filter.type);
+    }
+    if (filter?.locationId) {
+      countSql += ' AND (m.from_location_id = ? OR m.to_location_id = ?)';
+      countArgs.push(filter.locationId, filter.locationId);
+    }
+    if (filter?.fromDate) {
+      countSql += ' AND m.created_at >= ?';
+      countArgs.push(filter.fromDate);
+    }
+    if (filter?.toDate) {
+      countSql += ' AND m.created_at <= ?';
+      countArgs.push(filter.toDate);
+    }
+    if (filter?.search) {
+      countSql += ` AND (
+        s.serial_number LIKE ? OR
+        p.name LIKE ? OR
+        p.product_code LIKE ? OR
+        m.reference LIKE ? OR
+        m.reason LIKE ?
+      )`;
+      const term = `%${filter.search}%`;
+      countArgs.push(term, term, term, term, term);
+    }
+
+    const [items, countResult] = await Promise.all([
+      this.listWithDetails({ ...filter, limit, offset }, client),
+      client.execute({ sql: countSql, args: countArgs }),
+    ]);
+
+    const total = Number(countResult.rows[0]?.count ?? 0);
+    return { items, total };
   },
 };

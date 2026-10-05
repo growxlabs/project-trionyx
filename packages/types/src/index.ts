@@ -212,6 +212,7 @@ export interface SerialNumberWithDetails extends SerialNumberRecord {
     status: 'ACTIVE' | 'INACTIVE';
   };
   movements?: SerialMovementWithDetails[];
+  lastMovementAt?: string | null;
 }
 
 export type SerialMovementType = 'RECEIVED' | 'TRANSFERRED' | 'ADJUSTED';

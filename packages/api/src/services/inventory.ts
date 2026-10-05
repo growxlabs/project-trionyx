@@ -1,7 +1,10 @@
+import type { DatabaseClient as Client } from '@trionyx/database';
+import { getDbClient } from '@trionyx/database';
 import {
   serialsRepository,
   serialMovementsRepository,
   locationsRepository,
+  productsRepository,
 } from '@trionyx/database';
 import type {
   ReceiveSerialsInput,
@@ -72,7 +75,7 @@ export const inventoryService = {
     });
   },
 
-  async transferSerials(data: TransferSerialsInput, actorId: string) {
+  async transferSerials(data: TransferSerialsInput, actorId: string, client: Client = getDbClient()) {
     return serialsRepository.transferBatch({
       serialNumbers: data.serialNumbers,
       sourceLocationId: data.sourceLocationId,
@@ -80,7 +83,7 @@ export const inventoryService = {
       reference: data.reference,
       notes: data.notes,
       actorId,
-    });
+    }, client);
   },
 
   async adjustSerial(data: AdjustSerialStatusInput, actorId: string) {
@@ -132,5 +135,75 @@ export const inventoryService = {
 
   async updateLocation(id: string, data: { name?: string; status?: 'ACTIVE' | 'INACTIVE' }) {
     return locationsRepository.update(id, data);
+  },
+
+  async resolveProduct(query: { productId?: string; productName?: string }) {
+    if (query.productId) {
+      const p = await productsRepository.findById(query.productId);
+      if (!p) return { found: false as const };
+      return { found: true as const, product: p };
+    }
+    if (query.productName) {
+      const matches = await productsRepository.findMatching(query.productName);
+      if (matches.length === 0) return { found: false as const };
+      if (matches.length === 1) return { found: true as const, product: matches[0] };
+      // Check for exact case-insensitive match on name, slug, or code
+      const clean = query.productName.trim().toLowerCase();
+      const exact = matches.find(
+        (m) =>
+          m.name.toLowerCase() === clean ||
+          m.slug.toLowerCase() === clean ||
+          m.productCode.toLowerCase() === clean
+      );
+      if (exact) return { found: true as const, product: exact };
+      return { ambiguous: true as const, matches };
+    }
+    return { found: false as const };
+  },
+
+  async resolveLocation(query: { locationId?: string; locationName?: string }) {
+    if (query.locationId) {
+      const loc = await locationsRepository.findById(query.locationId);
+      if (!loc) return { found: false as const };
+      return { found: true as const, location: loc };
+    }
+    if (query.locationName) {
+      const matches = await locationsRepository.findMatching(query.locationName);
+      if (matches.length === 0) return { found: false as const };
+      if (matches.length === 1) return { found: true as const, location: matches[0] };
+      // Check for exact case-insensitive match on name or code
+      const clean = query.locationName.trim().toLowerCase();
+      const exact = matches.find(
+        (m) => m.name.toLowerCase() === clean || m.code.toLowerCase() === clean
+      );
+      if (exact) return { found: true as const, location: exact };
+      return { ambiguous: true as const, matches };
+    }
+    return { found: false as const };
+  },
+
+  async getSummary(filter: {
+    productId?: string;
+    locationId?: string;
+    status?: 'AVAILABLE' | 'TRANSFERRED' | 'INACTIVE';
+    groupBy: 'product' | 'location' | 'status';
+  }) {
+    return serialsRepository.getInventorySummary(filter);
+  },
+
+  async getExceptions() {
+    return serialsRepository.getInventoryExceptions();
+  },
+
+  async listRecentMovements(query: {
+    productId?: string;
+    locationId?: string;
+    type?: 'RECEIVED' | 'TRANSFERRED' | 'ADJUSTED';
+    fromDate?: string;
+    toDate?: string;
+    page?: number;
+    limit?: number;
+  }) {
+    return serialMovementsRepository.listWithDetailsAndCount(query);
   },
 };

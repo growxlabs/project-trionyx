@@ -2,6 +2,7 @@ import type { Client } from '@libsql/client';
 import type { ContactEnquiry, ContactEnquiryStatus, ContactEnquiryType } from '@trionyx/types';
 import { getDbClient } from '../db';
 import { randomUUID } from 'crypto';
+import { enquiryWhere, type EnquiryFilter } from './enquiryReads';
 
 function mapRow(row: Record<string, unknown>): ContactEnquiry {
   return {
@@ -25,8 +26,8 @@ function mapRow(row: Record<string, unknown>): ContactEnquiry {
     status: row.status as ContactEnquiryStatus,
     assignedTo: row.assigned_to ? String(row.assigned_to) : null,
     assignedUserName: row.assigned_user_name ? String(row.assigned_user_name) : null,
-    createdAt: String(row.created_at),
-    updatedAt: String(row.updated_at),
+    createdAt: (row.created_at instanceof Date ? row.created_at : new Date(String(row.created_at))).toISOString(),
+    updatedAt: (row.updated_at instanceof Date ? row.updated_at : new Date(String(row.updated_at))).toISOString(),
   };
 }
 
@@ -192,53 +193,10 @@ export const contactEnquiriesRepository = {
   },
 
   async list(
-    filter?: {
-      type?: ContactEnquiryType | 'ALL';
-      status?: ContactEnquiryStatus | 'ALL';
-      state?: string;
-      assignedTo?: string; // 'UNASSIGNED', 'ALL', or user UUID
-      search?: string;
-      page?: number;
-      limit?: number;
-    },
+    filter?: EnquiryFilter,
     client: Client = getDbClient()
   ): Promise<{ items: ContactEnquiry[]; total: number }> {
-    let whereSql = 'WHERE 1=1';
-    const args: (string | number)[] = [];
-
-    if (filter?.type && filter.type !== 'ALL') {
-      whereSql += ' AND ce.type = ?';
-      args.push(filter.type);
-    }
-    if (filter?.status && filter.status !== 'ALL') {
-      whereSql += ' AND ce.status = ?';
-      args.push(filter.status);
-    }
-    if (filter?.state && filter.state !== 'ALL') {
-      whereSql += ' AND LOWER(ce.state) = LOWER(?)';
-      args.push(filter.state);
-    }
-    if (filter?.assignedTo && filter.assignedTo !== 'ALL') {
-      if (filter.assignedTo === 'UNASSIGNED') {
-        whereSql += ' AND ce.assigned_to IS NULL';
-      } else {
-        whereSql += ' AND ce.assigned_to = ?';
-        args.push(filter.assignedTo);
-      }
-    }
-    if (filter?.search) {
-      const term = `%${filter.search.trim()}%`;
-      whereSql += ` AND (
-        ce.enquiry_code LIKE ? OR
-        ce.full_name LIKE ? OR
-        ce.company_name LIKE ? OR
-        ce.business_address LIKE ? OR
-        ce.phone LIKE ? OR
-        ce.email LIKE ? OR
-        ce.city LIKE ?
-      )`;
-      args.push(term, term, term, term, term, term, term);
-    }
+    const { whereSql, args } = enquiryWhere(filter);
 
     // Count
     const countResult = await client.execute({
@@ -258,7 +216,7 @@ export const contactEnquiriesRepository = {
             LEFT JOIN users u ON ce.assigned_to = u.id
             LEFT JOIN products p ON ce.product_id = p.id
             ${whereSql}
-            ORDER BY ce.created_at DESC
+            ORDER BY ce.created_at DESC, ce.id
             LIMIT ? OFFSET ?`,
       args: [...args, limit, offset],
     });

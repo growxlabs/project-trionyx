@@ -1,3 +1,5 @@
+import { AGENT_LOG_TABLE_STATEMENTS } from './agentLogSchema';
+
 export const POSTGRES_TABLE_STATEMENTS: string[] = [
   // 1. Users
   `CREATE TABLE IF NOT EXISTS users (
@@ -411,5 +413,6 @@ export const POSTGRES_TABLE_STATEMENTS: string[] = [
     ('0008_contact_enquiries_management'),
     ('0009_contact_enquiries_status_constraint'),
     ('0010_warranties_and_policies')
-  ON CONFLICT (name) DO NOTHING;`
+  ON CONFLICT (name) DO NOTHING;`,
+  ...AGENT_LOG_TABLE_STATEMENTS,
 ];

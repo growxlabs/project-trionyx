@@ -1,0 +1,4 @@
+{
+  "extends": "@trionyx/config/tsconfig.base.json",
+  "include": ["src/**/*.ts"]
+}

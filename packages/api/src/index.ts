@@ -5,6 +5,7 @@ export * from './services/products';
 export * from './services/inventory';
 export * from './services/dealers';
 export * from './services/distributors';
+export * from './services/dealerNetwork';
 export * from './services/dealerRequests';
 export * from './services/dealerAuth';
 export * from './services/dealerPortal';
@@ -23,3 +24,10 @@ export interface LegacyApiResponse<T> {
 
 export type SubmitContactResult = LegacyApiResponse<{ referenceId: string }>;
 export type SubmitDealerApplicationResult = LegacyApiResponse<{ applicationId: string }>;
+
+export { enquiryIntelligenceService, createEnquiryIntelligenceService, EnquiryReadError } from './services/enquiryIntelligence';
+
+export * from './services/warrantyExecutive';
+
+export { preparedActionsService, createPreparedActionsService, PreparedActionError, type PreparedActionContext } from './services/preparedActions';
+export { prepareDealerDistributorInputSchema, prepareEnquiryAssignmentInputSchema, prepareEnquiryStatusInputSchema, prepareInventoryTransferInputSchema } from '@trionyx/validation';

@@ -1,5 +1,6 @@
 export * from '@trionyx/types';
 export * from './db';
+export * from './repositories/agentLogs';
 export * from './repositories/users';
 export * from './repositories/sessions';
 export * from './repositories/audit';
@@ -22,3 +23,13 @@ export * from './repositories/enquiryNotes';
 export * from './repositories/warrantyPolicies';
 export * from './repositories/warranties';
 export * from './storage';
+export * from './repositories/dealerNetwork';
+
+export { enquiryReadsRepository, enquiryWhere, type EnquiryFilter, type EnquiryGrouping, type EnquiryChangeType } from './repositories/enquiryReads';
+export * from './repositories/warrantyReads';
+export * from './repositories/inventoryAttention';
+export * from './repositories/operationalChanges';
+
+export * from './repositories/preparedActions';
+export type { Client as DatabaseClient } from '@libsql/client';
+export {consumeTrixRateLimit} from './repositories/trixRateLimits';
