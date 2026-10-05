@@ -112,7 +112,7 @@ export function TrixWorkspace({ message, onMessageChange, entries, busy, onSend,
         <div className={styles.answer}><p className={styles.speaker}>TRIX</p>
           {entry.failure ? <ConnectionFailure failure={entry.failure} onRetry={() => onRetry(entry)} disabled={busy} />
             : entry.result ? <TrixAnswer entry={entry} onRetry={() => onRetry(entry)} disabled={busy} />
-            : <TrixProgressSteps steps={entry.steps ?? []} />}
+            : <TrixThinking />}
         </div>
       </article>)}</div>}
       <div ref={end} />
@@ -150,7 +150,7 @@ function TrixAnswer({ entry, onRetry, disabled }: { entry: TrixEntry; onRetry: (
   return <>
     {result.answer && !providerFailure && <MarkdownView content={result.answer} />}
     {providerFailure ? <ConnectionFailure failure={{ title: response.type === 'message' && response.errorCode === 'PROVIDER_LIMIT_REACHED' ? 'TRIX reached the AI provider limit.' : "TRIX couldn't connect.", description: response.type === 'message' && response.errorCode === 'PROVIDER_LIMIT_REACHED' ? response.summary : 'The AI service is temporarily unavailable.', code: response.type === 'message' ? response.errorCode! : 'PROVIDER_ERROR' }} onRetry={onRetry} disabled={disabled} />
-      : response.type === 'message' ? <MarkdownView content={response.summary} />
+      : response.type === 'message' ? (!result.answer ? <MarkdownView content={response.summary} /> : null)
       : response.type === 'prepared_action' ? <PreparedActionCard key={response.action.preparationId} initial={response.action} />
       : <TrixResultCard response={response} />}
     <details className={styles.activity}><summary>Activity · {result.activity.length} {result.activity.length === 1 ? 'step' : 'steps'}</summary>
@@ -164,34 +164,10 @@ function TrixAnswer({ entry, onRetry, disabled }: { entry: TrixEntry; onRetry: (
   </>;
 }
 
-const STEP_LABELS: Record<string, [string, string]> = {
-  verifyAccess: ['Verifying Managing Director access', 'Verified Managing Director access'],
-  checkRequest: ['Checking your request', 'Checked your request'],
-  connectData: ['Connecting to Trionyx data', 'Connected to Trionyx data'],
-  checkLimit: ['Checking the request limit', 'Within the request limit'],
-  searchInventory: ['Searching inventory', 'Searched inventory'],
-  searchDealers: ['Searching dealers', 'Searched dealers'],
-  searchDistributors: ['Searching distributors', 'Searched distributors'],
-  searchEnquiries: ['Searching enquiries', 'Searched enquiries'],
-  searchWarranties: ['Searching warranties', 'Searched warranties'],
-  changes: ['Reading recent changes', 'Read recent changes'],
-  attention: ['Checking what needs attention', 'Checked what needs attention'],
-  overview: ['Building the overview', 'Built the overview'],
-  prepareChange: ['Preparing the change for your confirmation', 'Prepared the change for your confirmation'],
-};
-const GATE_STEPS = new Set(['verifyAccess', 'checkRequest', 'connectData', 'checkLimit']);
-function TrixProgressSteps({ steps }: { steps: TrixProgress[] }) {
-  const running = steps.some(step => step.status === 'started') || steps.some(step => step.status === 'failed');
-  const gatesPassed = steps.some(step => step.toolName === 'checkLimit' && step.status === 'succeeded');
-  const usedData = steps.some(step => !GATE_STEPS.has(step.toolName));
-  return <ol className={styles.progress} role="status" aria-label="TRIX progress">
-    {!steps.length && <li className={styles.progressActive}>Sending your request…</li>}
-    {steps.map((step, index) => {
-      const [active, done] = STEP_LABELS[step.toolName] ?? ['Checking Trionyx data', 'Checked Trionyx data'];
-      return <li key={index} className={step.status === 'started' ? styles.progressActive : styles.progressDone}>
-        {step.status === 'started' ? `${active}…` : step.status === 'failed' ? `— Couldn't finish: ${active.toLowerCase()}` : `✓ ${done}`}
-      </li>;
-    })}
-    {gatesPassed && !running && <li className={styles.progressActive}>{usedData ? 'Writing the answer…' : 'Reading your question…'}</li>}
-  </ol>;
+function TrixThinking() {
+  return (
+    <p className={styles.working} role="status">
+      Thinking…
+    </p>
+  );
 }

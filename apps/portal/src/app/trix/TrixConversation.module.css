@@ -17,7 +17,8 @@
 .speaker { margin: 0 0 10px; font-size: 12px; line-height: 18px; font-weight: 600; color: var(--text-muted); }
 .userMessage > p:last-child { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 15px; line-height: 25px; }
 .answer { margin-top: 28px; }
-.working, .message { margin: 0; font-size: 15px; line-height: 25px; }
+.working { margin: 0; font-size: 15px; line-height: 25px; color: var(--text-secondary); animation: trixPulse 1.4s ease-in-out infinite; }
+.message { margin: 0; font-size: 15px; line-height: 25px; }
 .markdown { font-size: 15px; line-height: 25px; color: var(--text-primary); }
 .markdown p { margin: 0 0 12px; }
 .markdown p:last-child { margin-bottom: 0; }
