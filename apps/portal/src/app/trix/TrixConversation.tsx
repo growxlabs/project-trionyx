@@ -480,8 +480,10 @@ function TrixAnswer({ entry, onRetry, disabled }: { entry: TrixEntry; onRetry: (
           failure={{
             title: response.type === 'message' && response.errorCode === 'PROVIDER_LIMIT_REACHED'
               ? 'TRIX reached the AI provider limit.'
+              : response.type === 'message' && response.errorCode === 'PROVIDER_NOT_CONFIGURED'
+              ? 'AI provider not configured.'
               : "TRIX couldn't connect.",
-            description: response.type === 'message' && response.errorCode === 'PROVIDER_LIMIT_REACHED'
+            description: response.type === 'message' && (response.errorCode === 'PROVIDER_LIMIT_REACHED' || response.errorCode === 'PROVIDER_NOT_CONFIGURED')
               ? response.summary
               : 'The AI service is temporarily unavailable.',
             code: response.type === 'message' ? response.errorCode! : 'PROVIDER_ERROR',
