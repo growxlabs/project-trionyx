@@ -12,6 +12,8 @@ const nextConfig: NextConfig = {
     'streamdown',
     '@streamdown/code',
     'shiki',
+    '@json-render/react',
+    '@json-render/core',
   ],
   serverExternalPackages: ['@libsql/client', '@node-rs/argon2', 'pg'],
   images: {

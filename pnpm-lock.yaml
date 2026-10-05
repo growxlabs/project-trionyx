@@ -97,6 +97,12 @@ importers:
       '@carbon/icons-react':
         specifier: ^11.89.0
         version: 11.89.0(react@19.2.8)
+      '@json-render/core':
+        specifier: ^0.21.0
+        version: 0.21.0(zod@4.6.5)
+      '@json-render/react':
+        specifier: ^0.21.0
+        version: 0.21.0(react@19.2.8)(zod@4.6.5)
       '@streamdown/code':
         specifier: ^2.0.0
         version: 2.0.0(react@19.2.8)
@@ -151,6 +157,9 @@ importers:
       use-stick-to-bottom:
         specifier: ^1.1.6
         version: 1.1.6(react@19.2.8)
+      zod:
+        specifier: ^4.6.5
+        version: 4.6.5
     devDependencies:
       '@tailwindcss/postcss':
         specifier: ^4
@@ -1025,6 +1034,16 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@json-render/core@0.21.0':
+    resolution: {integrity: sha512-vysEbTjO1y8mEgAsp0tztRyaWCkNsBrG8MhAqbndGK3qmMXjMRdCNtk21+AQRNKdRelFGVAwBgtUNW8tfjQlsw==}
+    peerDependencies:
+      zod: ^4.0.0
+
+  '@json-render/react@0.21.0':
+    resolution: {integrity: sha512-z/fZg0L8fJe2dnnQjWkmMw409iBclSWcOqdjoBy8eLHeBr/7F7VipzkY1CfgA2Fa5uW+zxZ54OvWMtdDcsp/yg==}
+    peerDependencies:
+      react: ^19.2.3
 
   '@libsql/client@0.18.0':
     resolution: {integrity: sha512-zMCCo58vv7w27j7+cnt/GW+X6/Rih6cHZ86PKi0AxCMOqMfrVgG9OZ5lW2bDMJhSeOjsv2szH2nJF3A9l36UmA==}
@@ -4094,6 +4113,17 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.6.0
+
+  '@json-render/core@0.21.0(zod@4.6.5)':
+    dependencies:
+      zod: 4.6.5
+
+  '@json-render/react@0.21.0(react@19.2.8)(zod@4.6.5)':
+    dependencies:
+      '@json-render/core': 0.21.0(zod@4.6.5)
+      react: 19.2.8
+    transitivePeerDependencies:
+      - zod
 
   '@libsql/client@0.18.0':
     dependencies:

@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import type { TrixResponse } from '@trionyx/ai/responses';
 import { StatusBadge } from '../../components/workspace/StatusBadge';
+import { TrixJsonRenderer } from '../../components/json-render/TrixJsonRenderer';
 import styles from './TrixConversation.module.css';
 
 /** Every typed tool result except plain messages and prepared actions, which the conversation renders itself. */
@@ -51,6 +52,10 @@ export function formatDateTime(value: string) {
 }
 
 export function TrixResultCard({ response }: { response: ResultResponse }) {
+  return <TrixJsonRenderer response={response} />;
+}
+
+export function LegacyTrixResultCard({ response }: { response: ResultResponse }) {
   switch (response.type) {
     case 'inventory_list':
       return <Card title={`Inventory serials (${of(response.items.length, response.pageInfo.total)})`}>
