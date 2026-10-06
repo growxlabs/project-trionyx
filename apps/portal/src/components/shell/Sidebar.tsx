@@ -16,6 +16,7 @@ import {
   OperationalLedgerIcon,
   ControlSlidersIcon,
 } from './OperationsIcons';
+import { TrixNavIcon } from './TrixNavIcon';
 
 interface SidebarProps {
   user: SafeUser;
@@ -26,7 +27,7 @@ export function Sidebar({ user }: SidebarProps) {
 
   // Custom Trionyx Operations Icon Family (24x24 canvas, 1.5px stroke, technical/industrial, squared)
   const navItems = [
-    ...(user.role === 'MANAGING_DIRECTOR' ? [{ name: 'TRIX', href: '/trix', active: pathname.startsWith('/trix'), icon: <ControlBoardIcon className="w-6 h-6 shrink-0" /> }] : []),
+    ...(user.role === 'MANAGING_DIRECTOR' ? [{ name: 'TRIX', href: '/trix', active: pathname.startsWith('/trix'), icon: <TrixNavIcon className="w-6 h-6 shrink-0" /> }] : []),
     {
       name: 'Overview',
       href: '/overview',

@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import { AUTH_CONFIG, requireRole } from '@trionyx/auth';
 import { apiError, apiSuccess } from '@trionyx/api';
-import { getDatabaseUrl, isPostgresUrl, consumeTrixRateLimit } from '@trionyx/database';
+import { getDatabaseUrl, isPostgresUrl, consumeTrixRateLimit, trixConversationsRepository } from '@trionyx/database';
 import { requestSchema, runTrix, readBoundedTrixBody, type TrixProgress, type TrixStreamEvent } from '@trionyx/ai';
 
 export const runtime = 'nodejs';
@@ -16,6 +16,31 @@ function failure(error: unknown) {
   if (code === 'UNAUTHENTICATED') return { status: 401, code, message: 'Not authenticated' };
   if (code === 'FORBIDDEN') return { status: 403, code, message: 'Access denied' };
   return { status: 503, code: 'INTERNAL_ERROR', message: 'TRIX could not complete the request. Try again.' };
+}
+
+async function persistTurn(
+  conversationId: string,
+  userId: string,
+  question: string,
+  result: Awaited<ReturnType<typeof runTrix>>
+) {
+  try {
+    await trixConversationsRepository.ensureConversation(conversationId, userId, question);
+    await trixConversationsRepository.saveMessage({
+      conversationId,
+      role: 'user',
+      content: question,
+    });
+    await trixConversationsRepository.saveMessage({
+      conversationId,
+      role: 'assistant',
+      content: result.answer ?? '',
+      resultPayload: JSON.stringify(result.response),
+      activity: JSON.stringify(result.activity),
+    });
+  } catch (err) {
+    console.error('Failed to persist TRIX conversation turn:', err);
+  }
 }
 
 /** Every gate before the agent runs. `step` wraps each one so a streamed request can show it as it happens. */
@@ -43,7 +68,9 @@ export async function POST(request: Request) {
   if (!request.headers.get('accept')?.includes('application/x-ndjson')) {
     try {
       const { input, context } = await prepare(request, (_name, run) => run());
-      return apiSuccess(await runTrix(input, context), 200, { 'Cache-Control': 'no-store' });
+      const result = await runTrix(input, context);
+      await persistTurn(input.conversationId, context.user.id, input.message, result);
+      return apiSuccess(result, 200, { 'Cache-Control': 'no-store' });
     } catch (error) {
       const { status, code, message } = failure(error);
       return apiError(code, message, status);
@@ -61,7 +88,9 @@ export async function POST(request: Request) {
           try { const result = await run(); progress({ toolName, status: 'succeeded' }); return result; }
           catch (error) { progress({ toolName, status: 'failed' }); throw error; }
         });
-        send({ type: 'result', data: await runTrix(input, { ...context, onProgress: progress }) });
+        const result = await runTrix(input, { ...context, onProgress: progress });
+        await persistTurn(input.conversationId, context.user.id, input.message, result);
+        send({ type: 'result', data: result });
       } catch (error) {
         const { code, message } = failure(error);
         send({ type: 'error', code, message });

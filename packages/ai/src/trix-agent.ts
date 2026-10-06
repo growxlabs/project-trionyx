@@ -95,11 +95,13 @@ export async function runTrix(rawRequest: unknown, context: TrixContext, deps: T
     answer = generated.text.trim().slice(0, 4000);
     if (blocked) response = { type: 'message', summary: 'The requested tool action is not available in TRIX.', errorCode: 'UNSUPPORTED_TOOL' };
   } catch (error) {
-    const providerLimit = typeof error === 'object' && error !== null && 'statusCode' in error && error.statusCode === 402;
+    const statusCode = typeof error === 'object' && error !== null && 'statusCode' in error ? Number(error.statusCode) : 0;
+    const errorMessage = error instanceof Error ? error.message : '';
+    const providerLimit = statusCode === 402 || statusCode === 429 || /rate limit|credit|quota|free-models-per-day/i.test(errorMessage);
     const notConfigured = error instanceof Error && error.message === 'PROVIDER_NOT_CONFIGURED';
     response = {
       type: 'message',
-      summary: providerLimit ? 'The AI provider credit or token limit has been reached. Restore the configured OpenRouter account or key allowance to continue.' : 'TRIX is unavailable right now. Try again.',
+      summary: providerLimit ? 'The AI provider credit or rate limit has been reached. Restore the configured OpenRouter account credits or key allowance to continue.' : 'TRIX is unavailable right now. Try again.',
       errorCode: providerLimit ? 'PROVIDER_LIMIT_REACHED' : notConfigured ? 'PROVIDER_NOT_CONFIGURED' : 'PROVIDER_ERROR',
     };
     answer = '';

@@ -48,3 +48,8 @@ next-env.d.ts
 *.db-shm
 *.db-wal
 backups/
+
+# agents & skills
+.agents/
+.pi/
+skills-lock.json

@@ -3,7 +3,12 @@
 .header { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 0 18px; border-bottom: 1px solid var(--border); }
 .header h1 { margin: 0; font-size: 22px; line-height: 28px; font-weight: 600; }
 .header p { margin: 4px 0 0; font-size: 13px; line-height: 20px; color: var(--text-secondary); }
-.newConversation { display: flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0 4px; border: 0; background: transparent; color: var(--text-secondary); font-size: 13px; cursor: pointer; }
+.headerActions { display: flex; align-items: center; gap: 8px; }
+.historyButton { display: flex; align-items: center; justify-content: center; gap: 6px; min-width: 44px; min-height: 44px; padding: 0 10px; border: 1px solid var(--border); border-radius: 6px; background: transparent; color: var(--text-secondary); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s ease; }
+.historyButton:hover, .historyButtonActive { background: var(--surface-subtle); color: var(--text-primary); border-color: var(--border-strong, var(--border)); }
+.historyButton span { display: none; }
+.newConversation { display: flex; align-items: center; justify-content: center; gap: 6px; min-width: 44px; min-height: 44px; padding: 0 10px; border: 1px solid transparent; border-radius: 6px; background: transparent; color: var(--text-secondary); font-size: 13px; cursor: pointer; transition: all 0.15s ease; }
+.newConversation:hover { background: var(--surface-subtle); color: var(--text-primary); }
 .newConversation span { display: none; }
 .conversation { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
 .empty { padding-top: clamp(52px, 14dvh, 148px); text-align: center; }
@@ -17,7 +22,25 @@
 .speaker { margin: 0 0 10px; font-size: 12px; line-height: 18px; font-weight: 600; color: var(--text-muted); }
 .userMessage > p:last-child { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 15px; line-height: 25px; }
 .answer { margin-top: 28px; }
-.working, .message { margin: 0; font-size: 15px; line-height: 25px; }
+.working { margin: 0; font-size: 15px; line-height: 25px; color: var(--text-secondary); animation: trixPulse 1.4s ease-in-out infinite; }
+.message { margin: 0; font-size: 15px; line-height: 25px; }
+.markdown { font-size: 15px; line-height: 25px; color: var(--text-primary); }
+.markdown p { margin: 0 0 12px; }
+.markdown p:last-child { margin-bottom: 0; }
+.markdown ul, .markdown ol { margin: 0 0 12px 20px; padding: 0; }
+.markdown li { margin-bottom: 4px; }
+.markdown h1, .markdown h2, .markdown h3, .markdown h4 { margin: 16px 0 8px; font-weight: 600; line-height: 1.3; color: var(--text-primary); }
+.markdown h1 { font-size: 18px; }
+.markdown h2 { font-size: 16px; }
+.markdown h3 { font-size: 15px; }
+.markdown code { font-family: var(--font-mono, monospace); font-size: 13px; padding: 2px 5px; border-radius: 4px; background: var(--surface-raised, rgba(255,255,255,0.06)); border: 1px solid var(--border); }
+.markdown pre { margin: 12px 0; padding: 12px; border-radius: 6px; background: var(--surface-raised, rgba(255,255,255,0.06)); border: 1px solid var(--border); overflow-x: auto; }
+.markdown pre code { padding: 0; background: transparent; border: 0; }
+.markdown blockquote { margin: 12px 0; padding-left: 12px; border-left: 3px solid var(--accent, #6366f1); color: var(--text-secondary); }
+.markdown table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13.5px; }
+.markdown th, .markdown td { padding: 6px 10px; border: 1px solid var(--border); text-align: left; }
+.markdown th { background: var(--surface-raised, rgba(255,255,255,0.06)); font-weight: 600; }
+.markdown a { color: var(--accent, #6366f1); text-decoration: underline; text-underline-offset: 3px; }
 .working, .muted { color: var(--text-secondary); }
 .productRow { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
 .productRow > p { margin: 0; font-size: 15px; line-height: 24px; }
@@ -54,17 +77,259 @@ a.rowTitle:hover { text-decoration: underline; }
 .failureTitle { margin: 0 0 8px; font-size: 15px; font-weight: 500; }
 .failure > .muted { margin: 0 0 16px; font-size: 14px; line-height: 23px; }
 .footer { flex: none; padding: 16px 0 24px; }
+.footer form,
+.footer form:focus,
+.footer form:focus-within,
+.footer form:focus-visible,
+.footer textarea,
+.footer textarea:focus,
+.footer textarea:focus-within,
+.footer textarea:focus-visible {
+  outline: none !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+}
+.footer button:focus,
+.footer button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
 .composer { min-height: 56px; display: flex; align-items: flex-end; gap: 10px; padding: 6px 6px 6px 16px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface-raised); box-sizing: border-box; }
-.composer:focus-within { border-color: var(--accent-border, var(--accent)); }
-.composer textarea { display: block; flex: 1; width: 100%; min-width: 0; min-height: 42px; max-height: 160px; padding: 11px 0 9px; border: 0; outline: none; resize: none; background: transparent; color: var(--text-primary); font: inherit; font-size: 14px; line-height: 22px; box-sizing: border-box; }
+.composer:focus-within { border-color: var(--border-strong); outline: none !important; }
+.composer textarea { display: block; flex: 1; width: 100%; min-width: 0; min-height: 42px; max-height: 160px; padding: 11px 0 9px; border: 0; outline: none !important; resize: none; background: transparent; color: var(--text-primary); font: inherit; font-size: 14px; line-height: 22px; box-sizing: border-box; }
 .composer textarea::placeholder { color: var(--text-muted); }
 .send { display: flex; align-items: center; justify-content: center; flex: none; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 6px; background: var(--accent); color: var(--accent-foreground, var(--background)); cursor: pointer; }
 .send:disabled { background: var(--surface-subtle); color: var(--text-muted); cursor: default; }
 .workspace button:focus-visible, .workspace a:focus-visible, .workspace summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.footer button:focus-visible { outline: none !important; }
 .workspace button:disabled { cursor: default; }
+/* History drawer */
+.historyBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: flex-end;
+  animation: historyFadeIn 0.15s ease-out;
+}
+
+@keyframes historyFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.historyDrawer {
+  width: 100%;
+  max-width: 380px;
+  height: 100%;
+  background: var(--surface-raised, #18181b);
+  border-left: 1px solid var(--border);
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  animation: historySlideIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+@keyframes historySlideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.historyDrawerHeader {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.historyHeaderTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+}
+
+.historyHeaderTitle h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 22px;
+}
+
+.historyCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 7px;
+  border-radius: 9999px;
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.historyCloseButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.historyCloseButton:hover {
+  background: var(--surface-subtle);
+  color: var(--text-primary);
+}
+
+.historyContent {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 12px;
+  scrollbar-width: thin;
+}
+
+.historyLoading {
+  padding: 40px 16px;
+  text-align: center;
+}
+
+.historyShimmer {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.historyEmpty {
+  padding: 60px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.historyEmptyIcon {
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  opacity: 0.6;
+}
+
+.historyEmptyTitle {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.historyEmptyText {
+  margin: 0;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--text-secondary);
+}
+
+.historyList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.historyItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  text-align: left;
+}
+
+.historyItem:hover {
+  background: var(--surface-subtle);
+}
+
+.historyItemActive {
+  background: var(--surface-subtle);
+  border-color: var(--border);
+}
+
+.historyItemInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.historyItemTitle {
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 18px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.historyItemMeta {
+  font-size: 11.5px;
+  line-height: 16px;
+  color: var(--text-muted);
+}
+
+.historyDeleteButton {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  opacity: 0.5;
+  transition: all 0.15s ease;
+}
+
+.historyItem:hover .historyDeleteButton {
+  opacity: 1;
+}
+
+.historyDeleteButton:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
 @media (min-width: 640px) {
   .workspace { margin: -20px -24px; }
   .frame { padding: 0 24px; }
+  .historyButton span { display: inline; }
+  .historyButton { min-width: auto; min-height: 38px; padding: 0 12px; }
+  .newConversation { min-width: auto; min-height: 38px; padding: 0 12px; border-color: var(--border); }
   .newConversation span { display: inline; }
   .mobileAdd { display: none; }
   .empty h2 { font-size: 32px; line-height: 42px; }
@@ -79,3 +344,7 @@ a.rowTitle:hover { text-decoration: underline; }
   .empty h2 { font-size: 28px; line-height: 36px; }
   .fields { grid-template-columns: 1fr; gap: 16px; }
 }
+@media (prefers-reduced-motion: reduce) {
+  .historyBackdrop, .historyDrawer { animation: none; }
+}
+

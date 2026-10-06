@@ -186,7 +186,7 @@ async function ensureTrixSchema(client: Client): Promise<void> {
       for (const statement of TRIX_TABLE_STATEMENTS) await client.execute(statement);
       if (isPostgresUrl(getDatabaseUrl())) {
         // No public Supabase policy: these tables are accessible only through the server DB role.
-        for (const table of ['trix_prepared_actions', 'trix_request_limits']) await client.execute(`ALTER TABLE ${table} ENABLE ROW LEVEL SECURITY`);
+        for (const table of ['trix_prepared_actions', 'trix_request_limits', 'trix_conversations', 'trix_messages']) await client.execute(`ALTER TABLE ${table} ENABLE ROW LEVEL SECURITY`);
       }
     })().catch((error) => { trixSchemaPromise = null; throw error; });
   }
