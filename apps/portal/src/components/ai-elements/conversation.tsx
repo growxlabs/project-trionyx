@@ -9,7 +9,7 @@ export type ConversationProps = ComponentProps<typeof StickToBottom>;
 
 export const Conversation = ({ className, ...props }: ConversationProps) => (
   <StickToBottom
-    className={cn('relative flex-1 overflow-y-auto overscroll-contain scrollbar-thin', className)}
+    className={cn('relative flex-1 min-w-0 w-full max-w-full h-full flex flex-col overflow-hidden', className)}
     initial="smooth"
     resize="smooth"
     role="log"
@@ -19,9 +19,17 @@ export const Conversation = ({ className, ...props }: ConversationProps) => (
 
 export type ConversationContentProps = ComponentProps<typeof StickToBottom.Content>;
 
-export const ConversationContent = ({ className, ...props }: ConversationContentProps) => (
+export const ConversationContent = ({
+  className,
+  scrollClassName,
+  ...props
+}: ConversationContentProps & { scrollClassName?: string }) => (
   <StickToBottom.Content
-    className={cn('flex flex-col gap-8 py-6 px-4 max-w-4xl mx-auto w-full', className)}
+    scrollClassName={cn(
+      'min-w-0 w-full max-w-full flex-1 h-full overflow-y-auto overflow-x-hidden overscroll-contain scrollbar-thin',
+      scrollClassName
+    )}
+    className={cn('flex flex-col gap-8 py-6 px-4 max-w-4xl mx-auto w-full min-w-0 box-border', className)}
     {...props}
   />
 );

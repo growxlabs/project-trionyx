@@ -25,7 +25,7 @@ const severityClasses: Record<string, string> = {
 export const { registry: trixRegistry } = defineRegistry(trixCatalog, {
   components: {
     CardContainer: ({ props, children, slots }) => (
-      <section className="w-full max-w-2xl bg-[var(--surface-raised)] border border-[var(--border)] rounded-xl shadow-xs overflow-hidden my-3">
+      <section className="w-full max-w-2xl min-w-0 box-border bg-[var(--surface-raised)] border border-[var(--border)] rounded-xl shadow-xs overflow-hidden my-3">
         <header className="flex items-center justify-between px-5 py-3.5 border-b border-[var(--border)] bg-[var(--surface-subtle)]/30">
           <div>
             <div className="flex items-center gap-2.5">
@@ -40,7 +40,7 @@ export const { registry: trixRegistry } = defineRegistry(trixCatalog, {
           </div>
           {slots?.actions && <div className="flex items-center gap-2">{slots.actions}</div>}
         </header>
-        <div className="p-5">{children}</div>
+        <div className="p-5 min-w-0 max-w-full box-border">{children}</div>
       </section>
     ),
 
@@ -49,7 +49,7 @@ export const { registry: trixRegistry } = defineRegistry(trixCatalog, {
       return (
         <div
           className={cn(
-            'grid gap-3 w-full my-2',
+            'grid gap-3 w-full min-w-0 max-w-full my-2',
             cols === 3 ? 'grid-cols-1 sm:grid-cols-3' : cols === 4 ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-1 sm:grid-cols-2'
           )}
         >
@@ -59,7 +59,7 @@ export const { registry: trixRegistry } = defineRegistry(trixCatalog, {
     },
 
     MetricCard: ({ props }) => (
-      <div className={cn('p-4 rounded-lg border flex flex-col justify-between transition-all', toneClasses[props.tone ?? 'neutral'])}>
+      <div className={cn('p-4 rounded-lg border flex flex-col justify-between transition-all min-w-0 box-border', toneClasses[props.tone ?? 'neutral'])}>
         <span className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">{props.label}</span>
         <div className="mt-1.5 flex items-baseline gap-2">
           <span className="text-2xl font-bold font-mono tracking-tight text-[var(--text-primary)]">{props.value}</span>
@@ -73,9 +73,9 @@ export const { registry: trixRegistry } = defineRegistry(trixCatalog, {
     ),
 
     PropertyGrid: ({ props }) => (
-      <dl className={cn('grid gap-x-6 gap-y-3.5 my-2', props.columns === 3 ? 'grid-cols-1 sm:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2')}>
+      <dl className={cn('grid gap-x-6 gap-y-3.5 my-2 w-full min-w-0 max-w-full', props.columns === 3 ? 'grid-cols-1 sm:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2')}>
         {props.items.map((item, idx) => (
-          <div key={idx}>
+          <div key={idx} className="min-w-0">
             <dt className="text-xs text-[var(--text-muted)] font-medium mb-0.5">{item.label}</dt>
             <dd className="text-sm font-medium text-[var(--text-primary)] break-words m-0">{item.value}</dd>
           </div>
@@ -84,7 +84,7 @@ export const { registry: trixRegistry } = defineRegistry(trixCatalog, {
     ),
 
     DataTable: ({ props }) => (
-      <div className="w-full overflow-x-auto my-1">
+      <div className="w-full max-w-full min-w-0 overflow-x-auto my-1">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="border-b border-[var(--border)]">
@@ -157,17 +157,17 @@ export const { registry: trixRegistry } = defineRegistry(trixCatalog, {
     ),
 
     Callout: ({ props }) => (
-      <div className={cn('p-3.5 rounded-lg border flex items-start gap-3 my-2.5', severityClasses[props.severity ?? 'warning'])}>
-        <div className="flex-1">
+      <div className={cn('p-3.5 rounded-lg border flex items-start gap-3 my-2.5 w-full min-w-0 max-w-full box-border', severityClasses[props.severity ?? 'warning'])}>
+        <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between">
-            <p className="font-semibold text-sm m-0">{props.title}</p>
+            <p className="font-semibold text-sm m-0 break-words">{props.title}</p>
             {props.href && (
-              <Link href={props.href} className="text-xs font-medium underline hover:opacity-80">
+              <Link href={props.href} className="text-xs font-medium underline hover:opacity-80 shrink-0">
                 View
               </Link>
             )}
           </div>
-          {props.description && <p className="text-xs opacity-90 mt-1 m-0 leading-relaxed">{props.description}</p>}
+          {props.description && <p className="text-xs opacity-90 mt-1 m-0 leading-relaxed break-words">{props.description}</p>}
         </div>
       </div>
     ),
@@ -193,7 +193,7 @@ export const { registry: trixRegistry } = defineRegistry(trixCatalog, {
     },
 
     CustomerQuote: ({ props }) => (
-      <blockquote className="my-3 p-3.5 rounded-lg bg-[var(--surface-subtle)] border-l-4 border-[var(--accent,#F26522)] text-sm text-[var(--text-secondary)] italic leading-relaxed">
+      <blockquote className="my-3 p-3.5 rounded-lg bg-[var(--surface-subtle)] border-l-4 border-[var(--accent,#F26522)] text-sm text-[var(--text-secondary)] italic leading-relaxed break-words w-full min-w-0 max-w-full box-border">
         {props.message}
         {props.truncated && '…'}
       </blockquote>

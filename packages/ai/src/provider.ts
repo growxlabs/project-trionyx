@@ -4,7 +4,7 @@ export function getModelMetadata(_purpose: 'trix') {
   if (_purpose !== 'trix') throw new Error('PROVIDER_NOT_CONFIGURED');
   const provider = process.env.TRIX_MODEL_PROVIDER || 'openrouter';
   if (provider !== 'openrouter') throw new Error('PROVIDER_NOT_CONFIGURED');
-  const modelName = (process.env.TRIX_MODEL || 'anthropic/claude-sonnet-4.6').trim();
+  const modelName = (process.env.TRIX_MODEL || 'openrouter/free').trim();
   if (!modelName || !/^[a-zA-Z0-9/_.:-]{1,150}$/.test(modelName)) throw new Error('PROVIDER_NOT_CONFIGURED');
   return { modelProvider: 'openrouter', modelName };
 }
