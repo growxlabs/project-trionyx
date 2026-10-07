@@ -13,7 +13,7 @@ export type MessageProps = HTMLAttributes<HTMLDivElement> & {
 export const Message = ({ className, from, ...props }: MessageProps) => (
   <article
     className={cn(
-      'group flex w-full flex-col gap-2',
+      'group flex w-full min-w-0 max-w-full flex-col gap-2 box-border',
       from === 'user' ? 'is-user items-end' : 'is-assistant items-start',
       className
     )}
@@ -26,7 +26,7 @@ export type MessageContentProps = HTMLAttributes<HTMLDivElement>;
 export const MessageContent = ({ children, className, ...props }: MessageContentProps) => (
   <div
     className={cn(
-      'flex w-fit min-w-0 max-w-full flex-col gap-2 text-sm leading-relaxed',
+      'flex w-fit min-w-0 max-w-full flex-col gap-2 text-sm leading-relaxed box-border',
       'group-[.is-user]:max-w-[85%] group-[.is-user]:rounded-2xl group-[.is-user]:bg-[var(--surface-raised)] group-[.is-user]:border group-[.is-user]:border-[var(--border)] group-[.is-user]:px-4 group-[.is-user]:py-3 group-[.is-user]:text-[var(--text-primary)] group-[.is-user]:shadow-xs',
       'group-[.is-assistant]:w-full group-[.is-assistant]:text-[var(--text-primary)]',
       className
@@ -43,9 +43,9 @@ const streamdownPlugins = { code };
 
 export const MessageResponse = memo(
   ({ className, isAnimating, children, ...props }: MessageResponseProps) => (
-    <div className={cn('streamdown-container w-full min-w-0', className)}>
+    <div className={cn('streamdown-container w-full min-w-0 max-w-full box-border', className)}>
       <Streamdown
-        className="w-full text-[15px] leading-relaxed break-words"
+        className="w-full min-w-0 max-w-full text-[15px] leading-relaxed break-words"
         plugins={streamdownPlugins}
         caret="block"
         isAnimating={isAnimating}

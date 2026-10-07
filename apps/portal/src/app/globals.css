@@ -332,9 +332,13 @@ form:focus-within {
 
 .streamdown-container [data-streamdown="code-block"] {
   margin: 14px 0;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   border-radius: 8px;
   border: 1px solid var(--border);
-  overflow: hidden;
+  overflow-x: auto;
+  box-sizing: border-box;
 }
 
 .streamdown-container [data-streamdown="inline-code"] {
@@ -365,9 +369,13 @@ form:focus-within {
 
 .streamdown-container [data-streamdown="table-wrapper"] {
   margin: 16px 0;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   overflow-x: auto;
   border-radius: 8px;
   border: 1px solid var(--border);
+  box-sizing: border-box;
 }
 
 .streamdown-container [data-streamdown="table"] {

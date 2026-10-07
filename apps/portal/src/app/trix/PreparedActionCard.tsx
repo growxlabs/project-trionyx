@@ -27,13 +27,13 @@ export function PreparedActionCard({initial}:{initial:PreparedAction}) {
     }catch(reason){setError(reason instanceof Error?reason.message:'This action could not be completed. Reload the preview to check its state.');}
     finally{submitting.current=false;setBusy(false);}
   }
-  return <section aria-label="Prepared action" className="border border-white/20 rounded p-4 space-y-3">
-    <h2>{action.title}</h2><p>{action.state==='PREPARED'?'Prepared only. Business records have not changed.':`Action state: ${action.state}`}</p>
-    <dl className="space-y-2">{action.currentState.map(record=><div key={record.id}><dt>{record.label} · {record.id}</dt><dd>Current status: {record.status}{action.actionType==='DEALER_DISTRIBUTOR_ASSIGNMENT'||action.actionType==='ENQUIRY_ASSIGNMENT'?` · Current assignment: ${record.assignmentLabel??'Unassigned'} (${record.assignmentId??'none'})`:''}{record.locationId?` · Source location: ${record.locationId}`:''}</dd></div>)}</dl>
-    <p>Proposed: {action.proposedChange.destination?`${action.proposedChange.destination.label} (${action.proposedChange.destination.id})`:action.proposedChange.status}</p>
-    {action.proposedChange.reason&&<p>Reason: {action.proposedChange.reason}</p>}
-    <p>{action.consequences}</p><p>Expires: {new Date(action.expiresAt).toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})} IST</p>
-    {error&&<p role="alert">{error}</p>}
-    {action.state==='PREPARED'&&<div className="flex gap-3"><button type="button" disabled={!ready||busy} onClick={()=>submit('confirm')}>Confirm exact change</button><button type="button" disabled={!ready||busy} onClick={()=>submit('cancel')}>Cancel action</button></div>}
+  return <section aria-label="Prepared action" className="w-full min-w-0 max-w-full box-border border border-white/20 rounded p-4 space-y-3">
+    <h2 className="break-words">{action.title}</h2><p className="break-words">{action.state==='PREPARED'?'Prepared only. Business records have not changed.':`Action state: ${action.state}`}</p>
+    <dl className="space-y-2 min-w-0 max-w-full">{action.currentState.map(record=><div key={record.id} className="min-w-0"><dt className="break-words">{record.label} · {record.id}</dt><dd className="break-words">Current status: {record.status}{action.actionType==='DEALER_DISTRIBUTOR_ASSIGNMENT'||action.actionType==='ENQUIRY_ASSIGNMENT'?` · Current assignment: ${record.assignmentLabel??'Unassigned'} (${record.assignmentId??'none'})`:''}{record.locationId?` · Source location: ${record.locationId}`:''}</dd></div>)}</dl>
+    <p className="break-words">Proposed: {action.proposedChange.destination?`${action.proposedChange.destination.label} (${action.proposedChange.destination.id})`:action.proposedChange.status}</p>
+    {action.proposedChange.reason&&<p className="break-words">Reason: {action.proposedChange.reason}</p>}
+    <p className="break-words">{action.consequences}</p><p className="break-words">Expires: {new Date(action.expiresAt).toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})} IST</p>
+    {error&&<p role="alert" className="break-words">{error}</p>}
+    {action.state==='PREPARED'&&<div className="flex flex-wrap gap-3"><button type="button" disabled={!ready||busy} onClick={()=>submit('confirm')}>Confirm exact change</button><button type="button" disabled={!ready||busy} onClick={()=>submit('cancel')}>Cancel action</button></div>}
   </section>;
 }

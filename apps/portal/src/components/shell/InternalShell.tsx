@@ -21,7 +21,7 @@ export function InternalShell({ user, children }: InternalShellProps) {
         <MobileNavigation user={user} />
 
         {/* Workbench Canvas — secondary sidebar spans the full height */}
-        <div className="flex-1 flex flex-col bg-[var(--background)] border-l border-[var(--border)] min-h-0">
+        <div className="flex-1 flex flex-col bg-[var(--background)] border-l border-[var(--border)] min-h-0 min-w-0">
           <WorkspaceViewsProvider>{children}</WorkspaceViewsProvider>
         </div>
       </div>
