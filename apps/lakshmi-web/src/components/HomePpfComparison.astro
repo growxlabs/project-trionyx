@@ -1,0 +1,436 @@
+---
+import Container from './Container.astro';
+
+interface ComparisonImage {
+  src: string;
+  alt: string;
+}
+
+interface Props {
+  beforeImage?: ComparisonImage;
+  afterImage?: ComparisonImage;
+}
+
+const {
+  beforeImage = {
+    src: '/images/ppf/ppf-before.jpg',
+    alt: 'Vehicle surface before PPF application',
+  },
+  afterImage = {
+    src: '/images/ppf/ppf-after.jpg',
+    alt: 'Vehicle surface after PPF application with high gloss finish',
+  },
+} = Astro.props;
+---
+
+<section class="ppf-compare-section" aria-labelledby="ppf-compare-title">
+  <Container>
+    <div class="ppf-compare-header">
+      <p class="eyebrow">PAINT PROTECTION FILM</p>
+      <h2 id="ppf-compare-title" class="heading">See the difference.</h2>
+    </div>
+
+    <div
+      class="ppf-comparison-stage"
+      data-ppf-stage
+      style="--position: 50%;"
+      tabindex="-1"
+    >
+      <!-- Base Layer: After PPF (revealed on the right) -->
+      <div class="ppf-layer ppf-layer-after" aria-hidden="true">
+        <img
+          src={afterImage.src}
+          alt={afterImage.alt}
+          class="ppf-image"
+          loading="lazy"
+          draggable="false"
+        />
+      </div>
+
+      <!-- Clipped Top Layer: Before PPF (shown on the left) -->
+      <div class="ppf-layer ppf-layer-before" data-ppf-before aria-hidden="true">
+        <img
+          src={beforeImage.src}
+          alt={beforeImage.alt}
+          class="ppf-image"
+          loading="lazy"
+          draggable="false"
+        />
+      </div>
+
+      <!-- Permanent Visible Badges -->
+      <span class="badge badge-before">BEFORE</span>
+      <span class="badge badge-after">AFTER</span>
+
+      <!-- Divider Bar & Handle -->
+      <div class="divider-track" data-ppf-divider aria-hidden="true">
+        <div class="divider-bar"></div>
+      </div>
+
+      <div
+        class="handle"
+        data-ppf-handle
+        role="slider"
+        tabindex="0"
+        aria-label="PPF before and after comparison"
+        aria-valuenow="50"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuetext="50% Before PPF, 50% After PPF"
+      >
+        <svg
+          viewBox="0 0 20 20"
+          width="14"
+          height="14"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <polyline points="6 5 2 10 6 15"></polyline>
+          <polyline points="14 5 18 10 14 15"></polyline>
+        </svg>
+      </div>
+    </div>
+  </Container>
+</section>
+
+<style>
+  .ppf-compare-section {
+    padding-block: clamp(3.5rem, 6vw, 6rem);
+    background: var(--color-background, #0B0D0F);
+    border-top: 1px solid var(--color-border, #2A2E32);
+    position: relative;
+  }
+
+  .ppf-compare-header {
+    margin-bottom: clamp(1.75rem, 3vw, 2.5rem);
+    max-width: var(--content-max, 60rem);
+  }
+
+  .eyebrow {
+    font-size: var(--font-label, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-primary, #E95D2C);
+    margin-bottom: var(--space-2, 0.5rem);
+  }
+
+  .heading {
+    font-size: clamp(2rem, 3.2vw, 3rem);
+    line-height: var(--line-heading, 1.15);
+    letter-spacing: -0.03em;
+    color: var(--color-text, #F7F7F5);
+    margin: 0;
+  }
+
+  /* Comparison Stage Container (16 / 7 ratio matching 1920x840 real photos) */
+  .ppf-comparison-stage {
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    aspect-ratio: 16 / 7;
+    min-height: 480px;
+    max-height: 620px;
+    overflow: hidden;
+    background: #0B1014;
+    border: 1px solid var(--color-border, #2A2E32);
+    border-radius: var(--radius-sm, 2px);
+    user-select: none;
+    cursor: ew-resize;
+    touch-action: pan-y;
+  }
+
+  .ppf-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .ppf-layer-after {
+    z-index: 1;
+  }
+
+  .ppf-layer-before {
+    z-index: 2;
+    clip-path: inset(0 calc(100% - var(--position, 50%)) 0 0);
+  }
+
+  .ppf-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    pointer-events: none;
+  }
+
+  /* Small Labels */
+  .badge {
+    position: absolute;
+    top: 1.25rem;
+    z-index: 4;
+    padding: 0.35rem 0.65rem;
+    background: rgba(11, 13, 15, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #F7F7F5;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  .badge-before {
+    left: 1.25rem;
+  }
+
+  .badge-after {
+    right: 1.25rem;
+  }
+
+  /* Divider Track & Vertical Line */
+  .divider-track {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--position, 50%);
+    width: 0;
+    z-index: 5;
+    pointer-events: none;
+    transform: translateX(-50%);
+  }
+
+  .divider-bar {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -1px;
+    width: 2px;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Compact Orange Circular Handle */
+  .handle {
+    position: absolute;
+    top: 50%;
+    left: var(--position, 50%);
+    transform: translate(-50%, -50%);
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--color-primary, #E95D2C);
+    color: #FFFFFF;
+    border: 2px solid #0B0D0F;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.7);
+    display: grid;
+    place-items: center;
+    z-index: 10;
+    cursor: ew-resize;
+    outline: none;
+    transition: transform 120ms ease, background-color 120ms ease, box-shadow 120ms ease;
+  }
+
+  .handle:hover {
+    background: #FF7545;
+    transform: translate(-50%, -50%) scale(1.08);
+    box-shadow: 0 4px 16px rgba(233, 93, 44, 0.45);
+  }
+
+  .handle:focus-visible {
+    outline: 2px solid var(--color-primary, #E95D2C);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 4px rgba(233, 93, 44, 0.35);
+  }
+
+  .handle svg {
+    display: block;
+    pointer-events: none;
+  }
+
+  /* Stage Active / Focus States */
+  .ppf-comparison-stage:focus-within {
+    border-color: rgba(233, 93, 44, 0.6);
+  }
+
+  /* Responsive Ratios */
+  @media (max-width: 64rem) {
+    .ppf-comparison-stage {
+      aspect-ratio: 16 / 8;
+      min-height: 400px;
+      max-height: 520px;
+    }
+  }
+
+  @media (max-width: 48rem) {
+    .ppf-compare-section {
+      padding-block: clamp(2.5rem, 5vw, 4rem);
+    }
+
+    .ppf-comparison-stage {
+      aspect-ratio: 4 / 3;
+      min-height: 280px;
+      max-height: 380px;
+    }
+
+    .badge {
+      top: 0.875rem;
+      font-size: 0.625rem;
+      padding: 0.3rem 0.5rem;
+    }
+
+    .badge-before {
+      left: 0.875rem;
+    }
+
+    .badge-after {
+      right: 0.875rem;
+    }
+
+    .handle {
+      width: 36px;
+      height: 36px;
+    }
+  }
+</style>
+
+<script>
+  function initPpfComparisonStages() {
+    const stages = document.querySelectorAll<HTMLElement>('[data-ppf-stage]');
+
+    stages.forEach((stage) => {
+      if (stage.dataset.initialized === 'true') return;
+      stage.dataset.initialized = 'true';
+
+      const handle = stage.querySelector<HTMLElement>('[data-ppf-handle]');
+      if (!handle) return;
+      const handleEl = handle;
+
+      let isDragging = false;
+
+      function setPosition(percentage: number) {
+        const clamped = Math.max(0, Math.min(100, percentage));
+        stage.style.setProperty('--position', `${clamped}%`);
+        handleEl.setAttribute('aria-valuenow', Math.round(clamped).toString());
+        handleEl.setAttribute('aria-valuetext', `${Math.round(clamped)}% Before PPF, ${Math.round(100 - clamped)}% After PPF`);
+      }
+
+      function calculatePercentage(clientX: number): number {
+        const rect = stage.getBoundingClientRect();
+        const offsetX = clientX - rect.left;
+        return (offsetX / rect.width) * 100;
+      }
+
+      // Mouse drag handling
+      function onMouseDown(e: MouseEvent) {
+        if (e.button !== 0) return;
+        isDragging = true;
+        setPosition(calculatePercentage(e.clientX));
+        handleEl.focus();
+        e.preventDefault();
+      }
+
+      function onMouseMove(e: MouseEvent) {
+        if (!isDragging) return;
+        setPosition(calculatePercentage(e.clientX));
+      }
+
+      function onMouseUp() {
+        if (isDragging) {
+          isDragging = false;
+        }
+      }
+
+      // Touch drag handling (allows vertical scrolling unless horizontal drag is active)
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let isHorizontalIntent = false;
+
+      function onTouchStart(e: TouchEvent) {
+        if (e.touches.length !== 1) return;
+        const touch = e.touches[0];
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+        isHorizontalIntent = false;
+        isDragging = true;
+      }
+
+      function onTouchMove(e: TouchEvent) {
+        if (!isDragging || e.touches.length !== 1) return;
+        const touch = e.touches[0];
+        const deltaX = Math.abs(touch.clientX - touchStartX);
+        const deltaY = Math.abs(touch.clientY - touchStartY);
+
+        if (!isHorizontalIntent) {
+          if (deltaX > 8 && deltaX > deltaY) {
+            isHorizontalIntent = true;
+          } else if (deltaY > 8) {
+            isDragging = false;
+            return;
+          }
+        }
+
+        if (isHorizontalIntent) {
+          if (e.cancelable) e.preventDefault();
+          setPosition(calculatePercentage(touch.clientX));
+        }
+      }
+
+      function onTouchEnd() {
+        isDragging = false;
+        isHorizontalIntent = false;
+      }
+
+      stage.addEventListener('mousedown', onMouseDown);
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mouseup', onMouseUp);
+
+      stage.addEventListener('touchstart', onTouchStart, { passive: true });
+      window.addEventListener('touchmove', onTouchMove, { passive: false });
+      window.addEventListener('touchend', onTouchEnd);
+      window.addEventListener('touchcancel', onTouchEnd);
+
+      // Keyboard arrow control on handle
+      handleEl.addEventListener('keydown', (e: KeyboardEvent) => {
+        const current = parseFloat(handleEl.getAttribute('aria-valuenow') || '50');
+        let next = current;
+        const step = 5;
+
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          next = Math.max(0, current - step);
+        } else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          next = Math.min(100, current + step);
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          next = 0;
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          next = 100;
+        }
+
+        if (next !== current) {
+          setPosition(next);
+        }
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPpfComparisonStages);
+  } else {
+    initPpfComparisonStages();
+  }
+  document.addEventListener('astro:page-load', initPpfComparisonStages);
+</script>

@@ -1,0 +1,47 @@
+---
+import Container from './Container.astro';
+import Button from './Button.astro';
+---
+<section class="enquiry-banner" aria-labelledby="enquiry-title">
+  <div class="enquiry-backdrop" aria-hidden="true">
+    <img src="/images/products/azoom-installed-beam.jpg" alt="" loading="lazy" />
+  </div>
+  <Container>
+    <div class="enquiry-copy">
+      <p class="enquiry-eyebrow">LET’S FIND YOUR NEXT UPGRADE</p>
+      <h2 id="enquiry-title">The right products.<br /><span>For the road ahead.</span></h2>
+      <p class="enquiry-description">Explore lighting, protection and comfort products for your vehicle or business.</p>
+      <div class="enquiry-actions">
+        <Button href="/contact">Contact our team</Button>
+        <a class="catalogue-link" href="/products">Explore the catalogue</a>
+      </div>
+    </div>
+  </Container>
+</section>
+<style>
+  .enquiry-banner { position: relative; isolation: isolate; overflow: hidden; background: var(--color-background); padding-block: clamp(2.75rem, 4.5vw, 4rem); }
+  .enquiry-backdrop { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+  .enquiry-backdrop img { width: 100%; height: 100%; object-fit: cover; object-position: 62% 70%; }
+  .enquiry-backdrop::before { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, var(--color-background) 0%, transparent 24%, transparent 78%, var(--color-background) 100%); }
+  .enquiry-backdrop::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, #090b0d 0%, rgba(9,11,13,.96) 26%, rgba(9,11,13,.8) 45%, rgba(9,11,13,.22) 75%, rgba(9,11,13,.3) 100%); }
+  .enquiry-copy { max-width: 35rem; }
+  .enquiry-eyebrow { color: #f1845d; font-size: .6875rem; font-weight: 700; letter-spacing: .16em; margin-bottom: 1.25rem; }
+  h2 { font-size: clamp(2rem, 3.2vw, 3rem); letter-spacing: -.04em; line-height: 1.08; }
+  h2 span { color: #b6bdc3; }
+  .enquiry-description { max-width: 47ch; margin-top: 1.25rem; color: #b6bdc3; font-size: .9375rem; line-height: 1.75; }
+  .enquiry-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.75rem; margin-top: 1.75rem; }
+  .enquiry-actions :global(.button) { min-height: 48px; padding: .75rem 1.5rem; color: #111315; font-size: .875rem; }
+  .enquiry-actions :global(.button:hover) { background: #f47b4f; border-color: #f47b4f; }
+  .catalogue-link { display: inline-flex; align-items: center; min-height: 44px; font-size: .875rem; font-weight: 700; text-decoration-color: #64707a; text-underline-offset: .4rem; transition: color 150ms ease; }
+  .catalogue-link:hover { color: #f1845d; text-decoration-color: currentColor; }
+  @media (max-width: 47.999rem) {
+    .enquiry-backdrop img { object-position: 65% center; }
+    .enquiry-backdrop::after { background: linear-gradient(90deg, rgba(9,11,13,.97), rgba(9,11,13,.78)); }
+    .enquiry-copy { max-width: 31rem; }
+  }
+  @media (max-width: 25rem) {
+    .enquiry-actions { align-items: stretch; flex-direction: column; gap: .5rem; }
+    .catalogue-link { justify-content: center; }
+    .enquiry-eyebrow { font-size: .625rem; letter-spacing: .1em; }
+  }
+</style>

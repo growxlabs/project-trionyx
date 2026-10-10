@@ -1,0 +1,371 @@
+---
+interface Props {
+  beforeImage?: { src: string; alt: string };
+  afterImage?: { src: string; alt: string };
+}
+
+const { beforeImage, afterImage } = Astro.props;
+---
+
+<div class="ppf-comparison" data-ppf-slider>
+  <!-- Base Layer: After PPF (Protected) -->
+  <div class="ppf-layer ppf-layer-after" aria-hidden="true">
+    {afterImage ? (
+      <img src={afterImage.src} alt={afterImage.alt} class="ppf-image" loading="lazy" />
+    ) : (
+      <div class="ppf-placeholder ppf-placeholder-after">
+        <svg viewBox="0 0 480 360" class="ppf-svg" role="img" aria-label="After PPF technical automotive visual">
+          <defs>
+            <linearGradient id="ppf-after-panel" x1="0" y1="0" x2="1" y2="1">
+              <stop stop-color="#18232c" />
+              <stop offset="0.35" stop-color="#2a3c48" />
+              <stop offset="0.6" stop-color="#141d24" />
+              <stop offset="1" stop-color="#0b1014" />
+            </linearGradient>
+            <linearGradient id="ppf-film-gloss" x1="0" y1="0" x2="0" y2="1">
+              <stop stop-color="#ffffff" stop-opacity="0.35" />
+              <stop offset="0.4" stop-color="#90b8d4" stop-opacity="0.12" />
+              <stop offset="1" stop-color="#ffffff" stop-opacity="0" />
+            </linearGradient>
+            <pattern id="ppf-after-mesh" width="16" height="16" patternUnits="userSpaceOnUse">
+              <path d="M16 0L0 16M0 0l16 16" fill="none" stroke="#688496" stroke-opacity="0.08" stroke-width="0.75" />
+            </pattern>
+          </defs>
+          <ellipse cx="240" cy="300" rx="165" ry="18" fill="#050709" opacity="0.7" />
+          <!-- Car Front Body Curvature / Hood Panel -->
+          <path d="M85 240 C140 135 340 135 395 240 C360 270 120 270 85 240 Z" fill="url(#ppf-after-panel)" stroke="#455866" stroke-width="1.2" />
+          <path d="M85 240 C140 135 340 135 395 240 C360 270 120 270 85 240 Z" fill="url(#ppf-after-mesh)" />
+          <!-- High Gloss Specular Reflection Line -->
+          <path d="M110 230 C155 145 325 145 370 230" fill="none" stroke="url(#ppf-film-gloss)" stroke-width="6" stroke-linecap="round" />
+          <path d="M135 220 C170 160 310 160 345 220" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1.5" stroke-linecap="round" />
+          <!-- Optical Film Protection Layer Barrier -->
+          <path d="M95 242 C145 150 335 150 385 242" fill="none" stroke="#ef5924" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="3 3" />
+          <text x="240" y="275" text-anchor="middle" fill="#8ca1af" font-size="9" font-weight="600" letter-spacing="0.1em">OPTICAL SHIELD BARRIER</text>
+        </svg>
+      </div>
+    )}
+    <span class="ppf-badge ppf-badge-after">After PPF</span>
+  </div>
+
+  <!-- Top Clipped Layer: Before PPF (Unprotected) -->
+  <div class="ppf-layer ppf-layer-before" data-ppf-before aria-hidden="true">
+    {beforeImage ? (
+      <img src={beforeImage.src} alt={beforeImage.alt} class="ppf-image" loading="lazy" />
+    ) : (
+      <div class="ppf-placeholder ppf-placeholder-before">
+        <svg viewBox="0 0 480 360" class="ppf-svg" role="img" aria-label="Before PPF technical automotive visual">
+          <defs>
+            <linearGradient id="ppf-before-panel" x1="0" y1="0" x2="1" y2="1">
+              <stop stop-color="#12181d" />
+              <stop offset="0.4" stop-color="#1c252c" />
+              <stop offset="0.7" stop-color="#101519" />
+              <stop offset="1" stop-color="#080b0d" />
+            </linearGradient>
+            <pattern id="ppf-swirl-pattern" width="24" height="24" patternUnits="userSpaceOnUse">
+              <circle cx="12" cy="12" r="6" fill="none" stroke="#ffffff" stroke-opacity="0.05" stroke-width="0.75" />
+            </pattern>
+          </defs>
+          <ellipse cx="240" cy="300" rx="165" ry="18" fill="#050709" opacity="0.7" />
+          <!-- Car Front Body Curvature / Hood Panel (Matching Geometry) -->
+          <path d="M85 240 C140 135 340 135 395 240 C360 270 120 270 85 240 Z" fill="url(#ppf-before-panel)" stroke="#2b363f" stroke-width="1.2" />
+          <path d="M85 240 C140 135 340 135 395 240 C360 270 120 270 85 240 Z" fill="url(#ppf-swirl-pattern)" />
+          <!-- Flat Dull Reflection Line (Unprotected Clearcoat) -->
+          <path d="M135 220 C170 160 310 160 345 220" fill="none" stroke="#52626e" stroke-opacity="0.3" stroke-width="1.5" stroke-linecap="round" />
+          <text x="240" y="275" text-anchor="middle" fill="#697a85" font-size="9" font-weight="600" letter-spacing="0.1em">EXPOSED FACTORY CLEARCOAT</text>
+        </svg>
+      </div>
+    )}
+    <span class="ppf-badge ppf-badge-before">Before PPF</span>
+  </div>
+
+  <!-- Divider Line & Slider Handle -->
+  <div class="ppf-divider-wrap" data-ppf-divider style="left: 50%;">
+    <div class="ppf-divider-line"></div>
+    <div
+      class="ppf-handle"
+      data-ppf-handle
+      role="slider"
+      tabindex="0"
+      aria-label="PPF Before and After comparison"
+      aria-valuenow="50"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuetext="50% Before PPF"
+    >
+      <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="5 4 2 8 5 12"></polyline>
+        <polyline points="11 4 14 8 11 12"></polyline>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<style>
+  .ppf-comparison {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 280px;
+    background: #0b1014;
+    overflow: hidden;
+    user-select: none;
+    cursor: ew-resize;
+    touch-action: pan-y;
+  }
+
+  .ppf-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .ppf-layer-before {
+    clip-path: inset(0 50% 0 0);
+    z-index: 2;
+  }
+
+  .ppf-layer-after {
+    z-index: 1;
+  }
+
+  .ppf-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    pointer-events: none;
+  }
+
+  .ppf-placeholder {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, #161e24 0%, #0a0e11 85%);
+  }
+
+  .ppf-placeholder-after {
+    background: linear-gradient(145deg, #1a252d 0%, #0b1014 85%);
+  }
+
+  .ppf-svg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* Before and After Badges */
+  .ppf-badge {
+    position: absolute;
+    top: 14px;
+    z-index: 4;
+    background: rgba(8, 10, 12, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #c4cdd3;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 8px;
+    border-radius: 3px;
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  .ppf-badge-before {
+    left: 14px;
+  }
+
+  .ppf-badge-after {
+    right: 14px;
+  }
+
+  /* Divider Line & Handle */
+  .ppf-divider-wrap {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .ppf-divider-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -1px;
+    width: 2px;
+    background: rgba(255, 255, 255, 0.45);
+  }
+
+  .ppf-handle {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #ef5924;
+    color: #0b0e10;
+    border: 1.5px solid #0b0e10;
+    transform: translate(-50%, -50%);
+    display: grid;
+    place-items: center;
+    cursor: ew-resize;
+    pointer-events: auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+    outline: none;
+    transition: transform 120ms ease, background-color 120ms ease;
+  }
+
+  .ppf-handle:hover {
+    background: #fa6c39;
+    transform: translate(-50%, -50%) scale(1.06);
+  }
+
+  .ppf-handle:focus-visible {
+    outline: 2px solid #ef5924;
+    outline-offset: 3px;
+  }
+
+  .ppf-handle svg {
+    position: static !important;
+    width: 11px !important;
+    height: 11px !important;
+    display: block;
+    pointer-events: none;
+  }
+
+  @media (max-width: 600px) {
+    .ppf-comparison {
+      min-height: 240px;
+    }
+    .ppf-handle {
+      width: 32px;
+      height: 32px;
+    }
+  }
+</style>
+
+<script>
+  function setupPpfSliders() {
+    const sliders = document.querySelectorAll<HTMLElement>('[data-ppf-slider]');
+
+    sliders.forEach((container) => {
+      const beforeLayer = container.querySelector<HTMLElement>('[data-ppf-before]');
+      const divider = container.querySelector<HTMLElement>('[data-ppf-divider]');
+      const handle = container.querySelector<HTMLElement>('[data-ppf-handle]');
+
+      if (!beforeLayer || !divider || !handle) return;
+      const layer = beforeLayer;
+      const div = divider;
+      const hdl = handle;
+
+      let isDragging = false;
+
+      function updatePosition(percentage: number) {
+        const clamped = Math.max(0, Math.min(100, percentage));
+        layer.style.clipPath = `inset(0 ${100 - clamped}% 0 0)`;
+        div.style.left = `${clamped}%`;
+        hdl.setAttribute('aria-valuenow', Math.round(clamped).toString());
+        hdl.setAttribute('aria-valuetext', `${Math.round(clamped)}% Before PPF`);
+      }
+
+      function getPercentageFromEvent(e: MouseEvent | TouchEvent) {
+        const rect = container.getBoundingClientRect();
+        const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+        const offsetX = clientX - rect.left;
+        return (offsetX / rect.width) * 100;
+      }
+
+      function onPointerDown(e: MouseEvent) {
+        if (e.button !== 0) return; // Main click only
+        isDragging = true;
+        updatePosition(getPercentageFromEvent(e));
+        hdl.focus();
+        e.preventDefault();
+      }
+
+      function onPointerMove(e: MouseEvent) {
+        if (!isDragging) return;
+        updatePosition(getPercentageFromEvent(e));
+      }
+
+      function onPointerUp() {
+        if (!isDragging) return;
+        isDragging = false;
+      }
+
+      function onTouchStart(e: TouchEvent) {
+        isDragging = true;
+        updatePosition(getPercentageFromEvent(e));
+        hdl.focus();
+      }
+
+      function onTouchMove(e: TouchEvent) {
+        if (!isDragging) return;
+        if (e.cancelable) {
+          e.preventDefault(); // Stop vertical page scroll while dragging slider
+        }
+        updatePosition(getPercentageFromEvent(e));
+      }
+
+      function onTouchEnd() {
+        if (!isDragging) return;
+        isDragging = false;
+      }
+
+      // Mouse events
+      container.addEventListener('mousedown', onPointerDown);
+      window.addEventListener('mousemove', onPointerMove);
+      window.addEventListener('mouseup', onPointerUp);
+
+      // Touch events
+      container.addEventListener('touchstart', onTouchStart, { passive: true });
+      window.addEventListener('touchmove', onTouchMove, { passive: false });
+      window.addEventListener('touchend', onTouchEnd);
+      window.addEventListener('touchcancel', onTouchEnd);
+
+      // Keyboard navigation
+      handle.addEventListener('keydown', (e: KeyboardEvent) => {
+        const current = parseFloat(handle.getAttribute('aria-valuenow') || '50');
+        let next = current;
+        const step = 5;
+
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          next = Math.max(0, current - step);
+        } else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          next = Math.min(100, current + step);
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          next = 0;
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          next = 100;
+        }
+
+        if (next !== current) {
+          updatePosition(next);
+        }
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupPpfSliders);
+  } else {
+    setupPpfSliders();
+  }
+  document.addEventListener('astro:page-load', setupPpfSliders);
+</script>

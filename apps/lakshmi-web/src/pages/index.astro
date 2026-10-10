@@ -1,0 +1,254 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Container from '../components/Container.astro';
+import Section from '../components/Section.astro';
+import Button from '../components/Button.astro';
+import CategoryCard from '../components/CategoryCard.astro';
+// Note: Re-enable FeaturedProducts import once at least 3 real published products exist
+import HeroWaves from '../components/HeroWaves.astro';
+import Header from '../components/Header.astro';
+
+import { categories } from '../data/catalogue';
+import TestimonialsSection from '../components/TestimonialsSection.astro';
+import FaqSection from '../components/FaqSection.astro';
+import EnquiryCTA from '../components/EnquiryCTA.astro';
+import HomePpfComparison from '../components/HomePpfComparison.astro';
+---
+<SiteLayout title="Lakshmi Distributions">
+  <Header slot="header" dark />
+  <div class="home-intro">
+    <HeroWaves extendHeader />
+  <Section labelledBy="hero-title" class="home-hero">
+    <Container>
+      <div class="hero-grid">
+        <div class="hero-car">
+          <img src="/images/car-hero.png" alt="Audi Sportback in metallic grey facing right" class="hero-car-image" />
+        </div>
+        <div class="hero-copy hero-visual">
+          <h1 id="hero-title">
+            <span class="hero-title-line">Automotive lighting,</span>
+            <span class="hero-title-line">made easier to discover.</span>
+          </h1>
+          <p class="hero-description">Explore automotive LED lamps and find the right lighting for your vehicle.</p>
+          <div class="actions">
+            <Button href="/products">Explore Products</Button>
+            <a class="secondary-link" href="/contact">Contact Us <span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+      </div>
+    </Container>
+  </Section>
+
+  </div>
+
+  <Section labelledBy="categories-title">
+    <Container>
+      <div class="section-heading">
+        <div class="stack">
+          <p class="eyebrow">PRODUCT CATALOGUE</p>
+          <h2 id="categories-title">Explore by category</h2>
+        </div>
+        <a class="secondary-link" href="/products">Explore Products <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="category-grid">
+        {categories.map((category) => (
+          <CategoryCard
+            name={category.name}
+            brand={category.brandName}
+            brandSlug={category.brandSlug}
+            href={`/products?category=${category.slug}`}
+            description={category.description}
+            image={category.image}
+          />
+        ))}
+      </div>
+    </Container>
+  </Section>
+
+  <HomePpfComparison />
+
+  <Section labelledBy="about-title" class="about-section">
+    <Container>
+      <div class="about-grid">
+        <div class="about-imagery" aria-label="Automotive lighting solutions">
+          <div class="about-image-primary-wrap">
+            <img
+              src="/images/about/about-primary.jpg"
+              alt="High-precision automotive LED matrix headlight optics"
+              class="about-image-primary"
+              loading="lazy"
+            />
+          </div>
+          <div class="about-image-secondary-wrap">
+            <img
+              src="/images/about/about-secondary.jpg"
+              alt="Engineered automotive LED lamp projector module and heatsink component"
+              class="about-image-secondary"
+              loading="lazy"
+            />
+          </div>
+        </div>
+        <div class="about-content">
+          <div class="stack">
+            <p class="eyebrow">ABOUT</p>
+            <h2 id="about-title" class="about-title">Lakshmi Distributions</h2>
+          </div>
+          <p class="about-lead">
+            Lakshmi Distributions supplies automotive lighting products to dealers, workshops, and vehicle owners through a clear, product-focused distribution experience.
+          </p>
+          <p class="about-description">
+            We focus on reliable vehicle illumination—curating verified LED lamps and lighting components with transparent technical specifications to help customers and partners source the right lighting with confidence.
+          </p>
+          <div class="about-action">
+            <a class="secondary-link" href="/about">About Us <span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+      </div>
+    </Container>
+  </Section>
+
+  <TestimonialsSection />
+
+  <FaqSection />
+
+  <EnquiryCTA />
+</SiteLayout>
+
+<style>
+  .home-intro { position: relative; padding-bottom: clamp(3rem, 10vh, 7rem); background: var(--color-background); color: var(--color-text); --color-focus: var(--color-primary); }
+  .home-intro :global(section) { position: relative; }
+  :global(.home-hero) {
+    min-height: clamp(34rem, 76svh, 48rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-block: clamp(3rem, 6vh, 5rem);
+  }
+  .home-intro .text-muted { color: var(--color-text-muted); }
+  .home-intro .secondary-link span { color: inherit; }
+  .hero-grid { position: relative; display: grid; grid-template-columns: 1.05fr 1.15fr; align-items: center; gap: var(--space-6); }
+  .hero-car { position: relative; isolation: isolate; display: flex; align-items: center; justify-content: center; width: 100%; }
+  .hero-car::before { content: ''; position: absolute; z-index: -1; inset: 12% -6% 8% -12%; background: radial-gradient(ellipse at 48% 48%, rgba(255, 255, 255, .04), transparent 68%); pointer-events: none; }
+  .hero-car-image { width: 140%; max-width: none; height: auto; display: block; object-fit: contain; margin-inline-start: -20%; filter: brightness(1.12) contrast(1.04) drop-shadow(0 20px 28px rgba(0, 0, 0, .8)); }
+  .hero-copy { display: flex; flex-direction: column; align-items: flex-start; text-align: left; gap: var(--space-5); }
+  .eyebrow { display: flex; align-items: center; gap: var(--space-3); font-size: var(--font-label); font-weight: var(--weight-strong); letter-spacing: .08em; }
+  h1 { text-align: left; font-size: clamp(1.875rem, 1.45rem + 1.4vw, 3rem); line-height: 1.18; letter-spacing: -0.025em; margin: 0; }
+  .hero-title-line { display: block; }
+  .hero-description { max-width: 40ch; margin: 0; color: var(--color-text-muted); font-size: clamp(.95rem, 1.1vw, 1.0625rem); line-height: 1.7; }
+  .actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: var(--space-5); margin-top: var(--space-2); }
+  .secondary-link { display: inline-flex; align-items: center; gap: var(--space-3); font-weight: var(--weight-strong); padding-block: var(--space-3); color: var(--color-text); text-decoration: underline; text-decoration-color: transparent; }
+  .secondary-link:hover { text-decoration-color: var(--color-primary); }
+  .secondary-link:hover span { color: var(--color-primary); }
+  .secondary-link span { color: inherit; transition: color 150ms ease; }
+  .hero-visual { padding: var(--space-3); }
+  .section-heading { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: var(--space-5); margin-bottom: var(--space-6); }
+  .category-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+  @media (min-width: 820px) {
+    .category-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-5);
+    }
+  }
+  :global(.about-section) {
+    border-top: var(--border-width) solid var(--color-border);
+    border-bottom: var(--border-width) solid var(--color-border);
+    padding-block: clamp(5rem, 8vw, 8.5rem);
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    align-items: center;
+    gap: clamp(3.5rem, 6vw, 6.5rem);
+  }
+  .about-imagery {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(12, 1fr);
+    aspect-ratio: 4 / 3.2;
+    width: 100%;
+  }
+  .about-image-primary-wrap {
+    grid-column: 1 / 10;
+    grid-row: 1 / 11;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    border: var(--border-width) solid var(--color-border);
+    background: var(--color-surface);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+  }
+  .about-image-primary {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .about-image-secondary-wrap {
+    grid-column: 7 / 13;
+    grid-row: 5 / 13;
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    border: var(--border-width) solid var(--color-border);
+    background: var(--color-surface);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.7);
+  }
+  .about-image-secondary {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .about-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5);
+  }
+  .about-title {
+    font-size: clamp(2rem, 1.55rem + 1.25vw, 2.75rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+  .about-lead {
+    font-size: clamp(1.125rem, 1.2vw, 1.3rem);
+    line-height: 1.55;
+    color: var(--color-text);
+    max-width: 48ch;
+  }
+  .about-description {
+    font-size: clamp(.95rem, 1vw, 1.0625rem);
+    line-height: 1.7;
+    color: var(--color-text-muted);
+    max-width: 48ch;
+  }
+  .about-action {
+    margin-top: var(--space-2);
+  }
+  @media (max-width: 63.999rem) {
+    .hero-grid { gap: var(--space-6); }
+    .about-grid { grid-template-columns: 1fr; gap: var(--space-8); }
+    .about-imagery { max-width: 32rem; margin-inline: auto; }
+  }
+
+  @media (max-width: 47.999rem) {
+    :global(.home-hero) { min-height: auto; padding-block: var(--section-space); }
+    .hero-grid { grid-template-columns: 1fr; gap: var(--space-7); }
+    .hero-car-image { width: 100%; margin-inline-start: 0; }
+    .hero-copy { align-items: center; text-align: center; }
+    h1 { text-align: center; font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.25rem); }
+    .hero-title-line { white-space: normal; }
+    .actions { justify-content: center; }
+    .about-imagery { max-width: 28rem; }
+    .about-content { align-items: flex-start; text-align: left; }
+
+  }
+</style>
+

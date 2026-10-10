@@ -1,0 +1,12 @@
+---
+import TestimonialsStory from './TestimonialsStory.astro';
+import type { Testimonial } from '../data/testimonials';
+
+interface Props {
+  items?: readonly Testimonial[];
+}
+
+const { items } = Astro.props;
+---
+
+<TestimonialsStory items={items} />
