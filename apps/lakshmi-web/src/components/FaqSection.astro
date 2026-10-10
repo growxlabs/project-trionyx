@@ -1,0 +1,314 @@
+---
+import Container from './Container.astro';
+import Section from './Section.astro';
+import { faqs, type FaqItem } from '../data/faq';
+
+interface Props {
+  items?: readonly FaqItem[];
+}
+
+const { items = faqs } = Astro.props;
+---
+
+<Section labelledBy="faq-title" class="faq-section" data-faq-section>
+  <Container>
+    <div class="faq-container">
+      <div class="faq-header stack">
+        <p class="eyebrow">FAQ</p>
+        <h2 id="faq-title">Frequently asked questions</h2>
+        <p class="faq-subtitle">
+          Answers to common questions about our catalogue, products, and trade enquiries.
+        </p>
+      </div>
+
+      <div class="faq-accordion" role="region" aria-label="Frequently asked questions list">
+        {items.map((item) => (
+          <div class="faq-item" data-faq-item>
+            <h3>
+              <button
+                type="button"
+                class="faq-trigger"
+                id={`faq-trigger-${item.id}`}
+                aria-expanded="false"
+                aria-controls={`faq-answer-${item.id}`}
+                data-faq-trigger
+              >
+                <span class="faq-question">{item.question}</span>
+                <span class="faq-icon" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 16 16"
+                    width="14"
+                    height="14"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <polyline points="4 6 8 10 12 6" />
+                  </svg>
+                </span>
+              </button>
+            </h3>
+
+            <div
+              id={`faq-answer-${item.id}`}
+              role="region"
+              aria-labelledby={`faq-trigger-${item.id}`}
+              class="faq-panel"
+              data-faq-panel
+              data-open="false"
+            >
+              <div class="faq-panel-inner">
+                <p class="faq-answer">{item.answer}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </Container>
+</Section>
+
+<style>
+  :global(.faq-section) {
+    border-top: var(--border-width) solid var(--color-border);
+    padding-block: clamp(4.5rem, 7vw, 7rem);
+    background: var(--color-background);
+  }
+
+  .faq-container {
+    max-width: 840px;
+    margin-inline: auto;
+    width: 100%;
+  }
+
+  .faq-header {
+    text-align: left;
+    margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+    max-width: 58ch;
+  }
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--font-label);
+    font-weight: var(--weight-strong);
+    letter-spacing: 0.08em;
+    color: var(--color-text);
+  }
+
+  h2 {
+    font-size: clamp(2rem, 1.6rem + 1.2vw, 2.75rem);
+    line-height: 1.16;
+    letter-spacing: -0.025em;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .faq-subtitle {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: clamp(0.925rem, 1vw, 1.05rem);
+    line-height: 1.6;
+  }
+
+  /* Accordion list */
+  .faq-accordion {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .faq-item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    transition: border-color 150ms ease;
+  }
+
+  .faq-item:hover {
+    border-bottom-color: rgba(255, 255, 255, 0.16);
+  }
+
+  .faq-item h3 {
+    margin: 0;
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  /* Trigger Button */
+  .faq-trigger {
+    appearance: none;
+    background: transparent;
+    border: none;
+    width: 100%;
+    padding: clamp(1.125rem, 2vw, 1.35rem) 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    cursor: pointer;
+    text-align: left;
+    color: #f4f5f6;
+    min-height: 48px;
+    outline: none;
+    transition: color 150ms ease;
+  }
+
+  .faq-trigger:hover .faq-question {
+    color: #ffffff;
+  }
+
+  .faq-trigger:hover .faq-icon {
+    border-color: rgba(239, 89, 36, 0.5);
+    color: #ef5924;
+  }
+
+  .faq-trigger:focus-visible {
+    outline: 2px solid #ef5924;
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+  }
+
+  .faq-trigger[aria-expanded="true"] .faq-question {
+    color: #ffffff;
+  }
+
+  .faq-trigger[aria-expanded="true"] .faq-icon {
+    transform: rotate(180deg);
+    border-color: #ef5924;
+    color: #ef5924;
+    background: rgba(239, 89, 36, 0.08);
+  }
+
+  .faq-question {
+    font-size: clamp(1rem, 1.05vw, 1.125rem);
+    font-weight: 600;
+    line-height: 1.4;
+    color: #eceff1;
+    transition: color 150ms ease;
+  }
+
+  .faq-icon {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #8e9ba4;
+    transition: transform 200ms ease, border-color 150ms ease, color 150ms ease, background-color 150ms ease;
+  }
+
+  .faq-icon svg {
+    display: block;
+    pointer-events: none;
+  }
+
+  /* Expandable Answer Panel using Grid Rows */
+  .faq-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 220ms ease, opacity 200ms ease;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .faq-panel[data-open="true"] {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .faq-panel-inner {
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .faq-answer {
+    margin: 0;
+    padding-bottom: clamp(1.125rem, 2vw, 1.4rem);
+    font-size: clamp(0.925rem, 0.98vw, 1rem);
+    line-height: 1.7;
+    color: #9aa7b1;
+    max-width: 68ch;
+  }
+</style>
+
+<script>
+  function handleFaqClick(e: MouseEvent) {
+    const trigger = (e.target as Element)?.closest<HTMLButtonElement>('[data-faq-trigger]');
+    if (!trigger) return;
+
+    const item = trigger.closest<HTMLElement>('[data-faq-item]');
+    if (!item) return;
+
+    const panel = item.querySelector<HTMLElement>('[data-faq-panel]');
+    if (!panel) return;
+
+    const isCurrentlyOpen = trigger.getAttribute('aria-expanded') === 'true';
+
+    // Find parent section or container to close sibling items
+    const section = trigger.closest<HTMLElement>('[data-faq-section], .faq-section');
+    if (section) {
+      const siblingItems = section.querySelectorAll<HTMLElement>('[data-faq-item]');
+      siblingItems.forEach((sibling) => {
+        if (sibling !== item) {
+          const siblingTrigger = sibling.querySelector<HTMLButtonElement>('[data-faq-trigger]');
+          const siblingPanel = sibling.querySelector<HTMLElement>('[data-faq-panel]');
+          if (siblingTrigger) siblingTrigger.setAttribute('aria-expanded', 'false');
+          if (siblingPanel) siblingPanel.setAttribute('data-open', 'false');
+        }
+      });
+    }
+
+    // Toggle target panel
+    if (isCurrentlyOpen) {
+      trigger.setAttribute('aria-expanded', 'false');
+      panel.setAttribute('data-open', 'false');
+    } else {
+      trigger.setAttribute('aria-expanded', 'true');
+      panel.setAttribute('data-open', 'true');
+    }
+  }
+
+  function handleFaqKeydown(e: KeyboardEvent) {
+    const trigger = (e.target as Element)?.closest<HTMLButtonElement>('[data-faq-trigger]');
+    if (!trigger) return;
+
+    const section = trigger.closest<HTMLElement>('[data-faq-section], .faq-section');
+    if (!section) return;
+
+    const triggers = Array.from(section.querySelectorAll<HTMLButtonElement>('[data-faq-trigger]'));
+    const currentIndex = triggers.indexOf(trigger);
+    if (currentIndex === -1) return;
+
+    let targetIndex = -1;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      targetIndex = (currentIndex + 1) % triggers.length;
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      targetIndex = (currentIndex - 1 + triggers.length) % triggers.length;
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      targetIndex = 0;
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      targetIndex = triggers.length - 1;
+    }
+
+    if (targetIndex >= 0 && triggers[targetIndex]) {
+      triggers[targetIndex].focus();
+    }
+  }
+
+  // Bind delegated events on document once
+  if (!(window as any).__faqInitialized) {
+    (window as any).__faqInitialized = true;
+    document.addEventListener('click', handleFaqClick);
+    document.addEventListener('keydown', handleFaqKeydown);
+  }
+</script>

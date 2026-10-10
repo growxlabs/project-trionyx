@@ -1,0 +1,11 @@
+/* Discovery layouts reuse the existing palette, spacing and catalogue primitives. */
+.discovery-eyebrow { display: flex; align-items: center; gap: var(--space-3); font-size: var(--font-label); font-weight: var(--weight-strong); letter-spacing: .08em; }
+.discovery-heading { margin-bottom: var(--space-6); }
+.discovery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--card-min)), 1fr)); gap: var(--space-5); max-width: var(--content-max); }
+.brand-hero { display: grid; grid-template-columns: 1.05fr 1fr; align-items: center; gap: var(--space-8); }
+.brand-hero-copy { display: grid; justify-items: start; gap: var(--space-5); }
+.brand-hero-visual { width: 100%; aspect-ratio: var(--image-ratio); background: var(--color-surface); border: var(--border-width) solid var(--color-border); object-fit: contain; }
+.brand-hero-placeholder { display: grid; place-content: center; text-align: center; gap: var(--space-2); padding: var(--space-6); background: var(--color-surface); color: var(--color-text-muted); }
+.discovery-back { display: inline-block; padding-block: var(--space-3); margin-bottom: var(--space-5); }
+@media (max-width: 63.999rem) { .brand-hero { gap: var(--space-6); } }
+@media (max-width: 47.999rem) { .brand-hero { grid-template-columns: 1fr; gap: var(--space-7); } }

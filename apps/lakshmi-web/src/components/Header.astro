@@ -1,0 +1,67 @@
+---
+import Container from './Container.astro';
+interface Props { dark?: boolean; }
+const { dark = false } = Astro.props;
+const links = [
+  { href: '/products', label: 'Products' },
+  { href: '/brands', label: 'Brands' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
+];
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+const current = (href: string) => pathname === href ? 'page' : pathname.startsWith(href + '/') ? 'location' : undefined;
+---
+<header class:list={['site-header', { 'header-dark': dark }]}>
+  <Container>
+    <div class="header-row">
+      <a class="site-name" href="/" aria-current={pathname === '/' ? 'page' : undefined}>Lakshmi Distributions</a>
+      <nav class="desktop-nav" aria-label="Primary">
+        <ul>{links.map(({ href, label }) => <li><a href={href} aria-current={current(href)}>{label}</a></li>)}</ul>
+      </nav>
+      <details class="mobile-menu">
+        <summary>Menu</summary>
+        <nav aria-label="Primary mobile">
+          <ul>{links.map(({ href, label }) => <li><a href={href} aria-current={current(href)}>{label}</a></li>)}</ul>
+        </nav>
+      </details>
+    </div>
+  </Container>
+</header>
+<style>
+  .site-header { border-bottom: var(--border-width) solid var(--color-border); }
+  .header-dark { position: relative; z-index: 2; color: var(--color-text); border-bottom-color: transparent; --color-focus: var(--color-primary); }
+  .header-dark .site-name { color: var(--color-text); }
+  .header-dark nav a:hover, .header-dark summary:hover { background: var(--color-surface); color: var(--color-text); text-decoration: underline; text-decoration-color: var(--color-primary); }
+  .header-dark .mobile-menu nav { background: var(--color-surface); color: var(--color-text); border: var(--border-width) solid var(--color-border); }
+  .header-row { position: relative; display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding-block: var(--space-4); }
+  .site-name { color: var(--color-text); font-weight: var(--weight-strong); text-decoration: none; line-height: var(--line-heading); }
+  ul { display: flex; gap: var(--space-2); list-style: none; margin: 0; padding: 0; }
+  nav a, summary { display: block; padding: var(--space-3); border-radius: var(--radius-sm); text-decoration: none; }
+  nav a:hover, summary:hover { background: var(--color-surface); color: var(--color-text); }
+  nav a[aria-current] { font-weight: var(--weight-strong); text-decoration: underline; text-decoration-color: var(--color-primary); }
+  nav a[aria-current]:hover, nav a[aria-current]:active { text-decoration-color: var(--color-primary-hover); }
+  .mobile-menu { display: none; }
+  summary { cursor: pointer; white-space: nowrap; }
+  @media (max-width: 47.999rem) {
+    .desktop-nav { display: none; }
+    .mobile-menu { display: block; }
+    summary { display: list-item; margin-inline-start: var(--space-4); }
+    .mobile-menu nav { position: absolute; inset-inline: 0; inset-block-start: 100%; background: var(--color-surface); border: var(--border-width) solid var(--color-border); padding: var(--space-2); z-index: 1; }
+    .mobile-menu ul { flex-direction: column; gap: 0; }
+  }
+</style>
+<script>
+  const menu = document.querySelector<HTMLDetailsElement>('.mobile-menu');
+  if (menu) {
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && menu.open) {
+        menu.open = false;
+        menu.querySelector('summary')?.focus();
+      }
+    });
+    document.addEventListener('click', (event) => {
+      if (event.target instanceof Node && !menu.contains(event.target)) menu.open = false;
+    });
+    matchMedia('(min-width: 48rem)').addEventListener('change', () => { menu.open = false; });
+  }
+</script>

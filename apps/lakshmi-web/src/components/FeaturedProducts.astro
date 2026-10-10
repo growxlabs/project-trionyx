@@ -1,0 +1,187 @@
+---
+import Container from './Container.astro';
+import Section from './Section.astro';
+import ProductCard from './ProductCard.astro';
+import { publicCatalogueService } from '@trionyx/api/catalogue';
+import type { PublicProductSummary } from '@trionyx/types';
+
+interface Props {
+  products?: PublicProductSummary[];
+}
+
+const { products: propProducts } = Astro.props;
+
+let products = propProducts;
+if (!products) {
+  try {
+    const result = await publicCatalogueService.listPublishedProducts('LAKSHMI', { limit: 4 });
+    products = result.items;
+  } catch (err) {
+    console.error('[FeaturedProducts] Failed to load products from database:', err);
+    products = [];
+  }
+}
+---
+
+<Section labelledBy="featured-products-title" class="featured-products-section">
+  <Container>
+    <div class="featured-header">
+      <div class="featured-header-left">
+        <p class="featured-eyebrow">PRODUCTS</p>
+        <h2 id="featured-products-title" class="featured-title">Explore our products</h2>
+        <p class="featured-subtitle">
+          Discover verified automotive LED lighting products and precision lamps distributed by Lakshmi Distributions.
+        </p>
+      </div>
+      <div class="featured-header-right">
+        <a href="/products" class="featured-view-all">
+          <span>View All Products</span>
+          <span class="view-all-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+
+    {products.length > 0 ? (
+      <div class="featured-grid">
+        {products.map((product) => (
+          <ProductCard
+            name={product.name}
+            href={`/products/${product.slug}`}
+            brand={product.brandName}
+            category={product.categoryName}
+            specification={product.keySpecification ? `${product.keySpecification.label}: ${product.keySpecification.value}` : null}
+            image={product.primaryImage ? { src: product.primaryImage.url, alt: product.primaryImage.altText || product.name } : null}
+          />
+        ))}
+      </div>
+    ) : (
+      <div class="featured-empty">
+        <p class="empty-text">Product details will appear here as catalogue inventory is updated.</p>
+      </div>
+    )}
+  </Container>
+</Section>
+
+<style>
+  :global(.featured-products-section) {
+    background: var(--color-surface);
+    border-top: var(--border-width) solid var(--color-border);
+    border-bottom: var(--border-width) solid var(--color-border);
+    padding-block: clamp(3.5rem, 6vw, 5.5rem);
+  }
+
+  .featured-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin-bottom: var(--space-7);
+  }
+
+  @media (min-width: 768px) {
+    .featured-header {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: var(--space-6);
+    }
+  }
+
+  .featured-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    max-width: 38rem;
+  }
+
+  .featured-eyebrow {
+    font-size: var(--font-label);
+    font-weight: var(--weight-strong);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin: 0;
+  }
+
+  .featured-title {
+    font-size: var(--font-section);
+    font-weight: var(--weight-strong);
+    color: var(--color-text);
+    line-height: var(--line-heading);
+    margin: 0;
+  }
+
+  .featured-subtitle {
+    font-size: var(--font-body);
+    color: var(--color-text-muted);
+    line-height: 1.5;
+    margin: 0;
+    margin-top: var(--space-1);
+  }
+
+  .featured-header-right {
+    flex-shrink: 0;
+  }
+
+  .featured-view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-text);
+    font-size: var(--font-small);
+    font-weight: var(--weight-strong);
+    text-decoration: none;
+    padding: var(--space-2) 0;
+    transition: color 150ms ease;
+  }
+
+  .featured-view-all:hover {
+    color: var(--color-primary);
+  }
+
+  .view-all-arrow {
+    color: var(--color-primary);
+    transition: transform 150ms ease;
+  }
+
+  .featured-view-all:hover .view-all-arrow {
+    transform: translateX(4px);
+  }
+
+  .featured-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+
+  @media (min-width: 580px) {
+    .featured-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 960px) {
+    .featured-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .featured-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .featured-empty {
+    padding: var(--space-8) var(--space-4);
+    background: #111417;
+    border: var(--border-width) dashed var(--color-border);
+    border-radius: var(--radius-md);
+    text-align: center;
+  }
+
+  .empty-text {
+    color: var(--color-text-muted);
+    font-size: var(--font-small);
+    margin: 0;
+  }
+</style>

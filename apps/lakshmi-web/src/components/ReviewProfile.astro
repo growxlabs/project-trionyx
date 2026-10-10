@@ -1,0 +1,29 @@
+---
+import type { Testimonial } from '../data/testimonials';
+interface Props { item: Testimonial; }
+const { item } = Astro.props;
+const initials = item.name.trim().split(/\s+/).filter(Boolean).slice(0, 2).map(part => part[0]).join('');
+---
+<div class="review-profile">
+  <div class="profile-avatar" aria-hidden="true">
+    {item.image ? <img src={item.image} alt="" loading="lazy" width="48" height="48" /> : <span>{initials}</span>}
+  </div>
+  <div class="profile-details">
+    <p class="profile-name">{item.name}</p>
+    {item.company && <p class="profile-role">{item.company}</p>}
+    {item.location && <p class="profile-location">{item.location}</p>}
+    {typeof item.rating === 'number' && item.rating > 0 && (
+      <p class="profile-rating" aria-label={`Rating: ${item.rating} out of 5 stars`}>{item.rating} / 5</p>
+    )}
+  </div>
+</div>
+<style>
+  .review-profile { display: flex; align-items: flex-start; gap: 14px; min-height: 112px; padding-top: 20px; border-top: 1px solid #242c32; }
+  .profile-avatar { width: 48px; height: 48px; flex: 0 0 48px; display: grid; place-items: center; border-radius: 50%; overflow: hidden; background: #242c32; border: 1px solid #3b454d; color: #f2b79e; font-size: 14px; font-weight: 700; letter-spacing: .03em; }
+  .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .profile-details { min-width: 0; display: grid; gap: 4px; }
+  .profile-name { font-size: 15px; font-weight: 700; color: #edf0f2; line-height: 1.35; }
+  .profile-role { font-size: 12px; color: #abb5bd; line-height: 1.5; }
+  .profile-location { font-size: 11px; color: #a0abb4; line-height: 1.5; }
+  .profile-rating { font-size: 12px; color: #f28b61; }
+</style>
