@@ -1,0 +1,502 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Container from '../components/Container.astro';
+import Section from '../components/Section.astro';
+import ProductCard from '../components/ProductCard.astro';
+import EnquiryCTA from '../components/EnquiryCTA.astro';
+import { publicCatalogueService } from '@trionyx/api/catalogue';
+import { categories as fallbackCategories } from '../data/catalogue';
+
+interface CategoryItem {
+  id?: string;
+  name: string;
+  slug: string;
+  brandSlug?: string | null;
+}
+
+let products: any[] = [];
+let categories: CategoryItem[] = [];
+
+try {
+  const [productsResult, categoriesResult] = await Promise.all([
+    publicCatalogueService.listPublishedProducts('LAKSHMI'),
+    publicCatalogueService.listPublishedCategories('LAKSHMI'),
+  ]);
+  products = productsResult.items;
+  categories = categoriesResult.length > 0 ? categoriesResult : [...fallbackCategories];
+} catch (err) {
+  console.error('[Products Page] Failed to fetch catalogue from database:', err);
+  categories = [...fallbackCategories];
+}
+---
+
+<SiteLayout
+  title="Catalogue | Lakshmi Distributions"
+  description="Browse automotive lighting, protection and damping products available through Lakshmi Distributions."
+>
+  <Section labelledBy="page-title" class="catalogue-section">
+    <Container>
+      <!-- Clean Top Section -->
+      <div class="catalogue-header">
+        <p class="catalogue-eyebrow">PRODUCTS</p>
+        <h1 id="page-title" class="catalogue-title">Explore the catalogue</h1>
+        <p class="catalogue-lead">
+          Browse automotive lighting, protection and damping products available through Lakshmi Distributions.
+        </p>
+      </div>
+
+      <!-- Catalogue Filter Toolbar -->
+      <div class="catalogue-toolbar" role="toolbar" aria-label="Catalogue filters">
+        <!-- Brand Tabs -->
+        <div class="brand-tabs" role="tablist" aria-label="Filter by brand">
+          <button
+            type="button"
+            role="tab"
+            aria-selected="true"
+            class="brand-tab active"
+            data-brand="all"
+          >
+            All Products
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            class="brand-tab"
+            data-brand="azoom"
+          >
+            Azoom
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            class="brand-tab"
+            data-brand="hoggon"
+          >
+            Hoggon
+          </button>
+        </div>
+
+        <!-- Category Dropdown -->
+        <div class="category-filter-wrap">
+          <label for="category-select" class="visually-hidden">Filter by category</label>
+          <div class="select-box">
+            <select id="category-select" class="category-select">
+              <option value="all">All Categories</option>
+              {categories.map((c) => (
+                <option
+                  value={c.slug}
+                  data-brand={c.brandSlug || (c.slug === 'led-lamps' ? 'azoom' : 'hoggon')}
+                >
+                  {c.name}
+                </option>
+              ))}
+            </select>
+            <span class="select-caret" aria-hidden="true">▾</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="catalogue-divider" aria-hidden="true"></div>
+
+      <!-- Product Grid & Empty State -->
+      <div class="catalogue-grid-wrap">
+        <h2 id="products-grid-heading" class="visually-hidden">Product Catalogue</h2>
+        <div id="products-grid" class="products-grid">
+          {products.map((product) => (
+            <div
+              class="product-grid-item"
+              data-brand={(product.brandSlug || 'azoom').toLowerCase()}
+              data-category={(product.categorySlug || 'led-lamps').toLowerCase()}
+            >
+              <ProductCard
+                name={product.name}
+                href={`/products/${product.slug}`}
+                brand={product.brandName}
+                category={product.categoryName}
+                specification={product.keySpecification ? `${product.keySpecification.label}: ${product.keySpecification.value}` : null}
+                image={product.primaryImage ? { src: product.primaryImage.url, alt: product.primaryImage.altText || product.name } : null}
+              />
+            </div>
+          ))}
+        </div>
+
+        <!-- Filter Empty State -->
+        <div id="filter-empty-state" class="products-empty" style="display: none;">
+          <p class="empty-title">No products available in this selection.</p>
+          <p class="empty-desc">Try selecting another brand or category, or view all products.</p>
+          <button type="button" id="reset-filter-btn" class="reset-filter-link">Clear filters</button>
+        </div>
+      </div>
+    </Container>
+  </Section>
+
+  <EnquiryCTA />
+</SiteLayout>
+
+<script>
+  function setupCatalogueFilters() {
+    const brandTabs = document.querySelectorAll<HTMLButtonElement>('.brand-tab');
+    const categorySelect = document.getElementById('category-select') as HTMLSelectElement | null;
+    const items = document.querySelectorAll<HTMLElement>('.product-grid-item');
+    const emptyState = document.getElementById('filter-empty-state');
+    const grid = document.getElementById('products-grid');
+    const resetBtn = document.getElementById('reset-filter-btn');
+
+    if (!categorySelect || items.length === 0) return;
+
+    let currentBrand = 'all';
+    let currentCategory = 'all';
+
+    // Parse initial URL parameters
+    const params = new URLSearchParams(window.location.search);
+    const initialCategory = params.get('category');
+    const initialBrand = params.get('brand');
+
+    if (initialCategory) {
+      currentCategory = initialCategory.toLowerCase();
+      categorySelect.value = initialCategory;
+      const opt = Array.from(categorySelect.options).find(
+        (o) => o.value.toLowerCase() === initialCategory.toLowerCase()
+      ) || null;
+      if (opt && opt.dataset.brand) {
+        currentBrand = opt.dataset.brand.toLowerCase();
+      }
+    } else if (initialBrand) {
+      currentBrand = initialBrand.toLowerCase();
+    }
+
+    // Apply active tab
+    function updateBrandTabUI() {
+      brandTabs.forEach((tab) => {
+        const b = (tab.dataset.brand || '').toLowerCase();
+        const isActive = b === currentBrand;
+        tab.classList.toggle('active', isActive);
+        tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+    }
+
+    // Filter dropdown options based on selected brand
+    function updateCategoryDropdown() {
+      if (!categorySelect) return;
+      const options = categorySelect.querySelectorAll<HTMLOptionElement>('option');
+      options.forEach((opt) => {
+        if (opt.value === 'all') return;
+        const optBrand = (opt.dataset.brand || '').toLowerCase();
+        const isMatch = currentBrand === 'all' || optBrand === currentBrand;
+        opt.hidden = !isMatch;
+        opt.disabled = !isMatch;
+      });
+
+      const currentOpt = Array.from(categorySelect.options).find(
+        (o) => o.value.toLowerCase() === currentCategory.toLowerCase()
+      ) || null;
+      if (currentOpt && currentOpt.disabled) {
+        currentCategory = 'all';
+        categorySelect.value = 'all';
+      }
+    }
+
+    function applyFilter() {
+      let visibleCount = 0;
+
+      items.forEach((item) => {
+        const itemBrand = (item.dataset.brand || '').toLowerCase();
+        const itemCategory = (item.dataset.category || '').toLowerCase();
+
+        const matchesBrand = currentBrand === 'all' || itemBrand === currentBrand;
+        const matchesCategory = currentCategory === 'all' || itemCategory === currentCategory;
+
+        if (matchesBrand && matchesCategory) {
+          item.style.display = '';
+          visibleCount++;
+        } else {
+          item.style.display = 'none';
+        }
+      });
+
+      if (emptyState && grid) {
+        if (visibleCount === 0) {
+          emptyState.style.display = 'block';
+          grid.style.display = 'none';
+        } else {
+          emptyState.style.display = 'none';
+          grid.style.display = 'grid';
+        }
+      }
+
+      // Update URL query params without reloading
+      const url = new URL(window.location.href);
+      if (currentBrand !== 'all') {
+        url.searchParams.set('brand', currentBrand);
+      } else {
+        url.searchParams.delete('brand');
+      }
+      if (currentCategory !== 'all') {
+        url.searchParams.set('category', currentCategory);
+      } else {
+        url.searchParams.delete('category');
+      }
+      window.history.replaceState({}, '', url.toString());
+    }
+
+    brandTabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        currentBrand = (tab.dataset.brand || 'all').toLowerCase();
+        updateBrandTabUI();
+        updateCategoryDropdown();
+        applyFilter();
+      });
+    });
+
+    categorySelect.addEventListener('change', () => {
+      currentCategory = categorySelect.value.toLowerCase();
+      const selectedOpt = categorySelect.querySelector(`option[value="${currentCategory}"]`) as HTMLOptionElement | null;
+      if (selectedOpt && selectedOpt.dataset.brand && currentBrand !== 'all' && selectedOpt.dataset.brand.toLowerCase() !== currentBrand) {
+        currentBrand = selectedOpt.dataset.brand.toLowerCase();
+        updateBrandTabUI();
+      }
+      applyFilter();
+    });
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        currentBrand = 'all';
+        currentCategory = 'all';
+        categorySelect.value = 'all';
+        updateBrandTabUI();
+        updateCategoryDropdown();
+        applyFilter();
+      });
+    }
+
+    updateBrandTabUI();
+    updateCategoryDropdown();
+    applyFilter();
+  }
+
+  setupCatalogueFilters();
+  document.addEventListener('astro:page-load', setupCatalogueFilters);
+</script>
+
+<style>
+  :global(.catalogue-section) {
+    background: var(--color-background);
+    padding-top: clamp(2rem, 3.5vw, 3rem);
+    padding-bottom: clamp(3rem, 5vw, 4.5rem);
+  }
+
+  /* Header */
+  .catalogue-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    max-width: 44rem;
+    margin-bottom: var(--space-5);
+  }
+
+  .catalogue-eyebrow {
+    font-size: var(--font-label);
+    font-weight: var(--weight-strong);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin: 0;
+  }
+
+  .catalogue-title {
+    font-size: clamp(2rem, 1.6rem + 1.2vw, 2.75rem);
+    font-weight: var(--weight-strong);
+    color: var(--color-text);
+    line-height: 1.15;
+    margin: 0;
+  }
+
+  .catalogue-lead {
+    font-size: var(--font-body);
+    color: var(--color-text-muted);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  /* Toolbar */
+  .catalogue-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .brand-tabs {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: var(--color-surface);
+    padding: 0.25rem;
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-sm);
+  }
+
+  .brand-tab {
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    font-size: var(--font-small);
+    font-weight: 500;
+    padding: 0.4rem 0.95rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+
+  .brand-tab:hover {
+    color: var(--color-text);
+  }
+
+  .brand-tab.active {
+    background: #20252A;
+    color: #FFFFFF;
+    font-weight: var(--weight-strong);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Category Select Dropdown */
+  .category-filter-wrap {
+    flex-shrink: 0;
+  }
+
+  .select-box {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .category-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+    font-size: var(--font-small);
+    font-weight: 500;
+    padding: 0.5rem 2.25rem 0.5rem 0.9rem;
+    cursor: pointer;
+    transition: border-color 150ms ease;
+    min-width: 13rem;
+  }
+
+  .category-select:hover {
+    border-color: #4A5056;
+  }
+
+  .category-select:focus {
+    border-color: var(--color-primary);
+    outline: none;
+  }
+
+  .select-caret {
+    position: absolute;
+    right: 0.85rem;
+    pointer-events: none;
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+  }
+
+  /* Divider */
+  .catalogue-divider {
+    height: 1px;
+    background: var(--color-border);
+    margin-bottom: var(--space-5);
+  }
+
+  /* Product Grid */
+  .catalogue-grid-wrap {
+    min-height: 30vh;
+  }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+
+  @media (min-width: 580px) {
+    .products-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 960px) {
+    .products-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .products-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .product-grid-item {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  /* Empty State */
+  .products-empty {
+    padding: var(--space-8) var(--space-4);
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-align: center;
+    max-width: 32rem;
+    margin-inline: auto;
+    margin-block: var(--space-6);
+  }
+
+  .empty-title {
+    font-size: var(--font-product);
+    font-weight: var(--weight-strong);
+    color: var(--color-text);
+    margin-bottom: var(--space-2);
+  }
+
+  .empty-desc {
+    font-size: var(--font-small);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-4);
+  }
+
+  .reset-filter-link {
+    background: none;
+    border: none;
+    color: var(--color-primary);
+    font-size: var(--font-small);
+    font-weight: var(--weight-strong);
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .reset-filter-link:hover {
+    color: var(--color-primary-hover);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

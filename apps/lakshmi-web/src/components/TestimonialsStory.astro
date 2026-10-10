@@ -1,0 +1,662 @@
+---
+import Container from './Container.astro';
+import { testimonials, type Testimonial } from '../data/testimonials';
+
+interface Props {
+  items?: readonly Testimonial[];
+}
+
+const { items = testimonials } = Astro.props;
+---
+
+<section
+  id="reviews-section"
+  class="reviews-story-section"
+  aria-labelledby="reviews-title"
+  data-reviews-section
+>
+  <div class="reviews-sticky-viewport" data-sticky-viewport>
+    <div class="reviews-header-container">
+      <Container>
+        <div class="reviews-sticky-header">
+          <p class="eyebrow">REVIEWS</p>
+          <h2 id="reviews-title" class="heading">What customers say</h2>
+        </div>
+      </Container>
+    </div>
+
+    <!-- Presentation Stage for Wispr Flow Style Floating Deck -->
+    <div
+      class="reviews-stage"
+      data-reviews-stage
+      role="region"
+      aria-label="Customer and dealer reviews"
+    >
+      {items.map((item, index) => {
+        const hasImage = Boolean(item.image);
+
+        return (
+          <article
+            class={`wispr-card theme-${item.theme} type-${item.cardType || 'square'}`}
+            data-story-card
+            data-index={index}
+          >
+            {hasImage ? (
+              <div class="card-split-grid">
+                <div class="card-image-pane">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    class="card-photo"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="card-copy-pane">
+                  <blockquote class="wispr-quote">
+                    “{item.quote}”
+                  </blockquote>
+                  <div class="wispr-author">
+                    <p class="author-name">{item.name}</p>
+                    <p class="author-role">
+                      {item.company}
+                      {item.location && <span class="role-location"> · {item.location}</span>}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div class="card-quote-box">
+                <blockquote class="wispr-quote">
+                  “{item.quote}”
+                </blockquote>
+                <div class="wispr-author">
+                  <p class="author-name">{item.name}</p>
+                  <p class="author-role">
+                    {item.company}
+                    {item.location && <span class="role-location"> · {item.location}</span>}
+                  </p>
+                </div>
+              </div>
+            )}
+          </article>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<style>
+  .reviews-story-section {
+    position: relative;
+    min-height: 320vh;
+    background: #111215;
+    border-top: 1px solid var(--color-border, #2A2E32);
+    overflow: clip;
+  }
+
+  /* Sticky Viewport Stage */
+  .reviews-sticky-viewport {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-top: clamp(4.5rem, 8vh, 6rem);
+    padding-bottom: clamp(2.5rem, 5vh, 3.5rem);
+    box-sizing: border-box;
+  }
+
+  .reviews-header-container {
+    width: 100%;
+    z-index: 25;
+    pointer-events: none;
+  }
+
+  .reviews-sticky-header {
+    max-width: var(--content-max, 60rem);
+  }
+
+  .eyebrow {
+    font-size: var(--font-label, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-primary, #E95D2C);
+    margin-bottom: var(--space-2, 0.5rem);
+  }
+
+  .heading {
+    font-size: clamp(2rem, 3.2vw, 3rem);
+    line-height: var(--line-heading, 1.15);
+    letter-spacing: -0.03em;
+    color: #F7F7F5;
+    margin: 0;
+  }
+
+  /* Presentation Stage for Floating Cards Deck */
+  .reviews-stage {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(3vh);
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* Base Wispr-Style Card (Organic Large Radii & Editorial Typography) */
+  .wispr-card {
+    position: absolute;
+    pointer-events: auto;
+    will-change: transform, opacity;
+    border-radius: 40px;
+    box-sizing: border-box;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), 0 4px 16px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 220ms ease;
+  }
+
+  /* Editorial Serif Quote */
+  .wispr-quote {
+    margin: 0;
+    font-family: ui-serif, Georgia, Cambria, 'Times New Roman', serif;
+    font-style: normal;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    line-height: 1.32;
+  }
+
+  .wispr-author {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .author-name {
+    margin: 0;
+    font-family: var(--font-body, system-ui, sans-serif);
+    font-size: 1.0625rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+
+  .author-role {
+    margin: 0;
+    font-family: var(--font-body, system-ui, sans-serif);
+    font-size: 0.875rem;
+    line-height: 1.35;
+    font-weight: 500;
+  }
+
+  .role-location {
+    opacity: 0.85;
+  }
+
+  /* Landscape Image Card (Elena Verna Style in Wispr Flow Screenshot) */
+  .type-landscape-image {
+    width: min(780px, 88vw);
+    min-height: 400px;
+    padding: 16px;
+  }
+
+  .card-split-grid {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    height: 100%;
+    min-height: 368px;
+    gap: clamp(24px, 3vw, 36px);
+  }
+
+  .card-image-pane {
+    flex: 0 0 45%;
+    position: relative;
+    border-radius: 26px;
+    overflow: hidden;
+    background: #000;
+  }
+
+  .card-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  .card-copy-pane {
+    flex: 1 1 55%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(20px, 2.5vw, 32px) clamp(20px, 2.5vw, 32px) clamp(20px, 2.5vw, 32px) 0;
+    gap: 24px;
+  }
+
+  .type-landscape-image .wispr-quote {
+    font-size: clamp(1.45rem, 1.9vw, 1.85rem);
+  }
+
+  /* Square / Editorial Quote Card (Fast Company & Slash Gear Style) */
+  .type-square {
+    width: min(480px, 82vw);
+    min-height: 410px;
+    padding: clamp(36px, 4vw, 48px);
+  }
+
+  .card-quote-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    min-height: 320px;
+    gap: 28px;
+  }
+
+  .type-square .wispr-quote {
+    font-size: clamp(1.6rem, 2.1vw, 2.05rem);
+  }
+
+  /* Wide Card */
+  .type-wide {
+    width: min(700px, 86vw);
+    min-height: 370px;
+    padding: clamp(36px, 4vw, 48px);
+  }
+
+  .type-wide .wispr-quote {
+    font-size: clamp(1.6rem, 2.1vw, 2.05rem);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* COLOR THEMES MATCHING WISPR FLOW REFERENCE                         */
+  /* ------------------------------------------------------------------ */
+
+  /* 1. Emerald Green (#18C88A) — Elena Verna Card in Screenshot */
+  .theme-green {
+    background: #18C88A;
+    color: #062C1C;
+  }
+  .theme-green .wispr-quote {
+    color: #062C1C;
+  }
+  .theme-green .author-name {
+    color: #062C1C;
+  }
+  .theme-green .author-role {
+    color: rgba(6, 44, 28, 0.76);
+  }
+
+  /* 2. Warm Cream / Ivory (#EDE9D5) — Fast Company Card in Screenshot */
+  .theme-cream {
+    background: #EDE9D5;
+    color: #161616;
+  }
+  .theme-cream .wispr-quote {
+    color: #161616;
+  }
+  .theme-cream .author-name {
+    color: #161616;
+  }
+  .theme-cream .author-role {
+    color: rgba(22, 22, 22, 0.72);
+  }
+
+  /* 3. Warm Orange / Amber (#FFA946) — Alex Lieberman Card in Screenshot */
+  .theme-orange {
+    background: #FFA946;
+    color: #281404;
+  }
+  .theme-orange .wispr-quote {
+    color: #281404;
+  }
+  .theme-orange .author-name {
+    color: #281404;
+  }
+  .theme-orange .author-role {
+    color: rgba(40, 20, 4, 0.76);
+  }
+
+  /* 4. Soft Lavender / Lilac (#E8DAFF) */
+  .theme-lavender {
+    background: #E8DAFF;
+    color: #23123D;
+  }
+  .theme-lavender .wispr-quote {
+    color: #23123D;
+  }
+  .theme-lavender .author-name {
+    color: #23123D;
+  }
+  .theme-lavender .author-role {
+    color: rgba(35, 18, 61, 0.74);
+  }
+
+  /* 5. Deep Oxblood / Burgundy (#7F1C34) */
+  .theme-oxblood {
+    background: #7F1C34;
+    color: #FFF5F5;
+  }
+  .theme-oxblood .wispr-quote {
+    color: #FFF5F5;
+  }
+  .theme-oxblood .author-name {
+    color: #FFFFFF;
+  }
+  .theme-oxblood .author-role {
+    color: rgba(255, 245, 245, 0.78);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Mobile Behavior (< 768px): Horizontal Swipe & Scroll Snap         */
+  /* ------------------------------------------------------------------ */
+  @media (max-width: 767px) {
+    .reviews-story-section {
+      min-height: auto;
+      padding-block: clamp(3.5rem, 6vw, 5rem);
+    }
+
+    .reviews-sticky-viewport {
+      position: static;
+      height: auto;
+      overflow: visible;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    .reviews-header-container {
+      margin-bottom: 2rem;
+    }
+
+    .reviews-stage {
+      position: static;
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      justify-content: flex-start;
+      transform: none;
+      gap: 16px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding-inline: 1.25rem;
+      padding-bottom: 12px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      pointer-events: auto;
+    }
+
+    .reviews-stage::-webkit-scrollbar {
+      display: none;
+    }
+
+    .wispr-card {
+      position: static;
+      flex: 0 0 88vw;
+      max-width: 420px;
+      min-height: auto;
+      border-radius: 30px;
+      scroll-snap-align: center;
+      transform: none !important;
+      opacity: 1 !important;
+      pointer-events: auto;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .type-landscape-image,
+    .type-square,
+    .type-wide {
+      width: 88vw;
+      padding: 16px;
+    }
+
+    .card-split-grid {
+      flex-direction: column;
+      min-height: auto;
+      gap: 16px;
+    }
+
+    .card-image-pane {
+      flex: 0 0 180px;
+      height: 180px;
+      border-radius: 20px;
+    }
+
+    .card-copy-pane {
+      padding: 8px 12px 16px 12px;
+      gap: 16px;
+    }
+
+    .type-square,
+    .type-wide {
+      padding: 28px 24px;
+    }
+
+    .card-quote-box {
+      min-height: 220px;
+      gap: 20px;
+    }
+
+    .wispr-quote {
+      font-size: 1.25rem !important;
+      line-height: 1.38;
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Accessibility: Prefers Reduced Motion                              */
+  /* ------------------------------------------------------------------ */
+  @media (prefers-reduced-motion: reduce) {
+    .reviews-story-section {
+      min-height: auto;
+      padding-block: 4rem;
+    }
+
+    .reviews-sticky-viewport {
+      position: static;
+      height: auto;
+      overflow: visible;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    .reviews-header-container {
+      margin-bottom: 2rem;
+    }
+
+    .reviews-stage {
+      position: static;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: stretch;
+      justify-content: flex-start;
+      transform: none;
+      gap: 24px;
+      padding-inline: 1.5rem;
+      pointer-events: auto;
+    }
+
+    .wispr-card {
+      position: static;
+      flex: 1 1 calc(50% - 24px);
+      max-width: 100%;
+      min-height: auto;
+      transform: none !important;
+      opacity: 1 !important;
+      pointer-events: auto;
+    }
+  }
+</style>
+
+<script>
+  function initReviewsStory() {
+    const section = document.querySelector<HTMLElement>('[data-reviews-section]');
+    if (!section) return;
+
+    const cards = Array.from(section.querySelectorAll<HTMLElement>('[data-story-card]'));
+    if (cards.length === 0) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isMobile = window.innerWidth < 768;
+
+    if (prefersReducedMotion || isMobile) {
+      cards.forEach((card) => {
+        card.style.transform = '';
+        card.style.opacity = '';
+        card.style.zIndex = '';
+        card.style.pointerEvents = '';
+      });
+      return;
+    }
+
+    // Wispr Flow Layered Deck Positions:
+    // - Active dominant in center: (0, -10px), scale 1.0, rot 0deg
+    // - Peeking bottom-left: (-330px, 150px), scale 0.88, rot -3.5deg
+    // - Peeking upper-right: (+340px, -130px), scale 0.88, rot +3.0deg
+    const keyframesMap: Record<
+      number,
+      Array<{ p: number; x: number; y: number; scale: number; rot: number; opacity: number; zIndex: number }>
+    > = {
+      // Card 0: Starts Active Center -> shifts to bottom-left -> fades away
+      0: [
+        { p: 0.00, x: 0, y: -10, scale: 1.0, rot: 0, opacity: 1.0, zIndex: 10 },
+        { p: 0.12, x: 0, y: -10, scale: 1.0, rot: 0, opacity: 1.0, zIndex: 10 },
+        { p: 0.28, x: -330, y: 150, scale: 0.88, rot: -3.5, opacity: 0.88, zIndex: 4 },
+        { p: 0.40, x: -500, y: 240, scale: 0.82, rot: -5.0, opacity: 0.0, zIndex: 1 },
+        { p: 1.00, x: -500, y: 240, scale: 0.82, rot: -5.0, opacity: 0.0, zIndex: 1 },
+      ],
+      // Card 1 (Cream): Starts peeking at bottom-left -> glides to Center -> shifts away
+      1: [
+        { p: 0.00, x: -330, y: 150, scale: 0.88, rot: -3.5, opacity: 0.88, zIndex: 4 },
+        { p: 0.12, x: -330, y: 150, scale: 0.88, rot: -3.5, opacity: 0.88, zIndex: 4 },
+        { p: 0.28, x: 0, y: -10, scale: 1.0, rot: 0, opacity: 1.0, zIndex: 10 },
+        { p: 0.38, x: 0, y: -10, scale: 1.0, rot: 0, opacity: 1.0, zIndex: 10 },
+        { p: 0.52, x: -330, y: 150, scale: 0.88, rot: -3.5, opacity: 0.85, zIndex: 4 },
+        { p: 0.62, x: -500, y: 240, scale: 0.82, rot: -5.0, opacity: 0.0, zIndex: 1 },
+        { p: 1.00, x: -500, y: 240, scale: 0.82, rot: -5.0, opacity: 0.0, zIndex: 1 },
+      ],
+      // Card 2 (Orange): Starts peeking at upper-right -> moves into place -> Center -> shifts to bottom-left
+      2: [
+        { p: 0.00, x: 340, y: -130, scale: 0.88, rot: 3.0, opacity: 0.88, zIndex: 4 },
+        { p: 0.18, x: 340, y: -130, scale: 0.88, rot: 3.0, opacity: 0.88, zIndex: 4 },
+        { p: 0.35, x: 340, y: -130, scale: 0.88, rot: 3.0, opacity: 0.88, zIndex: 4 },
+        { p: 0.52, x: 0, y: -10, scale: 1.0, rot: 0, opacity: 1.0, zIndex: 10 },
+        { p: 0.62, x: 0, y: -10, scale: 1.0, rot: 0, opacity: 1.0, zIndex: 10 },
+        { p: 0.75, x: -330, y: 150, scale: 0.88, rot: -3.5, opacity: 0.85, zIndex: 4 },
+        { p: 0.85, x: -500, y: 240, scale: 0.82, rot: -5.0, opacity: 0.0, zIndex: 1 },
+        { p: 1.00, x: -500, y: 240, scale: 0.82, rot: -5.0, opacity: 0.0, zIndex: 1 },
+      ],
+      // Card 3 (Lavender): Waiting -> enters upper-right -> Center -> shifts to bottom-left
+      3: [
+        { p: 0.00, x: 480, y: -180, scale: 0.82, rot: 4.5, opacity: 0.0, zIndex: 1 },
+        { p: 0.38, x: 480, y: -180, scale: 0.82, rot: 4.5, opacity: 0.0, zIndex: 1 },
+        { p: 0.52, x: 340, y: -130, scale: 0.88, rot: 3.0, opacity: 0.88, zIndex: 4 },
+        { p: 0.70, x: 0, y: -10, scale: 1.0, rot: 0, opacity: 1.0, zIndex: 10 },
+        { p: 0.78, x: 0, y: -10, scale: 1.0, rot: 0, opacity: 1.0, zIndex: 10 },
+        { p: 0.88, x: -330, y: 150, scale: 0.88, rot: -3.5, opacity: 0.85, zIndex: 4 },
+        { p: 1.00, x: -330, y: 150, scale: 0.88, rot: -3.5, opacity: 0.85, zIndex: 4 },
+      ],
+      // Card 4 (Oxblood): Waiting -> enters upper-right -> Center dominant settled
+      4: [
+        { p: 0.00, x: 480, y: -180, scale: 0.82, rot: 4.5, opacity: 0.0, zIndex: 1 },
+        { p: 0.58, x: 480, y: -180, scale: 0.82, rot: 4.5, opacity: 0.0, zIndex: 1 },
+        { p: 0.72, x: 340, y: -130, scale: 0.88, rot: 3.0, opacity: 0.88, zIndex: 4 },
+        { p: 0.86, x: 0, y: -10, scale: 1.0, rot: 0, opacity: 1.0, zIndex: 10 },
+        { p: 1.00, x: 0, y: -10, scale: 1.0, rot: 0, opacity: 1.0, zIndex: 10 },
+      ],
+    };
+
+    function interpolate(
+      kfs: Array<{ p: number; x: number; y: number; scale: number; rot: number; opacity: number; zIndex: number }>,
+      p: number
+    ) {
+      if (p <= kfs[0].p) return kfs[0];
+      if (p >= kfs[kfs.length - 1].p) return kfs[kfs.length - 1];
+      for (let i = 0; i < kfs.length - 1; i++) {
+        const kA = kfs[i];
+        const kB = kfs[i + 1];
+        if (p >= kA.p && p <= kB.p) {
+          const span = kB.p - kA.p;
+          const t = span > 0 ? (p - kA.p) / span : 0;
+          const easeT = t * t * (3 - 2 * t); // smoothstep
+          return {
+            x: kA.x + (kB.x - kA.x) * easeT,
+            y: kA.y + (kB.y - kA.y) * easeT,
+            scale: kA.scale + (kB.scale - kA.scale) * easeT,
+            rot: kA.rot + (kB.rot - kA.rot) * easeT,
+            opacity: kA.opacity + (kB.opacity - kA.opacity) * easeT,
+            zIndex: t > 0.5 ? kB.zIndex : kA.zIndex,
+          };
+        }
+      }
+      return kfs[0];
+    }
+
+    const sectionEl = section;
+    let isTicking = false;
+
+    function update() {
+      const rect = sectionEl.getBoundingClientRect();
+      const scrollableDistance = sectionEl.offsetHeight - window.innerHeight;
+      if (scrollableDistance <= 0) {
+        isTicking = false;
+        return;
+      }
+
+      const rawProgress = -rect.top / scrollableDistance;
+      const progress = Math.max(0, Math.min(1, rawProgress));
+
+      cards.forEach((card, index) => {
+        const kfs = keyframesMap[index];
+        if (!kfs) return;
+        const state = interpolate(kfs, progress);
+
+        card.style.transform = `translate3d(${state.x.toFixed(1)}px, ${state.y.toFixed(1)}px, 0) scale(${state.scale.toFixed(3)}) rotate(${state.rot.toFixed(2)}deg)`;
+        card.style.opacity = state.opacity.toFixed(3);
+        card.style.zIndex = String(state.zIndex);
+        card.style.pointerEvents = state.opacity > 0.4 ? 'auto' : 'none';
+      });
+
+      isTicking = false;
+    }
+
+    function onScroll() {
+      if (!isTicking) {
+        isTicking = true;
+        window.requestAnimationFrame(update);
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener(
+      'resize',
+      () => {
+        if (window.innerWidth < 768) {
+          cards.forEach((card) => {
+            card.style.transform = '';
+            card.style.opacity = '';
+            card.style.zIndex = '';
+            card.style.pointerEvents = '';
+          });
+        } else {
+          update();
+        }
+      },
+      { passive: true }
+    );
+
+    // Initial positioning
+    update();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initReviewsStory);
+  } else {
+    initReviewsStory();
+  }
+  document.addEventListener('astro:page-load', initReviewsStory);
+</script>

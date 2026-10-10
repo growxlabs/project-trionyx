@@ -1,0 +1,606 @@
+---
+import type { GetStaticPaths } from 'astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import Container from '../../components/Container.astro';
+import Section from '../../components/Section.astro';
+import Button from '../../components/Button.astro';
+import EnquiryCTA from '../../components/EnquiryCTA.astro';
+import { publicCatalogueService } from '@trionyx/api/catalogue';
+
+export const getStaticPaths = (async () => {
+  try {
+    const { items } = await publicCatalogueService.listPublishedProducts('LAKSHMI');
+    return items.map((product) => ({
+      params: { slug: product.slug },
+      props: { slug: product.slug },
+    }));
+  } catch (err) {
+    console.error('[Product Detail] Failed to get static paths:', err);
+    return [];
+  }
+}) satisfies GetStaticPaths;
+
+const { slug } = Astro.params;
+const product = await publicCatalogueService.getPublishedProductBySlug('LAKSHMI', slug as string);
+
+if (!product) {
+  return Astro.redirect('/products');
+}
+
+const galleryImages = (product.galleryImages && product.galleryImages.length > 0)
+  ? product.galleryImages
+  : product.primaryImage
+    ? [{ id: 'primary', url: product.primaryImage.url, altText: product.primaryImage.altText || product.name, sortOrder: 0 }]
+    : [];
+
+const primary = product.primaryImage;
+const allImages = primary
+  ? [galleryImages.find((image) => image.url === primary.url) || {
+      id: 'primary', url: primary.url, altText: primary.altText || product.name, sortOrder: 0,
+    }, ...galleryImages.filter((image) => image.url !== primary.url)]
+  : galleryImages;
+const initialImage = allImages[0] || null;
+const hasMultipleImages = allImages.length > 1;
+const summary = product.shortDescription?.trim() || product.description?.trim();
+const hasMoreDescription = product.description?.trim() && product.description.trim() !== summary;
+const supplierLabels = /^(distribution|distributor|supplier)$/i;
+const technicalSpecs = product.specifications.filter((spec) => !supplierLabels.test(spec.label.trim()));
+const supplierSpecs = product.specifications.filter((spec) => supplierLabels.test(spec.label.trim()));
+const enquiryHref = `/contact?${new URLSearchParams({ product: product.name, code: product.productCode }).toString()}`;
+---
+
+<SiteLayout
+  title={`${product.name} | Lakshmi Distributions`}
+  description={product.shortDescription || `Explore ${product.name} distributed by Lakshmi Distributions.`}
+>
+  <Section labelledBy="product-title" class="product-detail-section">
+    <Container>
+      <div class="product-nav">
+        <a href="/products" class="back-link">
+          <span aria-hidden="true">←</span> Back to all products
+        </a>
+      </div>
+
+      <div class="product-layout">
+        <!-- Left: Product Imagery Gallery -->
+        <div class="product-gallery" data-product-gallery>
+          <div class="product-gallery-stage">
+            {hasMultipleImages && (
+              <div
+                class="product-thumbnails"
+                role="region"
+                aria-label="Product thumbnails"
+              >
+                {allImages.map((img, idx) => (
+                  <button
+                    type="button"
+                    class={`product-thumb-btn ${idx === 0 ? 'is-active' : ''}`}
+                    data-gallery-thumb
+                    data-image-src={img.url}
+                    data-image-alt={img.altText || `${product.name} view ${idx + 1}`}
+                    aria-label={`Show ${img.altText || `${product.name} view ${idx + 1}`}`}
+                    aria-pressed={idx === 0 ? 'true' : 'false'}
+                  >
+                    <img
+                      src={img.url}
+                      alt=""
+                      class="product-thumb-image"
+                      loading={idx === 0 ? 'eager' : 'lazy'}
+                      width="80"
+                      height="80"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <div class="product-main-image-box">
+              {initialImage ? (
+                <img
+                  id="main-product-image"
+                  src={initialImage.url}
+                  alt={initialImage.altText || product.name}
+                  class="product-main-image"
+                  loading="eager"
+                />
+              ) : (
+                <div class="product-image-fallback">
+                  <span>Contact us for product images.</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Product Information & Specifications -->
+        <div class="product-info">
+          <div class="product-header">
+            {(product.brandName || product.categoryName) && (
+              <div class="product-meta-row">
+                {product.brandName && <a href={product.brandSlug ? `/brands/${product.brandSlug}` : '/brands'} class="brand-badge">
+                  {product.brandName}
+                </a>}
+                {product.categoryName && <span class="category-tag">{product.categoryName}</span>}
+              </div>
+            )}
+            <h1 id="product-title" class="product-title">{product.name}</h1>
+            <p class="product-code">Catalogue Ref: <code>{product.productCode}</code></p>
+          </div>
+
+          {summary && (
+            <p class="product-lead">{summary}</p>
+          )}
+
+          <div class="product-action-card">
+            <div class="action-copy">
+              <h2 class="action-title">Find the right fit for your vehicle</h2>
+              <p class="action-note">Contact our team for pricing, availability and compatibility.</p>
+            </div>
+            <Button href={enquiryHref}>Enquire now <span aria-hidden="true">↗</span></Button>
+            <span class="enquiry-context">Your enquiry includes this product’s name and reference.</span>
+          </div>
+
+          <!-- Technical Specifications -->
+          {technicalSpecs.length > 0 && (
+            <div class="specs-section">
+              <h2 class="specs-heading">Technical specifications</h2>
+              <dl class="specs-list">
+                {technicalSpecs.map((spec) => (
+                  <div class="spec-row">
+                    <dt class="spec-key">{spec.label}</dt>
+                    <dd class="spec-value">{spec.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          )}
+
+          {hasMoreDescription && <details class="product-description">
+            <summary>About this product <span aria-hidden="true">+</span></summary>
+            <p>{product.description}</p>
+          </details>}
+          {supplierSpecs.length > 0 && <div class="supplier-section">
+            <h2>Supplier information</h2>
+            <dl class="specs-list">{supplierSpecs.map((spec) => <div class="spec-row"><dt class="spec-key">{spec.label}</dt><dd class="spec-value">{spec.value}</dd></div>)}</dl>
+          </div>}
+        </div>
+      </div>
+    </Container>
+  </Section>
+
+  <EnquiryCTA />
+</SiteLayout>
+
+<style>
+  :global(.product-detail-section) {
+    background: var(--color-background);
+    padding-top: clamp(1.5rem, 3vw, 2.5rem);
+    padding-bottom: clamp(3rem, 6vw, 5rem);
+  }
+
+  .product-nav {
+    margin-bottom: var(--space-6);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-text-muted);
+    font-size: var(--font-small);
+    font-weight: var(--weight-strong);
+    text-decoration: none;
+    transition: color 150ms ease;
+  }
+
+  .back-link:hover {
+    color: var(--color-primary);
+  }
+
+  .product-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: start;
+  }
+
+  @media (min-width: 900px) {
+    .product-layout {
+      grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+    }
+  }
+
+  /* Gallery */
+  .product-gallery {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .product-gallery-stage {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .product-main-image-box {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: #0B0D0F;
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    order: 1;
+    padding: clamp(0.5rem, 1vw, 0.75rem);
+  }
+
+  .product-main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    background: transparent;
+    transition: opacity 150ms ease;
+  }
+
+  .product-image-fallback {
+    color: var(--color-text-muted);
+    font-size: var(--font-small);
+  }
+
+  .product-thumbnails {
+    display: flex;
+    gap: var(--space-2);
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 2px 2px var(--space-1) 2px;
+    margin: 0;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    order: 2;
+  }
+
+  .product-thumbnails::-webkit-scrollbar {
+    display: none;
+  }
+
+  .product-thumb-btn {
+    appearance: none;
+    background: #0B0D0F;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 4px;
+    margin: 0;
+    width: 4.25rem;
+    height: 4.25rem;
+    aspect-ratio: 1 / 1;
+    flex-shrink: 0;
+    cursor: pointer;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+  }
+
+  .product-thumb-btn:hover {
+    border-color: rgba(233, 93, 44, 0.6);
+  }
+
+  .product-thumb-btn:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .product-thumb-btn.is-active {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 1px var(--color-primary), 0 2px 8px rgba(233, 93, 44, 0.25);
+  }
+
+  .product-thumb-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    pointer-events: none;
+  }
+
+  @media (min-width: 900px) {
+    .product-gallery-stage {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-3);
+    }
+
+    .product-main-image-box {
+      order: 1;
+      min-width: 0;
+      aspect-ratio: 4 / 3;
+    }
+
+    .product-thumbnails {
+      order: 2;
+      flex-direction: row;
+      flex-shrink: 0;
+      width: 100%;
+      overflow-y: hidden;
+      overflow-x: auto;
+      padding: 2px;
+      gap: var(--space-2);
+    }
+
+    .product-thumb-btn {
+      width: 4.75rem;
+      height: 4.75rem;
+      aspect-ratio: 1 / 1;
+      padding: 4px;
+    }
+  }
+
+  /* Info */
+  .product-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    min-width: 0;
+  }
+
+  .product-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .product-meta-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .brand-badge {
+    font-size: var(--font-label);
+    font-weight: var(--weight-strong);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    text-decoration: none;
+    border: var(--border-width) solid rgba(233, 93, 44, 0.35);
+    background: rgba(233, 93, 44, 0.08);
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-sm);
+    transition: border-color 150ms ease;
+  }
+
+  .brand-badge:hover {
+    border-color: var(--color-primary);
+  }
+
+  .category-tag {
+    font-size: var(--font-label);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .product-title {
+    font-size: clamp(2rem, 3.1vw, 3rem);
+    font-weight: var(--weight-strong);
+    color: var(--color-text);
+    line-height: 1.15;
+    margin: 0;
+    letter-spacing: -.035em;
+    overflow-wrap: anywhere;
+  }
+
+  .product-code {
+    font-size: var(--font-small);
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .product-code code {
+    font-family: monospace;
+    color: var(--color-text);
+    background: var(--color-surface);
+    padding: 0.1rem 0.35rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .product-lead {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #CCD2D8;
+    margin: 0;
+  }
+
+  .product-description {
+    font-size: var(--font-body);
+    line-height: var(--line-body);
+    color: var(--color-text-muted);
+  }
+
+  .product-description p {
+    margin: 18px 0 0;
+    white-space: pre-line;
+  }
+
+  /* Specifications */
+  .specs-section {
+    border-top: var(--border-width) solid var(--color-border);
+    padding-top: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .specs-heading {
+    font-size: 1.125rem;
+    font-weight: var(--weight-strong);
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .specs-list {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+  }
+
+  .spec-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 24px;
+    padding-bottom: var(--space-2);
+    border-bottom: var(--border-width) solid rgba(255, 255, 255, 0.06);
+  }
+
+  .spec-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .spec-key {
+    font-size: var(--font-small);
+    color: var(--color-text-muted);
+  }
+
+  .spec-value {
+    font-size: var(--font-small);
+    font-weight: var(--weight-strong);
+    color: var(--color-text);
+    margin: 0;
+    text-align: right;
+    overflow-wrap: anywhere;
+    max-width: 60%;
+  }
+
+  /* Action Card */
+  .product-action-card {
+    background: #111417;
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 600px) {
+    .product-action-card {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  .action-copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .action-title {
+    font-size: var(--font-body);
+    font-weight: var(--weight-strong);
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .action-note {
+    font-size: var(--font-small);
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .product-action-card :global(.button) {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    white-space: normal;
+  }
+  .enquiry-context { font-size: 12px; line-height: 1.6; color: #a2adb5; }
+  .product-action-card { border-radius: 8px; gap: 14px; }
+  .product-action-card :global(.button) { min-height: 52px; background: #bd411a; border-color: #bd411a; }
+  .product-action-card :global(.button:hover) { background: #a93614; border-color: #a93614; }
+  .product-main-image-box { border-radius: 8px; }
+  .product-thumb-btn { border-radius: 4px; }
+  .product-info { gap: 22px; }
+  .product-description { padding: 20px 0; border-block: 1px solid var(--color-border); }
+  .product-description summary { cursor: pointer; display: flex; justify-content: space-between; gap: 16px; color: var(--color-text); font-size: 15px; font-weight: 600; list-style: none; }
+  .product-description summary::-webkit-details-marker { display: none; }
+  .product-description[open] summary span { transform: rotate(45deg); }
+  .supplier-section h2 { font-size: 13px; font-weight: 600; color: var(--color-text-muted); margin: 0 0 15px; }
+  @media (min-width: 900px) and (min-height: 750px) { .product-gallery { position: sticky; top: 24px; } }
+  @media (max-width: 420px) { .spec-row { gap: 12px; } .product-action-card { padding: 20px; } }
+  @media (prefers-reduced-motion: reduce) { .product-main-image, .product-thumb-btn { transition: none; } }
+</style>
+
+<script>
+  function setupGallery() {
+    const galleryContainers = document.querySelectorAll<HTMLElement>('[data-product-gallery]');
+
+    galleryContainers.forEach((gallery) => {
+      if (gallery.dataset.initialized) return;
+      gallery.dataset.initialized = 'true';
+      const mainImg = gallery.querySelector<HTMLImageElement>('#main-product-image');
+      const thumbBtns = gallery.querySelectorAll<HTMLButtonElement>('[data-gallery-thumb]');
+
+      if (!mainImg || thumbBtns.length === 0) return;
+
+      thumbBtns.forEach((btn, index) => {
+        btn.addEventListener('click', () => {
+          const targetSrc = btn.getAttribute('data-image-src');
+          const targetAlt = btn.getAttribute('data-image-alt');
+          if (!targetSrc) return;
+
+          if (mainImg.getAttribute('src') !== targetSrc) {
+            mainImg.src = targetSrc;
+            if (targetAlt) {
+              mainImg.alt = targetAlt;
+            }
+          }
+
+          thumbBtns.forEach((b) => {
+            b.classList.remove('is-active');
+            b.setAttribute('aria-pressed', 'false');
+          });
+
+          btn.classList.add('is-active');
+          btn.setAttribute('aria-pressed', 'true');
+        });
+
+        btn.addEventListener('keydown', (e) => {
+          const btnList = Array.from(thumbBtns);
+          let targetIndex = -1;
+
+          if (e.key === 'Home' || e.key === 'End') {
+            e.preventDefault();
+            targetIndex = e.key === 'Home' ? 0 : btnList.length - 1;
+          } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            targetIndex = (index + 1) % btnList.length;
+          } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+            e.preventDefault();
+            targetIndex = (index - 1 + btnList.length) % btnList.length;
+          }
+
+          if (targetIndex >= 0) {
+            btnList[targetIndex].focus();
+            btnList[targetIndex].click();
+          }
+        });
+      });
+    });
+  }
+
+  setupGallery();
+  document.addEventListener('astro:page-load', setupGallery);
+</script>

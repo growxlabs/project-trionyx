@@ -1,0 +1,70 @@
+---
+import Container from './Container.astro';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <Container>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="footer-name" href="/" aria-label="Lakshmi Distributions home">
+          <span class="brand-name">LAKSHMI<span class="brand-period" aria-hidden="true">.</span></span>
+          <span class="brand-descriptor">DISTRIBUTIONS</span>
+        </a>
+        <p>Automotive lighting, protection and comfort.<br />For vehicle owners, workshops and dealers.</p>
+        <p class="brand-tagline">LIGHTING. PROTECTION. COMFORT.</p>
+        <a class="brand-story" href="/about">Get to know Lakshmi</a>
+      </div>
+      <nav class="footer-explore" aria-label="Footer navigation">
+        <h2>Explore</h2>
+        <ul>
+          <li><a href="/products">Product catalogue</a></li>
+          <li><a href="/brands">Our brands</a></li>
+          <li><a href="/about">About Lakshmi</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="footer-contact">
+        <h2>Let’s talk products</h2>
+        <p>Have a product in mind or a bulk requirement? Start a conversation with our team.</p>
+        <a class="contact-link" href="/contact">Contact our team</a>
+        <p class="audience-note">Product enquiries &amp; trade requirements</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; {year} Lakshmi Distributions. All rights reserved.</p>
+      <p class="partner-credit">Technology &amp; Digital Partner by <a href="https://growxlabs.tech">Growxlabs</a></p>
+    </div>
+  </Container>
+</footer>
+<style>
+  .site-footer { background: #0b0d0f; border-top: 1px solid rgba(247, 247, 245, .06); }
+  .footer-grid { display: grid; grid-template-columns: 1.5fr .75fr 1fr; gap: clamp(2rem, 5vw, 5rem); padding-top: clamp(2.75rem, 5vw, 4rem); padding-bottom: clamp(1.75rem, 3vw, 2.5rem); }
+  .footer-grid > * { min-width: 0; }
+  .footer-name { display: inline-flex; flex-direction: column; align-items: flex-start; text-decoration: none; }
+  .brand-name { font-size: 2rem; font-weight: 800; line-height: 1; letter-spacing: -.055em; }
+  .brand-period { color: var(--color-primary); }
+  .brand-descriptor { font-size: .625rem; font-weight: 700; letter-spacing: .3em; margin-top: .625rem; }
+  .footer-brand p { margin-top: 1.5rem; color: var(--color-text-muted); font-size: .875rem; line-height: 1.8; }
+  .brand-story { display: inline-flex; align-items: center; min-height: 44px; margin-top: .5rem; font-size: .8125rem; text-decoration-color: #59616a; }
+  h2 { font-size: .75rem; line-height: 1.5; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 1.125rem; }
+  ul { list-style: none; padding: 0; margin: -.5rem 0 0; }
+  nav a { display: inline-flex; align-items: center; min-height: 44px; color: var(--color-text-muted); font-size: .875rem; text-decoration: none; }
+  nav a:hover { color: var(--color-text); text-decoration: underline; text-decoration-color: var(--color-primary); }
+  .footer-contact p { max-width: 32ch; font-size: .875rem; color: var(--color-text-muted); line-height: 1.8; }
+  .contact-link { display: inline-flex; align-items: center; min-height: 44px; margin-top: .75rem; color: #f1845d; font-size: .875rem; font-weight: 700; text-underline-offset: .4rem; }
+  .contact-link:hover, .brand-story:hover { color: #ffa07d; text-decoration-color: currentColor; }
+  .footer-contact .audience-note { margin-top: .5rem; font-size: .6875rem; color: #959da4; }
+  .footer-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; border-top: 1px solid var(--color-border); padding-block: 1.5rem; color: #959da4; font-size: .6875rem; }
+  .footer-brand .brand-tagline { margin-top: 1rem; font-size: .625rem; letter-spacing: .14em; }
+  .partner-credit { margin-left: auto; text-align: right; font-size: .75rem; }
+  .partner-credit a { color: var(--color-text); font-weight: 700; text-decoration-color: #59616a; }
+  .partner-credit a:hover { color: #f1845d; text-decoration-color: currentColor; }
+  @media (max-width: 47.999rem) {
+    .footer-grid { grid-template-columns: .85fr 1.15fr; gap: 2rem; }
+    .footer-brand { grid-column: 1 / -1; padding-bottom: 1.75rem; border-bottom: 1px solid var(--color-border); }
+    .footer-brand p { margin-top: 1.125rem; }
+    .footer-bottom { align-items: flex-start; flex-direction: column; }
+    .partner-credit { margin-left: 0; text-align: left; }
+  }
+  @media (max-width: 25rem) { .footer-grid { grid-template-columns: 1fr; } }
+</style>

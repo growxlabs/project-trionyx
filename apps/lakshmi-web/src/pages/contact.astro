@@ -1,0 +1,755 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Container from '../components/Container.astro';
+import Section from '../components/Section.astro';
+
+const INDIAN_STATES = [
+  'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
+  'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand',
+  'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur',
+  'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab',
+  'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura',
+  'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
+  'Andaman & Nicobar', 'Chandigarh', 'Dadra & Nagar Haveli and Daman & Diu',
+  'Delhi', 'Jammu & Kashmir', 'Ladakh', 'Lakshadweep', 'Puducherry',
+];
+---
+
+<SiteLayout
+  title="Contact Us | Lakshmi Distributions"
+  description="Get in touch with Lakshmi Distributions for trade enquiries, automotive lighting solutions, and distribution partnerships."
+>
+  <Section labelledBy="contact-heading" class="contact-section">
+    <Container>
+      <div class="contact-layout">
+        <!-- Left Column: Image-led Contact Hero Panel -->
+        <div class="contact-hero-panel">
+          <div class="contact-hero-media">
+            <img
+              src="/images/products/azoom-headlight-studio.jpg"
+              alt="Automotive LED matrix optical lighting"
+              class="contact-hero-img"
+              loading="eager"
+            />
+            <div class="contact-hero-overlay" aria-hidden="true"></div>
+          </div>
+
+          <div class="contact-hero-content">
+            <div class="contact-hero-copy">
+              <p class="eyebrow">TRADE ENQUIRIES</p>
+              <h1 id="contact-heading" class="contact-title">Connect with Lakshmi Distributions</h1>
+              <p class="contact-lead">
+                Reach out for technical specifications, stock availability, dealer and workshop fitment support, or bulk distribution requirements across South India.
+              </p>
+            </div>
+
+            <div class="contact-hero-meta">
+              <span class="meta-brand">Azoom</span>
+              <span class="meta-sep" aria-hidden="true">•</span>
+              <span class="meta-brand">Hoggon</span>
+              <span class="meta-sep" aria-hidden="true">•</span>
+              <span class="meta-tag">Automotive lighting • protection • damping</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Enquiry Form -->
+        <div class="contact-form-wrapper">
+          <div id="enquiry-success-view" class="success-banner" style="display: none;" role="status" aria-live="polite">
+            <div class="success-icon" aria-hidden="true">✓</div>
+            <h3 class="success-title">Enquiry Submitted Successfully</h3>
+            <p class="success-lead">Thank you for reaching out to Lakshmi Distributions. Your enquiry has been received and our team will contact you shortly.</p>
+            <div class="success-code-box">
+              <span class="code-label">Enquiry Reference Code:</span>
+              <span id="reference-code-display" class="code-value">TRX-ENQ-000000</span>
+            </div>
+            <button type="button" id="submit-another-btn" class="reset-button">Submit Another Enquiry</button>
+          </div>
+
+          <form id="lakshmi-contact-form" class="enquiry-form" novalidate>
+            <!-- Honeypot anti-spam field -->
+            <input type="text" name="website" id="field-website" tabindex="-1" autocomplete="off" style="position: absolute; left: -9999px; opacity: 0;" />
+
+            <div id="form-error-banner" class="form-error-banner" style="display: none;" role="alert"></div>
+
+            <div id="product-context-banner" class="product-context-box" style="display: none;">
+              <span class="product-badge">Product Selected</span>
+              <span id="product-context-title" class="product-title-text"></span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="field-fullName" class="form-label">Full Name <span class="required">*</span></label>
+                <input
+                  type="text"
+                  id="field-fullName"
+                  name="fullName"
+                  class="form-input"
+                  required
+                  placeholder="e.g. Ramesh Kumar"
+                />
+                <span class="field-error" id="err-fullName"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="field-phone" class="form-label">Phone Number <span class="required">*</span></label>
+                <input
+                  type="tel"
+                  id="field-phone"
+                  name="phone"
+                  class="form-input"
+                  required
+                  placeholder="10-digit mobile number"
+                />
+                <span class="field-error" id="err-phone"></span>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="field-email" class="form-label">Email Address <span class="required">*</span></label>
+                <input
+                  type="email"
+                  id="field-email"
+                  name="email"
+                  class="form-input"
+                  required
+                  placeholder="your.email@domain.com"
+                />
+                <span class="field-error" id="err-email"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="field-type" class="form-label">Enquiry Type <span class="required">*</span></label>
+                <select id="field-type" name="type" class="form-select" required>
+                  <option value="PRODUCT_ENQUIRY">Product Enquiry</option>
+                  <option value="DEALER_ENQUIRY">Dealer / Workshop Enquiry</option>
+                  <option value="DISTRIBUTION_ENQUIRY">Distribution Partnership</option>
+                  <option value="PRODUCT_SUPPORT">Product Support</option>
+                  <option value="GENERAL_ENQUIRY">General Enquiry</option>
+                </select>
+                <span class="field-error" id="err-type"></span>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="field-companyName" class="form-label">Company / Workshop Name</label>
+                <input
+                  type="text"
+                  id="field-companyName"
+                  name="companyName"
+                  class="form-input"
+                  placeholder="e.g. Precision Detailing Studio"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="field-state" class="form-label">State <span class="required">*</span></label>
+                <select id="field-state" name="state" class="form-select" required>
+                  <option value="">Select State</option>
+                  {INDIAN_STATES.map((state) => (
+                    <option value={state}>{state}</option>
+                  ))}
+                </select>
+                <span class="field-error" id="err-state"></span>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="field-city" class="form-label">City <span class="required">*</span></label>
+                <input
+                  type="text"
+                  id="field-city"
+                  name="city"
+                  class="form-input"
+                  required
+                  placeholder="e.g. Coimbatore"
+                />
+                <span class="field-error" id="err-city"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="field-pincode" class="form-label">Pincode <span class="required">*</span></label>
+                <input
+                  type="text"
+                  id="field-pincode"
+                  name="pincode"
+                  class="form-input"
+                  required
+                  placeholder="6-digit pincode"
+                  maxlength="6"
+                />
+                <span class="field-error" id="err-pincode"></span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="field-message" class="form-label">Message / Enquiry Details <span class="required">*</span></label>
+              <textarea
+                id="field-message"
+                name="message"
+                class="form-textarea"
+                rows="4"
+                required
+                placeholder="Please describe your requirements, vehicle models, or quantity..."
+              ></textarea>
+              <span class="field-error" id="err-message"></span>
+            </div>
+
+            <button type="submit" id="submit-button" class="submit-btn">
+              <span class="btn-text">Send Enquiry</span>
+              <span class="btn-loading" style="display: none;">Sending...</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </Container>
+  </Section>
+</SiteLayout>
+
+<script>
+  function initContactPage() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productName = urlParams.get('product');
+    const productCode = urlParams.get('code');
+
+    const productBox = document.getElementById('product-context-banner');
+    const productTitle = document.getElementById('product-context-title');
+    const messageInput = document.getElementById('field-message') as HTMLTextAreaElement | null;
+
+    if (productName && productBox && productTitle) {
+      productTitle.textContent = `${productName} (${productCode || ''})`.trim();
+      productBox.style.display = 'flex';
+      if (messageInput && !messageInput.value) {
+        messageInput.value = `I am interested in acquiring or learning more about ${productName} (Code: ${productCode || 'N/A'}). Please share availability and technical guidance.`;
+      }
+    }
+
+    const form = document.getElementById('lakshmi-contact-form') as HTMLFormElement | null;
+    const successView = document.getElementById('enquiry-success-view');
+    const referenceCodeDisplay = document.getElementById('reference-code-display');
+    const submitAnotherBtn = document.getElementById('submit-another-btn');
+    const errorBanner = document.getElementById('form-error-banner');
+    const submitBtn = document.getElementById('submit-button');
+
+    if (!form || !successView) return;
+
+    submitAnotherBtn?.addEventListener('click', () => {
+      form.reset();
+      form.style.display = 'flex';
+      successView.style.display = 'none';
+      if (errorBanner) errorBanner.style.display = 'none';
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Clear previous error messages
+      document.querySelectorAll('.field-error').forEach((el) => {
+        el.textContent = '';
+      });
+      if (errorBanner) {
+        errorBanner.style.display = 'none';
+        errorBanner.textContent = '';
+      }
+
+      const formData = new FormData(form);
+      const fullName = String(formData.get('fullName') || '').trim();
+      const phone = String(formData.get('phone') || '').trim();
+      const email = String(formData.get('email') || '').trim();
+      const type = String(formData.get('type') || '').trim();
+      const companyName = String(formData.get('companyName') || '').trim();
+      const state = String(formData.get('state') || '').trim();
+      const city = String(formData.get('city') || '').trim();
+      const pincode = String(formData.get('pincode') || '').trim();
+      const message = String(formData.get('message') || '').trim();
+      const website = String(formData.get('website') || '').trim();
+
+      let hasError = false;
+
+      function setError(fieldId: string, msg: string) {
+        const el = document.getElementById(`err-${fieldId}`);
+        if (el) el.textContent = msg;
+        hasError = true;
+      }
+
+      if (!fullName || fullName.length < 2) {
+        setError('fullName', 'Please enter your full name (at least 2 characters)');
+      }
+      const cleanPhone = phone.replace(/[^0-9+]/g, '');
+      if (!cleanPhone || cleanPhone.length < 10) {
+        setError('phone', 'Please enter a valid mobile number (at least 10 digits)');
+      }
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        setError('email', 'Please enter a valid email address');
+      }
+      if (!type) {
+        setError('type', 'Please select an enquiry type');
+      }
+      if (!state) {
+        setError('state', 'Please select your state');
+      }
+      if (!city || city.length < 2) {
+        setError('city', 'Please enter your city');
+      }
+      if (!pincode || pincode.length < 6) {
+        setError('pincode', 'Please enter a valid 6-digit pincode');
+      }
+      if (!message || message.length < 5) {
+        setError('message', 'Please provide a message or details of your requirements');
+      }
+
+      if (hasError) return;
+
+      // Determine API endpoint: Use local/relative or fallback to port 3000 in dev
+      const apiOrigin = window.location.port === '4321' ? 'http://localhost:3000' : '';
+      const endpoint = `${apiOrigin}/api/v1/public/contact-enquiries`;
+
+      const btnText = submitBtn?.querySelector('.btn-text') as HTMLElement | null;
+      const btnLoading = submitBtn?.querySelector('.btn-loading') as HTMLElement | null;
+
+      if (submitBtn) (submitBtn as HTMLButtonElement).disabled = true;
+      if (btnText) btnText.style.display = 'none';
+      if (btnLoading) btnLoading.style.display = 'inline-block';
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            type,
+            fullName,
+            phone: cleanPhone,
+            email,
+            companyName: companyName || undefined,
+            state,
+            city,
+            pincode,
+            message: productName ? `[Product: ${productName} (${productCode || 'N/A'})] ${message}` : message,
+            website, // honeypot
+          }),
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok || data.error) {
+          const errMsg = data.error?.message || 'Failed to submit enquiry. Please check your information and try again.';
+          if (errorBanner) {
+            errorBanner.textContent = errMsg;
+            errorBanner.style.display = 'block';
+          }
+          return;
+        }
+
+        const enquiryCode = data.data?.enquiryCode || 'TRX-ENQ-SUBMITTED';
+        if (referenceCodeDisplay) {
+          referenceCodeDisplay.textContent = enquiryCode;
+        }
+        form.style.display = 'none';
+        successView.style.display = 'block';
+      } catch (err) {
+        if (errorBanner) {
+          errorBanner.textContent = 'Network error connecting to the enquiry service. Please verify your connection or try again shortly.';
+          errorBanner.style.display = 'block';
+        }
+      } finally {
+        if (submitBtn) (submitBtn as HTMLButtonElement).disabled = false;
+        if (btnText) btnText.style.display = 'inline-block';
+        if (btnLoading) btnLoading.style.display = 'none';
+      }
+    });
+  }
+
+  // Initialize on load and on view transitions
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initContactPage);
+  } else {
+    initContactPage();
+  }
+  document.addEventListener('astro:page-load', initContactPage);
+</script>
+
+<style>
+  .contact-section {
+    padding-top: clamp(2.5rem, 5vw, 4rem);
+    padding-bottom: clamp(3.5rem, 7vw, 6rem);
+  }
+
+  .contact-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 0.42fr) minmax(0, 0.58fr);
+    gap: 48px;
+    align-items: stretch;
+  }
+
+  /* Left Column: Image-led Contact Hero Panel */
+  .contact-hero-panel {
+    position: relative;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: var(--border-width) solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 100%;
+    background: var(--color-surface);
+  }
+
+  .contact-hero-media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .contact-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 20%;
+    display: block;
+  }
+
+  .contact-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.18) 0%,
+      rgba(0, 0, 0, 0.42) 45%,
+      rgba(0, 0, 0, 0.82) 78%,
+      rgba(0, 0, 0, 0.95) 100%
+    );
+  }
+
+  .contact-hero-content {
+    position: relative;
+    z-index: 2;
+    padding: clamp(1.75rem, 3.5vw, 2.75rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: var(--space-5);
+  }
+
+  .contact-hero-copy {
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .eyebrow {
+    font-size: var(--font-label);
+    font-weight: var(--weight-strong);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin: 0;
+  }
+
+  .contact-title {
+    font-size: clamp(1.75rem, 1.4rem + 1.1vw, 2.35rem);
+    line-height: 1.18;
+    letter-spacing: -0.025em;
+    color: #FFFFFF;
+    margin: 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+  }
+
+  .contact-lead {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: #CBD3DA;
+    margin: 0;
+    max-width: 440px;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+  }
+
+  .contact-hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78125rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+    padding-top: var(--space-4);
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    flex-wrap: wrap;
+  }
+
+  .meta-brand {
+    color: #FFFFFF;
+    text-transform: uppercase;
+  }
+
+  .meta-sep {
+    color: var(--color-primary);
+  }
+
+  .meta-tag {
+    color: #8E98A0;
+  }
+
+  /* Form Styles */
+  .contact-form-wrapper {
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: clamp(1.5rem, 3.5vw, 2.5rem);
+  }
+
+  .enquiry-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .form-label {
+    font-size: var(--font-small);
+    font-weight: var(--weight-strong);
+    color: var(--color-text);
+  }
+
+  .required {
+    color: var(--color-primary);
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--color-background);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    font-size: var(--font-small);
+    font-family: inherit;
+    transition: border-color 0.2s;
+  }
+
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+  }
+
+  .form-select option {
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+
+  .form-textarea {
+    resize: vertical;
+    min-height: 6rem;
+  }
+
+  .field-error {
+    font-size: var(--font-label);
+    color: #FF5A5A;
+    min-height: 1.1em;
+  }
+
+  .form-error-banner {
+    background: rgba(255, 90, 90, 0.1);
+    border: var(--border-width) solid #FF5A5A;
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--font-small);
+    color: #FF8585;
+  }
+
+  .product-context-box {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    background: rgba(233, 93, 44, 0.1);
+    border: var(--border-width) solid rgba(233, 93, 44, 0.3);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    margin-bottom: var(--space-2);
+  }
+
+  .product-badge {
+    font-size: var(--font-label);
+    font-weight: var(--weight-strong);
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .product-title-text {
+    font-size: var(--font-small);
+    font-weight: var(--weight-strong);
+    color: var(--color-text);
+  }
+
+  .submit-btn {
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 0.875rem 1.75rem;
+    font-size: var(--font-small);
+    font-weight: var(--weight-strong);
+    cursor: pointer;
+    transition: background-color 0.2s, opacity 0.2s;
+    margin-top: var(--space-2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .submit-btn:hover:not(:disabled) {
+    background: var(--color-primary-hover);
+  }
+
+  .submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  /* Success Banner */
+  .success-banner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--space-6) var(--space-4);
+    gap: var(--space-4);
+  }
+
+  .success-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background: rgba(40, 167, 69, 0.15);
+    color: #48D065;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    font-weight: bold;
+  }
+
+  .success-title {
+    font-size: 1.5rem;
+    font-weight: var(--weight-strong);
+    color: var(--color-text);
+  }
+
+  .success-lead {
+    font-size: var(--font-body);
+    line-height: 1.6;
+    color: var(--color-text-muted);
+    max-width: 44ch;
+  }
+
+  .success-code-box {
+    background: var(--color-background);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin-block: var(--space-2);
+  }
+
+  .code-label {
+    font-size: var(--font-label);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .code-value {
+    font-family: monospace;
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: var(--color-primary);
+  }
+
+  .reset-button {
+    background: transparent;
+    border: var(--border-width) solid var(--color-border);
+    color: var(--color-text);
+    border-radius: var(--radius-md);
+    padding: 0.625rem 1.25rem;
+    font-size: var(--font-small);
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .reset-button:hover {
+    border-color: var(--color-primary);
+  }
+
+  @media (max-width: 63.999rem) and (min-width: 48rem) {
+    .contact-layout {
+      grid-template-columns: minmax(0, 0.4fr) minmax(0, 0.6fr);
+      gap: 32px;
+    }
+    .contact-hero-content {
+      padding: 1.75rem;
+    }
+  }
+
+  @media (max-width: 47.999rem) {
+    .contact-layout {
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+    }
+
+    .contact-hero-panel {
+      min-height: clamp(280px, 60vw, 340px);
+    }
+
+    .contact-hero-img {
+      object-position: center 25%;
+    }
+
+    .contact-hero-content {
+      padding: 1.5rem;
+      gap: var(--space-3);
+    }
+
+    .contact-title {
+      font-size: 1.5rem;
+    }
+
+    .contact-lead {
+      font-size: 0.875rem;
+      line-height: 1.55;
+    }
+
+    .form-row {
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+    }
+
+    .contact-form-wrapper {
+      padding: 1.5rem;
+    }
+  }
+</style>
