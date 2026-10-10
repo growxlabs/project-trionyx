@@ -21,6 +21,7 @@ function mapDistributorRow(row: Record<string, unknown>): Distributor {
     postalCode: row.postal_code ? String(row.postal_code) : null,
     country: String(row.country || 'India'),
     territory: row.territory ? String(row.territory) : null,
+    organizationId: row.organization_id ? String(row.organization_id) : null,
     status: row.status as DistributorStatus,
     gstin: row.gstin ? String(row.gstin) : null,
     notes: row.notes ? String(row.notes) : null,
@@ -69,6 +70,7 @@ export const distributorsRepository = {
       postalCode?: string | null;
       country?: string;
       territory?: string | null;
+      organizationId?: string | null;
       status?: DistributorStatus;
       gstin?: string | null;
       notes?: string | null;
@@ -81,14 +83,15 @@ export const distributorsRepository = {
     const now = new Date().toISOString();
     const status = data.status || 'ACTIVE';
     const country = data.country || 'India';
+    const organizationId = data.organizationId || 'org-trionyx';
 
     await client.execute({
       sql: `INSERT INTO distributors (
         id, distributor_code, business_name, legal_name, contact_person,
         phone, alternate_phone, email, address_line1, address_line2,
-        city, district, state, postal_code, country, territory,
+        city, district, state, postal_code, country, territory, organization_id,
         status, gstin, notes, created_by, updated_by, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       args: [
         id,
         code,
@@ -106,6 +109,7 @@ export const distributorsRepository = {
         data.postalCode?.trim() || null,
         country,
         data.territory?.trim() || null,
+        organizationId,
         status,
         data.gstin?.trim() || null,
         data.notes?.trim() || null,
@@ -116,16 +120,30 @@ export const distributorsRepository = {
       ],
     });
 
-    const created = await this.findById(id, client);
+    const created = await this.findById(id, undefined, client);
     if (!created) {
       throw new Error('Failed to retrieve distributor after creation');
     }
     return created;
   },
 
-  async findById(id: string, client: Client = getDbClient()): Promise<DistributorWithRelations | null> {
-    const result = await client.execute({
-      sql: `SELECT d.*,
+  async findById(
+    id: string,
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
+  ): Promise<DistributorWithRelations | null> {
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
+    let sql = `SELECT d.*,
                    u1.name as creator_name,
                    u2.name as updater_name,
                    (SELECT COUNT(*) FROM dealers WHERE distributor_id = d.id) as dealer_count,
@@ -133,9 +151,14 @@ export const distributorsRepository = {
             FROM distributors d
             LEFT JOIN users u1 ON d.created_by = u1.id
             LEFT JOIN users u2 ON d.updated_by = u2.id
-            WHERE d.id = ?`,
-      args: [id],
-    });
+            WHERE d.id = ?`;
+    const args: string[] = [id];
+    if (organizationId) {
+      sql += ' AND d.organization_id = ?';
+      args.push(organizationId);
+    }
+
+    const result = await client.execute({ sql, args });
 
     if (result.rows.length === 0) return null;
     const row = result.rows[0];
@@ -150,9 +173,23 @@ export const distributorsRepository = {
     };
   },
 
-  async findByCode(code: string, client: Client = getDbClient()): Promise<DistributorWithRelations | null> {
-    const result = await client.execute({
-      sql: `SELECT d.*,
+  async findByCode(
+    code: string,
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
+  ): Promise<DistributorWithRelations | null> {
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
+    let sql = `SELECT d.*,
                    u1.name as creator_name,
                    u2.name as updater_name,
                    (SELECT COUNT(*) FROM dealers WHERE distributor_id = d.id) as dealer_count,
@@ -160,9 +197,14 @@ export const distributorsRepository = {
             FROM distributors d
             LEFT JOIN users u1 ON d.created_by = u1.id
             LEFT JOIN users u2 ON d.updated_by = u2.id
-            WHERE d.distributor_code = ?`,
-      args: [code],
-    });
+            WHERE d.distributor_code = ?`;
+    const args: string[] = [code];
+    if (organizationId) {
+      sql += ' AND d.organization_id = ?';
+      args.push(organizationId);
+    }
+
+    const result = await client.execute({ sql, args });
 
     if (result.rows.length === 0) return null;
     const row = result.rows[0];
@@ -198,9 +240,21 @@ export const distributorsRepository = {
       notes?: string | null;
       updatedBy: string;
     },
-    client: Client = getDbClient()
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
   ): Promise<DistributorWithRelations> {
-    const existing = await this.findById(id, client);
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
+    const existing = await this.findById(id, client, organizationId);
     if (!existing) {
       throw new Error(`Distributor ${id} not found`);
     }
@@ -286,7 +340,7 @@ export const distributorsRepository = {
       args,
     });
 
-    const updated = await this.findById(id, client);
+    const updated = await this.findById(id, client, organizationId);
     if (!updated) {
       throw new Error(`Failed to find distributor ${id} after update`);
     }
@@ -297,9 +351,21 @@ export const distributorsRepository = {
     id: string,
     status: DistributorStatus,
     updatedBy: string,
-    client: Client = getDbClient()
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
   ): Promise<DistributorWithRelations> {
-    const existing = await this.findById(id, client);
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
+    const existing = await this.findById(id, client, organizationId);
     if (!existing) {
       throw new Error(`Distributor ${id} not found`);
     }
@@ -309,7 +375,7 @@ export const distributorsRepository = {
       args: [status, updatedBy, new Date().toISOString(), id],
     });
 
-    const updated = await this.findById(id, client);
+    const updated = await this.findById(id, client, organizationId);
     if (!updated) {
       throw new Error(`Distributor ${id} not found after status update`);
     }
@@ -318,6 +384,7 @@ export const distributorsRepository = {
 
   async list(
     params: {
+      organizationId?: string;
       search?: string;
       status?: DistributorStatus;
       state?: string;
@@ -337,6 +404,11 @@ export const distributorsRepository = {
 
     const whereClauses: string[] = [];
     const args: InValue[] = [];
+
+    if (params.organizationId) {
+      whereClauses.push('d.organization_id = ?');
+      args.push(params.organizationId);
+    }
 
     for (const [column, value] of [['id', params.id], ['distributor_code', params.code], ['city', params.city], ['business_name', params.exactName]] as const) {
       if (value !== undefined) {
@@ -408,13 +480,20 @@ export const distributorsRepository = {
     return { items, total, page, limit };
   },
 
-  async listAllActive(client: Client = getDbClient()): Promise<Array<{ id: string; distributorCode: string; businessName: string; city: string; state: string }>> {
-    const result = await client.execute(`
+  async listAllActive(organizationId?: string, client: Client = getDbClient()): Promise<Array<{ id: string; distributorCode: string; businessName: string; city: string; state: string }>> {
+    let sql = `
       SELECT id, distributor_code, business_name, city, state
       FROM distributors
       WHERE status = 'ACTIVE'
-      ORDER BY business_name ASC
-    `);
+    `;
+    const args: string[] = [];
+    if (organizationId) {
+      sql += ' AND organization_id = ?';
+      args.push(organizationId);
+    }
+    sql += ' ORDER BY business_name ASC';
+
+    const result = await client.execute({ sql, args });
 
     return result.rows.map((row) => ({
       id: String(row.id),

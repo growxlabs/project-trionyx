@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers';
+import { getServerActiveOrg } from '@/lib/serverOrg';
 import { AUTH_CONFIG, requireRole } from '@trionyx/auth';
 import { apiError, apiSuccess } from '@trionyx/api';
 import { getDatabaseUrl, isPostgresUrl, consumeTrixRateLimit, trixConversationsRepository } from '@trionyx/database';
@@ -45,8 +46,11 @@ async function persistTurn(
 
 /** Every gate before the agent runs. `step` wraps each one so a streamed request can show it as it happens. */
 async function prepare(request: Request, step: <T>(name: TrixProgress['toolName'], run: () => Promise<T>) => Promise<T>) {
-  const token = (await cookies()).get(AUTH_CONFIG.cookieName)?.value;
-  const auth = await step('verifyAccess', () => requireRole(['MANAGING_DIRECTOR'], token));
+  const auth = await step('verifyAccess', async () => {
+    const orgAuth = await getServerActiveOrg(request);
+    if (orgAuth.user.role !== 'MANAGING_DIRECTOR') throw new RouteError('FORBIDDEN', 'Access denied', 403);
+    return orgAuth;
+  });
   const input = await step('checkRequest', async () => {
     if (request.headers.get('origin') !== new URL(request.url).origin) throw new RouteError('FORBIDDEN', 'Access denied', 403);
     const text = await readBoundedTrixBody(request, 10000);
@@ -61,7 +65,7 @@ async function prepare(request: Request, step: <T>(name: TrixProgress['toolName'
   await step('checkLimit', async () => {
     if (!await consumeTrixRateLimit(auth.user.id, 'chat')) throw new RouteError('TRIX_RATE_LIMITED', 'Too many TRIX requests. Try again in a minute.', 429);
   });
-  return { input, context: { user: auth.user, sessionId: auth.session.id } };
+  return { input, context: { user: auth.user, sessionId: auth.session.id, activeOrg: auth.activeOrg, organizationId: auth.activeOrg.id } };
 }
 
 export async function POST(request: Request) {

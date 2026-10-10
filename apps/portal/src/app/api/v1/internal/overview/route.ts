@@ -1,18 +1,14 @@
-import { cookies } from 'next/headers';
-import { internalAuthService, internalOverviewService, apiSuccess, apiError } from '@trionyx/api';
+import { getServerActiveOrg } from '@/lib/serverOrg';
+import { internalOverviewService, apiSuccess, apiError } from '@trionyx/api';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(internalAuthService.cookieConfig.cookieName)?.value;
-    const { user } = await internalAuthService.getSession(token);
-
-    const overview = await internalOverviewService.getOverview(user);
+    const { user, activeOrg } = await getServerActiveOrg(request);
+    const overview = await internalOverviewService.getOverview(user, activeOrg.id);
     return apiSuccess(overview, 200);
   } catch (err: any) {
-    if (err.message === 'UNAUTHENTICATED' || err.code === 'UNAUTHENTICATED') {
-      return apiError('UNAUTHENTICATED', 'Not authenticated', 401);
-    }
-    return apiError('INTERNAL_ERROR', err.message || 'Failed to retrieve overview', 500);
+    const status = err.statusCode || (err.message === 'UNAUTHENTICATED' ? 401 : 500);
+    const code = err.code || (status === 401 ? 'UNAUTHENTICATED' : status === 403 ? 'FORBIDDEN' : 'INTERNAL_ERROR');
+    return apiError(code, err.message || 'Failed to retrieve overview', status);
   }
 }

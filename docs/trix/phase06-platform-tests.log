@@ -1,0 +1,78 @@
+▶ Authentication & Brute-Force Lockout
+  ✔ valid credentials authenticate successfully and return session and token (126.4305ms)
+  ✔ incorrect password returns generic safe failure error (41.3299ms)
+  ✔ unknown email returns identical generic safe failure error (no account enumeration) (2.5531ms)
+  ✔ disabled user is rejected safely (1.9927ms)
+  ✔ repeated failed login attempts trigger 15-minute account lockout on 5th attempt (252.6531ms)
+✔ Authentication & Brute-Force Lockout (574.9685ms)
+▶ Dealer Portal Production Test Suite (Step 4)
+  ✔ Invitation and Activation lifecycle (55.7919ms)
+  ✔ Authentication, invalid credentials, and 5-attempt lockout (191.5654ms)
+  ✔ Account status enforcement (DISABLED user rejected) (24.6413ms)
+  ✔ Dealer business status enforcement (INACTIVE dealership rejected) (46.8587ms)
+  ✔ Session validation, deletion, and cross-portal session isolation (33.7936ms)
+  ✔ Password change and reset workflows (179.0533ms)
+  ✔ Product availability derivation and information leakage protection (6.0829ms)
+  ✔ Dealer requests and conversation thread multi-tenancy (2.6067ms)
+✔ Dealer Portal Production Test Suite (Step 4) (614.7884ms)
+▶ Dealer & Distributor Management Production Suite
+  ✔ Distributor creation, code generation, and relations (8.6635ms)
+  ✔ Dealer creation with initial assignment and duplicate validation (3.567ms)
+  ✔ Dealer distributor reassignment with immutable audit trail (5.6256ms)
+  ✔ Dealer requests creation and lifecycle state transitions (4.451ms)
+  ✔ Internal notes creation for dealers and distributors (1.9136ms)
+  ✔ Role permissions and distributor scoping enforcement (0.3486ms)
+  ✔ Overview integration: activeDealers KPI and audit event formatting (24.1642ms)
+✔ Dealer & Distributor Management Production Suite (108.8406ms)
+▶ Internal Overview Domain Service (Step 2)
+  ✔ formatRoleLabel produces human-readable titles for all roles (0.952ms)
+  ✔ formatActivityLabel produces human-readable descriptions for audit events (0.305ms)
+  ✔ getInternalOverview returns valid structure with strictly null unbuilt metrics (31.8895ms)
+  ✔ getInternalOverview succeeds equally for DISTRIBUTOR, MANAGING_DIRECTOR, and ADMIN (2.5933ms)
+✔ Internal Overview Domain Service (Step 2) (112.8164ms)
+▶ Password Security (Argon2id)
+  ✔ generates valid Argon2id hash with standard PHC prefix (28.0384ms)
+  ✔ verifies correct password returns true (51.3828ms)
+  ✔ verifies incorrect password returns false (52.3182ms)
+  ✔ gracefully rejects empty or malformed hash without crashing (1.1093ms)
+✔ Password Security (Argon2id) (134.7407ms)
+▶ Products & Serial Number Inventory Production Suite
+  ✔ 1. Role authorization guards check correct permissions (1.1799ms)
+  ✔ 2. Product creation without SKUs or variants (2.7762ms)
+  ✔ 3. Batch receive physical serial numbers into location A (1.7599ms)
+  ✔ 4. Reject duplicate serial numbers in batch and across database (0.9087ms)
+  ✔ 5. Direct serial number lookup with full lineage and movements (1.0569ms)
+  ✔ 6. Transfer serial number from location A to location B (3.1057ms)
+  ✔ 7. Adjust serial status with mandatory audit reason (3.2413ms)
+  ✔ 8. Serial movements ledger audit history (1.312ms)
+  ✔ 9. Overview aggregates live serial inventory metrics (27.5365ms)
+✔ Products & Serial Number Inventory Production Suite (118.8186ms)
+▶ Role Authorization Foundation
+  ✔ DISTRIBUTOR, MANAGING_DIRECTOR, and ADMIN authenticate and satisfy requireInternalUser (122.7984ms)
+  ✔ DEALER user is rejected from internal portal authentication (1.2409ms)
+✔ Role Authorization Foundation (203.7502ms)
+▶ Security & Audit Event Integrity
+  ✔ authentication response never exposes passwordHash (46.9223ms)
+  ✔ audit events record LOGIN_SUCCESS and never store plaintext password or hashes (1.2645ms)
+  ✔ session invalidation terminates valid token (23.8721ms)
+✔ Security & Audit Event Integrity (140.1529ms)
+▶ Session Model & Storage
+  ✔ creates session with opaque token and SHA-256 hash in database (28.2372ms)
+  ✔ rejects non-existent or invalid session token (1.9145ms)
+  ✔ invalidateSession removes session from database (2.2217ms)
+✔ Session Model & Storage (105.5324ms)
+▶ Validation Layer
+  ✔ normalizeEmail trims whitespace and converts to lowercase (0.8221ms)
+  ✔ loginSchema accepts valid email and password (3.8541ms)
+  ✔ loginSchema rejects invalid email formats (0.7787ms)
+  ✔ loginSchema rejects missing or empty password (0.8921ms)
+  ✔ createInternalUserSchema validates role enum and minimum password length (1.5062ms)
+✔ Validation Layer (9.3481ms)
+ℹ tests 50
+ℹ suites 10
+ℹ pass 50
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11705.3103

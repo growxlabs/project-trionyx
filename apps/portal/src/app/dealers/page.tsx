@@ -3,23 +3,21 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { requireInternalUser, AUTH_CONFIG } from '@trionyx/auth';
 import { dealersRepository, distributorsRepository, ensureDatabaseReady } from '@trionyx/database';
+import { getServerActiveOrg } from '@/lib/serverOrg';
 import { InternalShell } from '../../components/shell/InternalShell';
 import { DealersTable } from './DealersTable';
 
 export const dynamic = 'force-dynamic';
 
 export default async function DealersPage() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(AUTH_CONFIG.cookieName)?.value;
-
   let authData;
   try {
-    authData = await requireInternalUser(token);
+    authData = await getServerActiveOrg();
   } catch {
     redirect('/login');
   }
 
-  const { user } = authData;
+  const { user, activeOrg } = authData;
 
   await ensureDatabaseReady();
 
@@ -31,12 +29,13 @@ export default async function DealersPage() {
 
   const [dealersRes, distributorsList] = await Promise.all([
     dealersRepository.list({
+      organizationId: activeOrg.id,
       distributorId: distributorIdScope,
       limit: 100,
     }),
     user.role === 'DISTRIBUTOR'
       ? Promise.resolve([])
-      : distributorsRepository.listAllActive(),
+      : distributorsRepository.listAllActive(activeOrg.id),
   ]);
 
   return (

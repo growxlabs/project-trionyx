@@ -1,0 +1,8 @@
+workflowRlsEnabled=true
+preparedTelemetrySupported=true
+temporary DEALER_DISTRIBUTOR_ASSIGNMENT: prepare/row-lock/confirm/idempotency passed
+temporary ENQUIRY_ASSIGNMENT: prepare/row-lock/confirm/idempotency passed
+temporary ENQUIRY_STATUS_CHANGE: prepare/row-lock/confirm/idempotency passed
+temporary INVENTORY_TRANSFER: prepare/row-lock/confirm/idempotency passed
+Temporary PostgreSQL fixture audit/logging/stale checks passed. All fixture tables drop at commit.
+Live workflow state counts only: []

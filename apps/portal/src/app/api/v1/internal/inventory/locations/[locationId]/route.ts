@@ -1,5 +1,5 @@
-import { cookies } from 'next/headers';
-import { requireInternalUser, canManageLocations, AUTH_CONFIG } from '@trionyx/auth';
+import { getServerActiveOrg } from '@/lib/serverOrg';
+import { canManageLocations } from '@trionyx/auth';
 import { inventoryService, apiSuccess, apiError } from '@trionyx/api';
 
 export async function PATCH(
@@ -8,24 +8,21 @@ export async function PATCH(
 ) {
   try {
     const { locationId } = await params;
-    const cookieStore = await cookies();
-    const token = cookieStore.get(AUTH_CONFIG.cookieName)?.value;
-    const { user } = await requireInternalUser(token);
-
+    const { user, activeOrg } = await getServerActiveOrg(request);
     if (!canManageLocations(user.role)) {
       return apiError('FORBIDDEN', 'You do not have permission to manage inventory locations', 403);
     }
 
     const body = await request.json().catch(() => ({}));
-    const updated = await inventoryService.updateLocation(locationId, body);
+    const updated = await inventoryService.updateLocation(locationId, body, activeOrg.id);
     if (!updated) {
       return apiError('NOT_FOUND', 'Location not found', 404);
     }
 
     return apiSuccess(updated, 200);
   } catch (err: any) {
-    if (err.message === 'UNAUTHENTICATED') return apiError('UNAUTHENTICATED', 'Not authenticated', 401);
-    if (err.message === 'FORBIDDEN') return apiError('FORBIDDEN', 'Access denied', 403);
-    return apiError('INTERNAL_ERROR', err.message || 'Failed to update location', 500);
+    const status = err.statusCode || (err.message === 'UNAUTHENTICATED' ? 401 : 500);
+    const code = err.code || (status === 401 ? 'UNAUTHENTICATED' : status === 403 ? 'FORBIDDEN' : 'INTERNAL_ERROR');
+    return apiError(code, err.message || 'Failed to update location', status);
   }
 }

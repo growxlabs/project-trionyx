@@ -1,4 +1,5 @@
-import type { Role, User, Session, SafeUser } from '@trionyx/types';
+import type { Role, User, Session, SafeUser, Organization, OrganizationMembership } from '@trionyx/types';
+import { organizationsRepository } from '@trionyx/database';
 import { validateSessionToken } from './session';
 import { AUTH_CONFIG } from './config';
 
@@ -168,4 +169,70 @@ export async function requireEnquiryWritePermission(
   }
   return { user, session };
 }
+
+/**
+ * Server-side active organization guard.
+ * Validates session, verifies user has access to the requested organization,
+ * or resolves their default/primary organization.
+ * 
+ * Rejects with FORBIDDEN if the user attempts to access an organization they are not a member of.
+ */
+export async function requireActiveOrganization(
+  token?: string | null,
+  options?: {
+    requestedOrgIdOrSlug?: string | null;
+  }
+): Promise<{
+  user: SafeUser;
+  session: Session;
+  activeOrg: Organization;
+  membership: OrganizationMembership;
+  memberships: OrganizationMembership[];
+}> {
+  const { user, session } = await requireInternalUser(token);
+  const memberships = await organizationsRepository.getUserMemberships(user.id);
+
+  if (memberships.length === 0) {
+    const err = new Error('FORBIDDEN: User has no organization memberships');
+    (err as any).statusCode = 403;
+    (err as any).code = 'FORBIDDEN';
+    throw err;
+  }
+
+  let activeMembership: (OrganizationMembership & { organization: Organization }) | undefined;
+
+  const requested = options?.requestedOrgIdOrSlug?.trim();
+  if (requested) {
+    activeMembership = memberships.find(
+      (m) => m.organizationId === requested || m.organization.slug.toLowerCase() === requested.toLowerCase()
+    );
+
+    if (!activeMembership) {
+      // User is not authorized for requested organization
+      const err = new Error('FORBIDDEN: User is not authorized for requested organization');
+      (err as any).statusCode = 403;
+      (err as any).code = 'FORBIDDEN';
+      throw err;
+    }
+  } else {
+    // Default to Trionyx membership or first membership
+    activeMembership = memberships.find((m) => m.organization.slug === 'trionyx') || memberships[0];
+  }
+
+  if (!activeMembership || !activeMembership.organization) {
+    const err = new Error('FORBIDDEN: Invalid active organization membership');
+    (err as any).statusCode = 403;
+    (err as any).code = 'FORBIDDEN';
+    throw err;
+  }
+
+  return {
+    user,
+    session,
+    activeOrg: activeMembership.organization,
+    membership: activeMembership,
+    memberships,
+  };
+}
+
 

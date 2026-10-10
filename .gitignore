@@ -53,3 +53,6 @@ backups/
 .agents/
 .pi/
 skills-lock.json
+
+# astro
+.astro/

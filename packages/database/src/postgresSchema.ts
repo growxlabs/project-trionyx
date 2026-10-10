@@ -1,5 +1,31 @@
 
 export const POSTGRES_TABLE_STATEMENTS: string[] = [
+  // 0. Organizations & Memberships
+  `CREATE TABLE IF NOT EXISTS organizations (
+    id TEXT PRIMARY KEY,
+    slug TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'INACTIVE')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+  );`,
+  `CREATE INDEX IF NOT EXISTS idx_organizations_slug ON organizations(slug);`,
+  `CREATE INDEX IF NOT EXISTS idx_organizations_status ON organizations(status);`,
+
+  `CREATE TABLE IF NOT EXISTS organization_memberships (
+    id TEXT PRIMARY KEY,
+    organization_id TEXT NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    role TEXT NOT NULL DEFAULT 'MANAGING_DIRECTOR',
+    status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'INACTIVE')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (organization_id, user_id)
+  );`,
+  `CREATE INDEX IF NOT EXISTS idx_org_memberships_user ON organization_memberships(user_id);`,
+  `CREATE INDEX IF NOT EXISTS idx_org_memberships_org ON organization_memberships(organization_id);`,
+  `CREATE INDEX IF NOT EXISTS idx_org_memberships_status ON organization_memberships(status);`,
+
   // 1. Users
   `CREATE TABLE IF NOT EXISTS users (
     id TEXT PRIMARY KEY,
@@ -35,6 +61,7 @@ export const POSTGRES_TABLE_STATEMENTS: string[] = [
   // 3. Audit logs
   `CREATE TABLE IF NOT EXISTS audit_logs (
     id TEXT PRIMARY KEY,
+    organization_id TEXT REFERENCES organizations(id) ON DELETE SET NULL,
     user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
     event TEXT NOT NULL,
     ip_address TEXT,
@@ -42,13 +69,16 @@ export const POSTGRES_TABLE_STATEMENTS: string[] = [
     metadata TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
   );`,
+  `CREATE INDEX IF NOT EXISTS idx_audit_logs_org ON audit_logs(organization_id);`,
   `CREATE INDEX IF NOT EXISTS idx_audit_logs_user_id ON audit_logs(user_id);`,
   `CREATE INDEX IF NOT EXISTS idx_audit_logs_event ON audit_logs(event);`,
   `CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at);`,
 
-  // 4. Product categories
-  `CREATE TABLE IF NOT EXISTS product_categories (
+  // 3b. Brands
+  `CREATE TABLE IF NOT EXISTS brands (
     id TEXT PRIMARY KEY,
+    organization_id TEXT NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    business_code TEXT NOT NULL DEFAULT 'LAKSHMI',
     name TEXT NOT NULL,
     slug TEXT NOT NULL UNIQUE,
     description TEXT,
@@ -57,12 +87,35 @@ export const POSTGRES_TABLE_STATEMENTS: string[] = [
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
   );`,
+  `CREATE INDEX IF NOT EXISTS idx_brands_org ON brands(organization_id);`,
+  `CREATE INDEX IF NOT EXISTS idx_brands_slug ON brands(slug);`,
+  `CREATE INDEX IF NOT EXISTS idx_brands_business ON brands(business_code);`,
+  `CREATE INDEX IF NOT EXISTS idx_brands_status ON brands(status);`,
+
+  // 4. Product categories
+  `CREATE TABLE IF NOT EXISTS product_categories (
+    id TEXT PRIMARY KEY,
+    organization_id TEXT REFERENCES organizations(id) ON DELETE CASCADE,
+    brand_id TEXT REFERENCES brands(id) ON DELETE SET NULL,
+    business_code TEXT NOT NULL DEFAULT 'TRIONYX',
+    name TEXT NOT NULL,
+    slug TEXT NOT NULL UNIQUE,
+    description TEXT,
+    status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'INACTIVE')),
+    sort_order INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+  );`,
+  `CREATE INDEX IF NOT EXISTS idx_product_categories_org ON product_categories(organization_id);`,
   `CREATE INDEX IF NOT EXISTS idx_product_categories_slug ON product_categories(slug);`,
   `CREATE INDEX IF NOT EXISTS idx_product_categories_status ON product_categories(status);`,
 
   // 5. Products
   `CREATE TABLE IF NOT EXISTS products (
     id TEXT PRIMARY KEY,
+    organization_id TEXT REFERENCES organizations(id) ON DELETE CASCADE,
+    business_code TEXT NOT NULL DEFAULT 'TRIONYX',
+    brand_id TEXT REFERENCES brands(id) ON DELETE SET NULL,
     product_code TEXT NOT NULL UNIQUE,
     name TEXT NOT NULL,
     slug TEXT NOT NULL UNIQUE,
@@ -77,6 +130,9 @@ export const POSTGRES_TABLE_STATEMENTS: string[] = [
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
   );`,
+  `CREATE INDEX IF NOT EXISTS idx_products_org ON products(organization_id);`,
+  `CREATE INDEX IF NOT EXISTS idx_products_business ON products(business_code);`,
+  `CREATE INDEX IF NOT EXISTS idx_products_brand ON products(brand_id);`,
   `CREATE INDEX IF NOT EXISTS idx_products_code ON products(product_code);`,
   `CREATE INDEX IF NOT EXISTS idx_products_slug ON products(slug);`,
   `CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id);`,
@@ -113,12 +169,14 @@ export const POSTGRES_TABLE_STATEMENTS: string[] = [
   // 8. Inventory locations
   `CREATE TABLE IF NOT EXISTS inventory_locations (
     id TEXT PRIMARY KEY,
+    organization_id TEXT REFERENCES organizations(id) ON DELETE CASCADE,
     code TEXT NOT NULL UNIQUE,
     name TEXT NOT NULL,
     status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'INACTIVE')),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
   );`,
+  `CREATE INDEX IF NOT EXISTS idx_inventory_locations_org ON inventory_locations(organization_id);`,
   `CREATE INDEX IF NOT EXISTS idx_inventory_locations_code ON inventory_locations(code);`,
   `CREATE INDEX IF NOT EXISTS idx_inventory_locations_status ON inventory_locations(status);`,
 
@@ -159,6 +217,7 @@ export const POSTGRES_TABLE_STATEMENTS: string[] = [
   // 11. Distributors
   `CREATE TABLE IF NOT EXISTS distributors (
     id TEXT PRIMARY KEY,
+    organization_id TEXT REFERENCES organizations(id) ON DELETE CASCADE,
     distributor_code TEXT NOT NULL UNIQUE,
     business_name TEXT NOT NULL,
     legal_name TEXT,
@@ -182,6 +241,7 @@ export const POSTGRES_TABLE_STATEMENTS: string[] = [
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
   );`,
+  `CREATE INDEX IF NOT EXISTS idx_distributors_org ON distributors(organization_id);`,
   `CREATE INDEX IF NOT EXISTS idx_distributors_code ON distributors(distributor_code);`,
   `CREATE INDEX IF NOT EXISTS idx_distributors_name ON distributors(business_name);`,
   `CREATE INDEX IF NOT EXISTS idx_distributors_status ON distributors(status);`,
@@ -192,6 +252,7 @@ export const POSTGRES_TABLE_STATEMENTS: string[] = [
   // 12. Dealers
   `CREATE TABLE IF NOT EXISTS dealers (
     id TEXT PRIMARY KEY,
+    organization_id TEXT REFERENCES organizations(id) ON DELETE CASCADE,
     dealer_code TEXT NOT NULL UNIQUE,
     business_name TEXT NOT NULL,
     legal_name TEXT,
@@ -326,6 +387,7 @@ export const POSTGRES_TABLE_STATEMENTS: string[] = [
   // 19. Contact enquiries
   `CREATE TABLE IF NOT EXISTS contact_enquiries (
     id TEXT PRIMARY KEY,
+    organization_id TEXT REFERENCES organizations(id) ON DELETE CASCADE,
     enquiry_code TEXT NOT NULL UNIQUE,
     type TEXT NOT NULL CHECK (type IN ('PRODUCT_ENQUIRY', 'DEALER_ENQUIRY', 'DISTRIBUTION_ENQUIRY', 'PRODUCT_SUPPORT', 'GENERAL_ENQUIRY')),
     full_name TEXT NOT NULL,
@@ -346,6 +408,7 @@ export const POSTGRES_TABLE_STATEMENTS: string[] = [
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
   );`,
+  `CREATE INDEX IF NOT EXISTS idx_contact_enquiries_org ON contact_enquiries(organization_id);`,
   `CREATE INDEX IF NOT EXISTS idx_contact_enquiries_code ON contact_enquiries(enquiry_code);`,
   `CREATE INDEX IF NOT EXISTS idx_contact_enquiries_type ON contact_enquiries(type);`,
   `CREATE INDEX IF NOT EXISTS idx_contact_enquiries_status ON contact_enquiries(status);`,
@@ -411,6 +474,10 @@ export const POSTGRES_TABLE_STATEMENTS: string[] = [
     ('0007_contact_enquiries'),
     ('0008_contact_enquiries_management'),
     ('0009_contact_enquiries_status_constraint'),
-    ('0010_warranties_and_policies')
+    ('0010_warranties_and_policies'),
+    ('0011_brands_and_business_scoping'),
+    ('0012_lakshmi_hoggon_categories'),
+    ('0013_azoom_gallery_media'),
+    ('0014_organizations_and_memberships')
   ON CONFLICT (name) DO NOTHING;`,
 ];

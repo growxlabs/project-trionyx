@@ -15,3 +15,6 @@ export const SAFE_AUTH_ERRORS = {
   unauthorizedRole: 'Email or password is incorrect.', // Safe error, zero role leakage
   disabledAccount: 'Email or password is incorrect.', // Safe error, zero account leakage
 } as const;
+
+export const ACTIVE_ORG_COOKIE_NAME = 'trionyx_active_org';
+export const ACTIVE_ORG_HEADER_NAME = 'x-trionyx-org-id';

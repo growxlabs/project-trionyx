@@ -20,6 +20,7 @@ function mapDealerRow(row: Record<string, unknown>): Dealer {
     state: String(row.state),
     postalCode: row.postal_code ? String(row.postal_code) : null,
     country: String(row.country || 'India'),
+    organizationId: row.organization_id ? String(row.organization_id) : null,
     distributorId: row.distributor_id ? String(row.distributor_id) : null,
     status: row.status as DealerStatus,
     gstin: row.gstin ? String(row.gstin) : null,
@@ -59,6 +60,7 @@ export const dealersRepository = {
       email?: string | null;
       gstin?: string | null;
       excludeId?: string;
+      organizationId?: string;
     },
     client: Client = getDbClient()
   ): Promise<{ duplicateField: string; existingDealerName: string } | null> {
@@ -81,6 +83,10 @@ export const dealersRepository = {
       if (params.excludeId) {
         query += ' AND id != ?';
         args.push(params.excludeId);
+      }
+      if (params.organizationId) {
+        query += ' AND organization_id = ?';
+        args.push(params.organizationId);
       }
 
       const res = await client.execute({ sql: query, args });
@@ -111,6 +117,7 @@ export const dealersRepository = {
       postalCode?: string | null;
       country?: string;
       distributorId?: string | null;
+      organizationId?: string | null;
       status?: DealerStatus;
       gstin?: string | null;
       notes?: string | null;
@@ -124,14 +131,15 @@ export const dealersRepository = {
     const status = data.status || 'ACTIVE';
     const country = data.country || 'India';
     const distributorId = data.distributorId?.trim() || null;
+    const organizationId = data.organizationId || 'org-trionyx';
 
     await client.execute({
       sql: `INSERT INTO dealers (
         id, dealer_code, business_name, legal_name, contact_person,
         phone, alternate_phone, email, address_line1, address_line2,
-        city, district, state, postal_code, country, distributor_id,
+        city, district, state, postal_code, country, distributor_id, organization_id,
         status, gstin, notes, created_by, updated_by, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       args: [
         id,
         code,
@@ -149,6 +157,7 @@ export const dealersRepository = {
         data.postalCode?.trim() || null,
         country,
         distributorId,
+        organizationId,
         status,
         data.gstin?.trim() || null,
         data.notes?.trim() || null,
@@ -169,16 +178,30 @@ export const dealersRepository = {
       });
     }
 
-    const created = await this.findById(id, client);
+    const created = await this.findById(id, undefined, client);
     if (!created) {
       throw new Error('Failed to retrieve dealer after creation');
     }
     return created;
   },
 
-  async findById(id: string, client: Client = getDbClient()): Promise<DealerWithRelations | null> {
-    const result = await client.execute({
-      sql: `SELECT dl.*,
+  async findById(
+    id: string,
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
+  ): Promise<DealerWithRelations | null> {
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
+    let sql = `SELECT dl.*,
                    dst.distributor_code as dst_code,
                    dst.business_name as dst_name,
                    dst.contact_person as dst_contact_person,
@@ -191,9 +214,14 @@ export const dealersRepository = {
             LEFT JOIN distributors dst ON dl.distributor_id = dst.id
             LEFT JOIN users u1 ON dl.created_by = u1.id
             LEFT JOIN users u2 ON dl.updated_by = u2.id
-            WHERE dl.id = ?`,
-      args: [id],
-    });
+            WHERE dl.id = ?`;
+    const args: string[] = [id];
+    if (organizationId) {
+      sql += ' AND dl.organization_id = ?';
+      args.push(organizationId);
+    }
+
+    const result = await client.execute({ sql, args });
 
     if (result.rows.length === 0) return null;
     const row = result.rows[0];
@@ -217,9 +245,23 @@ export const dealersRepository = {
     };
   },
 
-  async findByCode(code: string, client: Client = getDbClient()): Promise<DealerWithRelations | null> {
-    const result = await client.execute({
-      sql: `SELECT dl.*,
+  async findByCode(
+    code: string,
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
+  ): Promise<DealerWithRelations | null> {
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
+    let sql = `SELECT dl.*,
                    dst.distributor_code as dst_code,
                    dst.business_name as dst_name,
                    dst.contact_person as dst_contact_person,
@@ -232,9 +274,14 @@ export const dealersRepository = {
             LEFT JOIN distributors dst ON dl.distributor_id = dst.id
             LEFT JOIN users u1 ON dl.created_by = u1.id
             LEFT JOIN users u2 ON dl.updated_by = u2.id
-            WHERE dl.dealer_code = ?`,
-      args: [code],
-    });
+            WHERE dl.dealer_code = ?`;
+    const args: string[] = [code];
+    if (organizationId) {
+      sql += ' AND dl.organization_id = ?';
+      args.push(organizationId);
+    }
+
+    const result = await client.execute({ sql, args });
 
     if (result.rows.length === 0) return null;
     const row = result.rows[0];
@@ -278,9 +325,21 @@ export const dealersRepository = {
       notes?: string | null;
       updatedBy: string;
     },
-    client: Client = getDbClient()
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
   ): Promise<DealerWithRelations> {
-    const existing = await this.findById(id, client);
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
+    const existing = await this.findById(id, client, organizationId);
     if (!existing) {
       throw new Error(`Dealer ${id} not found`);
     }
@@ -362,7 +421,7 @@ export const dealersRepository = {
       args,
     });
 
-    const updated = await this.findById(id, client);
+    const updated = await this.findById(id, client, organizationId);
     if (!updated) {
       throw new Error(`Failed to find dealer ${id} after update`);
     }
@@ -373,9 +432,21 @@ export const dealersRepository = {
     id: string,
     status: DealerStatus,
     updatedBy: string,
-    client: Client = getDbClient()
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
   ): Promise<DealerWithRelations> {
-    const existing = await this.findById(id, client);
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
+    const existing = await this.findById(id, client, organizationId);
     if (!existing) {
       throw new Error(`Dealer ${id} not found`);
     }
@@ -385,7 +456,7 @@ export const dealersRepository = {
       args: [status, updatedBy, new Date().toISOString(), id],
     });
 
-    const updated = await this.findById(id, client);
+    const updated = await this.findById(id, client, organizationId);
     if (!updated) {
       throw new Error(`Dealer ${id} not found after status update`);
     }
@@ -489,6 +560,7 @@ export const dealersRepository = {
 
   async list(
     params: {
+      organizationId?: string;
       search?: string;
       status?: DealerStatus;
       state?: string;
@@ -510,6 +582,11 @@ export const dealersRepository = {
 
     const whereClauses: string[] = [];
     const args: InValue[] = [];
+
+    if (params.organizationId) {
+      whereClauses.push('dl.organization_id = ?');
+      args.push(params.organizationId);
+    }
 
     for (const [column, value] of [['id', params.id], ['dealer_code', params.code], ['city', params.city], ['business_name', params.exactName]] as const) {
       if (value !== undefined) {
@@ -606,16 +683,24 @@ export const dealersRepository = {
     return { items, total, page, limit };
   },
 
-  async countActive(distributorId?: string | null, client: Client = getDbClient()): Promise<number> {
-    if (distributorId) {
-      const res = await client.execute({
-        sql: `SELECT COUNT(*) as count FROM dealers WHERE status = 'ACTIVE' AND distributor_id = ?`,
-        args: [distributorId],
-      });
-      return Number(res.rows[0].count || 0);
+  async countActive(distributorId?: string | null, organizationId?: string, client: Client = getDbClient()): Promise<number> {
+    const whereClauses: string[] = ["status = 'ACTIVE'"];
+    const args: string[] = [];
+
+    if (organizationId) {
+      whereClauses.push('organization_id = ?');
+      args.push(organizationId);
     }
 
-    const res = await client.execute(`SELECT COUNT(*) as count FROM dealers WHERE status = 'ACTIVE'`);
+    if (distributorId) {
+      whereClauses.push('distributor_id = ?');
+      args.push(distributorId);
+    }
+
+    const res = await client.execute({
+      sql: `SELECT COUNT(*) as count FROM dealers WHERE ${whereClauses.join(' AND ')}`,
+      args,
+    });
     return Number(res.rows[0].count || 0);
   },
 };

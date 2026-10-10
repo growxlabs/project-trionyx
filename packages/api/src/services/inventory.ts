@@ -13,10 +13,10 @@ import type {
 } from '@trionyx/validation';
 
 export const inventoryService = {
-  async getOverview() {
+  async getOverview(organizationId?: string) {
     const [summaries, locations] = await Promise.all([
-      serialsRepository.listProductInventorySummaries(),
-      locationsRepository.list(),
+      serialsRepository.listProductInventorySummaries(organizationId),
+      locationsRepository.list({ organizationId }),
     ]);
 
     const totalAvailable = summaries.reduce((acc, s) => acc + s.availableCount, 0);
@@ -37,6 +37,7 @@ export const inventoryService = {
     search?: string;
     page?: number;
     pageSize?: number;
+    organizationId?: string;
   }) {
     const page = query.page || 1;
     const limit = query.pageSize || 25;
@@ -48,6 +49,7 @@ export const inventoryService = {
       search: query.search,
       page,
       limit,
+      organizationId: query.organizationId,
     });
 
     return {
@@ -60,8 +62,8 @@ export const inventoryService = {
     };
   },
 
-  async getSerialByNumber(serialNumber: string) {
-    return serialsRepository.findBySerialNumber(serialNumber);
+  async getSerialByNumber(serialNumber: string, organizationId?: string) {
+    return serialsRepository.findBySerialNumber(serialNumber, organizationId);
   },
 
   async receiveSerials(data: ReceiveSerialsInput, actorId: string) {
@@ -125,26 +127,26 @@ export const inventoryService = {
     };
   },
 
-  async listLocations() {
-    return locationsRepository.list();
+  async listLocations(filter?: { status?: 'ACTIVE' | 'INACTIVE'; organizationId?: string }) {
+    return locationsRepository.list(filter);
   },
 
-  async createLocation(data: { code: string; name: string }) {
+  async createLocation(data: { code: string; name: string; organizationId?: string | null }) {
     return locationsRepository.create(data);
   },
 
-  async updateLocation(id: string, data: { name?: string; status?: 'ACTIVE' | 'INACTIVE' }) {
-    return locationsRepository.update(id, data);
+  async updateLocation(id: string, data: { name?: string; status?: 'ACTIVE' | 'INACTIVE' }, organizationId?: string) {
+    return locationsRepository.update(id, data, organizationId);
   },
 
-  async resolveProduct(query: { productId?: string; productName?: string }) {
+  async resolveProduct(query: { productId?: string; productName?: string; organizationId?: string }) {
     if (query.productId) {
-      const p = await productsRepository.findById(query.productId);
+      const p = await productsRepository.findById(query.productId, query.organizationId);
       if (!p) return { found: false as const };
       return { found: true as const, product: p };
     }
     if (query.productName) {
-      const matches = await productsRepository.findMatching(query.productName);
+      const matches = await productsRepository.findMatching(query.productName, query.organizationId);
       if (matches.length === 0) return { found: false as const };
       if (matches.length === 1) return { found: true as const, product: matches[0] };
       // Check for exact case-insensitive match on name, slug, or code
@@ -161,14 +163,14 @@ export const inventoryService = {
     return { found: false as const };
   },
 
-  async resolveLocation(query: { locationId?: string; locationName?: string }) {
+  async resolveLocation(query: { locationId?: string; locationName?: string; organizationId?: string }) {
     if (query.locationId) {
-      const loc = await locationsRepository.findById(query.locationId);
+      const loc = await locationsRepository.findById(query.locationId, query.organizationId);
       if (!loc) return { found: false as const };
       return { found: true as const, location: loc };
     }
     if (query.locationName) {
-      const matches = await locationsRepository.findMatching(query.locationName);
+      const matches = await locationsRepository.findMatching(query.locationName, query.organizationId);
       if (matches.length === 0) return { found: false as const };
       if (matches.length === 1) return { found: true as const, location: matches[0] };
       // Check for exact case-insensitive match on name or code

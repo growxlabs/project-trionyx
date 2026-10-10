@@ -1,32 +1,24 @@
-import { cookies } from 'next/headers';
-import {
-  requireInternalUser,
-  requireProductWritePermission,
-  AUTH_CONFIG,
-} from '@trionyx/auth';
+import { getServerActiveOrg } from '@/lib/serverOrg';
 import { productsService, apiSuccess, apiError } from '@trionyx/api';
 import { updateProductSchema } from '@trionyx/validation';
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ productId: string }> }
 ) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(AUTH_CONFIG.cookieName)?.value;
-    await requireInternalUser(token);
-
+    const { activeOrg } = await getServerActiveOrg(request);
     const { productId } = await params;
-    const product = await productsService.getProductById(productId);
+    const product = await productsService.getProductById(productId, activeOrg.id);
     if (!product) {
       return apiError('NOT_FOUND', 'Product not found', 404);
     }
 
     return apiSuccess(product, 200);
   } catch (err: any) {
-    if (err.message === 'UNAUTHENTICATED') return apiError('UNAUTHENTICATED', 'Not authenticated', 401);
-    if (err.message === 'FORBIDDEN') return apiError('FORBIDDEN', 'Access denied', 403);
-    return apiError('INTERNAL_ERROR', err.message || 'Server error', 500);
+    const status = err.statusCode || (err.message === 'UNAUTHENTICATED' ? 401 : 500);
+    const code = err.code || (status === 401 ? 'UNAUTHENTICATED' : status === 403 ? 'FORBIDDEN' : 'INTERNAL_ERROR');
+    return apiError(code, err.message || 'Server error', status);
   }
 }
 
@@ -35,9 +27,10 @@ export async function PATCH(
   { params }: { params: Promise<{ productId: string }> }
 ) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(AUTH_CONFIG.cookieName)?.value;
-    const { user } = await requireProductWritePermission(token);
+    const { user, activeOrg } = await getServerActiveOrg(request);
+    if (user.role !== 'MANAGING_DIRECTOR' && user.role !== 'ADMIN') {
+      return apiError('FORBIDDEN', 'Insufficient permissions', 403);
+    }
 
     const { productId } = await params;
     const body = await request.json().catch(() => ({}));
@@ -46,12 +39,11 @@ export async function PATCH(
       return apiError('VALIDATION_ERROR', parse.error.issues[0]?.message || 'Invalid product data', 422);
     }
 
-    const updated = await productsService.updateProduct(productId, parse.data, user.id);
+    const updated = await productsService.updateProduct(productId, parse.data, user.id, activeOrg.id);
     return apiSuccess(updated, 200);
   } catch (err: any) {
-    if (err.message === 'UNAUTHENTICATED') return apiError('UNAUTHENTICATED', 'Not authenticated', 401);
-    if (err.message === 'FORBIDDEN') return apiError('FORBIDDEN', 'Insufficient permissions', 403);
-    if (err.statusCode === 404 || err.code === 'NOT_FOUND') return apiError('NOT_FOUND', 'Product not found', 404);
-    return apiError('INTERNAL_ERROR', err.message || 'Failed to update product', 500);
+    const status = err.statusCode || (err.message === 'UNAUTHENTICATED' ? 401 : 500);
+    const code = err.code || (status === 401 ? 'UNAUTHENTICATED' : status === 403 ? 'FORBIDDEN' : 'INTERNAL_ERROR');
+    return apiError(code, err.message || 'Failed to update product', status);
   }
 }

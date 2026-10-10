@@ -8,6 +8,7 @@ function mapRow(row: Record<string, unknown>): ContactEnquiry {
   return {
     id: String(row.id),
     enquiryCode: String(row.enquiry_code),
+    organizationId: row.organization_id ? String(row.organization_id) : null,
     type: row.type as ContactEnquiryType,
     fullName: String(row.full_name),
     phone: String(row.phone),
@@ -48,11 +49,13 @@ export const contactEnquiriesRepository = {
       productId?: string | null;
       purchaseDealerDetails?: string | null;
       message: string;
+      organizationId?: string | null;
     },
     client: Client = getDbClient()
   ): Promise<ContactEnquiry> {
     const id = randomUUID();
     const now = new Date().toISOString();
+    const organizationId = data.organizationId || 'org-trionyx';
 
     // Generate enquiry code: TRX-ENQ-XXXXXX
     const countResult = await client.execute('SELECT COUNT(*) as count FROM contact_enquiries');
@@ -63,9 +66,9 @@ export const contactEnquiriesRepository = {
       sql: `INSERT INTO contact_enquiries (
               id, enquiry_code, type, full_name, phone, email,
               company_name, business_address, business_type, city, state, pincode, territory,
-              product_id, purchase_dealer_details, message,
+              product_id, purchase_dealer_details, message, organization_id,
               status, assigned_to, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'NEW', NULL, ?, ?)`,
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'NEW', NULL, ?, ?)`,
       args: [
         id,
         enquiryCode,
@@ -76,13 +79,14 @@ export const contactEnquiriesRepository = {
         data.companyName || null,
         data.businessAddress || null,
         data.businessType || null,
-        data.city,
-        data.state,
-        data.pincode,
+        data.city || '',
+        data.state || '',
+        data.pincode || '',
         data.territory || null,
         data.productId || null,
         data.purchaseDealerDetails || null,
-        data.message,
+        data.message || '',
+        organizationId,
         now,
         now,
       ],
@@ -91,6 +95,7 @@ export const contactEnquiriesRepository = {
     return {
       id,
       enquiryCode,
+      organizationId,
       type: data.type,
       fullName: data.fullName,
       phone: data.phone,
@@ -114,28 +119,68 @@ export const contactEnquiriesRepository = {
     };
   },
 
-  async findById(id: string, client: Client = getDbClient()): Promise<ContactEnquiry | null> {
-    const result = await client.execute({
-      sql: `SELECT ce.*, u.name as assigned_user_name, p.name as product_name
+  async findById(
+    id: string,
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
+  ): Promise<ContactEnquiry | null> {
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
+    let sql = `SELECT ce.*, u.name as assigned_user_name, p.name as product_name
             FROM contact_enquiries ce
             LEFT JOIN users u ON ce.assigned_to = u.id
             LEFT JOIN products p ON ce.product_id = p.id
-            WHERE ce.id = ? LIMIT 1`,
-      args: [id],
-    });
+            WHERE ce.id = ?`;
+    const args: string[] = [id];
+    if (organizationId) {
+      sql += ' AND ce.organization_id = ?';
+      args.push(organizationId);
+    }
+    sql += ' LIMIT 1';
+
+    const result = await client.execute({ sql, args });
     if (result.rows.length === 0) return null;
     return mapRow(result.rows[0]);
   },
 
-  async findByCode(code: string, client: Client = getDbClient()): Promise<ContactEnquiry | null> {
-    const result = await client.execute({
-      sql: `SELECT ce.*, u.name as assigned_user_name, p.name as product_name
+  async findByCode(
+    code: string,
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
+  ): Promise<ContactEnquiry | null> {
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
+    let sql = `SELECT ce.*, u.name as assigned_user_name, p.name as product_name
             FROM contact_enquiries ce
             LEFT JOIN users u ON ce.assigned_to = u.id
             LEFT JOIN products p ON ce.product_id = p.id
-            WHERE ce.enquiry_code = ? LIMIT 1`,
-      args: [code],
-    });
+            WHERE ce.enquiry_code = ?`;
+    const args: string[] = [code];
+    if (organizationId) {
+      sql += ' AND ce.organization_id = ?';
+      args.push(organizationId);
+    }
+    sql += ' LIMIT 1';
+
+    const result = await client.execute({ sql, args });
     if (result.rows.length === 0) return null;
     return mapRow(result.rows[0]);
   },
@@ -143,35 +188,70 @@ export const contactEnquiriesRepository = {
   async updateStatus(
     id: string,
     status: ContactEnquiryStatus,
-    client: Client = getDbClient()
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
   ): Promise<ContactEnquiry | null> {
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
     const now = new Date().toISOString();
     await client.execute({
       sql: `UPDATE contact_enquiries SET status = ?, updated_at = ? WHERE id = ?`,
       args: [status, now, id],
     });
-    return this.findById(id, client);
+    return this.findById(id, client, organizationId);
   },
 
   async assign(
     id: string,
     assignedTo: string | null,
-    client: Client = getDbClient()
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
   ): Promise<ContactEnquiry | null> {
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
     const now = new Date().toISOString();
     await client.execute({
       sql: `UPDATE contact_enquiries SET assigned_to = ?, updated_at = ? WHERE id = ?`,
       args: [assignedTo || null, now, id],
     });
-    return this.findById(id, client);
+    return this.findById(id, client, organizationId);
   },
 
   async findDuplicates(
     phone: string,
     email: string,
     excludeId?: string,
-    client: Client = getDbClient()
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
   ): Promise<ContactEnquiry[]> {
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
     const cleanPhone = phone.trim();
     const cleanEmail = email.trim().toLowerCase();
 
@@ -184,6 +264,10 @@ export const contactEnquiriesRepository = {
     if (excludeId) {
       sql += ' AND ce.id != ?';
       args.push(excludeId);
+    }
+    if (organizationId) {
+      sql += ' AND ce.organization_id = ?';
+      args.push(organizationId);
     }
 
     sql += ' ORDER BY ce.created_at DESC LIMIT 10';

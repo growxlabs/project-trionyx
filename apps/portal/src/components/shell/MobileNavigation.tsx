@@ -17,6 +17,8 @@ import {
   OperationalLedgerIcon,
 } from './OperationsIcons';
 import { TrixNavIcon } from './TrixNavIcon';
+import { useActiveOrg } from './OrgContext';
+import { OrgSwitcher } from './OrgSwitcher';
 
 interface MobileNavigationProps {
   user: SafeUser;
@@ -28,6 +30,8 @@ export function MobileNavigation({ user }: MobileNavigationProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { preference, setPreference } = useThemePreference();
+  const { activeOrg } = useActiveOrg();
+  const isTrionyx = !activeOrg || activeOrg.slug === 'trionyx';
 
   const roleLabel = formatRoleLabel(user.role);
   const userInitial = user.name ? user.name.charAt(0).toUpperCase() : 'O';
@@ -66,12 +70,16 @@ export function MobileNavigation({ user }: MobileNavigationProps) {
     },
     ...(user.role !== 'DISTRIBUTOR'
       ? [
-          {
-            name: 'Warranty',
-            href: '/warranty',
-            active: pathname.startsWith('/warranty'),
-            icon: <VerifiedShieldIcon className="w-5 h-5 shrink-0" />,
-          },
+          ...(isTrionyx
+            ? [
+                {
+                  name: 'Warranty',
+                  href: '/warranty',
+                  active: pathname.startsWith('/warranty'),
+                  icon: <VerifiedShieldIcon className="w-5 h-5 shrink-0" />,
+                },
+              ]
+            : []),
           {
             name: 'Records / Logs',
             href: '/enquiries',
@@ -146,7 +154,7 @@ export function MobileNavigation({ user }: MobileNavigationProps) {
             <Image src="/brand/trionyx-logo-light.png" alt="" aria-hidden="true" width={2092} height={752} priority className="theme-logo-dark h-6 w-auto object-contain" />
           </div>
           <span className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text-secondary)] px-1.5 py-0.5 rounded bg-[var(--background)] border border-[var(--border)]">
-            Ops
+            {activeOrg?.slug === 'lakshmi' ? 'Lakshmi' : 'Trionyx'}
           </span>
         </Link>
 
@@ -167,7 +175,7 @@ export function MobileNavigation({ user }: MobileNavigationProps) {
             strokeLinejoin="round"
           >
             <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="6" y1="6" x2="21" y2="6" />
             <line x1="3" y1="18" x2="21" y2="18" />
           </svg>
           <span>Menu</span>
@@ -212,6 +220,11 @@ export function MobileNavigation({ user }: MobileNavigationProps) {
                     <line x1="6" y1="6" x2="18" y2="18" />
                   </svg>
                 </button>
+              </div>
+
+              {/* Organization Switcher */}
+              <div className="p-4 pb-0">
+                <OrgSwitcher user={user} />
               </div>
 
               {/* Navigation Items (ONLY Overview) */}

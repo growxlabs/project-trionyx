@@ -1,12 +1,9 @@
-import { cookies } from 'next/headers';
-import { requireInternalUser, AUTH_CONFIG } from '@trionyx/auth';
+import { getServerActiveOrg } from '@/lib/serverOrg';
 import { inventoryService, apiCollection, apiError } from '@trionyx/api';
 
 export async function GET(request: Request) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(AUTH_CONFIG.cookieName)?.value;
-    await requireInternalUser(token);
+    const { activeOrg } = await getServerActiveOrg(request);
 
     const { searchParams } = new URL(request.url);
     const page = searchParams.get('page') ? parseInt(searchParams.get('page')!, 10) : 1;
@@ -23,12 +20,13 @@ export async function GET(request: Request) {
       locationId,
       status,
       search,
+      organizationId: activeOrg.id,
     });
 
     return apiCollection(result.items, result.meta, 200);
   } catch (err: any) {
-    if (err.message === 'UNAUTHENTICATED') return apiError('UNAUTHENTICATED', 'Not authenticated', 401);
-    if (err.message === 'FORBIDDEN') return apiError('FORBIDDEN', 'Access denied', 403);
-    return apiError('INTERNAL_ERROR', err.message || 'Failed to list serials', 500);
+    const status = err.statusCode || (err.message === 'UNAUTHENTICATED' ? 401 : 500);
+    const code = err.code || (status === 401 ? 'UNAUTHENTICATED' : status === 403 ? 'FORBIDDEN' : 'INTERNAL_ERROR');
+    return apiError(code, err.message || 'Failed to list serials', status);
   }
 }

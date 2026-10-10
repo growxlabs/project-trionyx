@@ -61,7 +61,7 @@ export function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <SectionFrame id="faq" className={styles.section} aria-labelledby="faq-heading">
+    <SectionFrame id="faq" className={styles.section} hasBottomBorder={false} aria-labelledby="faq-heading">
       <div className={styles.layout}>
         <header className={styles.heading}>
           <SectionEyebrow>FAQ</SectionEyebrow>

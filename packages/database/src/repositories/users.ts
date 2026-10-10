@@ -118,6 +118,38 @@ export const usersRepository = {
     });
   },
 
+  async update(
+    userId: string,
+    data: {
+      name?: string;
+      role?: Role;
+      status?: UserStatus;
+      passwordHash?: string;
+      distributorId?: string | null;
+    },
+    client: Client = getDbClient()
+  ): Promise<User | null> {
+    const fields: string[] = [];
+    const args: any[] = [];
+    if (data.name !== undefined) { fields.push('name = ?'); args.push(data.name); }
+    if (data.role !== undefined) { fields.push('role = ?'); args.push(data.role); }
+    if (data.status !== undefined) { fields.push('status = ?'); args.push(data.status); }
+    if (data.passwordHash !== undefined) { fields.push('password_hash = ?'); args.push(data.passwordHash); }
+    if (data.distributorId !== undefined) { fields.push('distributor_id = ?'); args.push(data.distributorId); }
+    if (fields.length === 0) return this.findById(userId, client);
+
+    const now = new Date().toISOString();
+    fields.push('updated_at = ?');
+    args.push(now);
+    args.push(userId);
+
+    await client.execute({
+      sql: `UPDATE users SET ${fields.join(', ')} WHERE id = ?`,
+      args,
+    });
+    return this.findById(userId, client);
+  },
+
   async listInternalUsers(client: Client = getDbClient()): Promise<User[]> {
     const result = await client.execute({
       sql: `SELECT * FROM users 

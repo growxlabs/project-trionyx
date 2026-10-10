@@ -27,6 +27,7 @@ export interface ListProductsQuery {
   categoryId?: string;
   status?: ProductStatus;
   visibility?: PublicVisibility;
+  organizationId?: string;
 }
 
 export interface CreateProductInput {
@@ -38,6 +39,7 @@ export interface CreateProductInput {
   publicVisibility?: PublicVisibility;
   dealerVisibility?: boolean;
   specifications?: Array<{ label: string; value: string }>;
+  organizationId?: string | null;
 }
 
 export interface UpdateProductInput {
@@ -59,6 +61,7 @@ export const productsService = {
 
     const [items, total] = await Promise.all([
       productsRepository.list({
+        organizationId: query.organizationId,
         categoryId: query.categoryId,
         status: query.status,
         publicVisibility: query.visibility,
@@ -67,6 +70,7 @@ export const productsService = {
         offset,
       }),
       productsRepository.count({
+        organizationId: query.organizationId,
         categoryId: query.categoryId,
         status: query.status,
         publicVisibility: query.visibility,
@@ -84,14 +88,15 @@ export const productsService = {
     };
   },
 
-  async getProductById(id: string): Promise<ProductWithRelations | null> {
-    return productsRepository.findWithRelations(id);
+  async getProductById(id: string, organizationId?: string): Promise<ProductWithRelations | null> {
+    return productsRepository.findWithRelations(id, undefined, organizationId);
   },
 
   async createProduct(data: CreateProductInput, actorId: string): Promise<ProductWithRelations> {
     const slug = `${generateSlug(data.name)}-${Date.now().toString().slice(-4)}`;
 
     const created = await productsRepository.create({
+      organizationId: data.organizationId,
       name: data.name,
       slug,
       categoryId: data.categoryId,
@@ -117,11 +122,11 @@ export const productsService = {
     return full!;
   },
 
-  async updateProduct(id: string, data: UpdateProductInput, actorId: string): Promise<ProductWithRelations> {
+  async updateProduct(id: string, data: UpdateProductInput, actorId: string, organizationId?: string): Promise<ProductWithRelations> {
     const updated = await productsRepository.update(id, {
       ...data,
       updatedBy: actorId,
-    });
+    }, undefined, organizationId);
 
     if (!updated) {
       const err = new Error('Product not found');
@@ -136,16 +141,17 @@ export const productsService = {
 
     await auditLogsRepository.recordEvent({
       userId: actorId,
+      organizationId: organizationId || updated.organizationId || null,
       event: 'PRODUCT_UPDATED',
       metadata: { productId: id, updatedFields: Object.keys(data) },
     });
 
-    const full = await productsRepository.findWithRelations(id);
+    const full = await productsRepository.findWithRelations(id, undefined, organizationId);
     return full!;
   },
 
-  async archiveProduct(id: string, actorId: string): Promise<ProductWithRelations> {
-    const archived = await productsRepository.archive(id, actorId);
+  async archiveProduct(id: string, actorId: string, organizationId?: string): Promise<ProductWithRelations> {
+    const archived = await productsRepository.archive(id, actorId, undefined, organizationId);
     if (!archived) {
       const err = new Error('Product not found');
       (err as any).statusCode = 404;
@@ -154,18 +160,19 @@ export const productsService = {
     }
     await auditLogsRepository.recordEvent({
       userId: actorId,
+      organizationId: organizationId || archived.organizationId || null,
       event: 'PRODUCT_ARCHIVED',
       metadata: { productId: id },
     });
-    const full = await productsRepository.findWithRelations(id);
+    const full = await productsRepository.findWithRelations(id, undefined, organizationId);
     return full!;
   },
 
-  async restoreProduct(id: string, actorId: string): Promise<ProductWithRelations> {
+  async restoreProduct(id: string, actorId: string, organizationId?: string): Promise<ProductWithRelations> {
     const restored = await productsRepository.update(id, {
       status: 'ACTIVE',
       updatedBy: actorId,
-    });
+    }, undefined, organizationId);
     if (!restored) {
       const err = new Error('Product not found');
       (err as any).statusCode = 404;
@@ -174,29 +181,30 @@ export const productsService = {
     }
     await auditLogsRepository.recordEvent({
       userId: actorId,
+      organizationId: organizationId || restored.organizationId || null,
       event: 'PRODUCT_UPDATED',
       metadata: { productId: id, action: 'RESTORED' },
     });
-    const full = await productsRepository.findWithRelations(id);
+    const full = await productsRepository.findWithRelations(id, undefined, organizationId);
     return full!;
   },
 
-  async listCategories(): Promise<ProductCategory[]> {
-    return categoriesRepository.listAllActive();
+  async listCategories(organizationId?: string): Promise<ProductCategory[]> {
+    return categoriesRepository.listAllActive(organizationId);
   },
 
-  async createCategory(data: { name: string; description?: string | null }) {
+  async createCategory(data: { name: string; description?: string | null; organizationId?: string | null }) {
     const slug = generateSlug(data.name);
     return categoriesRepository.create({
       name: data.name,
       slug,
-      description: data.description,
-      status: 'ACTIVE',
+      description: data.description || null,
+      organizationId: data.organizationId,
     });
   },
 
-  async updateCategory(id: string, data: { name?: string; description?: string | null; status?: 'ACTIVE' | 'INACTIVE' }) {
-    return categoriesRepository.update(id, data);
+  async updateCategory(id: string, data: { name?: string; description?: string | null; status?: 'ACTIVE' | 'INACTIVE' }, organizationId?: string) {
+    return categoriesRepository.update(id, data, organizationId);
   },
 
   async deleteMedia(mediaId: string, _actorId: string) {

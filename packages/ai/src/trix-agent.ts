@@ -1,6 +1,6 @@
 import { generateText, tool, stepCountIs } from 'ai';
 import type { PreparedActionContext } from '@trionyx/api';
-import type { SafeUser } from '@trionyx/types';
+import type { SafeUser, Organization } from '@trionyx/types';
 import { randomUUID } from 'node:crypto';
 import { getModel } from './provider';
 import { TRIX_TOOLS, type ToolDefinition, type ToolResult, type TrixDependencies } from './tools/catalog';
@@ -8,7 +8,13 @@ import { requestSchema, type TrixExecution, type TrixResponse, type ActivityStep
 
 export type { TrixDependencies } from './tools/catalog';
 /** The route has already verified `user` as an active Managing Director; the agent does not re-check it. */
-export type TrixContext = { user: SafeUser; sessionId: string; onProgress?: (step: TrixProgress) => void };
+export type TrixContext = {
+  user: SafeUser;
+  sessionId: string;
+  activeOrg?: Organization;
+  organizationId?: string;
+  onProgress?: (step: TrixProgress) => void;
+};
 
 const MAX_TOOL_CALLS = 6;
 

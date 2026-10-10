@@ -10,32 +10,30 @@ import {
   serialMovementsRepository,
   ensureDatabaseReady,
 } from '@trionyx/database';
+import { getServerActiveOrg } from '@/lib/serverOrg';
 import { InternalShell } from '../../components/shell/InternalShell';
 import { InventoryTable } from './InventoryTable';
 
 export const dynamic = 'force-dynamic';
 
 export default async function InventoryPage() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(AUTH_CONFIG.cookieName)?.value;
-
   let authData;
   try {
-    authData = await requireInternalUser(token);
+    authData = await getServerActiveOrg();
   } catch {
     redirect('/login');
   }
 
-  const { user } = authData;
+  const { user, activeOrg } = authData;
 
   await ensureDatabaseReady();
 
   const [summaries, locations, categories, products, movements] = await Promise.all([
-    serialsRepository.listProductInventorySummaries(),
-    locationsRepository.list(),
-    categoriesRepository.list({ status: 'ACTIVE' }),
-    productsRepository.list({ limit: 500 }),
-    serialMovementsRepository.listWithDetails({ limit: 8 }).catch(() => []),
+    serialsRepository.listProductInventorySummaries({ organizationId: activeOrg.id }),
+    locationsRepository.list({ organizationId: activeOrg.id }),
+    categoriesRepository.list({ status: 'ACTIVE', organizationId: activeOrg.id }),
+    productsRepository.list({ limit: 500, organizationId: activeOrg.id }),
+    serialMovementsRepository.listWithDetails({ limit: 8, organizationId: activeOrg.id }).catch(() => []),
   ]);
 
   return (

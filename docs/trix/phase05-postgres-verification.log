@@ -1,0 +1,45 @@
+warranty group=status;total=1;groups=1
+warranty group=dealer;total=1;groups=1
+warranty group=product;total=1;groups=1
+warranty group=registration_period;total=1;groups=1
+warrantySampleValid=true
+Current real counts: {"inventory":{"totalSerials":1,"availableSerials":1},"dealers":{"totalDealers":5,"totalDistributors":1,"activeDealers":5,"unassignedDealers":0},"enquiries":{"total":1,"new":1,"inProgress":0,"closed":0,"unassigned":0},"warranties":{"total":1,"active":1,"expired":0,"void":0,"registeredToday":0},"attention":{"inventory":2,"dealers":0,"enquiries":0,"warranties":0},"activityCount":0}
+last7DaysEvents=7
+query-plan: Aggregate | ->  Seq Scan on warranties w
+query-plan: Aggregate | ->  HashAggregate | ->  Seq Scan on warranties w
+query-plan: Limit | ->  Sort | ->  HashAggregate | ->  Seq Scan on warranties w
+query-plan: Aggregate | ->  HashAggregate | ->  Hash Left Join | ->  Seq Scan on warranties w | ->  Hash | ->  Seq Scan on dealers d
+query-plan: Limit | ->  Sort | ->  HashAggregate | ->  Hash Left Join | ->  Seq Scan on warranties w | ->  Hash | ->  Seq Scan on dealers d
+query-plan: Aggregate | ->  HashAggregate | ->  Hash Left Join | ->  Seq Scan on warranties w | ->  Hash | ->  Seq Scan on products p
+query-plan: Limit | ->  Sort | ->  HashAggregate | ->  Hash Left Join | ->  Seq Scan on warranties w | ->  Hash | ->  Seq Scan on products p
+query-plan: Aggregate | ->  HashAggregate | ->  Seq Scan on warranties w
+query-plan: Limit | ->  Sort | ->  HashAggregate | ->  Seq Scan on warranties w
+query-plan: Limit | ->  Sort | ->  Hash Left Join | ->  Hash Left Join | ->  Hash Left Join | ->  Seq Scan on warranties w | ->  Hash | ->  Seq Scan on serial_numbers s | ->  Hash | ->  Seq Scan on products p | ->  Hash | ->  Seq Scan on dealers d
+query-plan: Sort | ->  HashAggregate | ->  Seq Scan on serial_numbers s
+query-plan: Aggregate | ->  Seq Scan on serial_numbers s
+query-plan: Aggregate | ->  Append | ->  Subquery Scan on "*SELECT* 1" | ->  Hash Right Anti Join | ->  Seq Scan on serial_numbers s | ->  Hash | ->  Index Scan using idx_products_status on products p | ->  Subquery Scan on records | ->  HashAggregate | ->  Nested Loop | ->  Seq Scan on inventory_locations l | ->  Seq Scan on serial_numbers s_1 | ->  Subquery Scan on "*SELECT* 3" | ->  Hash Anti Join | ->  Seq Scan on serial_numbers s_2 | ->  Hash | ->  Seq Scan on inventory_locations l_1
+query-plan: Limit | ->  Sort | ->  Append | ->  Hash Right Anti Join | ->  Seq Scan on serial_numbers s | ->  Hash | ->  Index Scan using idx_products_status on products p | ->  Subquery Scan on records | ->  HashAggregate | ->  Nested Loop | ->  Seq Scan on inventory_locations l | ->  Seq Scan on serial_numbers s_1 | ->  Hash Anti Join | ->  Seq Scan on serial_numbers s_2 | ->  Hash | ->  Seq Scan on inventory_locations l_1
+query-plan: Aggregate | ->  Seq Scan on dealers dl
+query-plan: Aggregate | ->  HashAggregate | ->  Seq Scan on dealers dl
+query-plan: Aggregate | ->  Seq Scan on distributors
+query-plan: Limit | ->  Sort | ->  HashAggregate | ->  Seq Scan on dealers dl
+query-plan: Aggregate | ->  HashAggregate | ->  Seq Scan on dealers dl
+query-plan: Limit | ->  Sort | ->  HashAggregate | ->  Seq Scan on dealers dl
+query-plan: Aggregate | ->  Append | ->  Subquery Scan on "*SELECT* 1" | ->  Seq Scan on dealers dl | ->  Subquery Scan on "*SELECT* 2" | ->  Nested Loop Anti Join | ->  Seq Scan on dealers dl_1 | ->  Materialize | ->  Seq Scan on distributors dst | ->  Subquery Scan on "*SELECT* 3" | ->  Nested Loop | ->  Index Scan using idx_distributors_status on distributors dst_1 | ->  Seq Scan on dealers dl_2
+query-plan: Limit | ->  Sort | ->  Append | ->  Seq Scan on dealers dl | ->  Nested Loop Anti Join | ->  Seq Scan on dealers dl_1 | ->  Materialize | ->  Seq Scan on distributors dst | ->  Nested Loop | ->  Index Scan using idx_distributors_status on distributors dst_1 | ->  Seq Scan on dealers dl_2
+query-plan: Aggregate | ->  Seq Scan on contact_enquiries ce
+query-plan: Aggregate | ->  Group | ->  Sort | ->  Seq Scan on contact_enquiries ce
+query-plan: Limit | ->  Sort | ->  HashAggregate | ->  Seq Scan on contact_enquiries ce
+query-plan: Aggregate | ->  Group | ->  Sort | ->  Seq Scan on contact_enquiries ce
+query-plan: Limit | ->  Sort | ->  HashAggregate | ->  Seq Scan on contact_enquiries ce
+query-plan: Aggregate | ->  Nested Loop Left Join | ->  Seq Scan on contact_enquiries ce | ->  Index Only Scan using users_pkey on users u
+query-plan: Limit | ->  Sort | ->  Nested Loop Left Join | ->  Seq Scan on contact_enquiries ce | ->  Index Only Scan using users_pkey on users u
+query-plan: Aggregate | ->  Seq Scan on warranties w
+query-plan: Aggregate | ->  GroupAggregate | ->  Sort | ->  Seq Scan on warranties w
+query-plan: Limit | ->  Sort | ->  GroupAggregate | ->  Sort | ->  Seq Scan on warranties w
+query-plan: Aggregate | ->  Append | ->  Subquery Scan on "*SELECT* 1" | ->  Hash Anti Join | ->  Seq Scan on warranties w | ->  Hash | ->  Seq Scan on serial_numbers s | ->  Subquery Scan on "*SELECT* 2" | ->  Hash Anti Join | ->  Seq Scan on warranties w_1 | ->  Hash | ->  Seq Scan on products p | ->  Subquery Scan on "*SELECT* 3" | ->  Hash Anti Join | ->  Seq Scan on warranties w_2 | ->  Hash | ->  Seq Scan on dealers d | ->  Subquery Scan on "*SELECT* 4" | ->  Nested Loop | ->  Seq Scan on dealers d_1 | ->  Index Scan using idx_warranties_dealer on warranties w_3 | ->  Subquery Scan on "*SELECT* 5" | ->  Nested Loop | ->  Index Scan using idx_warranties_status on warranties w_4 | ->  Index Scan using idx_warranties_status on warranties other | ->  Subquery Scan on "*SELECT* 6" | ->  Seq Scan on warranties w_5 | ->  Subquery Scan on "*SELECT* 7" | ->  Bitmap Heap Scan on warranties w_6 | ->  BitmapOr | ->  Bitmap Index Scan on idx_warranties_status | ->  Bitmap Index Scan on idx_warranties_status
+query-plan: Limit | ->  Sort | ->  Append | ->  Hash Anti Join | ->  Seq Scan on warranties w | ->  Hash | ->  Seq Scan on serial_numbers s | ->  Hash Anti Join | ->  Seq Scan on warranties w_1 | ->  Hash | ->  Seq Scan on products p | ->  Hash Anti Join | ->  Seq Scan on warranties w_2 | ->  Hash | ->  Seq Scan on dealers d | ->  Nested Loop | ->  Seq Scan on dealers d_1 | ->  Index Scan using idx_warranties_dealer on warranties w_3 | ->  Nested Loop | ->  Index Scan using idx_warranties_status on warranties w_4 | ->  Index Scan using idx_warranties_status on warranties other | ->  Seq Scan on warranties w_5 | ->  Bitmap Heap Scan on warranties w_6 | ->  BitmapOr | ->  Bitmap Index Scan on idx_warranties_status | ->  Bitmap Index Scan on idx_warranties_status
+query-plan: Aggregate | ->  Append | ->  Subquery Scan on "*SELECT* 1" | ->  Seq Scan on serial_movements | ->  Subquery Scan on "*SELECT* 2" | ->  Seq Scan on dealer_distributor_history | ->  Subquery Scan on "*SELECT* 3" | ->  Index Scan using idx_audit_logs_event on audit_logs a | ->  Subquery Scan on "*SELECT* 4" | ->  Bitmap Heap Scan on audit_logs a_1 | ->  Bitmap Index Scan on idx_audit_logs_event | ->  Subquery Scan on "*SELECT* 5" | ->  Index Scan using idx_audit_logs_event on audit_logs a_2 | ->  Subquery Scan on "*SELECT* 6" | ->  Index Scan using idx_audit_logs_event on audit_logs a_3
+query-plan: Aggregate | ->  Append | ->  Subquery Scan on "*SELECT* 1" | ->  Index Only Scan using idx_serial_movements_created on serial_movements | ->  Subquery Scan on "*SELECT* 2" | ->  Seq Scan on dealer_distributor_history | ->  Subquery Scan on "*SELECT* 3" | ->  Index Scan using idx_audit_logs_event on audit_logs a | ->  Subquery Scan on "*SELECT* 4" | ->  Bitmap Heap Scan on audit_logs a_1 | ->  Bitmap Index Scan on idx_audit_logs_event | ->  Subquery Scan on "*SELECT* 5" | ->  Index Scan using idx_audit_logs_event on audit_logs a_2 | ->  Subquery Scan on "*SELECT* 6" | ->  Index Scan using idx_audit_logs_event on audit_logs a_3
+query-plan: Limit | ->  Sort | ->  Append | ->  Seq Scan on serial_movements | ->  Seq Scan on dealer_distributor_history | ->  Index Scan using idx_audit_logs_event on audit_logs a | ->  Bitmap Heap Scan on audit_logs a_1 | ->  Bitmap Index Scan on idx_audit_logs_event | ->  Index Scan using idx_audit_logs_event on audit_logs a_2 | ->  Index Scan using idx_audit_logs_event on audit_logs a_3
+phase05TelemetrySupported=true

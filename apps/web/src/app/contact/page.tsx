@@ -143,8 +143,8 @@ export default function ContactPage() {
           </SectionFrame>
         </main>
 
+        <SiteFooter />
       </PageFrame>
-      <SiteFooter />
     </div>
   );
 }

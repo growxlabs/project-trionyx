@@ -29,11 +29,22 @@ export const serialsRepository = {
    */
   async findBySerialNumber(
     serialNumber: string,
-    client: Client = getDbClient()
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
   ): Promise<SerialNumberWithDetails | null> {
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
     const cleanSn = serialNumber.trim().toUpperCase();
-    const result = await client.execute({
-      sql: `
+    let sql = `
         SELECT
           s.*,
           p.product_code as product_code,
@@ -47,9 +58,17 @@ export const serialsRepository = {
         JOIN products p ON s.product_id = p.id
         JOIN inventory_locations l ON s.location_id = l.id
         WHERE UPPER(s.serial_number) = ?
-        LIMIT 1
-      `,
-      args: [cleanSn],
+    `;
+    const args: string[] = [cleanSn];
+    if (organizationId) {
+      sql += ' AND p.organization_id = ?';
+      args.push(organizationId);
+    }
+    sql += ' LIMIT 1';
+
+    const result = await client.execute({
+      sql,
+      args,
     });
 
     if (result.rows.length === 0) return null;
@@ -488,6 +507,7 @@ export const serialsRepository = {
 
   async list(
     filter?: {
+      organizationId?: string;
       productId?: string;
       locationId?: string;
       status?: SerialStatus;
@@ -527,6 +547,12 @@ export const serialsRepository = {
     const args: (string | number)[] = [];
     const countArgs: (string | number)[] = [];
 
+    if (filter?.organizationId) {
+      sql += ' AND p.organization_id = ?';
+      countSql += ' AND p.organization_id = ?';
+      args.push(filter.organizationId);
+      countArgs.push(filter.organizationId);
+    }
     if (filter?.productId) {
       sql += ' AND s.product_id = ?';
       countSql += ' AND s.product_id = ?';
@@ -598,12 +624,14 @@ export const serialsRepository = {
    */
   async listProductInventorySummaries(
     filter?: {
+      organizationId?: string;
       locationId?: string;
       categoryId?: string;
       search?: string;
-    },
+    } | string,
     client: Client = getDbClient()
   ): Promise<ProductInventorySummary[]> {
+    const filterObj = typeof filter === 'string' ? { organizationId: filter } : filter;
     let sql = `
       SELECT
         p.id as product_id,
@@ -627,17 +655,21 @@ export const serialsRepository = {
     `;
     const args: (string | number)[] = [];
 
-    if (filter?.locationId) {
+    if (filterObj?.organizationId) {
+      sql += ' AND p.organization_id = ?';
+      args.push(filterObj.organizationId);
+    }
+    if (filterObj?.locationId) {
       sql += ' AND s.location_id = ?';
-      args.push(filter.locationId);
+      args.push(filterObj.locationId);
     }
-    if (filter?.categoryId) {
+    if (filterObj?.categoryId) {
       sql += ' AND p.category_id = ?';
-      args.push(filter.categoryId);
+      args.push(filterObj.categoryId);
     }
-    if (filter?.search) {
+    if (filterObj?.search) {
       sql += ' AND (p.name LIKE ? OR p.product_code LIKE ? OR l.name LIKE ? OR s.serial_number LIKE ?)';
-      const term = `%${filter.search}%`;
+      const term = `%${filterObj.search}%`;
       args.push(term, term, term, term);
     }
 

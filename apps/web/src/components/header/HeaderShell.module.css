@@ -1,0 +1,22 @@
+.overlay { background: transparent; border-bottom: 1px solid rgb(255 255 255 / 16%); }
+.overlayScrolled {
+  background: rgba(18, 20, 24, 0.94) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+.overlay > div:first-child > nav a,
+.overlay > div:first-child > nav button { color: #fcfbf7; }
+.overlay > div:first-child > nav a:hover,
+.overlay > div:first-child > nav button:hover { color: #ff985f; background: rgb(255 255 255 / 8%); }
+.overlay > div:first-child > nav button[aria-expanded='true'] { color: #ff985f; }
+.overlay > div:first-child > nav svg { stroke: currentColor; }
+.overlay > div:first-child a[href='/contact'] button,
+.overlay > div:first-child button[aria-label='Open Menu'],
+.overlay > div:first-child button[aria-label='Close Menu'] { color: #fcfbf7; background: rgb(15 17 20 / 35%); border-color: rgb(255 255 255 / 35%); }
+.overlay > div:first-child a[href='/contact'] button:hover,
+.overlay > div:first-child button[aria-label='Open Menu']:hover,
+.overlay > div:first-child button[aria-label='Close Menu']:hover { background: rgb(255 255 255 / 12%); border-color: rgb(255 255 255 / 65%); }
+.overlay > div:first-child button[aria-label='Open Menu'] svg,
+.overlay > div:first-child button[aria-label='Close Menu'] svg { stroke: currentColor; }

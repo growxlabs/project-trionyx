@@ -1,0 +1,44 @@
+{
+  "advisories": {
+    "1240609": {
+      "findings": [
+        {
+          "version": "16.3.5",
+          "paths": [
+            ".>next",
+            "apps__dealer>next",
+            "apps__portal>next",
+            "apps__web>next",
+            "packages__auth>better-auth>next",
+            "packages__ui>next"
+          ],
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "id": 1240609,
+      "title": "Next.js: Remote Code Execution in next/og ImageResponse",
+      "module_name": "next",
+      "vulnerable_versions": ">=16.2.0 <16.3.6",
+      "patched_versions": ">=16.3.6",
+      "severity": "critical",
+      "cwe": "CWE-1395",
+      "github_advisory_id": "GHSA-vcvr-r3jv-pc5j",
+      "url": "https://github.com/advisories/GHSA-vcvr-r3jv-pc5j"
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 1
+    },
+    "dependencies": 112,
+    "devDependencies": 0,
+    "optionalDependencies": 98,
+    "totalDependencies": 210
+  }
+}

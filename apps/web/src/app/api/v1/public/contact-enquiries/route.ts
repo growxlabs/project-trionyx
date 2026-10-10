@@ -2,6 +2,19 @@ import { NextRequest } from 'next/server';
 import { apiSuccess, apiError, contactEnquiriesService } from '@trionyx/api';
 import { createContactEnquirySchema } from '@trionyx/validation';
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
+
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 204,
+    headers: corsHeaders,
+  });
+}
+
 // Simple in-memory rate limiter (5 submissions per IP per hour)
 const rateStore = new Map<string, { count: number; resetAt: number }>();
 const RATE_LIMIT = 5; // max requests per window
@@ -31,14 +44,14 @@ export async function POST(request: NextRequest) {
 
     // Rate limiting
     if (!checkRateLimit(clientIp)) {
-      return apiError('RATE_LIMITED', 'Too many requests. Please try again later.', 429);
+      return apiError('RATE_LIMITED', 'Too many requests. Please try again later.', 429, undefined, corsHeaders);
     }
 
     const rawBody = await request.json().catch(() => ({}));
 
     // Honeypot check — if hidden "website" field is filled, it's an automated bot
     if (rawBody.website) {
-      return apiSuccess({ enquiryCode: 'TRX-ENQ-000000' }, 201);
+      return apiSuccess({ enquiryCode: 'TRX-ENQ-000000' }, 201, corsHeaders);
     }
 
     // Explicitly pick only public-submittable fields to prevent any prototype pollution
@@ -68,7 +81,8 @@ export async function POST(request: NextRequest) {
         'VALIDATION_ERROR',
         firstIssue?.message || 'Invalid request data',
         400,
-        parsed.error.flatten().fieldErrors
+        parsed.error.flatten().fieldErrors,
+        corsHeaders
       );
     }
 
@@ -93,9 +107,9 @@ export async function POST(request: NextRequest) {
       { ipAddress: clientIp, userAgent }
     );
 
-    return apiSuccess({ enquiryCode: enquiry.enquiryCode }, 201);
+    return apiSuccess({ enquiryCode: enquiry.enquiryCode }, 201, corsHeaders);
   } catch (err) {
     console.error('[Contact Enquiry] Error:', err);
-    return apiError('INTERNAL_ERROR', 'Something went wrong. Please try again.', 500);
+    return apiError('INTERNAL_ERROR', 'Something went wrong. Please try again.', 500, undefined, corsHeaders);
   }
 }

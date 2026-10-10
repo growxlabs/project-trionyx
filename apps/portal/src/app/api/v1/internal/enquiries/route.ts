@@ -1,13 +1,13 @@
-import { cookies } from 'next/headers';
-import { requireEnquiryReadPermission, AUTH_CONFIG } from '@trionyx/auth';
+import { getServerActiveOrg } from '@/lib/serverOrg';
 import { contactEnquiriesService, apiCollection, apiError } from '@trionyx/api';
 import type { ContactEnquiryStatus, ContactEnquiryType } from '@trionyx/types';
 
 export async function GET(request: Request) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(AUTH_CONFIG.cookieName)?.value;
-    await requireEnquiryReadPermission(token);
+    const { user, activeOrg } = await getServerActiveOrg(request);
+    if (user.role !== 'MANAGING_DIRECTOR' && user.role !== 'ADMIN') {
+      return apiError('FORBIDDEN', 'Access denied', 403);
+    }
 
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || undefined;
@@ -26,6 +26,7 @@ export async function GET(request: Request) {
       assignedTo,
       page,
       limit: pageSize,
+      organizationId: activeOrg.id,
     });
 
     const meta = {
@@ -37,8 +38,8 @@ export async function GET(request: Request) {
 
     return apiCollection(result.items, meta, 200);
   } catch (err: any) {
-    if (err.message === 'UNAUTHENTICATED') return apiError('UNAUTHENTICATED', 'Not authenticated', 401);
-    if (err.message === 'FORBIDDEN') return apiError('FORBIDDEN', 'Access denied', 403);
-    return apiError('INTERNAL_ERROR', err.message || 'Failed to list enquiries', 500);
+    const status = err.statusCode || (err.message === 'UNAUTHENTICATED' ? 401 : 500);
+    const code = err.code || (status === 401 ? 'UNAUTHENTICATED' : status === 403 ? 'FORBIDDEN' : 'INTERNAL_ERROR');
+    return apiError(code, err.message || 'Failed to list enquiries', status);
   }
 }

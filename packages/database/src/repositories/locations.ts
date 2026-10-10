@@ -8,6 +8,7 @@ function mapLocationRow(row: Record<string, unknown>): InventoryLocation {
     id: String(row.id),
     code: String(row.code),
     name: String(row.name),
+    organizationId: row.organization_id ? String(row.organization_id) : null,
     status: row.status as 'ACTIVE' | 'INACTIVE',
     createdAt: String(row.created_at),
     updatedAt: String(row.updated_at),
@@ -19,6 +20,7 @@ export const locationsRepository = {
     data: {
       code: string;
       name: string;
+      organizationId?: string | null;
       status?: 'ACTIVE' | 'INACTIVE';
     },
     client: Client = getDbClient()
@@ -27,23 +29,25 @@ export const locationsRepository = {
     const now = new Date().toISOString();
     const status = data.status || 'ACTIVE';
     const cleanCode = data.code.trim().toUpperCase();
+    const organizationId = data.organizationId || 'org-trionyx';
 
-    // Check code uniqueness
-    const existing = await this.findByCode(cleanCode, client);
+    // Check code uniqueness within org
+    const existing = await this.findByCode(cleanCode, organizationId, client);
     if (existing) {
       throw new Error(`Location code "${cleanCode}" is already in use.`);
     }
 
     await client.execute({
-      sql: `INSERT INTO inventory_locations (id, code, name, status, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?)`,
-      args: [id, cleanCode, data.name.trim(), status, now, now],
+      sql: `INSERT INTO inventory_locations (id, code, name, organization_id, status, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      args: [id, cleanCode, data.name.trim(), organizationId, status, now, now],
     });
 
     return {
       id,
       code: cleanCode,
       name: data.name.trim(),
+      organizationId,
       status,
       createdAt: now,
       updatedAt: now,
@@ -56,9 +60,21 @@ export const locationsRepository = {
       name: string;
       status: 'ACTIVE' | 'INACTIVE';
     }>,
-    client: Client = getDbClient()
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
   ): Promise<InventoryLocation | null> {
-    const existing = await this.findById(id, client);
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
+    const existing = await this.findById(id, client, organizationId);
     if (!existing) return null;
 
     const name = data.name !== undefined ? data.name.trim() : existing.name;
@@ -80,31 +96,75 @@ export const locationsRepository = {
     };
   },
 
-  async findById(id: string, client: Client = getDbClient()): Promise<InventoryLocation | null> {
-    const result = await client.execute({
-      sql: 'SELECT * FROM inventory_locations WHERE id = ? LIMIT 1',
-      args: [id],
-    });
+  async findById(
+    id: string,
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
+  ): Promise<InventoryLocation | null> {
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
+    let sql = 'SELECT * FROM inventory_locations WHERE id = ?';
+    const args: string[] = [id];
+    if (organizationId) {
+      sql += ' AND organization_id = ?';
+      args.push(organizationId);
+    }
+    sql += ' LIMIT 1';
+
+    const result = await client.execute({ sql, args });
     if (result.rows.length === 0) return null;
     return mapLocationRow(result.rows[0]);
   },
 
-  async findByCode(code: string, client: Client = getDbClient()): Promise<InventoryLocation | null> {
-    const result = await client.execute({
-      sql: 'SELECT * FROM inventory_locations WHERE code = ? LIMIT 1',
-      args: [code.trim().toUpperCase()],
-    });
+  async findByCode(
+    code: string,
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
+  ): Promise<InventoryLocation | null> {
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
+    let sql = 'SELECT * FROM inventory_locations WHERE code = ?';
+    const args: string[] = [code.trim().toUpperCase()];
+    if (organizationId) {
+      sql += ' AND organization_id = ?';
+      args.push(organizationId);
+    }
+    sql += ' LIMIT 1';
+
+    const result = await client.execute({ sql, args });
     if (result.rows.length === 0) return null;
     return mapLocationRow(result.rows[0]);
   },
 
   async list(
-    filter?: { status?: 'ACTIVE' | 'INACTIVE'; search?: string },
+    filter?: { organizationId?: string; status?: 'ACTIVE' | 'INACTIVE'; search?: string },
     client: Client = getDbClient()
   ): Promise<InventoryLocation[]> {
     let sql = 'SELECT * FROM inventory_locations WHERE 1=1';
     const args: (string | number)[] = [];
 
+    if (filter?.organizationId) {
+      sql += ' AND organization_id = ?';
+      args.push(filter.organizationId);
+    }
     if (filter?.status) {
       sql += ' AND status = ?';
       args.push(filter.status);
@@ -120,25 +180,70 @@ export const locationsRepository = {
     return result.rows.map(mapLocationRow);
   },
 
-  async count(client: Client = getDbClient()): Promise<number> {
-    const result = await client.execute('SELECT COUNT(*) as count FROM inventory_locations');
+  async count(
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
+  ): Promise<number> {
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
+    let sql = 'SELECT COUNT(*) as count FROM inventory_locations';
+    const args: string[] = [];
+    if (organizationId) {
+      sql += ' WHERE organization_id = ?';
+      args.push(organizationId);
+    }
+    const result = await client.execute({ sql, args });
     return Number(result.rows[0]?.count ?? 0);
   },
 
-  async findMatching(term: string, client: Client = getDbClient()): Promise<InventoryLocation[]> {
+  async findMatching(
+    term: string,
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
+  ): Promise<InventoryLocation[]> {
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
     const clean = term.trim();
     if (!clean) return [];
-    const exact = await client.execute({
-      sql: `SELECT * FROM inventory_locations WHERE LOWER(name) = LOWER(?) OR LOWER(code) = LOWER(?)`,
-      args: [clean, clean],
-    });
+
+    let exactSql = `SELECT * FROM inventory_locations WHERE (LOWER(name) = LOWER(?) OR LOWER(code) = LOWER(?))`;
+    const exactArgs: string[] = [clean, clean];
+    if (organizationId) {
+      exactSql += ` AND organization_id = ?`;
+      exactArgs.push(organizationId);
+    }
+
+    const exact = await client.execute({ sql: exactSql, args: exactArgs });
     if (exact.rows.length > 0) return exact.rows.map(mapLocationRow);
 
     const pattern = `%${clean}%`;
-    const partial = await client.execute({
-      sql: `SELECT * FROM inventory_locations WHERE (LOWER(name) LIKE LOWER(?) OR LOWER(code) LIKE LOWER(?)) ORDER BY name ASC`,
-      args: [pattern, pattern],
-    });
+    let partialSql = `SELECT * FROM inventory_locations WHERE (LOWER(name) LIKE LOWER(?) OR LOWER(code) LIKE LOWER(?))`;
+    const partialArgs: string[] = [pattern, pattern];
+    if (organizationId) {
+      partialSql += ` AND organization_id = ?`;
+      partialArgs.push(organizationId);
+    }
+    partialSql += ` ORDER BY name ASC`;
+
+    const partial = await client.execute({ sql: partialSql, args: partialArgs });
     return partial.rows.map(mapLocationRow);
   },
 };

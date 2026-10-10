@@ -10,13 +10,18 @@ import type {
 import { getDbClient } from '../db';
 import { randomUUID } from 'crypto';
 import { categoriesRepository } from './categories';
+import { brandsRepository } from './brands';
 import { specificationsRepository } from './specifications';
 import { mediaRepository } from './media';
 
 function mapProductRow(row: Record<string, unknown>): Product {
+  const orgId = row.organization_id ? String(row.organization_id) : (row.business_code === 'LAKSHMI' ? 'org-lakshmi' : 'org-trionyx');
   return {
     id: String(row.id),
+    organizationId: orgId,
     productCode: String(row.product_code),
+    businessCode: row.business_code ? String(row.business_code) : (orgId === 'org-lakshmi' ? 'LAKSHMI' : 'TRIONYX'),
+    brandId: row.brand_id ? String(row.brand_id) : null,
     name: String(row.name),
     slug: String(row.slug),
     categoryId: String(row.category_id),
@@ -32,18 +37,19 @@ function mapProductRow(row: Record<string, unknown>): Product {
   };
 }
 
-export async function generateProductCode(client: Client = getDbClient()): Promise<string> {
+export async function generateProductCode(prefix: string = 'TRX-PROD-', client: Client = getDbClient()): Promise<string> {
   // Query existing product codes to find the highest sequence
-  const result = await client.execute(`
-    SELECT product_code FROM products
-    WHERE product_code LIKE 'TRX-PROD-%'
-    ORDER BY product_code DESC LIMIT 1
-  `);
+  const result = await client.execute({
+    sql: `SELECT product_code FROM products
+          WHERE product_code LIKE ?
+          ORDER BY product_code DESC LIMIT 1`,
+    args: [`${prefix}%`],
+  });
 
   let nextSeq = 1;
   if (result.rows.length > 0 && result.rows[0].product_code) {
     const lastCode = String(result.rows[0].product_code);
-    const numPart = lastCode.replace('TRX-PROD-', '');
+    const numPart = lastCode.replace(prefix, '');
     const parsed = parseInt(numPart, 10);
     if (!isNaN(parsed)) {
       nextSeq = parsed + 1;
@@ -51,12 +57,15 @@ export async function generateProductCode(client: Client = getDbClient()): Promi
   }
 
   const padded = String(nextSeq).padStart(6, '0');
-  return `TRX-PROD-${padded}`;
+  return `${prefix}${padded}`;
 }
 
 export const productsRepository = {
   async create(
     data: {
+      organizationId?: string | null;
+      businessCode?: 'TRIONYX' | 'LAKSHMI' | string;
+      brandId?: string | null;
       name: string;
       slug: string;
       categoryId: string;
@@ -70,7 +79,11 @@ export const productsRepository = {
     client: Client = getDbClient()
   ): Promise<Product> {
     const id = randomUUID();
-    const productCode = await generateProductCode(client);
+    const organizationId = data.organizationId || (data.businessCode === 'LAKSHMI' ? 'org-lakshmi' : 'org-trionyx');
+    const businessCode = data.businessCode || (organizationId === 'org-lakshmi' ? 'LAKSHMI' : 'TRIONYX');
+    const brandId = data.brandId || null;
+    const prefix = businessCode === 'LAKSHMI' || organizationId === 'org-lakshmi' ? 'LAK-PROD-' : 'TRX-PROD-';
+    const productCode = await generateProductCode(prefix, client);
     const now = new Date().toISOString();
     const status = data.status || 'DRAFT';
     const publicVisibility = data.publicVisibility || 'PRIVATE';
@@ -78,12 +91,15 @@ export const productsRepository = {
 
     await client.execute({
       sql: `INSERT INTO products (
-              id, product_code, name, slug, category_id, short_description,
+              id, organization_id, product_code, business_code, brand_id, name, slug, category_id, short_description,
               description, status, public_visibility, dealer_visibility, created_by, updated_by, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       args: [
         id,
+        organizationId,
         productCode,
+        businessCode,
+        brandId,
         data.name,
         data.slug,
         data.categoryId,
@@ -101,7 +117,10 @@ export const productsRepository = {
 
     return {
       id,
+      organizationId,
       productCode,
+      businessCode,
+      brandId,
       name: data.name,
       slug: data.slug,
       categoryId: data.categoryId,
@@ -130,9 +149,10 @@ export const productsRepository = {
       dealerVisibility: boolean;
       updatedBy: string | null;
     }>,
-    client: Client = getDbClient()
+    client: Client = getDbClient(),
+    organizationId?: string
   ): Promise<Product | null> {
-    const existing = await this.findById(id, client);
+    const existing = await this.findById(id, client, organizationId);
     if (!existing) return null;
 
     const name = data.name !== undefined ? data.name : existing.name;
@@ -169,42 +189,104 @@ export const productsRepository = {
     };
   },
 
-  async archive(id: string, actorId?: string | null, client: Client = getDbClient()): Promise<Product | null> {
-    return this.update(id, { status: 'ARCHIVED', updatedBy: actorId }, client);
+  async archive(id: string, actorId?: string | null, client: Client = getDbClient(), organizationId?: string): Promise<Product | null> {
+    return this.update(id, { status: 'ARCHIVED', updatedBy: actorId }, client, organizationId);
   },
 
-  async findById(id: string, client: Client = getDbClient()): Promise<Product | null> {
-    const result = await client.execute({
-      sql: 'SELECT * FROM products WHERE id = ? LIMIT 1',
-      args: [id],
-    });
+  async findById(
+    id: string,
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
+  ): Promise<Product | null> {
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
+    let sql = 'SELECT * FROM products WHERE id = ?';
+    const args: string[] = [id];
+    if (organizationId) {
+      sql += " AND (organization_id = ? OR (organization_id IS NULL AND ? = 'org-trionyx'))";
+      args.push(organizationId, organizationId);
+    }
+    sql += ' LIMIT 1';
+    const result = await client.execute({ sql, args });
     if (result.rows.length === 0) return null;
     return mapProductRow(result.rows[0]);
   },
 
-  async findByCode(productCode: string, client: Client = getDbClient()): Promise<Product | null> {
-    const result = await client.execute({
-      sql: 'SELECT * FROM products WHERE product_code = ? LIMIT 1',
-      args: [productCode],
-    });
+  async findByCode(
+    productCode: string,
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
+  ): Promise<Product | null> {
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
+    let sql = 'SELECT * FROM products WHERE product_code = ?';
+    const args: string[] = [productCode];
+    if (organizationId) {
+      sql += " AND (organization_id = ? OR (organization_id IS NULL AND ? = 'org-trionyx'))";
+      args.push(organizationId, organizationId);
+    }
+    sql += ' LIMIT 1';
+    const result = await client.execute({ sql, args });
     if (result.rows.length === 0) return null;
     return mapProductRow(result.rows[0]);
   },
 
-  async findBySlug(slug: string, client: Client = getDbClient()): Promise<Product | null> {
-    const result = await client.execute({
-      sql: 'SELECT * FROM products WHERE slug = ? LIMIT 1',
-      args: [slug],
-    });
+  async findBySlug(slug: string, orgIdOrBusinessCode?: string, client: Client = getDbClient()): Promise<Product | null> {
+    let sql = 'SELECT * FROM products WHERE slug = ?';
+    const args: string[] = [slug];
+    if (orgIdOrBusinessCode) {
+      if (orgIdOrBusinessCode === 'LAKSHMI' || orgIdOrBusinessCode === 'org-lakshmi' || orgIdOrBusinessCode === 'lakshmi') {
+        sql += " AND (organization_id = 'org-lakshmi' OR business_code = 'LAKSHMI')";
+      } else {
+        sql += " AND (organization_id = 'org-trionyx' OR business_code = 'TRIONYX' OR organization_id IS NULL)";
+      }
+    }
+    sql += ' LIMIT 1';
+
+    const result = await client.execute({ sql, args });
     if (result.rows.length === 0) return null;
     return mapProductRow(result.rows[0]);
   },
 
-  async findWithRelations(id: string, client: Client = getDbClient()): Promise<ProductWithRelations | null> {
-    const product = await this.findById(id, client);
+  async findWithRelations(
+    id: string,
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
+  ): Promise<ProductWithRelations | null> {
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
+    const product = await this.findById(id, client, organizationId);
     if (!product) return null;
 
-    const [category, specifications, media] = await Promise.all([
+    const [brand, category, specifications, media] = await Promise.all([
+      product.brandId ? brandsRepository.findById(product.brandId, client) : Promise.resolve(null),
       categoriesRepository.findById(product.categoryId, client),
       specificationsRepository.listByProduct(product.id, client),
       mediaRepository.listByProduct(product.id, client),
@@ -212,14 +294,24 @@ export const productsRepository = {
 
     return {
       ...product,
+      brand: brand || undefined,
       category: category || undefined,
       specifications,
       media,
     };
   },
 
+  async findBySlugWithRelations(slug: string, orgIdOrBusinessCode?: string, client: Client = getDbClient()): Promise<ProductWithRelations | null> {
+    const product = await this.findBySlug(slug, orgIdOrBusinessCode, client);
+    if (!product) return null;
+    return this.findWithRelations(product.id, client, product.organizationId || undefined);
+  },
+
   async list(
     filter?: {
+      organizationId?: string;
+      businessCode?: string;
+      brandId?: string;
       categoryId?: string;
       status?: ProductStatus;
       publicVisibility?: PublicVisibility;
@@ -233,6 +325,18 @@ export const productsRepository = {
     const args: (string | number)[] = [];
     const conditions: string[] = [];
 
+    if (filter?.organizationId) {
+      conditions.push("(p.organization_id = ? OR (p.organization_id IS NULL AND ? = 'org-trionyx'))");
+      args.push(filter.organizationId, filter.organizationId);
+    } else if (filter?.businessCode) {
+      conditions.push('p.business_code = ?');
+      args.push(filter.businessCode);
+    }
+
+    if (filter?.brandId) {
+      conditions.push('p.brand_id = ?');
+      args.push(filter.brandId);
+    }
     if (filter?.categoryId) {
       conditions.push('p.category_id = ?');
       args.push(filter.categoryId);
@@ -277,6 +381,9 @@ export const productsRepository = {
 
   async count(
     filter?: {
+      organizationId?: string;
+      businessCode?: string;
+      brandId?: string;
       categoryId?: string;
       status?: ProductStatus;
       publicVisibility?: PublicVisibility;
@@ -288,6 +395,18 @@ export const productsRepository = {
     const args: (string | number)[] = [];
     const conditions: string[] = [];
 
+    if (filter?.organizationId) {
+      conditions.push("(p.organization_id = ? OR (p.organization_id IS NULL AND ? = 'org-trionyx'))");
+      args.push(filter.organizationId, filter.organizationId);
+    } else if (filter?.businessCode) {
+      conditions.push('p.business_code = ?');
+      args.push(filter.businessCode);
+    }
+
+    if (filter?.brandId) {
+      conditions.push('p.brand_id = ?');
+      args.push(filter.brandId);
+    }
     if (filter?.categoryId) {
       conditions.push('p.category_id = ?');
       args.push(filter.categoryId);
@@ -465,20 +584,43 @@ export const productsRepository = {
     };
   },
 
-  async findMatching(term: string, client: Client = getDbClient()): Promise<Product[]> {
+  async findMatching(
+    term: string,
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
+  ): Promise<Product[]> {
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
     const clean = term.trim();
     if (!clean) return [];
-    const exact = await client.execute({
-      sql: `SELECT * FROM products WHERE LOWER(name) = LOWER(?) OR LOWER(slug) = LOWER(?) OR LOWER(product_code) = LOWER(?)`,
-      args: [clean, clean, clean],
-    });
+
+    let exactSql = `SELECT * FROM products WHERE (LOWER(name) = LOWER(?) OR LOWER(slug) = LOWER(?) OR LOWER(product_code) = LOWER(?))`;
+    const exactArgs: string[] = [clean, clean, clean];
+    if (organizationId) {
+      exactSql += " AND (organization_id = ? OR (organization_id IS NULL AND ? = 'org-trionyx'))";
+      exactArgs.push(organizationId, organizationId);
+    }
+    const exact = await client.execute({ sql: exactSql, args: exactArgs });
     if (exact.rows.length > 0) return exact.rows.map(mapProductRow);
 
     const pattern = `%${clean}%`;
-    const partial = await client.execute({
-      sql: `SELECT * FROM products WHERE (LOWER(name) LIKE LOWER(?) OR LOWER(slug) LIKE LOWER(?) OR LOWER(product_code) LIKE LOWER(?)) ORDER BY name ASC`,
-      args: [pattern, pattern, pattern],
-    });
+    let partialSql = `SELECT * FROM products WHERE (LOWER(name) LIKE LOWER(?) OR LOWER(slug) LIKE LOWER(?) OR LOWER(product_code) LIKE LOWER(?))`;
+    const partialArgs: string[] = [pattern, pattern, pattern];
+    if (organizationId) {
+      partialSql += " AND (organization_id = ? OR (organization_id IS NULL AND ? = 'org-trionyx'))";
+      partialArgs.push(organizationId, organizationId);
+    }
+    partialSql += ' ORDER BY name ASC';
+    const partial = await client.execute({ sql: partialSql, args: partialArgs });
     return partial.rows.map(mapProductRow);
   },
 };

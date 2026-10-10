@@ -7,6 +7,7 @@ function mapAuditLogRow(row: Record<string, unknown>): AuditLog {
   return {
     id: String(row.id),
     userId: row.user_id ? String(row.user_id) : null,
+    organizationId: row.organization_id ? String(row.organization_id) : null,
     event: row.event as AuditEvent,
     ipAddress: row.ip_address ? String(row.ip_address) : null,
     userAgent: row.user_agent ? String(row.user_agent) : null,
@@ -19,6 +20,7 @@ export const auditLogsRepository = {
   async recordEvent(
     data: {
       userId?: string | null;
+      organizationId?: string | null;
       event: AuditEvent;
       ipAddress?: string | null;
       userAgent?: string | null;
@@ -34,14 +36,15 @@ export const auditLogsRepository = {
         : (data.metadata as string | null) || null;
 
     await client.execute({
-      sql: `INSERT INTO audit_logs (id, user_id, event, ip_address, user_agent, metadata, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      args: [id, data.userId || null, data.event, data.ipAddress || null, data.userAgent || null, metaStr, now],
+      sql: `INSERT INTO audit_logs (id, user_id, organization_id, event, ip_address, user_agent, metadata, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: [id, data.userId || null, data.organizationId || null, data.event, data.ipAddress || null, data.userAgent || null, metaStr, now],
     });
 
     return {
       id,
       userId: data.userId || null,
+      organizationId: data.organizationId || null,
       event: data.event,
       ipAddress: data.ipAddress || null,
       userAgent: data.userAgent || null,
@@ -53,6 +56,7 @@ export const auditLogsRepository = {
   async list(
     filter?: {
       userId?: string;
+      organizationId?: string;
       event?: AuditEvent;
       limit?: number;
     },
@@ -61,6 +65,10 @@ export const auditLogsRepository = {
     let sql = 'SELECT * FROM audit_logs WHERE 1=1';
     const args: (string | number)[] = [];
 
+    if (filter?.organizationId) {
+      sql += ' AND organization_id = ?';
+      args.push(filter.organizationId);
+    }
     if (filter?.userId) {
       sql += ' AND user_id = ?';
       args.push(filter.userId);
