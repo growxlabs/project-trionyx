@@ -17,7 +17,7 @@ export interface Testimonial {
 
 /**
  * Editorial Testimonial Sequence (Wispr Flow Deck Interaction)
- * 
+ *
  * IMPORTANT:
  * Per client review guidelines, these entries represent structured development placeholders
  * showcasing optical lighting retrofits, workshop installation feedback, and dealer distribution support.
