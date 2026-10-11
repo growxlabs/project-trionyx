@@ -11,8 +11,8 @@ const { items = faqs } = Astro.props;
 ---
 
 <Section labelledBy="faq-title" class="faq-section" data-faq-section>
-  <Container>
-    <div class="faq-container">
+  <Container class="faq-container">
+    <div class="faq-layout">
       <div class="faq-header stack">
         <p class="eyebrow">FAQ</p>
         <h2 id="faq-title">Frequently asked questions</h2>
@@ -73,20 +73,31 @@ const { items = faqs } = Astro.props;
 <style>
   :global(.faq-section) {
     border-top: var(--border-width) solid var(--color-border);
-    padding-block: clamp(4.5rem, 7vw, 7rem);
+    padding-top: 96px;
+    padding-bottom: 96px;
     background: var(--color-background);
   }
 
   .faq-container {
-    max-width: 840px;
-    margin-inline: auto;
+    width: 100%;
+    max-width: 1320px;
+    margin: 0 auto;
+  }
+
+  .faq-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 0.34fr) minmax(0, 0.66fr);
+    gap: 72px;
+    align-items: start;
     width: 100%;
   }
 
   .faq-header {
     text-align: left;
-    margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
-    max-width: 58ch;
+    max-width: 420px;
+    position: sticky;
+    top: 140px;
+    align-self: start;
   }
 
   .eyebrow {
@@ -119,6 +130,7 @@ const { items = faqs } = Astro.props;
     display: flex;
     flex-direction: column;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
+    width: 100%;
   }
 
   .faq-item {
@@ -142,7 +154,7 @@ const { items = faqs } = Astro.props;
     background: transparent;
     border: none;
     width: 100%;
-    padding: clamp(1.125rem, 2vw, 1.35rem) 0;
+    padding: 26px 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -228,11 +240,37 @@ const { items = faqs } = Astro.props;
 
   .faq-answer {
     margin: 0;
-    padding-bottom: clamp(1.125rem, 2vw, 1.4rem);
+    padding-bottom: 26px;
     font-size: clamp(0.925rem, 0.98vw, 1rem);
     line-height: 1.7;
     color: #9aa7b1;
-    max-width: 68ch;
+    max-width: 72ch;
+  }
+
+  @media (max-width: 768px) {
+    :global(.faq-section) {
+      padding-top: 64px;
+      padding-bottom: 64px;
+    }
+
+    .faq-layout {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+
+    .faq-header {
+      position: static;
+      top: auto;
+      max-width: 100%;
+    }
+
+    .faq-trigger {
+      padding: 20px 0;
+    }
+
+    .faq-answer {
+      padding-bottom: 20px;
+    }
   }
 </style>
 
