@@ -1,0 +1,493 @@
+---
+interface BannerSlide {
+  id: string;
+  tag: string;
+  title: string;
+  description: string;
+  ctaText: string;
+  href: string;
+  image: string;
+  alt: string;
+}
+
+const slides: BannerSlide[] = [
+  {
+    id: 'paint-protection',
+    tag: 'PAINT PROTECTION FILM',
+    title: 'Get unmatched paint protection with an unbeatable warranty',
+    description: 'Choose high-grade Paint Protection Films for best-in-class scratch resistance, self-healing performance, and enduring warranty.',
+    ctaText: 'Got queries? Contact Us',
+    href: '/contact',
+    image: '/images/banners/protection-outdoor.png',
+    alt: 'Luxury vehicle with clear glossy paint protection film in an outdoor landscape',
+  },
+  {
+    id: 'window-film',
+    tag: 'CERAMIC WINDOW FILM',
+    title: 'Superior heat rejection and clarity for every drive',
+    description: 'High-performance nano-ceramic sun control films engineered for optimal optical clarity, maximum UV defense, and cooler cabin comfort.',
+    ctaText: 'Explore Ceramic Film',
+    href: '/products?category=sun-control-ceramic-window-film',
+    image: '/images/banners/window-outdoor.png',
+    alt: 'Modern SUV with ceramic sun control tinted windows in a scenic mountain backdrop',
+  },
+  {
+    id: 'led-lamps',
+    tag: 'AUTOMOTIVE LIGHTING',
+    title: 'Razor-sharp beam cutoff with maximum night illumination',
+    description: 'Precision engineered bi-LED and laser projector lighting delivering superior lux output with zero glare for oncoming drivers.',
+    ctaText: 'Explore LED Lamps',
+    href: '/products?category=led-lamps',
+    image: '/images/banners/led-outdoor.png',
+    alt: 'Performance automobile featuring precision high-output LED matrix projector headlights',
+  },
+  {
+    id: 'sound-damping',
+    tag: 'ACOUSTIC DAMPING',
+    title: 'Eliminate road noise and elevate cabin acoustic comfort',
+    description: 'Multi-layered vibration damping sheets engineered for premium audio isolation and structural resonance reduction.',
+    ctaText: 'Explore Sound Damping',
+    href: '/products?category=shumoff-damping',
+    image: '/images/banners/sound-damping.png',
+    alt: 'Automotive vibration damping sheets and acoustic isolation components',
+  },
+];
+---
+
+<category-banners
+  class="category-hero-banner"
+  aria-label="Featured automotive categories"
+  role="region"
+  aria-roledescription="carousel"
+>
+  <div class="banner-track" tabindex="0">
+    {slides.map((slide, index) => (
+      <article
+        class="banner-slide"
+        aria-label={`${index + 1} of ${slides.length}: ${slide.title}`}
+        aria-roledescription="slide"
+        data-slide-index={index}
+      >
+        <img
+          src={slide.image}
+          alt={slide.alt}
+          width="1536"
+          height="1024"
+          loading={index === 0 ? 'eager' : 'lazy'}
+          decoding={index === 0 ? 'sync' : 'async'}
+          class="banner-img"
+        />
+        <div class="banner-scrim" aria-hidden="true"></div>
+        <div class="banner-copy">
+          <p class="banner-eyebrow">{slide.tag}</p>
+          <h2 class="banner-title">{slide.title}</h2>
+          <p class="banner-desc">{slide.description}</p>
+          <div class="banner-actions">
+            <a href={slide.href} class="banner-btn" aria-label={`${slide.ctaText}: ${slide.title}`}>
+              {slide.ctaText}
+              <span class="btn-arrow" aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
+      </article>
+    ))}
+  </div>
+
+  <!-- Navigation Chevron Buttons -->
+  <button type="button" class="banner-nav banner-prev" aria-label="Previous slide">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+  </button>
+  <button type="button" class="banner-nav banner-next" aria-label="Next slide">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </button>
+
+  <!-- Pagination Indicators -->
+  <div class="banner-dots" role="tablist" aria-label="Slide indicators">
+    {slides.map((_, i) => (
+      <button
+        type="button"
+        role="tab"
+        class={`dot ${i === 0 ? 'active' : ''}`}
+        aria-selected={i === 0 ? 'true' : 'false'}
+        aria-label={`Go to slide ${i + 1}`}
+        data-dot-index={i}
+      ></button>
+    ))}
+  </div>
+</category-banners>
+
+<style>
+  category-banners {
+    display: block;
+    position: relative;
+    width: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+    isolation: isolate;
+    background: #0B0D0F;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  }
+
+  .banner-track {
+    display: flex;
+    width: 100%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  .banner-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .banner-slide {
+    position: relative;
+    flex: 0 0 100%;
+    width: 100%;
+    min-height: clamp(340px, 30vw, 420px);
+    overflow: hidden;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+  }
+
+  .banner-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 72% center;
+    z-index: -2;
+  }
+
+  /* Dark Scrim matching 3M reference: rich dark overlay on the left, clear view of the vehicle on the right */
+  .banner-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+      90deg,
+      rgba(9, 11, 13, 0.94) 0%,
+      rgba(9, 11, 13, 0.88) 38%,
+      rgba(9, 11, 13, 0.45) 62%,
+      rgba(9, 11, 13, 0.08) 85%,
+      transparent 100%
+    );
+    pointer-events: none;
+  }
+
+  .banner-copy {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: clamp(32px, 5vw, 64px);
+    max-width: 660px;
+    box-sizing: border-box;
+    gap: 12px;
+  }
+
+  .banner-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-primary, #E95D2C);
+    margin: 0;
+  }
+
+  .banner-title {
+    margin: 0;
+    font-size: clamp(1.75rem, 2.5vw, 2.45rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    color: #FFFFFF;
+    max-width: 22ch;
+  }
+
+  .banner-desc {
+    margin: 0;
+    font-size: clamp(0.9rem, 1.1vw, 1.05rem);
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.85);
+    max-width: 44ch;
+  }
+
+  .banner-actions {
+    margin-top: 8px;
+  }
+
+  /* High contrast solid button matching 3M reference */
+  .banner-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 26px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-radius: 6px;
+    color: #0B0D0F;
+    background: #FFFFFF;
+    text-decoration: none;
+    transition: background 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  }
+
+  .banner-btn:hover {
+    background: var(--color-primary, #E95D2C);
+    color: #FFFFFF;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(233, 93, 44, 0.4);
+  }
+
+  .btn-arrow {
+    font-size: 1rem;
+    line-height: 1;
+    transition: transform 180ms ease;
+  }
+
+  .banner-btn:hover .btn-arrow {
+    transform: translateX(3px);
+  }
+
+  /* Chevron navigation buttons on left and right edges (3M style) */
+  .banner-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+  }
+
+  .banner-nav:hover {
+    background: rgba(0, 0, 0, 0.75);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-50%) scale(1.05);
+  }
+
+  .banner-prev {
+    left: 18px;
+  }
+
+  .banner-next {
+    right: 18px;
+  }
+
+  /* Dot pagination indicators at bottom center (3M style) */
+  .banner-dots {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: background 200ms ease, width 200ms ease, border-radius 200ms ease;
+  }
+
+  .dot.active {
+    width: 22px;
+    border-radius: 4px;
+    background: #FFFFFF;
+  }
+
+  @media (max-width: 640px) {
+    category-banners {
+      border-radius: 16px;
+    }
+
+    .banner-slide {
+      min-height: 380px;
+      align-items: flex-end;
+    }
+
+    .banner-img {
+      object-position: center top;
+    }
+
+    .banner-scrim {
+      background: linear-gradient(
+        0deg,
+        rgba(9, 11, 13, 0.96) 0%,
+        rgba(9, 11, 13, 0.88) 55%,
+        rgba(9, 11, 13, 0.3) 100%
+      );
+    }
+
+    .banner-copy {
+      padding: 24px 20px 48px 20px;
+      gap: 10px;
+    }
+
+    .banner-title {
+      font-size: 1.45rem;
+    }
+
+    .banner-desc {
+      font-size: 0.875rem;
+      line-height: 1.45;
+    }
+
+    .banner-nav {
+      display: none; /* Hide edge chevrons on small phones, user swipes naturally */
+    }
+
+    .banner-dots {
+      bottom: 12px;
+    }
+  }
+</style>
+
+<script>
+  class CategoryBanners extends HTMLElement {
+    cleanup?: () => void;
+
+    connectedCallback() {
+      const track = this.querySelector<HTMLElement>('.banner-track')!;
+      const slides = Array.from(this.querySelectorAll<HTMLElement>('.banner-slide'));
+      const prevBtn = this.querySelector<HTMLButtonElement>('.banner-prev');
+      const nextBtn = this.querySelector<HTMLButtonElement>('.banner-next');
+      const dots = Array.from(this.querySelectorAll<HTMLButtonElement>('.dot'));
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+      if (!track || slides.length === 0) return;
+
+      const controller = new AbortController();
+      const options = { signal: controller.signal };
+      let currentIndex = 0;
+      let isHovered = false;
+
+      const updateDots = (activeIndex: number) => {
+        dots.forEach((dot, idx) => {
+          const isActive = idx === activeIndex;
+          dot.classList.toggle('active', isActive);
+          dot.setAttribute('aria-selected', String(isActive));
+        });
+      };
+
+      const goToSlide = (nextIndex: number) => {
+        currentIndex = (nextIndex + slides.length) % slides.length;
+        const targetSlide = slides[currentIndex];
+        if (targetSlide) {
+          track.scrollTo({
+            left: targetSlide.offsetLeft - slides[0].offsetLeft,
+            behavior: prefersReducedMotion.matches ? 'instant' : 'smooth',
+          });
+          updateDots(currentIndex);
+        }
+      };
+
+      prevBtn?.addEventListener('click', (e) => {
+        e.preventDefault();
+        goToSlide(currentIndex - 1);
+      }, options);
+
+      nextBtn?.addEventListener('click', (e) => {
+        e.preventDefault();
+        goToSlide(currentIndex + 1);
+      }, options);
+
+      dots.forEach((dot, idx) => {
+        dot.addEventListener('click', (e) => {
+          e.preventDefault();
+          goToSlide(idx);
+        }, options);
+      });
+
+      this.addEventListener('mouseenter', () => { isHovered = true; }, options);
+      this.addEventListener('mouseleave', () => { isHovered = false; }, options);
+
+      // Keep active dot in sync during manual touch swiping
+      track.addEventListener('scroll', () => {
+        const scrollLeft = track.scrollLeft;
+        let closestIndex = 0;
+        let smallestDistance = Infinity;
+
+        slides.forEach((slide, i) => {
+          const distance = Math.abs(slide.offsetLeft - slides[0].offsetLeft - scrollLeft);
+          if (distance < smallestDistance) {
+            smallestDistance = distance;
+            closestIndex = i;
+          }
+        });
+
+        if (closestIndex !== currentIndex) {
+          currentIndex = closestIndex;
+          updateDots(currentIndex);
+        }
+      }, { passive: true, signal: controller.signal });
+
+      // Auto rotation timer (pauses on hover or when out of view)
+      const timer = window.setInterval(() => {
+        if (
+          !prefersReducedMotion.matches &&
+          !isHovered &&
+          !document.hidden &&
+          !this.contains(document.activeElement)
+        ) {
+          const rect = this.getBoundingClientRect();
+          const inView = rect.bottom > 0 && rect.top < window.innerHeight;
+          if (inView) {
+            goToSlide(currentIndex + 1);
+          }
+        }
+      }, 6500);
+
+      this.cleanup = () => {
+        controller.abort();
+        clearInterval(timer);
+      };
+    }
+
+    disconnectedCallback() {
+      this.cleanup?.();
+    }
+  }
+
+  if (!customElements.get('category-banners')) {
+    customElements.define('category-banners', CategoryBanners);
+  }
+</script>

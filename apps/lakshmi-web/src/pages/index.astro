@@ -3,16 +3,17 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 import Container from '../components/Container.astro';
 import Section from '../components/Section.astro';
 import Button from '../components/Button.astro';
-import CategoryCard from '../components/CategoryCard.astro';
+import CategoryBanners from '../components/CategoryBanners.astro';
 // Note: Re-enable FeaturedProducts import once at least 3 real published products exist
 import HeroWaves from '../components/HeroWaves.astro';
 import Header from '../components/Header.astro';
 
-import { categories } from '../data/catalogue';
+
 import TestimonialsSection from '../components/TestimonialsSection.astro';
 import FaqSection from '../components/FaqSection.astro';
 import EnquiryCTA from '../components/EnquiryCTA.astro';
 import HomePpfComparison from '../components/HomePpfComparison.astro';
+import BrandMarquee from '../components/BrandMarquee.astro';
 ---
 <SiteLayout title="Lakshmi Distributions">
   <Header slot="header" dark />
@@ -41,6 +42,8 @@ import HomePpfComparison from '../components/HomePpfComparison.astro';
 
   </div>
 
+  <BrandMarquee />
+
   <Section labelledBy="categories-title">
     <Container>
       <div class="section-heading">
@@ -50,18 +53,7 @@ import HomePpfComparison from '../components/HomePpfComparison.astro';
         </div>
         <a class="secondary-link" href="/products">Explore Products <span aria-hidden="true">→</span></a>
       </div>
-      <div class="category-grid">
-        {categories.map((category) => (
-          <CategoryCard
-            name={category.name}
-            brand={category.brandName}
-            brandSlug={category.brandSlug}
-            href={`/products?category=${category.slug}`}
-            description={category.description}
-            image={category.image}
-          />
-        ))}
-      </div>
+      <CategoryBanners />
     </Container>
   </Section>
 
