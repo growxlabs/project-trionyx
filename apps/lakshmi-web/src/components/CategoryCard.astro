@@ -13,7 +13,7 @@ interface Props {
   featured?: boolean;
 }
 
-const { name, brand, href = '/products', description, image } = Astro.props;
+const { name, brand, href = '/products', image } = Astro.props;
 const isPpf = name === 'Paint Protection Film';
 
 const formatBrand = (b?: string) => {
