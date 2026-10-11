@@ -43,7 +43,7 @@ export default function ContactPage() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
                 {/* Left: Form */}
                 <div className="lg:col-span-7 xl:col-span-8">
-                  <div className="bg-[#F5F5EE] border border-[var(--section-divider)] rounded-[8px] p-6 sm:p-8 relative overflow-hidden">
+                  <div className="bg-[#075B50] border border-[rgba(255,255,235,0.12)] rounded-[8px] p-6 sm:p-8 relative overflow-hidden shadow-xs">
                     <ContactForm />
                   </div>
                 </div>
