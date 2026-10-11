@@ -15,6 +15,14 @@ interface Props {
 
 const { name, brand, href = '/products', description, image } = Astro.props;
 const isPpf = name === 'Paint Protection Film';
+
+const formatBrand = (b?: string) => {
+  if (!b) return '';
+  const upper = b.toUpperCase();
+  if (upper === 'HOGGON') return 'HOGONN';
+  if (upper === 'AZOOM') return 'AOZOOM';
+  return upper;
+};
 ---
 
 <article class="category-card">
@@ -26,7 +34,7 @@ const isPpf = name === 'Paint Protection Film';
       </div>
       <div class="category-content">
         <div>
-          <span class="category-brand">HOGGON</span>
+          <span class="category-brand">{formatBrand(brand || 'Hogonn')}</span>
           <a href={href} class="category-title-link"><h3>{name}</h3></a>
           {description && <p>{description}</p>}
         </div>
@@ -44,7 +52,7 @@ const isPpf = name === 'Paint Protection Film';
       </div>
       <div class="category-content">
         <div>
-          {brand && <span class="category-brand">{brand === 'Hoggon' ? 'Hogonn' : brand}</span>}
+          {brand && <span class="category-brand">{formatBrand(brand)}</span>}
           <h3>{name}</h3>
           {description && <p>{description}</p>}
         </div>

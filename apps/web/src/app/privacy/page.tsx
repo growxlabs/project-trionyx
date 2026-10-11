@@ -363,8 +363,8 @@ const privacySections: LegalSection[] = [
           our compliance desk:
         </p>
 
-        {/* Restrained Information Block (#F5F5EE, subtle border, 6px radius) */}
-        <div className="bg-[#F5F5EE] border border-[#171714]/12 rounded-[6px] p-5 sm:p-6 mt-4 max-w-lg space-y-3 text-[14px]">
+        {/* Restrained Information Block (#FFFFEB, subtle border, 6px radius) */}
+        <div className="bg-[#FFFFEB] border border-[#171714]/12 rounded-[6px] p-5 sm:p-6 mt-4 max-w-lg space-y-3 text-[14px]">
           <div>
             <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#68665F] block">
               Corporate Entity

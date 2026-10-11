@@ -4,7 +4,7 @@
   grid-template-columns: minmax(0, 52%) minmax(0, 48%);
   min-height: 100svh;
   color: #171714;
-  background: #f5f5ee;
+  background: var(--trionyx-canvas, #FFFFEB);
 }
 
 .leftPanel {
@@ -14,7 +14,7 @@
   padding: 48px clamp(32px, 6vw, 96px);
   background:
     radial-gradient(ellipse at 0% 100%, rgba(242, 101, 34, .045), transparent 42%),
-    #f5f5ee;
+    var(--trionyx-canvas, #FFFFEB);
 }
 
 .leftContent { width: min(100%, 480px); }

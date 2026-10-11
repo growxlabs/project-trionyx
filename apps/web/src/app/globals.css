@@ -7,14 +7,14 @@
   --color-brand-red: #D9362B;
   --color-brand-charcoal: #171714;
   --color-brand-graphite: #171714;
-  --color-brand-warm-white: #F5F5EE;
+  --color-brand-warm-white: #FFFFEB;
   --color-brand-light-gray: #EFECE3;
   --color-brand-body-gray: #68665F;
 
-  --color-surface-default: #F5F5EE;
+  --color-surface-default: #FFFFEB;
   --color-surface-subtle: #EFECE3;
   --color-surface-muted: #EFECE3;
-  --color-surface-elevated: #F5F5EE;
+  --color-surface-elevated: #FFFFEB;
 
   --color-text-primary: #171714;
   --color-text-secondary: #68665F;
@@ -40,18 +40,20 @@
   --page-gutter: 32px;
   --frame-border: rgba(23, 23, 20, 0.07);
 
-  --page-bg: #F5F5EE;
-  --surface-elevated: #F5F5EE;
+  /* Permanent global warm ivory canvas */
+  --trionyx-canvas: #FFFFEB;
+  --page-bg: var(--trionyx-canvas);
+  --surface-elevated: var(--trionyx-canvas);
   --surface-beige: #EFECE3;
   --surface-dark: #171714;
 
-  --background: #F5F5EE;
+  --background: var(--trionyx-canvas);
   --foreground: #171714;
   --brand-orange: #F26522;
   --brand-red: #D9362B;
   --brand-charcoal: #171714;
-  --brand-warm-white: #F5F5EE;
-  --brand-elevated: #F5F5EE;
+  --brand-warm-white: var(--trionyx-canvas);
+  --brand-elevated: var(--trionyx-canvas);
   --brand-secondary: #EFECE3;
   --brand-border: rgba(23, 23, 20, 0.07);
   --brand-body-gray: #68665F;
@@ -84,10 +86,11 @@
 .body-copy { color: var(--brand-body-gray); font-size: var(--body-size); line-height: var(--body-leading); }
 .body-copy-small { color: var(--brand-body-gray); font-size: var(--body-small-size); line-height: var(--body-small-leading); }
 
-/* Warm tactile paper canvas (#F5F5EE) */
+/* Permanent global warm ivory canvas (#FFFFEB) */
 html,
-body {
-  background-color: var(--color-surface-default);
+body,
+main {
+  background-color: var(--trionyx-canvas);
   color: var(--color-text-primary);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;

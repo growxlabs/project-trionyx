@@ -9,7 +9,7 @@ import { WorldMap } from '../ui/world-map';
  *
  * Requirements:
  * - Aceternity UI World Map starting component + dotted-map + motion
- * - Full horizontal section width on the warm Trionyx canvas (#F5F5EE)
+ * - Full horizontal section width on the warm Trionyx canvas (#FFFFEB)
  * - Top left: Eyebrow "TRIONYX NETWORK", Main heading "From Vijayawada, across India."
  * - No body paragraph, no CTA buttons, no cards, no rectangular borders
  * - World dots: subtle warm grey, low contrast, no country borders, no ocean fill
@@ -22,7 +22,7 @@ export const NetworkSection: React.FC = () => {
     <SectionFrame
       id="network"
       hasBottomBorder
-      className="bg-[#F5F5EE] overflow-hidden"
+      className="bg-[#FFFFEB] overflow-hidden"
     >
       <div className="w-full px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24">
         {/* Top Left Header Area */}

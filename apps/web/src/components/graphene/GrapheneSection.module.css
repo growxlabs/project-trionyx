@@ -1,7 +1,7 @@
 .section {
   position: relative;
   width: 100%;
-  background-color: #F5F5EE;
+  background-color: var(--trionyx-canvas, #FFFFEB);
   padding: var(--section-space) 0;
 }
 

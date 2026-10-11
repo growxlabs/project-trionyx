@@ -88,8 +88,8 @@ export const HeaderShell = ({ appearance = 'default' }: HeaderShellProps = {}) =
               }`
             : `sticky top-0 z-50 w-full transition-colors duration-200 ${
                 isScrolled
-                  ? 'bg-[#F5F5EE]/95 backdrop-blur-sm border-b border-[rgba(23,23,20,0.07)] shadow-xs'
-                  : 'bg-transparent md:bg-[#F5F5EE]/90 lg:bg-transparent border-b-0 md:border-b md:border-[rgba(23,23,20,0.07)]'
+                  ? 'bg-[#FFFFEB]/95 backdrop-blur-sm border-b border-[rgba(23,23,20,0.07)] shadow-xs'
+                  : 'bg-transparent md:bg-[#FFFFEB]/90 lg:bg-transparent border-b-0 md:border-b md:border-[rgba(23,23,20,0.07)]'
               }`
         }
       >
@@ -180,7 +180,7 @@ export const HeaderShell = ({ appearance = 'default' }: HeaderShellProps = {}) =
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label={mobileMenuOpen ? 'Close Menu' : 'Open Menu'}
               aria-expanded={mobileMenuOpen}
-              className="w-12 h-12 rounded-[6px] border border-[rgba(23,23,20,0.12)] bg-[#F5F5EE] active:bg-[#EFECE3] flex items-center justify-center text-[#171714] hover:border-[rgba(23,23,20,0.22)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26522]"
+              className="w-12 h-12 rounded-[6px] border border-[rgba(23,23,20,0.12)] bg-[#FFFFEB] active:bg-[#EFECE3] flex items-center justify-center text-[#171714] hover:border-[rgba(23,23,20,0.22)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26522]"
             >
               {mobileMenuOpen ? <CloseIcon size={20} /> : <MenuIcon size={20} />}
             </button>
@@ -189,7 +189,7 @@ export const HeaderShell = ({ appearance = 'default' }: HeaderShellProps = {}) =
 
         {/* 
           DESKTOP PRODUCTS MEGA MENU PANEL
-          Attaches directly underneath the header using Elevated Surface (#F5F5EE)
+          Attaches directly underneath the header using Elevated Surface (#FFFFEB)
         */}
         <ProductsMegaMenu
           isOpen={isProductsOpen}
@@ -200,7 +200,7 @@ export const HeaderShell = ({ appearance = 'default' }: HeaderShellProps = {}) =
 
         {/* MOBILE EXPANDABLE MENU */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-[rgba(23,23,20,0.07)] bg-[#F5F5EE] px-5 py-5 shadow-[0_12px_24px_rgba(23,23,20,0.04)] animate-in fade-in slide-in-from-top-2 duration-150">
+          <div className="md:hidden border-t border-[rgba(23,23,20,0.07)] bg-[#FFFFEB] px-5 py-5 shadow-[0_12px_24px_rgba(23,23,20,0.04)] animate-in fade-in slide-in-from-top-2 duration-150">
             <div className="flex flex-col space-y-1">
               {/* Products Expandable Group */}
               <div>

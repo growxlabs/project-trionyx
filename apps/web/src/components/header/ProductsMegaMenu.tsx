@@ -42,7 +42,7 @@ export const ProductsMegaMenu: React.FC<ProductsMegaMenuProps> = ({
         className={`w-56 rounded-[4px] py-1.5 px-1 shadow-xl transition-all duration-150 ${
           isOverlay
             ? 'bg-[#121418]/95 backdrop-blur-md border border-[rgba(255,255,255,0.14)] shadow-[0_12px_32px_rgba(0,0,0,0.5)]'
-            : 'bg-[#FCFBF7] border border-[rgba(23,23,20,0.1)] shadow-[0_10px_25px_rgba(23,23,20,0.08)]'
+            : 'bg-[#FFFFEB] border border-[rgba(23,23,20,0.1)] shadow-[0_10px_25px_rgba(23,23,20,0.08)]'
         }`}
       >
         <ul className="space-y-0.5">

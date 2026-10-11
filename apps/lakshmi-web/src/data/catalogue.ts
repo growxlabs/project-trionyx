@@ -21,13 +21,13 @@ export interface Category {
 
 export const brands: readonly Brand[] = [
   {
-    slug: 'azoom',
-    name: 'Azoom',
-    description: 'Explore Azoom automotive lighting products available through Lakshmi Distributions.',
+    slug: 'aozoom',
+    name: 'Aozoom',
+    description: 'Explore Aozoom automotive lighting products available through Lakshmi Distributions.',
   },
   {
-    slug: 'hoggon',
-    name: 'Hoggon',
+    slug: 'hogonn',
+    name: 'Hogonn',
     description: 'Automotive surface protection, sun control window films, and acoustic damping solutions available through Lakshmi Distributions.',
   },
 ];
@@ -36,19 +36,19 @@ export const categories: readonly Category[] = [
   {
     slug: 'led-lamps',
     name: 'LED Lamps',
-    brandSlug: 'azoom',
-    brandName: 'Azoom',
+    brandSlug: 'aozoom',
+    brandName: 'Aozoom',
     description: 'Explore LED lamps and projector lighting for your vehicle.',
     image: {
       src: '/images/about/about-secondary.jpg',
-      alt: 'Azoom automotive LED lamp projector module and heatsink component',
+      alt: 'Aozoom automotive LED lamp projector module and heatsink component',
     },
   },
   {
     slug: 'sun-control-ceramic-window-film',
     name: 'Sun Control Ceramic Window Film',
-    brandSlug: 'hoggon',
-    brandName: 'Hoggon',
+    brandSlug: 'hogonn',
+    brandName: 'Hogonn',
     description: 'Discover ceramic window films for cabin comfort and sun control.',
     image: {
       src: '/images/categories/window-film.jpg',
@@ -58,8 +58,8 @@ export const categories: readonly Category[] = [
   {
     slug: 'paint-protection-film',
     name: 'Paint Protection Film',
-    brandSlug: 'hoggon',
-    brandName: 'Hoggon',
+    brandSlug: 'hogonn',
+    brandName: 'Hogonn',
     description: 'Explore clear films designed to protect your vehicle’s painted surfaces.',
     image: {
       src: '/images/categories/paint-protection.jpg',
@@ -69,8 +69,8 @@ export const categories: readonly Category[] = [
   {
     slug: 'shumoff-damping',
     name: 'Shumoff Damping',
-    brandSlug: 'hoggon',
-    brandName: 'Hoggon',
+    brandSlug: 'hogonn',
+    brandName: 'Hogonn',
     description: 'Discover damping materials for managing vibration and cabin noise.',
     image: {
       src: '/images/categories/sound-damping.jpg',

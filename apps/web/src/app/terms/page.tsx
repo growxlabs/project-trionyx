@@ -132,7 +132,7 @@ const termsSections: LegalSection[] = [
         <div className="pt-2">
           <Link
             href="/warranty"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[6px] bg-[#F5F5EE] border border-[#171714]/15 text-[#171714] text-[13.5px] font-semibold hover:border-[#F26522] hover:text-[#F26522] transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[6px] bg-[#FFFFEB] border border-[#171714]/15 text-[#171714] text-[13.5px] font-semibold hover:border-[#F26522] hover:text-[#F26522] transition-colors"
           >
             Check Warranty Registry (/warranty) →
           </Link>
@@ -308,7 +308,7 @@ const termsSections: LegalSection[] = [
         </p>
 
         {/* Restrained Information Block */}
-        <div className="bg-[#F5F5EE] border border-[#171714]/12 rounded-[6px] p-5 sm:p-6 mt-4 max-w-lg space-y-3 text-[14px]">
+        <div className="bg-[#FFFFEB] border border-[#171714]/12 rounded-[6px] p-5 sm:p-6 mt-4 max-w-lg space-y-3 text-[14px]">
           <div>
             <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#68665F] block">
               Legal Entity

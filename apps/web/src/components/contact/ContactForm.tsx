@@ -104,11 +104,11 @@ function StyledSelect({
         aria-controls={`${id}-listbox`}
         onClick={() => setOpen((prev) => !prev)}
         onKeyDown={handleKeyDown}
-        className={`w-full h-11 px-3.5 pr-10 bg-white border rounded-[6px] text-[14px] text-left transition-colors cursor-pointer flex items-center focus:outline-none ${
+        className={`w-full h-11 px-3.5 pr-10 bg-[#FFFFEB] border rounded-[6px] text-[14px] text-left transition-colors cursor-pointer flex items-center focus:outline-none ${
           open
-            ? 'border-[#F26522] ring-1 ring-[#F26522]/20'
-            : 'border-[rgba(23,23,20,0.12)] hover:border-[rgba(23,23,20,0.22)]'
-        } ${selectedLabel ? 'text-[#171714]' : 'text-[#68665F]/60'}`}
+            ? 'border-[#F26522] ring-1 ring-[#F26522]'
+            : 'border-[rgba(255,255,235,0.22)] hover:border-[#F26522]'
+        } ${selectedLabel ? 'text-[#171714]' : 'text-[rgba(23,23,20,0.48)]'}`}
       >
         <span className="truncate">{selectedLabel || placeholder}</span>
         {/* Chevron */}
@@ -118,7 +118,7 @@ function StyledSelect({
             height="14"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#68665F"
+            stroke="rgba(23,23,20,0.6)"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -136,7 +136,7 @@ function StyledSelect({
           ref={listRef}
           role="listbox"
           aria-activedescendant={value ? `${id}-option-${value}` : undefined}
-          className="absolute z-50 mt-1 w-full max-h-60 overflow-auto bg-white border border-[rgba(23,23,20,0.12)] rounded-[6px] shadow-[0_8px_24px_rgba(23,23,20,0.08)] py-1"
+          className="absolute z-50 mt-1 w-full max-h-60 overflow-auto bg-[#FFFFEB] border border-[rgba(23,23,20,0.12)] rounded-[6px] shadow-[0_8px_24px_rgba(0,0,0,0.18)] py-1"
         >
           {options.map((opt) => {
             const isSelected = opt.value === value;
@@ -153,8 +153,8 @@ function StyledSelect({
                 }}
                 className={`flex items-center px-3.5 h-10 text-[14px] cursor-pointer transition-colors select-none ${
                   isSelected
-                    ? 'text-[#F26522] bg-[#F26522]/[0.04] font-medium'
-                    : 'text-[#171714] hover:bg-[#EFECE3]/60'
+                    ? 'text-[#F26522] bg-[#F26522]/[0.08] font-medium'
+                    : 'text-[#171714] hover:bg-[#EFECE3]'
                 }`}
               >
                 {opt.label}
@@ -175,17 +175,17 @@ function StyledSelect({
 /* ─── Field Error Display ─── */
 function FieldError({ error }: { error?: string }) {
   if (!error) return null;
-  return <p className="mt-1 text-[12px] text-[#D9362B]">{error}</p>;
+  return <p className="mt-1 text-[12px] text-[#FCA5A5] font-medium">{error}</p>;
 }
 
 /* ─── Input Styles ─── */
 const inputBase =
-  'w-full h-11 px-3.5 bg-white border border-[rgba(23,23,20,0.12)] rounded-[6px] text-[14px] text-[#171714] placeholder:text-[#68665F]/60 focus:outline-none focus:border-[#F26522] focus:ring-1 focus:ring-[#F26522]/20 transition-colors';
+  'w-full h-11 px-3.5 bg-[#FFFFEB] border border-[rgba(255,255,235,0.22)] rounded-[6px] text-[14px] text-[#171714] placeholder:text-[rgba(23,23,20,0.48)] focus:outline-none focus:border-[#F26522] focus:ring-1 focus:ring-[#F26522] transition-colors';
 
 const textareaBase =
-  'w-full px-3.5 py-3 bg-white border border-[rgba(23,23,20,0.12)] rounded-[6px] text-[14px] text-[#171714] placeholder:text-[#68665F]/60 focus:outline-none focus:border-[#F26522] focus:ring-1 focus:ring-[#F26522]/20 transition-colors resize-none';
+  'w-full px-3.5 py-3 bg-[#FFFFEB] border border-[rgba(255,255,235,0.22)] rounded-[6px] text-[14px] text-[#171714] placeholder:text-[rgba(23,23,20,0.48)] focus:outline-none focus:border-[#F26522] focus:ring-1 focus:ring-[#F26522] transition-colors resize-none';
 
-const labelBase = 'block text-[13px] font-medium text-[#171714] mb-1.5';
+const labelBase = 'block text-[13px] font-medium text-[#FFFFEB] mb-1.5';
 
 /* ─── Types ─── */
 interface FormData {
@@ -416,7 +416,7 @@ export function ContactForm() {
       {/* Enquiry Type — Dropdown */}
       <div>
         <label htmlFor="enquiryType" className={labelBase}>
-          Enquiry Type <span className="text-[#D9362B]">*</span>
+          Enquiry Type <span className="text-[#F26522]">*</span>
         </label>
         <StyledSelect
           id="enquiryType"
@@ -432,7 +432,7 @@ export function ContactForm() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label htmlFor="fullName" className={labelBase}>
-            Full Name <span className="text-[#D9362B]">*</span>
+            Full Name <span className="text-[#F26522]">*</span>
           </label>
           <input
             type="text"
@@ -447,7 +447,7 @@ export function ContactForm() {
         </div>
         <div>
           <label htmlFor="phone" className={labelBase}>
-            Phone <span className="text-[#D9362B]">*</span>
+            Phone <span className="text-[#F26522]">*</span>
           </label>
           <input
             type="tel"
@@ -465,7 +465,7 @@ export function ContactForm() {
       {/* Email */}
       <div>
         <label htmlFor="email" className={labelBase}>
-          Email <span className="text-[#D9362B]">*</span>
+          Email <span className="text-[#F26522]">*</span>
         </label>
         <input
           type="email"
@@ -503,7 +503,7 @@ export function ContactForm() {
         <>
           <div>
             <label htmlFor="companyName" className={labelBase}>
-              Business / Company Name <span className="text-[#D9362B]">*</span>
+              Business / Company Name <span className="text-[#F26522]">*</span>
             </label>
             <input
               type="text"
@@ -519,7 +519,7 @@ export function ContactForm() {
 
           <div>
             <label htmlFor="businessAddress" className={labelBase}>
-              Business Address <span className="text-[#D9362B]">*</span>
+              Business Address <span className="text-[#F26522]">*</span>
             </label>
             <input
               type="text"
@@ -552,7 +552,7 @@ export function ContactForm() {
         <>
           <div>
             <label htmlFor="companyName" className={labelBase}>
-              Company Name <span className="text-[#D9362B]">*</span>
+              Company Name <span className="text-[#F26522]">*</span>
             </label>
             <input
               type="text"
@@ -568,7 +568,7 @@ export function ContactForm() {
 
           <div>
             <label htmlFor="businessAddress" className={labelBase}>
-              Business Address <span className="text-[#D9362B]">*</span>
+              Business Address <span className="text-[#F26522]">*</span>
             </label>
             <input
               type="text"
@@ -583,7 +583,7 @@ export function ContactForm() {
 
           <div>
             <label htmlFor="territory" className={labelBase}>
-              Territory / Area <span className="text-[#D9362B]">*</span>
+              Territory / Area <span className="text-[#F26522]">*</span>
             </label>
             <input
               type="text"
@@ -625,7 +625,7 @@ export function ContactForm() {
             value={form.purchaseDealerDetails}
             onChange={(e) => update('purchaseDealerDetails', e.target.value)}
           />
-          <p className="mt-1 text-[12px] text-[#68665F]">
+          <p className="mt-1 text-[12px] text-[rgba(255,255,235,0.65)]">
             If you remember the dealer or studio, share their name and city.
           </p>
         </div>
@@ -635,7 +635,7 @@ export function ContactForm() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label htmlFor="city" className={labelBase}>
-            City <span className="text-[#D9362B]">*</span>
+            City <span className="text-[#F26522]">*</span>
           </label>
           <input
             type="text"
@@ -649,7 +649,7 @@ export function ContactForm() {
         </div>
         <div>
           <label htmlFor="state" className={labelBase}>
-            State <span className="text-[#D9362B]">*</span>
+            State <span className="text-[#F26522]">*</span>
           </label>
           <StyledSelect
             id="state"
@@ -664,7 +664,7 @@ export function ContactForm() {
 
       <div>
         <label htmlFor="pincode" className={labelBase}>
-          Pincode <span className="text-[#D9362B]">*</span>
+          Pincode <span className="text-[#F26522]">*</span>
         </label>
         <input
           type="text"
@@ -681,7 +681,7 @@ export function ContactForm() {
       {/* Message — label changes for Product Support */}
       <div>
         <label htmlFor="message" className={labelBase}>
-          {isSupport ? 'Describe the issue' : 'Message'} <span className="text-[#D9362B]">*</span>
+          {isSupport ? 'Describe the issue' : 'Message'} <span className="text-[#F26522]">*</span>
         </label>
         <textarea
           id="message"
@@ -694,7 +694,7 @@ export function ContactForm() {
         />
         <div className="flex items-center justify-between mt-1">
           <FieldError error={errors.message} />
-          <p className="text-[12px] text-[#68665F] ml-auto">
+          <p className="text-[12px] text-[rgba(255,255,235,0.65)] ml-auto">
             {form.message.length}/2000
           </p>
         </div>
@@ -702,8 +702,8 @@ export function ContactForm() {
 
       {/* Submit Error */}
       {submitError && (
-        <div className="px-4 py-3 rounded-[6px] bg-[#D9362B]/[0.06] border border-[#D9362B]/20">
-          <p className="text-[13px] text-[#D9362B]">{submitError}</p>
+        <div className="px-4 py-3 rounded-[6px] bg-[#991B1B]/40 border border-[#F87171]/40 text-[#FEE2E2]">
+          <p className="text-[13px]">{submitError}</p>
         </div>
       )}
 

@@ -79,7 +79,7 @@ export function WarrantyCheckForm() {
         <div>
           <label
             htmlFor="serial-number-input"
-            className="block text-[13px] font-semibold text-[#171714] uppercase tracking-[0.05em] mb-2"
+            className="block text-[13px] font-semibold text-[#FFFFEB] uppercase tracking-[0.05em] mb-2"
           >
             Serial Number <span className="text-[#F26522]">*</span>
           </label>
@@ -95,20 +95,20 @@ export function WarrantyCheckForm() {
                 if (errorMessage) setErrorMessage(null);
               }}
               placeholder="e.g. TRX-SN-XXXXXXXX"
-              className="w-full h-13 px-4 sm:px-5 bg-white border border-[#171714]/15 rounded-[4px] text-[16px] sm:text-[17px] font-mono font-medium text-[#171714] uppercase tracking-wider placeholder:text-[#171714]/35 placeholder:font-sans placeholder:normal-case placeholder:tracking-normal focus:outline-none focus:border-[#F26522] focus:ring-1 focus:ring-[#F26522] transition-colors"
+              className="w-full h-13 px-4 sm:px-5 bg-[#FFFFEB] border border-[rgba(255,255,235,0.25)] rounded-[6px] text-[16px] sm:text-[17px] font-mono font-medium text-[#171714] uppercase tracking-wider placeholder:text-[rgba(23,23,20,0.45)] placeholder:font-sans placeholder:normal-case placeholder:tracking-normal focus:outline-none focus:border-[#F26522] focus:ring-1 focus:ring-[#F26522] transition-colors"
             />
           </div>
           <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <p className="text-[13px] text-[#171714]/60 m-0">
+            <p className="text-[13px] text-[rgba(255,255,235,0.72)] m-0 leading-normal">
               You can find the serial number on your product packaging, container label, or installation invoice.
             </p>
             <button
               type="button"
               onClick={() => setIsCameraOpen(true)}
-              className="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[4px] border border-[#171714]/15 hover:border-[#F26522] bg-[#F5F5EE] hover:bg-[#EFECE3] text-[#171714] text-[13px] font-semibold transition-colors cursor-pointer shrink-0"
+              className="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[6px] border border-[rgba(255,255,235,0.35)] hover:border-[#FFFFEB] bg-transparent hover:bg-[#FFFFEB]/10 text-[#FFFFEB] text-[13px] font-semibold transition-colors cursor-pointer shrink-0"
               title="Scan serial with mobile/tablet camera"
             >
-              <svg className="w-4 h-4 text-[#F26522]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg className="w-4 h-4 text-[#FFFFEB]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
                 <circle cx="12" cy="13" r="4" />
               </svg>
@@ -118,7 +118,7 @@ export function WarrantyCheckForm() {
         </div>
 
         {errorMessage && (
-          <div className="p-4 bg-[#FEE2E2]/60 border border-[#EF4444]/20 rounded-[4px] text-[#991B1B] text-[14px]">
+          <div className="p-4 bg-[#991B1B]/40 border border-[#F87171]/40 rounded-[6px] text-[#FEE2E2] text-[14px]">
             {errorMessage}
           </div>
         )}
@@ -126,7 +126,7 @@ export function WarrantyCheckForm() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full sm:w-auto min-w-[200px] h-12 px-8 bg-[#171714] hover:bg-[#2A2A26] active:bg-[#000000] text-[#F5F5EE] text-[14px] font-semibold tracking-[0.04em] uppercase rounded-[4px] transition-colors duration-150 inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed select-none"
+          className="w-full sm:w-auto min-w-[200px] h-12 px-8 bg-[#F26522] hover:bg-[#DC5414] active:bg-[#C4460D] text-white text-[14px] font-semibold tracking-[0.05em] uppercase rounded-[6px] transition-colors duration-150 inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed select-none shadow-[0_2px_4px_rgba(242,101,34,0.2)]"
         >
           {isLoading ? (
             <>
@@ -144,7 +144,7 @@ export function WarrantyCheckForm() {
 
       {/* Results Presentation */}
       {result && (
-        <div className="mt-10 pt-10 border-t border-[#171714]/10 animate-in fade-in duration-200">
+        <div className="mt-10 pt-10 border-t border-[rgba(255,255,235,0.15)] animate-in fade-in duration-200">
           {/* STATE 1: ACTIVE WARRANTY */}
           {result.status === 'ACTIVE' && (
             <div className="bg-[#FAF9F5] border border-[#171714]/12 rounded-[6px] p-6 sm:p-8">

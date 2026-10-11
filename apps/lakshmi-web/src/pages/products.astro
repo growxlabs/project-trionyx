@@ -3,6 +3,7 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 import Container from '../components/Container.astro';
 import Section from '../components/Section.astro';
 import ProductCard from '../components/ProductCard.astro';
+import CategoryBanners from '../components/CategoryBanners.astro';
 import EnquiryCTA from '../components/EnquiryCTA.astro';
 import { publicCatalogueService } from '@trionyx/api/catalogue';
 import { categories as fallbackCategories } from '../data/catalogue';
@@ -40,9 +41,10 @@ try {
       <div class="catalogue-header">
         <p class="catalogue-eyebrow">PRODUCTS</p>
         <h1 id="page-title" class="catalogue-title">Explore the catalogue</h1>
-        <p class="catalogue-lead">
-          Browse automotive lighting, protection and damping products available through Lakshmi Distributions.
-        </p>
+      </div>
+
+      <div style="margin-bottom: 2.5rem">
+        <CategoryBanners />
       </div>
 
       <!-- Catalogue Filter Toolbar -->
@@ -63,18 +65,18 @@ try {
             role="tab"
             aria-selected="false"
             class="brand-tab"
-            data-brand="azoom"
+            data-brand="aozoom"
           >
-            Azoom
+            Aozoom
           </button>
           <button
             type="button"
             role="tab"
             aria-selected="false"
             class="brand-tab"
-            data-brand="hoggon"
+            data-brand="hogonn"
           >
-            Hoggon
+            Hogonn
           </button>
         </div>
 
@@ -87,7 +89,7 @@ try {
               {categories.map((c) => (
                 <option
                   value={c.slug}
-                  data-brand={c.brandSlug || (c.slug === 'led-lamps' ? 'azoom' : 'hoggon')}
+                  data-brand={c.brandSlug || (c.slug === 'led-lamps' ? 'aozoom' : 'hogonn')}
                 >
                   {c.name}
                 </option>
@@ -107,7 +109,7 @@ try {
           {products.map((product) => (
             <div
               class="product-grid-item"
-              data-brand={(product.brandSlug || 'azoom').toLowerCase()}
+              data-brand={(product.brandSlug || 'aozoom').toLowerCase()}
               data-category={(product.categorySlug || 'led-lamps').toLowerCase()}
             >
               <ProductCard
@@ -198,6 +200,13 @@ try {
       }
     }
 
+    function normalizeBrand(b: string): string {
+      const lower = b.toLowerCase();
+      if (lower === 'azoom') return 'aozoom';
+      if (lower === 'hoggon') return 'hogonn';
+      return lower;
+    }
+
     function applyFilter() {
       let visibleCount = 0;
 
@@ -205,7 +214,7 @@ try {
         const itemBrand = (item.dataset.brand || '').toLowerCase();
         const itemCategory = (item.dataset.category || '').toLowerCase();
 
-        const matchesBrand = currentBrand === 'all' || itemBrand === currentBrand;
+        const matchesBrand = currentBrand === 'all' || normalizeBrand(itemBrand) === normalizeBrand(currentBrand);
         const matchesCategory = currentCategory === 'all' || itemCategory === currentCategory;
 
         if (matchesBrand && matchesCategory) {

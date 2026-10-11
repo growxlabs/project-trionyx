@@ -12,7 +12,7 @@ export interface AboutSectionProps {
  * TRIONYX ABOUT SECTION
  *
  * Premium floating editorial section in Deep Petrol Green (#075B50) sitting
- * on top of the permanent warm Trionyx page canvas (#F5F5EE).
+ * on top of the permanent warm Trionyx page canvas (#FFFFEB).
  *
  * - Canvas rhythm: warm page canvas → floating deep petrol green About section → warm page canvas
  * - Layout: ~46% imagery / 54% content on desktop, stacked on mobile (images first, text second)

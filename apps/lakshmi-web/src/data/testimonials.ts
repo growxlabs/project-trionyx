@@ -30,7 +30,7 @@ export const testimonials: readonly Testimonial[] = [
     cardType: 'landscape-image',
     image: '/images/categories/paint-protection.jpg',
     categoryLabel: 'WORKSHOP RETROFIT',
-    quote: 'Azoom LED projector modules have been our top recommendation for headlight retrofits. The beam cutoff is razor-sharp with zero glare for oncoming traffic.',
+    quote: 'Aozoom LED projector modules have been our top recommendation for headlight retrofits. The beam cutoff is razor-sharp with zero glare for oncoming traffic.',
     name: 'Arjun Menon',
     type: 'dealer',
     company: 'Apex Auto Lighting Workshop',

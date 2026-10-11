@@ -25,9 +25,9 @@ const { items = testimonials } = Astro.props;
       </Container>
     </div>
 
-    <!-- Presentation Stage for Wispr Flow Style Floating Deck -->
+    <!-- Presentation Stage / Mobile Track -->
     <div
-      class="reviews-stage"
+      class="reviews-stage reviews-track"
       data-reviews-stage
       role="region"
       aria-label="Customer and dealer reviews"
@@ -37,7 +37,7 @@ const { items = testimonials } = Astro.props;
 
         return (
           <article
-            class={`wispr-card theme-${item.theme} type-${item.cardType || 'square'}`}
+            class={`wispr-card review-card theme-${item.theme} type-${item.cardType || 'square'}`}
             data-story-card
             data-index={index}
           >
@@ -88,35 +88,8 @@ const { items = testimonials } = Astro.props;
 <style>
   .reviews-story-section {
     position: relative;
-    min-height: 320vh;
     background: #111215;
     border-top: 1px solid var(--color-border, #2A2E32);
-    overflow: clip;
-  }
-
-  /* Sticky Viewport Stage */
-  .reviews-sticky-viewport {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    height: 100svh;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding-top: clamp(4.5rem, 8vh, 6rem);
-    padding-bottom: clamp(2.5rem, 5vh, 3.5rem);
-    box-sizing: border-box;
-  }
-
-  .reviews-header-container {
-    width: 100%;
-    z-index: 25;
-    pointer-events: none;
-  }
-
-  .reviews-sticky-header {
-    max-width: var(--content-max, 60rem);
   }
 
   .eyebrow {
@@ -129,34 +102,9 @@ const { items = testimonials } = Astro.props;
   }
 
   .heading {
-    font-size: clamp(2rem, 3.2vw, 3rem);
-    line-height: var(--line-heading, 1.15);
     letter-spacing: -0.03em;
     color: #F7F7F5;
     margin: 0;
-  }
-
-  /* Presentation Stage for Floating Cards Deck */
-  .reviews-stage {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform: translateY(3vh);
-    pointer-events: none;
-    z-index: 10;
-  }
-
-  /* Base Wispr-Style Card (Organic Large Radii & Editorial Typography) */
-  .wispr-card {
-    position: absolute;
-    pointer-events: auto;
-    will-change: transform, opacity;
-    border-radius: 40px;
-    box-sizing: border-box;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), 0 4px 16px rgba(0, 0, 0, 0.3);
-    transition: box-shadow 220ms ease;
   }
 
   /* Editorial Serif Quote */
@@ -196,94 +144,16 @@ const { items = testimonials } = Astro.props;
     opacity: 0.85;
   }
 
-  /* Landscape Image Card (Elena Verna Style in Wispr Flow Screenshot) */
-  .type-landscape-image {
-    width: min(780px, 88vw);
-    min-height: 400px;
-    padding: 16px;
-  }
-
-  .card-split-grid {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    height: 100%;
-    min-height: 368px;
-    gap: clamp(24px, 3vw, 36px);
-  }
-
-  .card-image-pane {
-    flex: 0 0 45%;
-    position: relative;
-    border-radius: 26px;
-    overflow: hidden;
-    background: #000;
-  }
-
-  .card-photo {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    display: block;
-  }
-
-  .card-copy-pane {
-    flex: 1 1 55%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: clamp(20px, 2.5vw, 32px) clamp(20px, 2.5vw, 32px) clamp(20px, 2.5vw, 32px) 0;
-    gap: 24px;
-  }
-
-  .type-landscape-image .wispr-quote {
-    font-size: clamp(1.45rem, 1.9vw, 1.85rem);
-  }
-
-  /* Square / Editorial Quote Card (Fast Company & Slash Gear Style) */
-  .type-square {
-    width: min(480px, 82vw);
-    min-height: 410px;
-    padding: clamp(36px, 4vw, 48px);
-  }
-
-  .card-quote-box {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
-    min-height: 320px;
-    gap: 28px;
-  }
-
-  .type-square .wispr-quote {
-    font-size: clamp(1.6rem, 2.1vw, 2.05rem);
-  }
-
-  /* Wide Card */
-  .type-wide {
-    width: min(700px, 86vw);
-    min-height: 370px;
-    padding: clamp(36px, 4vw, 48px);
-  }
-
-  .type-wide .wispr-quote {
-    font-size: clamp(1.6rem, 2.1vw, 2.05rem);
-  }
-
   /* ------------------------------------------------------------------ */
-  /* COLOR THEMES MATCHING WISPR FLOW REFERENCE                         */
+  /* COLOR THEMES MATCHING EDITORIAL REFERENCE                          */
   /* ------------------------------------------------------------------ */
 
-  /* 1. Emerald Green (#18C88A) — Elena Verna Card in Screenshot */
+  /* 1. Emerald Green (#18C88A) */
   .theme-green {
     background: #18C88A;
     color: #062C1C;
   }
-  .theme-green .wispr-quote {
-    color: #062C1C;
-  }
+  .theme-green .wispr-quote,
   .theme-green .author-name {
     color: #062C1C;
   }
@@ -291,14 +161,12 @@ const { items = testimonials } = Astro.props;
     color: rgba(6, 44, 28, 0.76);
   }
 
-  /* 2. Warm Cream / Ivory (#EDE9D5) — Fast Company Card in Screenshot */
+  /* 2. Warm Cream / Ivory (#EDE9D5) */
   .theme-cream {
     background: #EDE9D5;
     color: #161616;
   }
-  .theme-cream .wispr-quote {
-    color: #161616;
-  }
+  .theme-cream .wispr-quote,
   .theme-cream .author-name {
     color: #161616;
   }
@@ -306,14 +174,12 @@ const { items = testimonials } = Astro.props;
     color: rgba(22, 22, 22, 0.72);
   }
 
-  /* 3. Warm Orange / Amber (#FFA946) — Alex Lieberman Card in Screenshot */
+  /* 3. Warm Orange / Amber (#FFA946) */
   .theme-orange {
     background: #FFA946;
     color: #281404;
   }
-  .theme-orange .wispr-quote {
-    color: #281404;
-  }
+  .theme-orange .wispr-quote,
   .theme-orange .author-name {
     color: #281404;
   }
@@ -326,9 +192,7 @@ const { items = testimonials } = Astro.props;
     background: #E8DAFF;
     color: #23123D;
   }
-  .theme-lavender .wispr-quote {
-    color: #23123D;
-  }
+  .theme-lavender .wispr-quote,
   .theme-lavender .author-name {
     color: #23123D;
   }
@@ -352,104 +216,310 @@ const { items = testimonials } = Astro.props;
   }
 
   /* ------------------------------------------------------------------ */
-  /* Mobile Behavior (< 768px): Horizontal Swipe & Scroll Snap         */
+  /* MOBILE (< 768px): Natural Stacked Section & Horizontal Snap Swipe   */
   /* ------------------------------------------------------------------ */
-  @media (max-width: 767px) {
+  @media (max-width: 767.98px) {
     .reviews-story-section {
+      position: relative;
       min-height: auto;
-      padding-block: clamp(3.5rem, 6vw, 5rem);
+      height: auto;
+      padding-top: 56px;
+      padding-bottom: 56px;
+      padding-block: 56px;
+      overflow: clip;
     }
 
     .reviews-sticky-viewport {
       position: static;
       height: auto;
+      min-height: auto;
       overflow: visible;
-      padding-top: 0;
-      padding-bottom: 0;
+      display: block;
+      padding: 0;
     }
 
     .reviews-header-container {
-      margin-bottom: 2rem;
+      width: 100%;
+      margin-bottom: 36px;
+      pointer-events: auto;
     }
 
-    .reviews-stage {
+    .reviews-sticky-header {
+      max-width: 100%;
+    }
+
+    .eyebrow {
+      margin-bottom: 8px;
+    }
+
+    .heading {
+      font-size: clamp(2rem, 7.5vw, 2.5rem);
+      line-height: 1.15;
+    }
+
+    /* Horizontal swipe & scroll-snap track */
+    .reviews-stage,
+    .reviews-track {
       position: static;
+      inset: auto;
+      transform: none !important;
       display: flex;
       flex-direction: row;
       align-items: stretch;
       justify-content: flex-start;
-      transform: none;
       gap: 16px;
       overflow-x: auto;
+      overflow-y: hidden;
       scroll-snap-type: x mandatory;
-      padding-inline: 1.25rem;
-      padding-bottom: 12px;
+      padding-inline: var(--page-gutter, 1.25rem);
+      padding-bottom: 8px;
+      margin: 0;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
       pointer-events: auto;
+      z-index: 1;
     }
 
-    .reviews-stage::-webkit-scrollbar {
+    .reviews-stage::-webkit-scrollbar,
+    .reviews-track::-webkit-scrollbar {
       display: none;
     }
 
-    .wispr-card {
-      position: static;
-      flex: 0 0 88vw;
+    /* Single dominant card (86vw) + peek of next */
+    .wispr-card,
+    .review-card {
+      position: relative !important;
+      inset: auto !important;
+      transform: none !important;
+      rotate: 0deg !important;
+      opacity: 1 !important;
+      flex: 0 0 86vw;
+      width: 86vw;
       max-width: 420px;
       min-height: auto;
-      border-radius: 30px;
+      border-radius: 28px;
       scroll-snap-align: center;
-      transform: none !important;
-      opacity: 1 !important;
-      pointer-events: auto;
+      scroll-snap-stop: normal;
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+      pointer-events: auto;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
 
-    .type-landscape-image,
-    .type-square,
-    .type-wide {
-      width: 88vw;
-      padding: 16px;
+    /* Landscape image card (Image on top, quote below) */
+    .type-landscape-image {
+      padding: 14px;
+      width: 86vw;
+      max-width: 420px;
+      min-height: auto;
     }
 
     .card-split-grid {
+      display: flex;
       flex-direction: column;
+      height: 100%;
       min-height: auto;
       gap: 16px;
     }
 
     .card-image-pane {
-      flex: 0 0 180px;
-      height: 180px;
+      flex: 0 0 auto;
+      width: 100%;
+      height: 190px;
       border-radius: 20px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .card-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
     }
 
     .card-copy-pane {
-      padding: 8px 12px 16px 12px;
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 4px 8px 12px 8px;
       gap: 16px;
     }
 
+    .type-landscape-image .wispr-quote {
+      font-size: 1.25rem !important;
+      line-height: 1.38;
+    }
+
+    /* Quote-only cards (Square & Wide) */
     .type-square,
     .type-wide {
-      padding: 28px 24px;
+      padding: 28px 22px;
+      width: 86vw;
+      max-width: 420px;
+      min-height: auto;
     }
 
     .card-quote-box {
-      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      min-height: 230px;
       gap: 20px;
     }
 
-    .wispr-quote {
+    .type-square .wispr-quote,
+    .type-wide .wispr-quote {
       font-size: 1.25rem !important;
       line-height: 1.38;
     }
   }
 
   /* ------------------------------------------------------------------ */
+  /* DESKTOP (>= 768px): Sticky Scroll-Story Presentation Stage         */
+  /* ------------------------------------------------------------------ */
+  @media (min-width: 768px) {
+    .reviews-story-section {
+      min-height: 320vh;
+      overflow: clip;
+    }
+
+    .reviews-sticky-viewport {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      height: 100svh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding-top: clamp(4.5rem, 8vh, 6rem);
+      padding-bottom: clamp(2.5rem, 5vh, 3.5rem);
+      box-sizing: border-box;
+    }
+
+    .reviews-header-container {
+      width: 100%;
+      z-index: 25;
+      pointer-events: none;
+    }
+
+    .reviews-sticky-header {
+      max-width: var(--content-max, 60rem);
+    }
+
+    .heading {
+      font-size: clamp(2rem, 3.2vw, 3rem);
+      line-height: var(--line-heading, 1.15);
+    }
+
+    .reviews-stage {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translateY(3vh);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .wispr-card {
+      position: absolute;
+      pointer-events: auto;
+      will-change: transform, opacity;
+      border-radius: 40px;
+      box-sizing: border-box;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), 0 4px 16px rgba(0, 0, 0, 0.3);
+      transition: box-shadow 220ms ease;
+    }
+
+    /* Landscape Image Card */
+    .type-landscape-image {
+      width: min(780px, 88vw);
+      min-height: 400px;
+      padding: 16px;
+    }
+
+    .card-split-grid {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      height: 100%;
+      min-height: 368px;
+      gap: clamp(24px, 3vw, 36px);
+    }
+
+    .card-image-pane {
+      flex: 0 0 45%;
+      position: relative;
+      border-radius: 26px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .card-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    .card-copy-pane {
+      flex: 1 1 55%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: clamp(20px, 2.5vw, 32px) clamp(20px, 2.5vw, 32px) clamp(20px, 2.5vw, 32px) 0;
+      gap: 24px;
+    }
+
+    .type-landscape-image .wispr-quote {
+      font-size: clamp(1.45rem, 1.9vw, 1.85rem);
+    }
+
+    /* Square Quote Card */
+    .type-square {
+      width: min(480px, 82vw);
+      min-height: 410px;
+      padding: clamp(36px, 4vw, 48px);
+    }
+
+    .card-quote-box {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      min-height: 320px;
+      gap: 28px;
+    }
+
+    .type-square .wispr-quote {
+      font-size: clamp(1.6rem, 2.1vw, 2.05rem);
+    }
+
+    /* Wide Card */
+    .type-wide {
+      width: min(700px, 86vw);
+      min-height: 370px;
+      padding: clamp(36px, 4vw, 48px);
+    }
+
+    .type-wide .wispr-quote {
+      font-size: clamp(1.6rem, 2.1vw, 2.05rem);
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
   /* Accessibility: Prefers Reduced Motion                              */
   /* ------------------------------------------------------------------ */
-  @media (prefers-reduced-motion: reduce) {
+  @media (prefers-reduced-motion: reduce) and (min-width: 768px) {
     .reviews-story-section {
       min-height: auto;
       padding-block: 4rem;
@@ -500,20 +570,19 @@ const { items = testimonials } = Astro.props;
     const cards = Array.from(section.querySelectorAll<HTMLElement>('[data-story-card]'));
     if (cards.length === 0) return;
 
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const isMobile = window.innerWidth < 768;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const desktopMedia = window.matchMedia('(min-width: 768px)');
 
-    if (prefersReducedMotion || isMobile) {
+    function clearCardStyles() {
       cards.forEach((card) => {
         card.style.transform = '';
         card.style.opacity = '';
         card.style.zIndex = '';
         card.style.pointerEvents = '';
       });
-      return;
     }
 
-    // Wispr Flow Layered Deck Positions:
+    // Wispr Flow Layered Deck Positions (Active >= 768px):
     // - Active dominant in center: (0, -10px), scale 1.0, rot 0deg
     // - Peeking bottom-left: (-330px, 150px), scale 0.88, rot -3.5deg
     // - Peeking upper-right: (+340px, -130px), scale 0.88, rot +3.0deg
@@ -600,6 +669,12 @@ const { items = testimonials } = Astro.props;
     let isTicking = false;
 
     function update() {
+      if (!desktopMedia.matches || prefersReducedMotion.matches) {
+        clearCardStyles();
+        isTicking = false;
+        return;
+      }
+
       const rect = sectionEl.getBoundingClientRect();
       const scrollableDistance = sectionEl.offsetHeight - window.innerHeight;
       if (scrollableDistance <= 0) {
@@ -625,32 +700,32 @@ const { items = testimonials } = Astro.props;
     }
 
     function onScroll() {
+      if (!desktopMedia.matches || prefersReducedMotion.matches) return;
       if (!isTicking) {
         isTicking = true;
         window.requestAnimationFrame(update);
       }
     }
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener(
-      'resize',
-      () => {
-        if (window.innerWidth < 768) {
-          cards.forEach((card) => {
-            card.style.transform = '';
-            card.style.opacity = '';
-            card.style.zIndex = '';
-            card.style.pointerEvents = '';
-          });
-        } else {
-          update();
-        }
-      },
-      { passive: true }
-    );
+    function onViewportChange() {
+      if (!desktopMedia.matches || prefersReducedMotion.matches) {
+        clearCardStyles();
+      } else {
+        update();
+      }
+    }
 
-    // Initial positioning
-    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    desktopMedia.addEventListener('change', onViewportChange);
+    prefersReducedMotion.addEventListener('change', onViewportChange);
+    window.addEventListener('resize', onViewportChange, { passive: true });
+
+    // Initial check
+    if (desktopMedia.matches && !prefersReducedMotion.matches) {
+      update();
+    } else {
+      clearCardStyles();
+    }
   }
 
   if (document.readyState === 'loading') {
