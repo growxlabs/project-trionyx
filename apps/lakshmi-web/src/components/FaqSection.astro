@@ -13,12 +13,8 @@ const { items = faqs } = Astro.props;
 <Section labelledBy="faq-title" class="faq-section" data-faq-section>
   <Container class="faq-container">
     <div class="faq-layout">
-      <div class="faq-header stack">
-        <p class="eyebrow">FAQ</p>
+      <div class="faq-header">
         <h2 id="faq-title">Frequently asked questions</h2>
-        <p class="faq-subtitle">
-          Answers to common questions about our catalogue, products, and trade enquiries.
-        </p>
       </div>
 
       <div class="faq-accordion" role="region" aria-label="Frequently asked questions list">
@@ -100,29 +96,12 @@ const { items = faqs } = Astro.props;
     align-self: start;
   }
 
-  .eyebrow {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    font-size: var(--font-label);
-    font-weight: var(--weight-strong);
-    letter-spacing: 0.08em;
-    color: var(--color-text);
-  }
-
   h2 {
     font-size: clamp(2rem, 1.6rem + 1.2vw, 2.75rem);
     line-height: 1.16;
     letter-spacing: -0.025em;
     color: var(--color-text);
     margin: 0;
-  }
-
-  .faq-subtitle {
-    margin: 0;
-    color: var(--color-text-muted);
-    font-size: clamp(0.925rem, 1vw, 1.05rem);
-    line-height: 1.6;
   }
 
   /* Accordion list */
