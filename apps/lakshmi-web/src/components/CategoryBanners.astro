@@ -1,7 +1,10 @@
 ---
 interface BannerSlide {
   id: string;
+  tag: string;
   title: string;
+  description: string;
+  ctaText: string;
   href: string;
   image: string;
   alt: string;
@@ -10,38 +13,50 @@ interface BannerSlide {
 const slides: BannerSlide[] = [
   {
     id: 'paint-protection',
-    title: 'Paint Protection Film',
-    href: '/products?category=paint-protection-film',
+    tag: 'PAINT PROTECTION FILM',
+    title: 'Get unmatched paint protection with an unbeatable warranty',
+    description: 'Choose high-grade Paint Protection Films for best-in-class scratch resistance, self-healing performance, and enduring warranty.',
+    ctaText: 'Got queries? Contact Us',
+    href: '/contact',
     image: '/images/banners/protection-outdoor.png',
-    alt: 'Vehicle with clear paint protection film in outdoor landscape',
+    alt: 'Luxury vehicle with clear glossy paint protection film in an outdoor landscape',
   },
   {
     id: 'window-film',
-    title: 'Sun Control Window Film',
+    tag: 'SUN CONTROL WINDOW FILM',
+    title: 'Superior solar heat rejection and cabin comfort',
+    description: 'High-performance sun control window films engineered for optimal optical clarity, maximum UV defense, and cooler cabin comfort.',
+    ctaText: 'Explore Window Film',
     href: '/products?category=sun-control-ceramic-window-film',
     image: '/images/banners/window-outdoor.png',
-    alt: 'Vehicle with sun control tinted window film in outdoor landscape',
+    alt: 'Modern SUV with sun control window tint glass in a scenic mountain backdrop',
   },
   {
     id: 'led-lamps',
-    title: 'LED Lamps',
+    tag: 'AUTOMOTIVE LIGHTING',
+    title: 'Razor-sharp beam cutoff with maximum night illumination',
+    description: 'Precision engineered bi-LED and laser projector lighting delivering superior lux output with zero glare for oncoming drivers.',
+    ctaText: 'Explore LED Lamps',
     href: '/products?category=led-lamps',
     image: '/images/banners/led-outdoor.png',
-    alt: 'Vehicle with automotive LED lamps in outdoor landscape',
+    alt: 'Performance automobile featuring precision high-output LED matrix projector headlights',
   },
   {
     id: 'sound-damping',
-    title: 'Sound Damping',
+    tag: 'ACOUSTIC DAMPING',
+    title: 'Eliminate road noise and elevate cabin acoustic comfort',
+    description: 'Multi-layered vibration damping sheets engineered for premium audio isolation and structural resonance reduction.',
+    ctaText: 'Explore Sound Damping',
     href: '/products?category=shumoff-damping',
     image: '/images/banners/sound-damping.png',
-    alt: 'Automotive sound damping isolation components',
+    alt: 'Automotive vibration damping sheets and acoustic isolation components',
   },
 ];
 ---
 
 <category-banners
   class="category-hero-banner"
-  aria-label="Product categories"
+  aria-label="Featured automotive categories"
   role="region"
   aria-roledescription="carousel"
 >
@@ -64,11 +79,15 @@ const slides: BannerSlide[] = [
         />
         <div class="banner-scrim" aria-hidden="true"></div>
         <div class="banner-copy">
+          <p class="banner-eyebrow">{slide.tag}</p>
           <h2 class="banner-title">{slide.title}</h2>
-          <a href={slide.href} class="banner-btn" aria-label={`Explore ${slide.title}`}>
-            Explore products
-            <span class="btn-arrow" aria-hidden="true">↗</span>
-          </a>
+          <p class="banner-desc">{slide.description}</p>
+          <div class="banner-actions">
+            <a href={slide.href} class="banner-btn" aria-label={`${slide.ctaText}: ${slide.title}`}>
+              {slide.ctaText}
+              <span class="btn-arrow" aria-hidden="true">→</span>
+            </a>
+          </div>
         </div>
       </article>
     ))}
@@ -132,7 +151,7 @@ const slides: BannerSlide[] = [
     position: relative;
     flex: 0 0 100%;
     width: 100%;
-    min-height: clamp(280px, 26vw, 380px);
+    min-height: clamp(340px, 30vw, 420px);
     overflow: hidden;
     scroll-snap-align: start;
     scroll-snap-stop: always;
@@ -151,17 +170,18 @@ const slides: BannerSlide[] = [
     z-index: -2;
   }
 
-  /* Clean subtle gradient: clear text on the left, open view of vehicle on the right */
+  /* Dark Scrim matching 3M reference: rich dark overlay on the left, clear view of the vehicle on the right */
   .banner-scrim {
     position: absolute;
     inset: 0;
     z-index: -1;
     background: linear-gradient(
       90deg,
-      rgba(9, 11, 13, 0.88) 0%,
-      rgba(9, 11, 13, 0.72) 36%,
-      rgba(9, 11, 13, 0.25) 60%,
-      transparent 80%
+      rgba(9, 11, 13, 0.94) 0%,
+      rgba(9, 11, 13, 0.88) 38%,
+      rgba(9, 11, 13, 0.45) 62%,
+      rgba(9, 11, 13, 0.08) 85%,
+      transparent 100%
     );
     pointer-events: none;
   }
@@ -173,53 +193,79 @@ const slides: BannerSlide[] = [
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    padding: clamp(32px, 5vw, 60px);
+    padding: clamp(32px, 5vw, 64px);
+    max-width: 660px;
     box-sizing: border-box;
-    gap: 20px;
-    max-width: 640px;
+    gap: 12px;
+  }
+
+  .banner-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-primary, #E95D2C);
+    margin: 0;
   }
 
   .banner-title {
     margin: 0;
-    max-width: 580px;
-    font-size: clamp(2rem, 3.2vw, 3.25rem);
+    font-size: clamp(1.75rem, 2.5vw, 2.45rem);
     font-weight: 700;
-    line-height: 1.08;
-    letter-spacing: -0.04em;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
     color: #FFFFFF;
-    text-wrap: balance;
+    max-width: 22ch;
   }
 
+  .banner-desc {
+    margin: 0;
+    font-size: clamp(0.9rem, 1.1vw, 1.05rem);
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.85);
+    max-width: 44ch;
+  }
+
+  .banner-actions {
+    margin-top: 8px;
+  }
+
+  /* High contrast solid button matching 3M reference */
   .banner-btn {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 22px;
-    font-size: 14px;
-    font-weight: 650;
-    border-radius: 8px;
-    color: #FFFFFF;
-    background: var(--color-primary, #E95D2C);
+    gap: 10px;
+    padding: 12px 26px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-radius: 6px;
+    color: #0B0D0F;
+    background: #FFFFFF;
     text-decoration: none;
-    transition: background 180ms ease, transform 180ms ease;
+    transition: background 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
   }
 
   .banner-btn:hover {
-    background: #cf491c;
+    background: var(--color-primary, #E95D2C);
+    color: #FFFFFF;
     transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(233, 93, 44, 0.4);
   }
 
   .btn-arrow {
-    font-size: 14px;
+    font-size: 1rem;
     line-height: 1;
     transition: transform 180ms ease;
   }
 
   .banner-btn:hover .btn-arrow {
-    transform: translate(2px, -2px);
+    transform: translateX(3px);
   }
 
-  /* Chevron navigation buttons on left and right edges */
+  /* Chevron navigation buttons on left and right edges (3M style) */
   .banner-nav {
     position: absolute;
     top: 50%;
@@ -254,7 +300,7 @@ const slides: BannerSlide[] = [
     right: 18px;
   }
 
-  /* Dot pagination indicators at bottom center */
+  /* Dot pagination indicators at bottom center (3M style) */
   .banner-dots {
     position: absolute;
     bottom: 16px;
@@ -294,43 +340,39 @@ const slides: BannerSlide[] = [
     }
 
     .banner-slide {
-      min-height: 240px;
+      min-height: 380px;
       align-items: flex-end;
     }
 
     .banner-img {
-      object-position: 70% center;
+      object-position: center top;
     }
 
     .banner-scrim {
       background: linear-gradient(
         0deg,
-        rgba(9, 11, 13, 0.92) 0%,
-        rgba(9, 11, 13, 0.7) 50%,
-        transparent 100%
+        rgba(9, 11, 13, 0.96) 0%,
+        rgba(9, 11, 13, 0.88) 55%,
+        rgba(9, 11, 13, 0.3) 100%
       );
     }
 
     .banner-copy {
-      padding: 24px;
-      gap: 14px;
-      max-width: 100%;
+      padding: 24px 20px 48px 20px;
+      gap: 10px;
     }
 
     .banner-title {
-      font-size: clamp(1.5rem, 6.5vw, 1.85rem);
-      max-width: 100%;
-      text-wrap: balance;
-      line-height: 1.15;
+      font-size: 1.45rem;
     }
 
-    .banner-btn {
-      padding: 10px 18px;
-      font-size: 13px;
+    .banner-desc {
+      font-size: 0.875rem;
+      line-height: 1.45;
     }
 
     .banner-nav {
-      display: none;
+      display: none; /* Hide edge chevrons on small phones, user swipes naturally */
     }
 
     .banner-dots {
