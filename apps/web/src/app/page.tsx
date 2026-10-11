@@ -13,13 +13,13 @@ import { SiteFooter } from '@/components/footer/SiteFooter';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-[#F5F5EE] text-[#171714] flex flex-col">
+    <div className="min-h-screen bg-[#FFFFEB] text-[#171714] flex flex-col">
       {/* 
         TRIONYX GLOBAL PAGE FRAME (Stripe-inspired architectural framing)
         - Max width: 1440px centered
         - Continuous 1px vertical rails: rgba(23, 23, 20, 0.07)
         - Responsive viewport gutters: 32px desktop, 24px tablet, 16px mobile
-        - Main Canvas: #F5F5EE
+        - Main Canvas: #FFFFEB
       */}
       <PageFrame>
         {/* Hero and header zone. WebGL ribbon remains available for a future visual test. */}

@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="min-h-screen bg-[#F5F5EE] text-[#171714] flex flex-col">
+    <div className="min-h-screen bg-[#FFFFEB] text-[#171714] flex flex-col">
       <PageFrame>
         {/* Header */}
         <div className="relative isolate overflow-hidden">

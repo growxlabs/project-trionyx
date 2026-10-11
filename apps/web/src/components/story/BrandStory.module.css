@@ -1,7 +1,7 @@
 .section {
   --story-ink: #242521;
   padding: var(--section-space) clamp(20px, 3.8vw, 60px);
-  background: #F5F5EE;
+  background: var(--trionyx-canvas, #FFFFEB);
   border-bottom: 1px solid var(--section-divider);
   font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }

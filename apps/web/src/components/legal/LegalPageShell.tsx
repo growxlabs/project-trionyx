@@ -32,7 +32,7 @@ export function LegalPageShell({
   currentPath,
 }: LegalPageShellProps) {
   return (
-    <div className="min-h-screen bg-[#F5F5EE] text-[#171714] flex flex-col font-sans antialiased selection:bg-[#F26522]/15 selection:text-[#171714]">
+    <div className="min-h-screen bg-[#FFFFEB] text-[#171714] flex flex-col font-sans antialiased selection:bg-[#F26522]/15 selection:text-[#171714]">
       <PageFrame>
         {/* Navigation Header */}
         <div className="relative isolate overflow-hidden">

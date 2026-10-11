@@ -43,7 +43,7 @@ export const HeroSection = ({
     <SectionFrame
       id="hero"
       hasBottomBorder={false}
-      className="bg-[#F5F5EE] relative overflow-hidden flex items-center border-b border-[var(--section-divider)]"
+      className="bg-[#FFFFEB] relative overflow-hidden flex items-center border-b border-[var(--section-divider)]"
     >
       {/* INTERNAL 12-COLUMN CONTENT GRID (32px padding on desktop, 20px-24px on mobile) */}
       <ContentGrid className="relative z-10 pt-4 sm:pt-6 lg:pt-8 pb-10 sm:pb-12 lg:pb-16 items-center !gap-y-10">

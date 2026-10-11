@@ -1,4 +1,4 @@
-.section { padding: var(--section-space) clamp(24px, 4vw, 64px); background: #F5F5EE; color: #252620; font-family: var(--font-sans); }
+.section { padding: var(--section-space) clamp(24px, 4vw, 64px); background: var(--trionyx-canvas, #FFFFEB); color: #252620; font-family: var(--font-sans); }
 .inner { max-width: 1200px; margin: 0 auto; }
 .header { margin-bottom: 48px; }
 .header h2 { margin: 0; font-size: clamp(36px, 4.3vw, 58px); font-weight: var(--heading-weight); line-height: 1.12; letter-spacing: -.045em; }

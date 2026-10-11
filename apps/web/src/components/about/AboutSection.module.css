@@ -1,7 +1,7 @@
 .outerSection {
   position: relative;
   width: 100%;
-  background: #F5F5EE;
+  background: var(--trionyx-canvas, #FFFFEB);
   padding-block: clamp(48px, 6vw, 88px);
 }
 
