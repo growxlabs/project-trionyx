@@ -25,19 +25,21 @@ export default function WarrantyPage() {
           {/* Warranty Header & Floating Lookup Block */}
           <section className="px-5 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-14 sm:pb-20">
             {/* Warranty header / intro */}
-            <div className="max-w-2xl mb-8 sm:mb-10">
-              <SectionEyebrow>WARRANTY</SectionEyebrow>
-              <h1 className="section-heading text-[32px] sm:text-[40px] lg:text-[48px] tracking-[-0.025em] leading-[1.1] text-[#171714] mb-4">
-                Check your Trionyx warranty.
-              </h1>
-              <p className="body-copy max-w-lg">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 md:gap-10 mb-8 sm:mb-12">
+              <div className="max-w-xl">
+                <SectionEyebrow>WARRANTY</SectionEyebrow>
+                <h1 className="section-heading text-[32px] sm:text-[40px] lg:text-[48px] tracking-[-0.025em] leading-[1.1] text-[#171714] m-0">
+                  Check your Trionyx warranty.
+                </h1>
+              </div>
+              <p className="body-copy max-w-md text-[#171714]/75 m-0 md:pb-1">
                 Enter the serial number provided with your Trionyx product to verify its genuine registration, coverage term, and installation record.
               </p>
             </div>
 
             {/* Premium Floating Warranty Lookup Block */}
             <div
-              className="w-full max-w-4xl rounded-[28px] p-6 sm:p-10 lg:p-[56px_48px] shadow-sm"
+              className="w-full rounded-[28px] p-6 sm:p-10 lg:p-[56px_48px] shadow-sm"
               style={{ backgroundColor: '#075B50', borderRadius: '28px' }}
             >
               <WarrantyCheckForm />
