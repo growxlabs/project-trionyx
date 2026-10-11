@@ -51,7 +51,7 @@ const [brandCategories, { items: brandProducts }] = await Promise.all([
 ]);
 
 const isHogonn = brand.slug === 'hoggon' || brand.slug === 'hogonn';
-const brandLogo = isHogonn ? '/images/brands/hoggon.png' : '/images/brands/aozoom.png';
+const brandLogo = isHogonn ? '/images/brands/hogonn.png' : '/images/brands/aozoom.png';
 const brandImage = isHogonn ? '/images/categories/paint-protection.jpg' : '/images/about/about-secondary.jpg';
 const brandImageAlt = isHogonn ? 'Hogonn automotive surface protection and film engineering' : `${brand.name} automotive lighting engineering`;
 ---
