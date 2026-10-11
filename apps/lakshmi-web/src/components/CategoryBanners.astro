@@ -176,16 +176,18 @@ const slides: BannerSlide[] = [
     padding: clamp(32px, 5vw, 60px);
     box-sizing: border-box;
     gap: 20px;
+    max-width: 640px;
   }
 
   .banner-title {
     margin: 0;
-    max-width: 12ch;
+    max-width: 580px;
     font-size: clamp(2rem, 3.2vw, 3.25rem);
     font-weight: 700;
-    line-height: 1.05;
+    line-height: 1.08;
     letter-spacing: -0.04em;
     color: #FFFFFF;
+    text-wrap: balance;
   }
 
   .banner-btn {
@@ -312,11 +314,14 @@ const slides: BannerSlide[] = [
     .banner-copy {
       padding: 24px;
       gap: 14px;
+      max-width: 100%;
     }
 
     .banner-title {
-      font-size: 1.75rem;
-      max-width: 14ch;
+      font-size: clamp(1.5rem, 6.5vw, 1.85rem);
+      max-width: 100%;
+      text-wrap: balance;
+      line-height: 1.15;
     }
 
     .banner-btn {

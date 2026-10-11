@@ -6,11 +6,16 @@ a { color: inherit; text-decoration-color: var(--color-primary); text-underline-
 a:hover, a:active { text-decoration-color: var(--color-primary-hover); }
 button, summary { font: inherit; }
 :focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: var(--focus-offset); }
-h1, h2, h3, p { margin: 0; overflow-wrap: anywhere; }
-h1, h2, h3 { line-height: var(--line-heading); font-weight: var(--weight-strong); }
+h1, h2, h3, p { margin: 0; }
+h1, h2, h3, .display-heading {
+  line-height: var(--line-heading);
+  font-weight: var(--weight-strong);
+  text-wrap: balance;
+}
 h1, .heading-page { font-size: var(--font-display); }
 h2, .heading-section { font-size: var(--font-section); }
 h3, .heading-product { font-size: var(--font-product); }
+p { text-wrap: pretty; }
 .text-small { font-size: var(--font-small); }
 .text-muted { color: var(--color-text-muted); }
 .label { font-size: var(--font-label); font-weight: var(--weight-strong); }

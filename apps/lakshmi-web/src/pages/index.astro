@@ -113,7 +113,7 @@ import BrandMarquee from '../components/BrandMarquee.astro';
   .hero-car::before { content: ''; position: absolute; z-index: -1; inset: 12% -6% 8% -12%; background: radial-gradient(ellipse at 48% 48%, rgba(255, 255, 255, .04), transparent 68%); pointer-events: none; }
   .hero-car-image { width: 140%; max-width: none; height: auto; display: block; object-fit: contain; margin-inline-start: -20%; filter: brightness(1.12) contrast(1.04) drop-shadow(0 20px 28px rgba(0, 0, 0, .8)); }
   .hero-copy { display: flex; flex-direction: column; align-items: flex-start; text-align: left; gap: var(--space-5); }
-  h1 { text-align: left; font-size: clamp(1.875rem, 1.45rem + 1.4vw, 3rem); line-height: 1.18; letter-spacing: -0.025em; margin: 0; }
+  h1 { text-align: left; font-size: clamp(1.875rem, 1.45rem + 1.4vw, 3rem); line-height: 1.18; letter-spacing: -0.025em; margin: 0; text-wrap: balance; max-width: 24ch; }
   .hero-title-line { display: block; }
   .actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: var(--space-5); margin-top: var(--space-2); }
   .secondary-link { display: inline-flex; align-items: center; gap: var(--space-3); font-weight: var(--weight-strong); padding-block: var(--space-3); color: var(--color-text); text-decoration: underline; text-decoration-color: transparent; }
@@ -196,12 +196,15 @@ import BrandMarquee from '../components/BrandMarquee.astro';
     font-size: clamp(2rem, 1.55rem + 1.25vw, 2.75rem);
     line-height: 1.15;
     letter-spacing: -0.02em;
+    text-wrap: balance;
+    max-width: 24ch;
   }
   .about-lead {
     font-size: clamp(1.125rem, 1.2vw, 1.3rem);
     line-height: 1.55;
     color: var(--color-text);
-    max-width: 48ch;
+    max-width: 58ch;
+    text-wrap: pretty;
   }
   .about-action {
     margin-top: var(--space-2);

@@ -1,6 +1,8 @@
 /* Discovery layouts reuse the existing palette, spacing and catalogue primitives. */
 .discovery-eyebrow { display: flex; align-items: center; gap: var(--space-3); font-size: var(--font-label); font-weight: var(--weight-strong); letter-spacing: .08em; }
 .discovery-heading { margin-bottom: var(--space-6); }
+.discovery-heading h1, .discovery-heading h2, .brand-hero-copy h1 { text-wrap: balance; }
+.brand-hero-copy p { max-width: 58ch; text-wrap: pretty; }
 .discovery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--card-min)), 1fr)); gap: var(--space-5); max-width: var(--content-max); }
 .brand-hero { display: grid; grid-template-columns: 1.05fr 1fr; align-items: center; gap: var(--space-8); }
 .brand-hero-copy { display: grid; justify-items: start; gap: var(--space-5); }

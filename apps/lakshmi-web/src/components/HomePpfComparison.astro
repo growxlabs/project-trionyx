@@ -117,7 +117,7 @@ const {
   }
 
   .ppf-compare-layout { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: clamp(2rem, 4vw, 4.5rem); align-items: center; }
-  .ppf-compare-header { min-width: 0; max-width: 30rem; }
+  .ppf-compare-header { min-width: 0; max-width: 32rem; }
   .heading span { color: var(--color-primary); }
   .ppf-compare-action { margin-top: clamp(1.25rem, 2.5vw, 1.75rem); }
 
@@ -127,6 +127,7 @@ const {
     letter-spacing: -0.03em;
     color: var(--color-text, #F7F7F5);
     margin: 0;
+    text-wrap: balance;
   }
 
   /* Scale the comparison with the full-height section. */
@@ -299,10 +300,11 @@ const {
     }
 
     .heading {
-      font-size: clamp(32px, 8.5vw, 36px);
+      font-size: clamp(30px, 8vw, 36px);
       line-height: 1.15;
       letter-spacing: -0.025em;
       margin: 0;
+      text-wrap: balance;
     }
 
     .ppf-compare-action {
