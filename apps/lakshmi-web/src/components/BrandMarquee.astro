@@ -6,13 +6,10 @@ interface BrandLogo {
 }
 
 const BRANDS: BrandLogo[] = [
+  { name: 'Trionyx', src: '/images/brands/trionyx.png', class: 'logo-trionyx' },
   { name: 'Azoom', src: '/images/brands/azoom.png', class: 'logo-azoom' },
   { name: 'Hoggon', src: '/images/brands/hoggon.png', class: 'logo-hoggon' },
-  { name: 'Trionyx', src: '/images/brands/trionyx.png', class: 'logo-trionyx' },
 ];
-
-// Repeat 2x per set to ensure track width generously exceeds ultrawide displays
-const BRAND_SET = [...BRANDS, ...BRANDS];
 ---
 
 <section class="brand-marquee" aria-label="Brands we work with">
@@ -23,7 +20,7 @@ const BRAND_SET = [...BRANDS, ...BRANDS];
   <div class="marquee-viewport">
     <div class="marquee-track">
       <div class="marquee-set">
-        {BRAND_SET.map((brand) => (
+        {BRANDS.map((brand) => (
           <div class="brand-item">
             <img
               src={brand.src}
@@ -37,7 +34,7 @@ const BRAND_SET = [...BRANDS, ...BRANDS];
       </div>
 
       <div class="marquee-set" aria-hidden="true">
-        {BRAND_SET.map((brand) => (
+        {BRANDS.map((brand) => (
           <div class="brand-item">
             <img
               src={brand.src}
@@ -59,7 +56,8 @@ const BRAND_SET = [...BRANDS, ...BRANDS];
     background: #0B0D0E;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    padding: clamp(22px, 3vh, 28px) 0;
+    padding: clamp(24px, 3vh, 28px) 0;
+    min-height: 130px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -91,6 +89,20 @@ const BRAND_SET = [...BRANDS, ...BRANDS];
     position: relative;
     display: flex;
     align-items: center;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 7%,
+      black 93%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 7%,
+      black 93%,
+      transparent 100%
+    );
   }
 
   .marquee-track {
@@ -98,7 +110,7 @@ const BRAND_SET = [...BRANDS, ...BRANDS];
     width: max-content;
     flex-shrink: 0;
     will-change: transform;
-    animation: marquee-scroll 32s linear infinite;
+    animation: marquee-scroll 40s linear infinite;
   }
 
   .brand-marquee:hover .marquee-track {
@@ -109,16 +121,19 @@ const BRAND_SET = [...BRANDS, ...BRANDS];
     display: flex;
     align-items: center;
     flex-shrink: 0;
-    gap: 100px;
-    padding-right: 100px;
+    width: 110vw;
+    min-width: 110vw;
     box-sizing: border-box;
   }
 
   .brand-item {
+    flex: 1 0 calc(110vw / 3);
+    width: calc(110vw / 3);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    box-sizing: border-box;
   }
 
   .brand-logo {
@@ -134,19 +149,19 @@ const BRAND_SET = [...BRANDS, ...BRANDS];
     opacity: 1;
   }
 
+  .logo-trionyx {
+    height: 44px;
+    max-height: 46px;
+  }
+
   .logo-azoom {
-    height: 38px;
-    max-height: 40px;
+    height: 40px;
+    max-height: 42px;
   }
 
   .logo-hoggon {
-    height: 46px;
-    max-height: 48px;
-  }
-
-  .logo-trionyx {
-    height: 38px;
-    max-height: 40px;
+    height: 36px;
+    max-height: 38px;
   }
 
   @keyframes marquee-scroll {
@@ -160,7 +175,8 @@ const BRAND_SET = [...BRANDS, ...BRANDS];
 
   @media (max-width: 768px) {
     .brand-marquee {
-      padding: clamp(16px, 2.5vh, 20px) 0;
+      padding: clamp(18px, 2.5vh, 22px) 0;
+      min-height: 105px;
     }
 
     .marquee-header {
@@ -172,9 +188,9 @@ const BRAND_SET = [...BRANDS, ...BRANDS];
       letter-spacing: 0.14em;
     }
 
-    .marquee-set {
-      gap: 68px;
-      padding-right: 68px;
+    .logo-trionyx {
+      height: 32px;
+      max-height: 34px;
     }
 
     .logo-azoom {
@@ -183,34 +199,21 @@ const BRAND_SET = [...BRANDS, ...BRANDS];
     }
 
     .logo-hoggon {
-      height: 35px;
-      max-height: 36px;
-    }
-
-    .logo-trionyx {
-      height: 28px;
-      max-height: 30px;
+      height: 25px;
+      max-height: 26px;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .marquee-viewport {
-      overflow-x: auto;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .marquee-viewport::-webkit-scrollbar {
-      display: none;
+      -webkit-mask-image: none;
+      mask-image: none;
     }
 
     .marquee-track {
       animation: none;
       width: 100%;
       justify-content: center;
-      flex-wrap: wrap;
-      gap: 32px;
-      padding: 0 16px;
     }
 
     .marquee-set:last-child {
@@ -218,10 +221,15 @@ const BRAND_SET = [...BRANDS, ...BRANDS];
     }
 
     .marquee-set {
-      gap: 48px;
-      padding-right: 0;
-      flex-wrap: wrap;
+      width: 100%;
+      min-width: 0;
       justify-content: center;
+      gap: 48px;
+    }
+
+    .brand-item {
+      flex: 0 0 auto;
+      width: auto;
     }
   }
 </style>
