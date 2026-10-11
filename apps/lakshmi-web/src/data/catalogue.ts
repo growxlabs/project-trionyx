@@ -38,7 +38,7 @@ export const categories: readonly Category[] = [
     name: 'LED Lamps',
     brandSlug: 'aozoom',
     brandName: 'Aozoom',
-    description: 'Explore LED lamps and projector lighting for your vehicle.',
+    description: '',
     image: {
       src: '/images/about/about-secondary.jpg',
       alt: 'Aozoom automotive LED lamp projector module and heatsink component',
@@ -49,7 +49,7 @@ export const categories: readonly Category[] = [
     name: 'Sun Control Window Film',
     brandSlug: 'hogonn',
     brandName: 'Hogonn',
-    description: 'Discover sun control window films for cabin comfort and solar protection.',
+    description: '',
     image: {
       src: '/images/categories/window-film.jpg',
       alt: 'Transparent automotive sun control window tint film unrolling under cool studio light',
@@ -60,7 +60,7 @@ export const categories: readonly Category[] = [
     name: 'Paint Protection Film',
     brandSlug: 'hogonn',
     brandName: 'Hogonn',
-    description: 'Explore clear films designed to protect your vehicle’s painted surfaces.',
+    description: '',
     image: {
       src: '/images/categories/paint-protection.jpg',
       alt: 'Technician applying clear paint protection film to a dark vehicle',
@@ -71,7 +71,7 @@ export const categories: readonly Category[] = [
     name: 'Shumoff Damping',
     brandSlug: 'hogonn',
     brandName: 'Hogonn',
-    description: 'Discover damping materials for managing vibration and cabin noise.',
+    description: '',
     image: {
       src: '/images/categories/sound-damping.jpg',
       alt: 'Textured automotive sound damping sheets with a layered foil backing',

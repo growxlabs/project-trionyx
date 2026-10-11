@@ -30,7 +30,6 @@ import BrandMarquee from '../components/BrandMarquee.astro';
             <span class="hero-title-line">Automotive lighting,</span>
             <span class="hero-title-line">made easier to discover.</span>
           </h1>
-          <p class="hero-description">Explore automotive LED lamps and find the right lighting for your vehicle.</p>
           <div class="actions">
             <Button href="/products">Explore Products</Button>
             <a class="secondary-link" href="/contact">Contact Us <span aria-hidden="true">→</span></a>
@@ -47,10 +46,7 @@ import BrandMarquee from '../components/BrandMarquee.astro';
   <Section labelledBy="categories-title">
     <Container>
       <div class="section-heading">
-        <div class="stack">
-          <p class="eyebrow">PRODUCT CATALOGUE</p>
-          <h2 id="categories-title">Explore by category</h2>
-        </div>
+        <h2 id="categories-title">Explore by category</h2>
         <a class="secondary-link" href="/products">Explore Products <span aria-hidden="true">→</span></a>
       </div>
       <CategoryBanners />
@@ -81,15 +77,9 @@ import BrandMarquee from '../components/BrandMarquee.astro';
           </div>
         </div>
         <div class="about-content">
-          <div class="stack">
-            <p class="eyebrow">ABOUT</p>
-            <h2 id="about-title" class="about-title">Lakshmi Distributions</h2>
-          </div>
+          <h2 id="about-title" class="about-title">Lakshmi Distributions</h2>
           <p class="about-lead">
             Lakshmi Distributions supplies automotive lighting products to dealers, workshops, and vehicle owners through a clear, product-focused distribution experience.
-          </p>
-          <p class="about-description">
-            We focus on reliable vehicle illumination—curating verified LED lamps and lighting components with transparent technical specifications to help customers and partners source the right lighting with confidence.
           </p>
           <div class="about-action">
             <a class="secondary-link" href="/about">About Us <span aria-hidden="true">→</span></a>
@@ -123,10 +113,8 @@ import BrandMarquee from '../components/BrandMarquee.astro';
   .hero-car::before { content: ''; position: absolute; z-index: -1; inset: 12% -6% 8% -12%; background: radial-gradient(ellipse at 48% 48%, rgba(255, 255, 255, .04), transparent 68%); pointer-events: none; }
   .hero-car-image { width: 140%; max-width: none; height: auto; display: block; object-fit: contain; margin-inline-start: -20%; filter: brightness(1.12) contrast(1.04) drop-shadow(0 20px 28px rgba(0, 0, 0, .8)); }
   .hero-copy { display: flex; flex-direction: column; align-items: flex-start; text-align: left; gap: var(--space-5); }
-  .eyebrow { display: flex; align-items: center; gap: var(--space-3); font-size: var(--font-label); font-weight: var(--weight-strong); letter-spacing: .08em; }
   h1 { text-align: left; font-size: clamp(1.875rem, 1.45rem + 1.4vw, 3rem); line-height: 1.18; letter-spacing: -0.025em; margin: 0; }
   .hero-title-line { display: block; }
-  .hero-description { max-width: 40ch; margin: 0; color: var(--color-text-muted); font-size: clamp(.95rem, 1.1vw, 1.0625rem); line-height: 1.7; }
   .actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: var(--space-5); margin-top: var(--space-2); }
   .secondary-link { display: inline-flex; align-items: center; gap: var(--space-3); font-weight: var(--weight-strong); padding-block: var(--space-3); color: var(--color-text); text-decoration: underline; text-decoration-color: transparent; }
   .secondary-link:hover { text-decoration-color: var(--color-primary); }
@@ -213,12 +201,6 @@ import BrandMarquee from '../components/BrandMarquee.astro';
     font-size: clamp(1.125rem, 1.2vw, 1.3rem);
     line-height: 1.55;
     color: var(--color-text);
-    max-width: 48ch;
-  }
-  .about-description {
-    font-size: clamp(.95rem, 1vw, 1.0625rem);
-    line-height: 1.7;
-    color: var(--color-text-muted);
     max-width: 48ch;
   }
   .about-action {
