@@ -1,0 +1,227 @@
+---
+interface BrandLogo {
+  name: string;
+  src: string;
+  class: string;
+}
+
+const BRANDS: BrandLogo[] = [
+  { name: 'Azoom', src: '/images/brands/azoom.png', class: 'logo-azoom' },
+  { name: 'Hoggon', src: '/images/brands/hoggon.png', class: 'logo-hoggon' },
+  { name: 'Trionyx', src: '/images/brands/trionyx.png', class: 'logo-trionyx' },
+];
+
+// Repeat 2x per set to ensure track width generously exceeds ultrawide displays
+const BRAND_SET = [...BRANDS, ...BRANDS];
+---
+
+<section class="brand-marquee" aria-label="Brands we work with">
+  <div class="marquee-header">
+    <span class="marquee-label">BRANDS WE WORK WITH</span>
+  </div>
+
+  <div class="marquee-viewport">
+    <div class="marquee-track">
+      <div class="marquee-set">
+        {BRAND_SET.map((brand) => (
+          <div class="brand-item">
+            <img
+              src={brand.src}
+              alt={brand.name}
+              class={`brand-logo ${brand.class}`}
+              loading="lazy"
+              draggable="false"
+            />
+          </div>
+        ))}
+      </div>
+
+      <div class="marquee-set" aria-hidden="true">
+        {BRAND_SET.map((brand) => (
+          <div class="brand-item">
+            <img
+              src={brand.src}
+              alt=""
+              class={`brand-logo ${brand.class}`}
+              loading="lazy"
+              draggable="false"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .brand-marquee {
+    position: relative;
+    background: #0B0D0E;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: clamp(22px, 3vh, 28px) 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    user-select: none;
+    box-sizing: border-box;
+  }
+
+  .marquee-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: clamp(14px, 2vh, 18px);
+  }
+
+  .marquee-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.42);
+    font-family: inherit;
+  }
+
+  .marquee-viewport {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    flex-shrink: 0;
+    will-change: transform;
+    animation: marquee-scroll 32s linear infinite;
+  }
+
+  .brand-marquee:hover .marquee-track {
+    animation-play-state: paused;
+  }
+
+  .marquee-set {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 100px;
+    padding-right: 100px;
+    box-sizing: border-box;
+  }
+
+  .brand-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .brand-logo {
+    display: block;
+    width: auto;
+    object-fit: contain;
+    filter: brightness(1);
+    opacity: 0.92;
+    transition: opacity 180ms ease;
+  }
+
+  .brand-marquee:hover .brand-logo {
+    opacity: 1;
+  }
+
+  .logo-azoom {
+    height: 38px;
+    max-height: 40px;
+  }
+
+  .logo-hoggon {
+    height: 46px;
+    max-height: 48px;
+  }
+
+  .logo-trionyx {
+    height: 38px;
+    max-height: 40px;
+  }
+
+  @keyframes marquee-scroll {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .brand-marquee {
+      padding: clamp(16px, 2.5vh, 20px) 0;
+    }
+
+    .marquee-header {
+      margin-bottom: 12px;
+    }
+
+    .marquee-label {
+      font-size: 10px;
+      letter-spacing: 0.14em;
+    }
+
+    .marquee-set {
+      gap: 68px;
+      padding-right: 68px;
+    }
+
+    .logo-azoom {
+      height: 28px;
+      max-height: 30px;
+    }
+
+    .logo-hoggon {
+      height: 35px;
+      max-height: 36px;
+    }
+
+    .logo-trionyx {
+      height: 28px;
+      max-height: 30px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-viewport {
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .marquee-viewport::-webkit-scrollbar {
+      display: none;
+    }
+
+    .marquee-track {
+      animation: none;
+      width: 100%;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 32px;
+      padding: 0 16px;
+    }
+
+    .marquee-set:last-child {
+      display: none;
+    }
+
+    .marquee-set {
+      gap: 48px;
+      padding-right: 0;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
+</style>
