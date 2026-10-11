@@ -13,7 +13,7 @@ export const faqs: readonly FaqItem[] = [
   {
     id: 'faq-categories',
     question: 'What product categories are available?',
-    answer: 'The current catalogue includes LED Lamps, Sun Control Ceramic Window Film, Paint Protection Film and Shumoff Damping.',
+    answer: 'The current catalogue includes LED Lamps, Sun Control Window Film, Paint Protection Film and Shumoff Damping.',
   },
   {
     id: 'faq-enquiry',
