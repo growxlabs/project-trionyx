@@ -1,13 +1,17 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import type { Organization, OrganizationMembership } from '@trionyx/types';
+
+const ACTIVE_ORG_COOKIE_NAME = 'trionyx_active_org';
 
 interface OrgContextValue {
   activeOrg: Organization | null;
   membership: OrganizationMembership | null;
   memberships: OrganizationMembership[];
   isLoading: boolean;
+  switchingOrganizationId: string | null;
   switchOrg: (orgIdOrSlug: string) => Promise<void>;
 }
 
@@ -24,10 +28,33 @@ export function OrgProvider({
   initialMemberships?: OrganizationMembership[];
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const [activeOrg, setActiveOrg] = useState<Organization | null>(initialActiveOrg || null);
   const [membership, setMembership] = useState<OrganizationMembership | null>(initialMembership || null);
   const [memberships, setMemberships] = useState<OrganizationMembership[]>(initialMemberships);
   const [isLoading, setIsLoading] = useState<boolean>(!initialActiveOrg);
+  const [switchingOrganizationId, setSwitchingOrganizationId] = useState<string | null>(null);
+
+  // Sync state if SSR props change on server component re-renders
+  useEffect(() => {
+    if (initialActiveOrg) {
+      setActiveOrg(initialActiveOrg);
+    }
+  }, [initialActiveOrg?.id]);
+
+  useEffect(() => {
+    if (initialMembership) {
+      setMembership(initialMembership);
+    }
+  }, [initialMembership?.id]);
+
+  useEffect(() => {
+    if (initialMemberships && initialMemberships.length > 0) {
+      setMemberships(initialMemberships);
+    }
+  }, [initialMemberships]);
 
   useEffect(() => {
     // If not supplied via SSR or if empty, fetch from API
@@ -35,12 +62,13 @@ export function OrgProvider({
       let isMounted = true;
       fetch('/api/v1/internal/auth/organizations')
         .then((res) => res.json())
-        .then((data) => {
+        .then((resData) => {
           if (!isMounted) return;
-          if (data?.success && data?.data) {
-            setActiveOrg(data.data.activeOrg);
-            setMembership(data.data.membership);
-            setMemberships(data.data.memberships || []);
+          const payload = resData?.data || (resData?.success ? resData.data : null);
+          if (payload) {
+            if (payload.activeOrg) setActiveOrg(payload.activeOrg);
+            if (payload.membership) setMembership(payload.membership);
+            if (payload.memberships) setMemberships(payload.memberships || []);
           }
         })
         .catch(() => {})
@@ -55,24 +83,54 @@ export function OrgProvider({
   }, [initialActiveOrg]);
 
   const switchOrg = useCallback(async (orgIdOrSlug: string) => {
+    if (switchingOrganizationId) return;
+    setSwitchingOrganizationId(orgIdOrSlug);
     setIsLoading(true);
+
     try {
       const res = await fetch('/api/v1/internal/auth/switch-org', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ organizationId: orgIdOrSlug }),
       });
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data?.error?.message || 'Failed to switch organization');
+      const resData = await res.json();
+      if (!res.ok) {
+        throw new Error(resData?.error?.message || 'Failed to switch organization');
       }
-      // Reload current page to refresh all server components and SSR queries with the new active org
-      window.location.reload();
-    } catch (err) {
+
+      const payload = resData?.data || (resData?.success ? resData.data : null);
+      const newActiveOrg = payload?.activeOrg;
+      const newMembership = payload?.membership;
+      const newMemberships = payload?.memberships;
+
+      if (!newActiveOrg) {
+        throw new Error('Invalid organization response from server');
+      }
+
+      // 1. Immediately update client state
+      setActiveOrg(newActiveOrg);
+      if (newMembership) setMembership(newMembership);
+      if (newMemberships && newMemberships.length > 0) setMemberships(newMemberships);
+
+      // 2. Client-side cookie sync for instant consistency
+      try {
+        const isSecure = typeof window !== 'undefined' && window.location.protocol === 'https:';
+        document.cookie = `${ACTIVE_ORG_COOKIE_NAME}=${encodeURIComponent(newActiveOrg.id)}; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax${isSecure ? '; Secure' : ''}`;
+      } catch {
+        // Ignore cookie access limitations in restricted environments
+      }
+
+      // 3. Handle route transitions: warranty is strictly Trionyx-only
+      if (pathname.startsWith('/warranty') && newActiveOrg.slug !== 'trionyx') {
+        router.replace('/overview');
+      } else {
+        router.refresh();
+      }
+    } finally {
       setIsLoading(false);
-      throw err;
+      setSwitchingOrganizationId(null);
     }
-  }, []);
+  }, [pathname, router, switchingOrganizationId]);
 
   return (
     <OrgContext.Provider
@@ -81,6 +139,7 @@ export function OrgProvider({
         membership,
         memberships,
         isLoading,
+        switchingOrganizationId,
         switchOrg,
       }}
     >
@@ -98,8 +157,10 @@ export function useActiveOrg(): OrgContextValue {
       membership: null,
       memberships: [],
       isLoading: false,
+      switchingOrganizationId: null,
       switchOrg: async () => {},
     };
   }
   return context;
 }
+

@@ -1,5 +1,6 @@
+import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { internalAuthService, ACTIVE_ORG_COOKIE_NAME, apiSuccess, apiError } from '@trionyx/api';
+import { internalAuthService, ACTIVE_ORG_COOKIE_NAME, apiError } from '@trionyx/api';
 
 export async function POST(request: Request) {
   try {
@@ -21,25 +22,41 @@ export async function POST(request: Request) {
       requestedOrgIdOrSlug
     );
 
-    // Set active organization cookie
-    cookieStore.set({
+    const isSecure = request.url.startsWith('https://') || request.headers.get('x-forwarded-proto') === 'https';
+
+    const cookieOptions = {
       name: ACTIVE_ORG_COOKIE_NAME,
       value: activeOrg.id,
-      httpOnly: false, // Accessible to client-side JS for optimistic switcher state
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      httpOnly: false, // Accessible to client-side JS for optimistic switcher state & sync
+      secure: isSecure,
+      sameSite: 'lax' as const,
       path: '/',
       maxAge: 30 * 24 * 60 * 60,
-    });
+    };
 
-    return apiSuccess(
+    // Set active organization cookie in server context
+    cookieStore.set(cookieOptions);
+
+    // Build NextResponse with explicit Set-Cookie header and cache-prevention
+    const response = NextResponse.json(
       {
-        activeOrg,
-        membership,
-        memberships,
+        data: {
+          activeOrg,
+          membership,
+          memberships,
+        },
       },
-      200
+      {
+        status: 200,
+        headers: {
+          'Cache-Control': 'no-store, max-age=0, must-revalidate',
+        },
+      }
     );
+
+    response.cookies.set(cookieOptions);
+
+    return response;
   } catch (err: any) {
     const status = err.statusCode || (err.message === 'UNAUTHENTICATED' ? 401 : 403);
     const code = err.code || (status === 401 ? 'UNAUTHENTICATED' : status === 403 ? 'FORBIDDEN' : 'INTERNAL_ERROR');

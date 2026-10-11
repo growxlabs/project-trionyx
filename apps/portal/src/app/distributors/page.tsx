@@ -37,7 +37,7 @@ export default async function DistributorsPage() {
   }
 
   return (
-    <InternalShell user={user}>
+    <InternalShell user={user} activeOrg={activeOrg} memberships={authData.memberships}>
       <DistributorsTable initialDistributors={initialDistributors} user={user} />
     </InternalShell>
   );
