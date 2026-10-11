@@ -202,14 +202,239 @@ export async function runPostgresMigrations(client: Client = getDbClient()): Pro
     );
   `);
 
-  const check = await client.execute({
-    sql: 'SELECT name FROM _migrations WHERE name = ?',
-    args: ['0010_warranties_and_policies'],
+  // Ensure base tables exist
+  for (const stmt of POSTGRES_TABLE_STATEMENTS) {
+    try {
+      await client.execute(stmt);
+    } catch {
+      // Continue if table or constraint already exists
+    }
+  }
+
+  // Ensure additive columns for multi-tenancy exist on all tables
+  const addColumn = async (table: string, col: string, def: string) => {
+    try {
+      await client.execute(`ALTER TABLE ${table} ADD COLUMN IF NOT EXISTS ${col} ${def}`);
+    } catch {
+      // Silently continue if column already exists
+    }
+  };
+
+  await addColumn('brands', 'organization_id', 'TEXT REFERENCES organizations(id)');
+  await addColumn('product_categories', 'organization_id', 'TEXT REFERENCES organizations(id)');
+  await addColumn('product_categories', 'business_code', "TEXT NOT NULL DEFAULT 'TRIONYX'");
+  await addColumn('product_categories', 'brand_id', 'TEXT REFERENCES brands(id)');
+  await addColumn('products', 'organization_id', 'TEXT REFERENCES organizations(id)');
+  await addColumn('products', 'business_code', "TEXT NOT NULL DEFAULT 'TRIONYX'");
+  await addColumn('products', 'brand_id', 'TEXT REFERENCES brands(id)');
+  await addColumn('inventory_locations', 'organization_id', 'TEXT REFERENCES organizations(id)');
+  await addColumn('distributors', 'organization_id', 'TEXT REFERENCES organizations(id)');
+  await addColumn('dealers', 'organization_id', 'TEXT REFERENCES organizations(id)');
+  await addColumn('contact_enquiries', 'organization_id', 'TEXT REFERENCES organizations(id)');
+  await addColumn('audit_logs', 'organization_id', 'TEXT REFERENCES organizations(id)');
+
+  // Seed organizations
+  await client.execute({
+    sql: `INSERT INTO organizations (id, slug, name, status) VALUES ('org-trionyx', 'trionyx', 'Trionyx', 'ACTIVE') ON CONFLICT (id) DO NOTHING`,
+    args: [],
+  });
+  await client.execute({
+    sql: `INSERT INTO organizations (id, slug, name, status) VALUES ('org-lakshmi', 'lakshmi', 'Lakshmi Distributions', 'ACTIVE') ON CONFLICT (id) DO NOTHING`,
+    args: [],
   });
 
-  if (check.rows.length === 0) {
-    for (const stmt of POSTGRES_TABLE_STATEMENTS) {
-      await client.execute(stmt);
+  // Seed brands
+  await client.execute({
+    sql: `INSERT INTO brands (id, organization_id, business_code, name, slug, description, status, sort_order)
+          VALUES ('brand-azoom-01', 'org-lakshmi', 'LAKSHMI', 'Azoom', 'azoom', 'Automotive LED lighting solutions engineered for clarity, reliability, and precision on the road.', 'ACTIVE', 1)
+          ON CONFLICT (id) DO NOTHING`,
+    args: [],
+  });
+  await client.execute({
+    sql: `INSERT INTO brands (id, organization_id, business_code, name, slug, description, status, sort_order)
+          VALUES ('brand-hoggon-01', 'org-lakshmi', 'LAKSHMI', 'Hoggon', 'hoggon', 'Automotive surface protection, sun control window films, and acoustic damping solutions.', 'ACTIVE', 2)
+          ON CONFLICT (id) DO NOTHING`,
+    args: [],
+  });
+
+  // Seed categories
+  await client.execute({
+    sql: `INSERT INTO product_categories (id, organization_id, business_code, brand_id, name, slug, description, status, sort_order)
+          VALUES ('cat-azoom-led-lamps-01', 'org-lakshmi', 'LAKSHMI', 'brand-azoom-01', 'LED Lamps', 'led-lamps', 'High-performance automotive LED lamps and headlight upgrades.', 'ACTIVE', 1)
+          ON CONFLICT (id) DO NOTHING`,
+    args: [],
+  });
+  await client.execute({
+    sql: `INSERT INTO product_categories (id, organization_id, business_code, brand_id, name, slug, description, status, sort_order)
+          VALUES ('cat-hoggon-window-film-01', 'org-lakshmi', 'LAKSHMI', 'brand-hoggon-01', 'Sun Control Ceramic Window Film', 'sun-control-ceramic-window-film', 'Automotive window film products available through Lakshmi Distributions.', 'ACTIVE', 2)
+          ON CONFLICT (id) DO NOTHING`,
+    args: [],
+  });
+  await client.execute({
+    sql: `INSERT INTO product_categories (id, organization_id, business_code, brand_id, name, slug, description, status, sort_order)
+          VALUES ('cat-hoggon-ppf-01', 'org-lakshmi', 'LAKSHMI', 'brand-hoggon-01', 'Paint Protection Film', 'paint-protection-film', 'Vehicle surface protection film products available through Hoggon.', 'ACTIVE', 3)
+          ON CONFLICT (id) DO NOTHING`,
+    args: [],
+  });
+  await client.execute({
+    sql: `INSERT INTO product_categories (id, organization_id, business_code, brand_id, name, slug, description, status, sort_order)
+          VALUES ('cat-hoggon-damping-01', 'org-lakshmi', 'LAKSHMI', 'brand-hoggon-01', 'Shumoff Damping', 'shumoff-damping', 'Automotive damping products for vehicle acoustic applications.', 'ACTIVE', 4)
+          ON CONFLICT (id) DO NOTHING`,
+    args: [],
+  });
+
+  // Seed Azoom product
+  await client.execute({
+    sql: `INSERT INTO products (
+            id, organization_id, product_code, business_code, brand_id, category_id, name, slug,
+            short_description, description, status, public_visibility, dealer_visibility
+          ) VALUES (
+            'prod-azoom-led-01', 'org-lakshmi', 'LAK-PROD-000001', 'LAKSHMI', 'brand-azoom-01', 'cat-azoom-led-lamps-01',
+            'Azoom LED Lamp', 'azoom-led-lamp',
+            'Automotive LED lamp upgrade engineered for durability, optical clarity, and dependable beam projection.',
+            'Azoom automotive LED lamp provides a modern lighting upgrade designed for clean beam cutoff and reliable road illumination. Built for automotive workshops, dealers, and vehicle owners seeking trusted lighting performance.',
+            'ACTIVE', 'PUBLIC', 1
+          ) ON CONFLICT (id) DO NOTHING`,
+    args: [],
+  });
+
+  // Seed specs
+  await client.execute({
+    sql: `INSERT INTO product_specifications (id, product_id, group_name, name, value, sort_order)
+          VALUES
+            ('spec-azoom-01', 'prod-azoom-led-01', 'General', 'Lighting Technology', 'LED', 1),
+            ('spec-azoom-02', 'prod-azoom-led-01', 'General', 'Application', 'Automotive Headlamp', 2),
+            ('spec-azoom-03', 'prod-azoom-led-01', 'General', 'Distribution', 'Lakshmi Distributions', 3)
+          ON CONFLICT (id) DO NOTHING`,
+    args: [],
+  });
+
+  // Seed media
+  await client.execute({
+    sql: `INSERT INTO product_media (id, product_id, type, storage_path, file_name, file_size, mime_type, alt_text, sort_order)
+          VALUES
+            ('media-azoom-01', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-1.jpg', 'azoom-led-lamp-1.jpg', 700723, 'image/jpeg', 'Azoom automotive LED lamp projector module', 1),
+            ('media-azoom-02', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-2.jpg', 'azoom-led-lamp-2.jpg', 613533, 'image/jpeg', 'Azoom projector optical lens detail', 2),
+            ('media-azoom-03', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-3.jpg', 'azoom-led-lamp-3.jpg', 587411, 'image/jpeg', 'Azoom automotive LED lamp front beam illumination', 3),
+            ('media-azoom-04', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-4.jpg', 'azoom-led-lamp-4.jpg', 438149, 'image/jpeg', 'Azoom headlamp assembly profile perspective', 4),
+            ('media-azoom-05', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-5.jpg', 'azoom-led-lamp-5.jpg', 439349, 'image/jpeg', 'Azoom automotive LED lamp vehicle installed perspective', 5)
+          ON CONFLICT (id) DO NOTHING`,
+    args: [],
+  });
+
+  // Link users to organization memberships
+  const usersRes = await client.execute('SELECT id, role FROM users');
+  for (const u of usersRes.rows as any[]) {
+    const userId = String(u.id);
+    const role = String(u.role);
+    if (role === 'MANAGING_DIRECTOR' || role === 'ADMIN') {
+      const m1 = await client.execute({
+        sql: 'SELECT id FROM organization_memberships WHERE organization_id = ? AND user_id = ?',
+        args: ['org-trionyx', userId],
+      });
+      if (m1.rows.length === 0) {
+        await client.execute({
+          sql: `INSERT INTO organization_memberships (id, organization_id, user_id, role, status) VALUES (?, 'org-trionyx', ?, ?, 'ACTIVE')`,
+          args: [`mem-trionyx-${userId}`, userId, role],
+        });
+      }
+      const m2 = await client.execute({
+        sql: 'SELECT id FROM organization_memberships WHERE organization_id = ? AND user_id = ?',
+        args: ['org-lakshmi', userId],
+      });
+      if (m2.rows.length === 0) {
+        await client.execute({
+          sql: `INSERT INTO organization_memberships (id, organization_id, user_id, role, status) VALUES (?, 'org-lakshmi', ?, ?, 'ACTIVE')`,
+          args: [`mem-lakshmi-${userId}`, userId, role],
+        });
+      }
+    } else if (role === 'DISTRIBUTOR' || role === 'STAFF') {
+      const m1 = await client.execute({
+        sql: 'SELECT id FROM organization_memberships WHERE organization_id = ? AND user_id = ?',
+        args: ['org-trionyx', userId],
+      });
+      if (m1.rows.length === 0) {
+        await client.execute({
+          sql: `INSERT INTO organization_memberships (id, organization_id, user_id, role, status) VALUES (?, 'org-trionyx', ?, ?, 'ACTIVE')`,
+          args: [`mem-trionyx-${userId}`, userId, role],
+        });
+      }
+    }
+  }
+
+  // Backfill operational data
+  await client.execute(`UPDATE brands SET organization_id = 'org-lakshmi' WHERE business_code = 'LAKSHMI' OR slug IN ('azoom', 'hoggon')`);
+  await client.execute(`UPDATE brands SET organization_id = 'org-trionyx' WHERE organization_id IS NULL OR organization_id = ''`);
+
+  await client.execute(`UPDATE product_categories SET organization_id = 'org-lakshmi' WHERE business_code = 'LAKSHMI' OR brand_id IN (SELECT id FROM brands WHERE organization_id = 'org-lakshmi')`);
+  await client.execute(`UPDATE product_categories SET organization_id = 'org-trionyx' WHERE organization_id IS NULL OR organization_id = ''`);
+
+  await client.execute(`UPDATE products SET organization_id = 'org-lakshmi' WHERE business_code = 'LAKSHMI' OR brand_id IN (SELECT id FROM brands WHERE organization_id = 'org-lakshmi')`);
+  await client.execute(`UPDATE products SET organization_id = 'org-trionyx' WHERE organization_id IS NULL OR organization_id = ''`);
+
+  await client.execute(`UPDATE inventory_locations SET organization_id = 'org-trionyx' WHERE organization_id IS NULL OR organization_id = ''`);
+
+  const lakshmiLocCheck = await client.execute({
+    sql: 'SELECT id FROM inventory_locations WHERE id = ?',
+    args: ['loc-lakshmi-main'],
+  });
+  if (lakshmiLocCheck.rows.length === 0) {
+    await client.execute({
+      sql: `INSERT INTO inventory_locations (id, organization_id, code, name, status) VALUES ('loc-lakshmi-main', 'org-lakshmi', 'LOC-LAKSHMI-MAIN', 'Lakshmi Central Warehouse', 'ACTIVE')`,
+      args: [],
+    });
+  }
+
+  await client.execute(`UPDATE distributors SET organization_id = 'org-trionyx' WHERE organization_id IS NULL OR organization_id = ''`);
+  await client.execute(`UPDATE dealers SET organization_id = 'org-trionyx' WHERE organization_id IS NULL OR organization_id = ''`);
+  await client.execute(`UPDATE contact_enquiries SET organization_id = 'org-trionyx' WHERE organization_id IS NULL OR organization_id = ''`);
+  await client.execute(`UPDATE audit_logs SET organization_id = 'org-trionyx' WHERE organization_id IS NULL OR organization_id = ''`);
+
+  // Ensure indexes
+  const indexes = [
+    `CREATE INDEX IF NOT EXISTS idx_products_org ON products(organization_id);`,
+    `CREATE INDEX IF NOT EXISTS idx_products_org_status ON products(organization_id, status);`,
+    `CREATE INDEX IF NOT EXISTS idx_product_categories_org ON product_categories(organization_id);`,
+    `CREATE INDEX IF NOT EXISTS idx_brands_org ON brands(organization_id);`,
+    `CREATE INDEX IF NOT EXISTS idx_inventory_locations_org ON inventory_locations(organization_id);`,
+    `CREATE INDEX IF NOT EXISTS idx_distributors_org ON distributors(organization_id);`,
+    `CREATE INDEX IF NOT EXISTS idx_dealers_org ON dealers(organization_id);`,
+    `CREATE INDEX IF NOT EXISTS idx_contact_enquiries_org ON contact_enquiries(organization_id);`,
+    `CREATE INDEX IF NOT EXISTS idx_audit_logs_org ON audit_logs(organization_id);`,
+  ];
+  for (const idx of indexes) {
+    try {
+      await client.execute(idx);
+    } catch {
+      // index already exists
+    }
+  }
+
+  // Record all migrations
+  const migrationsToRecord = [
+    '0001_initial_auth_schema',
+    '0002_products_and_inventory',
+    '0003_serial_number_inventory',
+    '0004_dealers_distributors',
+    '0005_dealer_portal',
+    '0006_dealer_requests_created_by',
+    '0007_contact_enquiries',
+    '0008_contact_enquiries_management',
+    '0009_contact_enquiries_status_constraint',
+    '0010_warranties_and_policies',
+    '0011_brands_and_business_scoping',
+    '0012_lakshmi_hoggon_categories',
+    '0013_azoom_gallery_media',
+    '0014_organizations_and_memberships',
+  ];
+  for (const m of migrationsToRecord) {
+    try {
+      await client.execute({
+        sql: `INSERT INTO _migrations (name) VALUES (?) ON CONFLICT (name) DO NOTHING`,
+        args: [m],
+      });
+    } catch {
+      // ignore
     }
   }
 }
