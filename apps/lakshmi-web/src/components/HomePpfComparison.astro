@@ -14,12 +14,12 @@ interface Props {
 
 const {
   beforeImage = {
-    src: '/images/ppf/ppf-before-illustration.png',
-    alt: 'AI illustration of a graphite car with bare paint before PPF',
+    src: '/images/ppf/ppf-before-v2.png',
+    alt: 'Illustration of a graphite car with visible swirl marks before paint preparation and PPF',
   },
   afterImage = {
-    src: '/images/ppf/ppf-after-illustration.png',
-    alt: 'AI illustration of the same car with clear protection film; a lifted corner reveals the layer',
+    src: '/images/ppf/ppf-after-v2.png',
+    alt: 'Illustration of the same graphite car after paint preparation and clear gloss PPF installation',
   },
 } = Astro.props;
 ---
@@ -29,6 +29,7 @@ const {
     <div class="ppf-compare-layout">
     <div class="ppf-compare-header">
       <h2 id="ppf-compare-title" class="heading">Protect the finish.<br /><span>Preserve the shine.</span></h2>
+      <p class="ppf-description">Clear paint protection film helps protect your finish from stone chips and everyday scratches.</p>
       <div class="ppf-compare-action">
         <Button href="/products?category=paint-protection-film">Explore PPF <span aria-hidden="true">↗</span></Button>
       </div>
@@ -64,8 +65,8 @@ const {
       </div>
 
       <!-- Permanent Visible Badges -->
-      <span class="badge badge-before">BEFORE</span>
-      <span class="badge badge-after">AFTER</span>
+      <span class="badge badge-before">BEFORE PPF</span>
+      <span class="badge badge-after">AFTER PPF</span>
 
       <!-- Divider Bar & Handle -->
       <div class="divider-track" data-ppf-divider aria-hidden="true">
@@ -106,7 +107,6 @@ const {
 
 <style>
   .ppf-compare-section {
-    min-height: 100svh;
     box-sizing: border-box;
     display: flex;
     align-items: center;
@@ -120,6 +120,9 @@ const {
   .ppf-compare-header { min-width: 0; max-width: 32rem; }
   .heading span { color: var(--color-primary); }
   .ppf-compare-action { margin-top: clamp(1.25rem, 2.5vw, 1.75rem); }
+  .ppf-description { max-width: 27rem; margin: 1.25rem 0 0; color: var(--color-text-muted); font-size: 1rem; line-height: 1.7; }
+  .ppf-compare-action :global(.button) { display: inline-flex; gap: .75rem; align-items: center; color: #111315; min-height: 48px; }
+  .comparison-figure { min-width: 0; margin: 0; }
 
   .heading {
     font-size: clamp(2rem, 3.1vw, 3.25rem);
@@ -135,12 +138,13 @@ const {
     position: relative;
     isolation: isolate;
     width: 100%;
-    height: clamp(420px, 64svh, 680px);
+    aspect-ratio: 1.59;
+    height: auto;
     min-width: 0;
     overflow: hidden;
     background: #0B1014;
     border: 1px solid var(--color-border, #2A2E32);
-    border-radius: 40px;
+    border-radius: 16px;
     user-select: none;
     cursor: ew-resize;
     touch-action: pan-y;
