@@ -10,7 +10,7 @@ interface OrgSwitcherProps {
 }
 
 export function OrgSwitcher({ user, compact = false }: OrgSwitcherProps) {
-  const { activeOrg, memberships, isLoading, switchOrg } = useActiveOrg();
+  const { activeOrg, memberships, isLoading, switchingOrganizationId, switchOrg } = useActiveOrg();
   const [isOpen, setIsOpen] = useState(false);
   const [switchingId, setSwitchingId] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -48,12 +48,14 @@ export function OrgSwitcher({ user, compact = false }: OrgSwitcherProps) {
   }, [isOpen]);
 
   const handleSelectOrg = async (orgId: string) => {
-    if (orgId === activeOrg?.id || switchingId) return;
+    if (orgId === activeOrg?.id || switchingId || switchingOrganizationId) return;
     setSwitchingId(orgId);
     try {
       await switchOrg(orgId);
+      setIsOpen(false);
     } catch (err) {
       console.error('[OrgSwitcher] Failed to switch organization:', err);
+    } finally {
       setSwitchingId(null);
     }
   };
@@ -124,14 +126,14 @@ export function OrgSwitcher({ user, compact = false }: OrgSwitcherProps) {
                 const mSlug = org?.slug || (mOrgId.includes('trionyx') ? 'trionyx' : 'lakshmi');
                 const mName = org?.name || (mSlug === 'trionyx' ? 'Trionyx' : 'Lakshmi Distributions');
                 const isSelected = activeOrg?.id === mOrgId || activeOrg?.slug === mSlug;
-                const isCurrentSwitching = switchingId === mOrgId;
+                const isCurrentSwitching = switchingId === mOrgId || switchingOrganizationId === mOrgId;
 
                 return (
                   <button
                     key={m.id || mOrgId}
                     type="button"
                     onClick={() => handleSelectOrg(mOrgId)}
-                    disabled={isSelected || Boolean(switchingId)}
+                    disabled={isSelected || Boolean(switchingId) || Boolean(switchingOrganizationId)}
                     className={`w-full flex items-center justify-between px-2.5 py-2 rounded-[5px] text-left transition-colors text-[12.5px] ${
                       isSelected
                         ? 'bg-[var(--menu-theme-track)] font-medium text-[var(--text-primary)] cursor-default'
@@ -243,14 +245,14 @@ export function OrgSwitcher({ user, compact = false }: OrgSwitcherProps) {
             const mSlug = org?.slug || (mOrgId.includes('trionyx') ? 'trionyx' : 'lakshmi');
             const mName = org?.name || (mSlug === 'trionyx' ? 'Trionyx' : 'Lakshmi Distributions');
             const isSelected = activeOrg?.id === mOrgId || activeOrg?.slug === mSlug;
-            const isCurrentSwitching = switchingId === mOrgId;
+            const isCurrentSwitching = switchingId === mOrgId || switchingOrganizationId === mOrgId;
 
             return (
               <button
                 key={m.id || mOrgId}
                 type="button"
                 onClick={() => handleSelectOrg(mOrgId)}
-                disabled={isSelected || Boolean(switchingId)}
+                disabled={isSelected || Boolean(switchingId) || Boolean(switchingOrganizationId)}
                 className={`w-full flex items-center justify-between px-3 py-2 rounded-[5px] text-left transition-colors text-[13px] ${
                   isSelected
                     ? 'bg-[var(--menu-theme-track)] font-medium text-[var(--text-primary)]'

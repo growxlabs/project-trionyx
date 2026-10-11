@@ -3,7 +3,6 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 import Container from '../components/Container.astro';
 import Section from '../components/Section.astro';
 import ProductCard from '../components/ProductCard.astro';
-import CategoryBanners from '../components/CategoryBanners.astro';
 import EnquiryCTA from '../components/EnquiryCTA.astro';
 import { publicCatalogueService } from '@trionyx/api/catalogue';
 import { categories as fallbackCategories } from '../data/catalogue';
@@ -39,12 +38,7 @@ try {
     <Container>
       <!-- Clean Top Section -->
       <div class="catalogue-header">
-        <p class="catalogue-eyebrow">PRODUCTS</p>
         <h1 id="page-title" class="catalogue-title">Explore the catalogue</h1>
-      </div>
-
-      <div style="margin-bottom: 2.5rem">
-        <CategoryBanners />
       </div>
 
       <!-- Catalogue Filter Toolbar -->
@@ -301,17 +295,8 @@ try {
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
-    max-width: 44rem;
+    max-width: 52rem;
     margin-bottom: var(--space-5);
-  }
-
-  .catalogue-eyebrow {
-    font-size: var(--font-label);
-    font-weight: var(--weight-strong);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--color-primary);
-    margin: 0;
   }
 
   .catalogue-title {
@@ -320,6 +305,7 @@ try {
     color: var(--color-text);
     line-height: 1.15;
     margin: 0;
+    text-wrap: balance;
   }
 
   .catalogue-lead {

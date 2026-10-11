@@ -25,8 +25,7 @@ const year = new Date().getFullYear();
       </nav>
       <div class="footer-contact">
         <h2>Let’s talk products</h2>
-        <p>Have a product in mind or a bulk requirement? Start a conversation with our team.</p>
-        <a class="contact-link" href="/contact">Contact our team</a>
+        <p>Have a product in mind or a bulk requirement? Start a conversation with <a href="/contact" class="footer-inline-link">our team</a>.</p>
         <p class="audience-note">Product enquiries &amp; trade requirements</p>
       </div>
     </div>
@@ -50,9 +49,16 @@ const year = new Date().getFullYear();
   ul { list-style: none; padding: 0; margin: -.5rem 0 0; }
   nav a { display: inline-flex; align-items: center; min-height: 44px; color: var(--color-text-muted); font-size: .875rem; text-decoration: none; }
   nav a:hover { color: var(--color-text); text-decoration: underline; text-decoration-color: var(--color-primary); }
-  .footer-contact p { max-width: 32ch; font-size: .875rem; color: var(--color-text-muted); line-height: 1.8; }
-  .contact-link { display: inline-flex; align-items: center; min-height: 44px; margin-top: .75rem; color: #f1845d; font-size: .875rem; font-weight: 700; text-underline-offset: .4rem; }
-  .contact-link:hover, .brand-story:hover { color: #ffa07d; text-decoration-color: currentColor; }
+  .footer-contact p { max-width: 40ch; font-size: .875rem; color: var(--color-text-muted); line-height: 1.8; text-wrap: pretty; }
+  .footer-inline-link {
+    color: #f1845d;
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: currentColor;
+    text-underline-offset: .25rem;
+    transition: color 150ms ease;
+  }
+  .footer-inline-link:hover, .brand-story:hover { color: #ffa07d; text-decoration-color: currentColor; }
   .footer-contact .audience-note { margin-top: .5rem; font-size: .6875rem; color: #959da4; }
   .footer-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; border-top: 1px solid var(--color-border); padding-block: 1.5rem; color: #959da4; font-size: .6875rem; }
   .footer-brand .brand-tagline { margin-top: 1rem; font-size: .625rem; letter-spacing: .14em; }

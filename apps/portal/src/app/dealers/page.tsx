@@ -39,7 +39,7 @@ export default async function DealersPage() {
   ]);
 
   return (
-    <InternalShell user={user}>
+    <InternalShell user={user} activeOrg={activeOrg} memberships={authData.memberships}>
       <DealersTable
         initialDealers={dealersRes.items}
         totalCount={dealersRes.total}

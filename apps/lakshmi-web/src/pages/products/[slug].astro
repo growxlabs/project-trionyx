@@ -395,7 +395,8 @@ const enquiryHref = `/contact?${new URLSearchParams({ product: product.name, cod
     line-height: 1.15;
     margin: 0;
     letter-spacing: -.035em;
-    overflow-wrap: anywhere;
+    text-wrap: balance;
+    max-width: 32ch;
   }
 
   .product-code {
@@ -417,6 +418,8 @@ const enquiryHref = `/contact?${new URLSearchParams({ product: product.name, cod
     line-height: 1.6;
     color: #CCD2D8;
     margin: 0;
+    max-width: 60ch;
+    text-wrap: pretty;
   }
 
   .product-description {
@@ -428,6 +431,8 @@ const enquiryHref = `/contact?${new URLSearchParams({ product: product.name, cod
   .product-description p {
     margin: 18px 0 0;
     white-space: pre-line;
+    max-width: 65ch;
+    text-wrap: pretty;
   }
 
   /* Specifications */
@@ -444,6 +449,7 @@ const enquiryHref = `/contact?${new URLSearchParams({ product: product.name, cod
     font-weight: var(--weight-strong);
     color: var(--color-text);
     margin: 0;
+    text-wrap: balance;
   }
 
   .specs-list {
@@ -510,12 +516,14 @@ const enquiryHref = `/contact?${new URLSearchParams({ product: product.name, cod
     font-weight: var(--weight-strong);
     color: var(--color-text);
     margin: 0;
+    text-wrap: balance;
   }
 
   .action-note {
     font-size: var(--font-small);
     color: var(--color-text-muted);
     margin: 0;
+    text-wrap: pretty;
   }
 
   .product-action-card :global(.button) {

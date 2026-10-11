@@ -19,7 +19,6 @@ const { items = testimonials } = Astro.props;
     <div class="reviews-header-container">
       <Container>
         <div class="reviews-sticky-header">
-          <p class="eyebrow">REVIEWS</p>
           <h2 id="reviews-title" class="heading">What customers say</h2>
         </div>
       </Container>
@@ -92,19 +91,11 @@ const { items = testimonials } = Astro.props;
     border-top: 1px solid var(--color-border, #2A2E32);
   }
 
-  .eyebrow {
-    font-size: var(--font-label, 0.75rem);
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--color-primary, #E95D2C);
-    margin-bottom: var(--space-2, 0.5rem);
-  }
-
   .heading {
     letter-spacing: -0.03em;
     color: #F7F7F5;
     margin: 0;
+    text-wrap: balance;
   }
 
   /* Editorial Serif Quote */
@@ -115,6 +106,7 @@ const { items = testimonials } = Astro.props;
     font-weight: 500;
     letter-spacing: -0.015em;
     line-height: 1.32;
+    text-wrap: pretty;
   }
 
   .wispr-author {
@@ -248,9 +240,6 @@ const { items = testimonials } = Astro.props;
       max-width: 100%;
     }
 
-    .eyebrow {
-      margin-bottom: 8px;
-    }
 
     .heading {
       font-size: clamp(2rem, 7.5vw, 2.5rem);

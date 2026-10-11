@@ -34,7 +34,7 @@ export default async function EnquiriesPage() {
   ]);
 
   return (
-    <InternalShell user={user}>
+    <InternalShell user={user} activeOrg={activeOrg} memberships={authData.memberships}>
       <EnquiriesTable
         initialEnquiries={enquiriesRes.items}
         internalUsers={internalUsers}

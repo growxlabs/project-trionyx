@@ -37,7 +37,7 @@ export default async function InventoryPage() {
   ]);
 
   return (
-    <InternalShell user={user}>
+    <InternalShell user={user} activeOrg={activeOrg} memberships={authData.memberships}>
       <InventoryTable
         initialSummaries={summaries}
         locations={locations}

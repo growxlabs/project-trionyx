@@ -46,7 +46,7 @@ export default async function ProductsPage() {
   );
 
   return (
-    <InternalShell user={user}>
+    <InternalShell user={user} activeOrg={activeOrg} memberships={authData.memberships}>
       <ProductsTable initialProducts={products} categories={categories} user={user} />
     </InternalShell>
   );

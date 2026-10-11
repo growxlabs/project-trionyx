@@ -43,7 +43,7 @@ export default async function WarrantyPage() {
   ]);
 
   return (
-    <InternalShell user={user}>
+    <InternalShell user={user} activeOrg={activeOrg} memberships={authData.memberships}>
       <WarrantyListView
         initialWarranties={warrantiesResult.items}
         totalCount={warrantiesResult.total}

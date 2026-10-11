@@ -196,7 +196,7 @@ export default async function OverviewPage() {
   };
 
   return (
-    <InternalShell user={user}>
+    <InternalShell user={user} activeOrg={activeOrg} memberships={authData.memberships}>
       <OverviewCockpit
         scorecardRows={scorecardRows}
         activities={activities}
