@@ -7,28 +7,29 @@ import {
   usersRepository,
   ensureDatabaseReady,
 } from '@trionyx/database';
+import { getServerActiveOrg } from '@/lib/serverOrg';
 import { InternalShell } from '../../components/shell/InternalShell';
 import { EnquiriesTable } from './EnquiriesTable';
 
 export const dynamic = 'force-dynamic';
 
 export default async function EnquiriesPage() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(AUTH_CONFIG.cookieName)?.value;
-
   let authData;
   try {
-    authData = await requireEnquiryReadPermission(token);
+    authData = await getServerActiveOrg();
+    if (authData.user.role !== 'MANAGING_DIRECTOR' && authData.user.role !== 'ADMIN' && authData.user.role !== 'STAFF') {
+      redirect('/overview');
+    }
   } catch {
-    redirect('/overview');
+    redirect('/login');
   }
 
-  const { user } = authData;
+  const { user, activeOrg } = authData;
 
   await ensureDatabaseReady();
 
   const [enquiriesRes, internalUsers] = await Promise.all([
-    contactEnquiriesRepository.list({ limit: 100 }),
+    contactEnquiriesRepository.list({ limit: 100, organizationId: activeOrg.id }),
     usersRepository.listInternalUsers(),
   ]);
 

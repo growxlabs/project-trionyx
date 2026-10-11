@@ -6,10 +6,16 @@ import { TrionyxLogo } from '../ui/TrionyxLogo';
 import { NavLink } from '../navigation';
 import { Button } from '../ui/Button';
 import { ProductsMegaMenu } from './ProductsMegaMenu';
+import styles from './HeaderShell.module.css';
 import { MenuIcon, CloseIcon, ChevronDownIcon } from '../ui/Icons';
 
-export const HeaderShell = () => {
+export interface HeaderShellProps {
+  appearance?: 'default' | 'overlay';
+}
+
+export const HeaderShell = ({ appearance = 'default' }: HeaderShellProps = {}) => {
   const [isProductsOpen, setIsProductsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileProductsOpen, setMobileProductsOpen] = useState(false);
 
@@ -62,11 +68,30 @@ export const HeaderShell = () => {
     };
   }, [isProductsOpen]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 15);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <>
       <header
         ref={headerRef}
-        className="sticky top-0 z-50 w-full bg-transparent md:bg-[#F5F5EE]/90 lg:bg-transparent border-b-0 md:border-b md:border-[rgba(23,23,20,0.07)] transition-colors"
+        className={
+          appearance === 'overlay'
+            ? `sticky top-0 z-50 w-full transition-all duration-200 ${styles.overlay} ${
+                isScrolled ? styles.overlayScrolled : ''
+              }`
+            : `sticky top-0 z-50 w-full transition-colors duration-200 ${
+                isScrolled
+                  ? 'bg-[#F5F5EE]/95 backdrop-blur-sm border-b border-[rgba(23,23,20,0.07)] shadow-xs'
+                  : 'bg-transparent md:bg-[#F5F5EE]/90 lg:bg-transparent border-b-0 md:border-b md:border-[rgba(23,23,20,0.07)]'
+              }`
+        }
       >
         <div className="w-full px-5 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between">
           {/* Official Brand Logo */}
@@ -80,7 +105,7 @@ export const HeaderShell = () => {
                 setMobileMenuOpen(false);
               }}
             >
-              <TrionyxLogo size="md" className="h-8 sm:h-10 lg:h-11" />
+              <TrionyxLogo variant={appearance === 'overlay' ? 'light' : 'dark'} size="md" className="h-8 sm:h-10 lg:h-11" />
             </Link>
           </div>
 

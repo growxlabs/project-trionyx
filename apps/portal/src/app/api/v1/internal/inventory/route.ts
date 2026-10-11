@@ -1,18 +1,14 @@
-import { cookies } from 'next/headers';
-import { requireInternalUser, AUTH_CONFIG } from '@trionyx/auth';
+import { getServerActiveOrg } from '@/lib/serverOrg';
 import { inventoryService, apiSuccess, apiError } from '@trionyx/api';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(AUTH_CONFIG.cookieName)?.value;
-    await requireInternalUser(token);
-
-    const overview = await inventoryService.getOverview();
+    const { activeOrg } = await getServerActiveOrg(request);
+    const overview = await inventoryService.getOverview(activeOrg.id);
     return apiSuccess(overview, 200);
   } catch (err: any) {
-    if (err.message === 'UNAUTHENTICATED') return apiError('UNAUTHENTICATED', 'Not authenticated', 401);
-    if (err.message === 'FORBIDDEN') return apiError('FORBIDDEN', 'Access denied', 403);
-    return apiError('INTERNAL_ERROR', err.message || 'Failed to get inventory overview', 500);
+    const status = err.statusCode || (err.message === 'UNAUTHENTICATED' ? 401 : 500);
+    const code = err.code || (status === 401 ? 'UNAUTHENTICATED' : status === 403 ? 'FORBIDDEN' : 'INTERNAL_ERROR');
+    return apiError(code, err.message || 'Failed to get inventory overview', status);
   }
 }

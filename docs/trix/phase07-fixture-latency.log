@@ -1,0 +1,29 @@
+$ tsx scripts/benchmark-trix-phase07.ts
+{
+  "scope": "20 isolated SQLite fixtures; mock model, real repositories/services; confirmation includes transaction commit; no live business mutation",
+  "request": {
+    "samples": 20,
+    "p50Ms": 7.09270000000015,
+    "p95Ms": 12.247299999999996
+  },
+  "tool": {
+    "samples": 20,
+    "p50Ms": 2,
+    "p95Ms": 3
+  },
+  "mockModel": {
+    "samples": 20,
+    "p50Ms": 0,
+    "p95Ms": 0
+  },
+  "sqliteQuery": {
+    "samples": 20,
+    "p50Ms": 0.22430000000076689,
+    "p95Ms": 0.3043999999999869
+  },
+  "confirmation": {
+    "samples": 20,
+    "p50Ms": 4.3752000000004045,
+    "p95Ms": 6.110300000000279
+  }
+}

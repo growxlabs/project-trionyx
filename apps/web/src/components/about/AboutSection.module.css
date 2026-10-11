@@ -1,0 +1,266 @@
+.outerSection {
+  position: relative;
+  width: 100%;
+  background: #F5F5EE;
+  padding-block: clamp(48px, 6vw, 88px);
+}
+
+.panel {
+  background: #075B50;
+  border-radius: 28px;
+  margin-inline: 32px;
+  padding: 72px 64px;
+  display: grid;
+  grid-template-columns: 46% 1fr;
+  align-items: center;
+  gap: clamp(36px, 4.5vw, 64px);
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Imagery column */
+.imageryCol {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.imageComposition {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  padding-bottom: 28px;
+  padding-right: 28px;
+}
+
+.baseImageWrapper {
+  position: relative;
+  width: 82%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #053F37;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.24);
+}
+
+.baseImage {
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.imageComposition:hover .baseImage {
+  transform: scale(1.02);
+}
+
+.accentImageWrapper {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 58%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #053F37;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.3);
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.imageComposition:hover .accentImageWrapper {
+  transform: translate(3px, -3px);
+}
+
+.accentImage {
+  object-fit: cover;
+}
+
+/* Content column */
+.contentCol {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-family: "Instrument Sans", sans-serif;
+}
+
+.eyebrow {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #F26522;
+  margin: 0 0 16px;
+  line-height: 1.4;
+}
+
+.heading {
+  font-family: "Instrument Sans", sans-serif;
+  font-size: clamp(28px, 3.2vw, 42px);
+  font-weight: 500;
+  line-height: 1.18;
+  letter-spacing: -0.025em;
+  color: #F7F6F0;
+  max-width: 540px;
+  margin: 0 0 24px;
+}
+
+.bodyCopy {
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: #DAD8CF;
+  font-weight: 400;
+  max-width: 500px;
+  margin: 0 0 28px;
+}
+
+.bodyCopy p {
+  margin: 0;
+}
+
+.bodyCopy p + p {
+  margin-top: 16px;
+}
+
+.metadataLine {
+  border-top: 1px solid rgba(247, 246, 240, 0.18);
+  padding-top: 24px;
+  margin-bottom: 32px;
+  max-width: 500px;
+}
+
+.metadataText {
+  display: block;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #F7F6F0;
+}
+
+.ctaWrapper {
+  margin-top: 0;
+}
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 48px;
+  padding-inline: 26px;
+  font-family: "Instrument Sans", sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 4px;
+  background: transparent;
+  border: 1px solid rgba(247, 246, 240, 0.35);
+  color: #F7F6F0;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.ctaButton:hover {
+  background: #F7F6F0;
+  border-color: #F7F6F0;
+  color: #075B50;
+}
+
+.ctaButton:focus-visible {
+  outline: 2px solid #F26522;
+  outline-offset: 2px;
+}
+
+.ctaButton svg {
+  transition: transform 0.2s ease;
+}
+
+.ctaButton:hover svg {
+  transform: translateX(3px);
+}
+
+/* Tablet responsive (768px - 1024px) */
+@media (max-width: 1024px) {
+  .outerSection {
+    padding-block: clamp(40px, 5vw, 64px);
+  }
+
+  .panel {
+    border-radius: 24px;
+    margin-inline: 24px;
+    padding: 56px 40px;
+    grid-template-columns: 44% 1fr;
+    gap: 32px;
+  }
+
+  .imageComposition {
+    max-width: 380px;
+    padding-bottom: 24px;
+    padding-right: 24px;
+  }
+}
+
+/* Mobile responsive (< 768px) */
+@media (max-width: 767px) {
+  .outerSection {
+    padding-block: 32px;
+  }
+
+  .panel {
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    margin-inline: 16px;
+    padding: 36px 20px;
+    gap: 32px;
+  }
+
+  .imageryCol {
+    justify-content: center;
+  }
+
+  .imageComposition {
+    max-width: 340px;
+    padding-bottom: 22px;
+    padding-right: 22px;
+    margin: 0 auto;
+  }
+
+  .baseImageWrapper {
+    width: 76%;
+    border-radius: 6px;
+  }
+
+  .accentImageWrapper {
+    width: 56%;
+    border-radius: 6px;
+  }
+
+  .heading {
+    font-size: 28px;
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+
+  .bodyCopy {
+    font-size: 15px;
+    margin-bottom: 24px;
+  }
+
+  .metadataLine {
+    padding-top: 20px;
+    margin-bottom: 28px;
+  }
+
+  .ctaButton {
+    width: 100%;
+    justify-content: center;
+  }
+}

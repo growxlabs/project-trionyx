@@ -5,6 +5,7 @@ import { getDbClient } from '../db';
 export const serialMovementsRepository = {
   async listWithDetails(
     filter?: {
+      organizationId?: string;
       productId?: string;
       serialRecordId?: string;
       type?: SerialMovementType;
@@ -38,6 +39,10 @@ export const serialMovementsRepository = {
     `;
     const args: (string | number)[] = [];
 
+    if (filter?.organizationId) {
+      sql += " AND (p.organization_id = ? OR (p.organization_id IS NULL AND ? = 'org-trionyx'))";
+      args.push(filter.organizationId, filter.organizationId);
+    }
     if (filter?.productId) {
       sql += ' AND m.product_id = ?';
       args.push(filter.productId);

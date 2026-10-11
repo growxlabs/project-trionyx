@@ -22,6 +22,7 @@ export const distributorsService = {
       code?: string;
       exactName?: string;
       hasDealers?: boolean;
+      organizationId?: string;
       page?: number;
       pageSize?: number;
     },
@@ -32,7 +33,7 @@ export const distributorsService = {
 
     // If user is a distributor, restrict to their own ID
     if (distributorScope) {
-      const dist = await distributorsRepository.findById(distributorScope);
+      const dist = await distributorsRepository.findById(distributorScope, query.organizationId);
       return {
         items: dist ? [dist] : [],
         meta: {
@@ -52,6 +53,7 @@ export const distributorsService = {
       search: query.search,
       status: query.status,
       state: query.state,
+      organizationId: query.organizationId,
       page,
       limit,
     });
@@ -66,7 +68,7 @@ export const distributorsService = {
     };
   },
 
-  async getDistributorById(id: string, distributorScope?: string | null) {
+  async getDistributorById(id: string, distributorScope?: string | null, organizationId?: string) {
     if (distributorScope && id !== distributorScope) {
       const err = new Error('Access denied to other distributor records');
       (err as any).statusCode = 403;
@@ -74,17 +76,22 @@ export const distributorsService = {
       throw err;
     }
 
-    return distributorsRepository.findById(id);
+    return distributorsRepository.findById(id, organizationId);
   },
 
-  async createDistributor(data: CreateDistributorInput, actorId: string) {
+  async createDistributor(
+    data: CreateDistributorInput & { organizationId?: string | null },
+    actorId: string
+  ) {
     const created = await distributorsRepository.create({
       ...data,
       createdBy: actorId,
+      organizationId: data.organizationId ?? null,
     });
 
     await auditLogsRepository.recordEvent({
       userId: actorId,
+      organizationId: data.organizationId ?? null,
       event: 'DISTRIBUTOR_CREATED',
       metadata: { distributorId: created.id, distributorCode: created.distributorCode, businessName: created.businessName },
     });
@@ -92,8 +99,13 @@ export const distributorsService = {
     return created;
   },
 
-  async updateDistributor(id: string, data: UpdateDistributorInput, actorId: string) {
-    const existing = await distributorsRepository.findById(id);
+  async updateDistributor(
+    id: string,
+    data: UpdateDistributorInput,
+    actorId: string,
+    organizationId?: string
+  ) {
+    const existing = await distributorsRepository.findById(id, organizationId);
     if (!existing) {
       const err = new Error('Distributor not found');
       (err as any).statusCode = 404;
@@ -104,10 +116,11 @@ export const distributorsService = {
     const updated = await distributorsRepository.update(id, {
       ...data,
       updatedBy: actorId,
-    });
+    }, organizationId);
 
     await auditLogsRepository.recordEvent({
       userId: actorId,
+      organizationId: organizationId || existing.organizationId || null,
       event: 'DISTRIBUTOR_UPDATED',
       metadata: { distributorId: id, updatedFields: Object.keys(data) },
     });
@@ -115,8 +128,13 @@ export const distributorsService = {
     return updated;
   },
 
-  async updateDistributorStatus(id: string, input: DistributorStatusInput, actorId: string) {
-    const existing = await distributorsRepository.findById(id);
+  async updateDistributorStatus(
+    id: string,
+    input: DistributorStatusInput,
+    actorId: string,
+    organizationId?: string
+  ) {
+    const existing = await distributorsRepository.findById(id, organizationId);
     if (!existing) {
       const err = new Error('Distributor not found');
       (err as any).statusCode = 404;
@@ -124,10 +142,11 @@ export const distributorsService = {
       throw err;
     }
 
-    const updated = await distributorsRepository.updateStatus(id, input.status, actorId);
+    const updated = await distributorsRepository.updateStatus(id, input.status, actorId, organizationId);
 
     await auditLogsRepository.recordEvent({
       userId: actorId,
+      organizationId: organizationId || existing.organizationId || null,
       event: 'DISTRIBUTOR_STATUS_CHANGED',
       metadata: { distributorId: id, newStatus: input.status },
     });

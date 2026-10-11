@@ -1,15 +1,15 @@
 import { NextRequest } from 'next/server';
-import { cookies } from 'next/headers';
-import { requireInternalUser, AUTH_CONFIG } from '@trionyx/auth';
+import { getServerActiveOrg } from '@/lib/serverOrg';
 import { warrantiesService, apiSuccess, apiError } from '@trionyx/api';
 import { activateWarrantySchema } from '@trionyx/validation';
 import type { WarrantyStatus } from '@trionyx/types';
 
 export async function GET(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(AUTH_CONFIG.cookieName)?.value;
-    await requireInternalUser(token);
+    const { activeOrg } = await getServerActiveOrg(request);
+    if (activeOrg.slug !== 'trionyx') {
+      return apiError('FORBIDDEN', 'Warranty management is only available for Trionyx', 403);
+    }
 
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || undefined;
@@ -30,17 +30,18 @@ export async function GET(request: NextRequest) {
 
     return apiSuccess(result, 200);
   } catch (err: any) {
-    if (err.message === 'UNAUTHENTICATED') return apiError('UNAUTHENTICATED', 'Not authenticated', 401);
-    if (err.message === 'FORBIDDEN') return apiError('FORBIDDEN', 'Access denied', 403);
-    return apiError('INTERNAL_ERROR', err.message || 'Failed to list warranties', 500);
+    const status = err.statusCode || (err.message === 'UNAUTHENTICATED' ? 401 : 500);
+    const code = err.code || (status === 401 ? 'UNAUTHENTICATED' : status === 403 ? 'FORBIDDEN' : 'INTERNAL_ERROR');
+    return apiError(code, err.message || 'Failed to list warranties', status);
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(AUTH_CONFIG.cookieName)?.value;
-    const { user } = await requireInternalUser(token);
+    const { user, activeOrg } = await getServerActiveOrg(request);
+    if (activeOrg.slug !== 'trionyx') {
+      return apiError('FORBIDDEN', 'Warranty management is only available for Trionyx', 403);
+    }
 
     if (user.role !== 'MANAGING_DIRECTOR' && user.role !== 'ADMIN') {
       return apiError('FORBIDDEN', 'Only Managing Director and Admin can activate warranties internally', 403);
@@ -74,8 +75,8 @@ export async function POST(request: NextRequest) {
 
     return apiSuccess(warranty, 201);
   } catch (err: any) {
-    if (err.message === 'UNAUTHENTICATED') return apiError('UNAUTHENTICATED', 'Not authenticated', 401);
-    if (err.message === 'FORBIDDEN') return apiError('FORBIDDEN', 'Access denied', 403);
+    const status = err.statusCode || (err.message === 'UNAUTHENTICATED' ? 401 : 500);
+    const code = err.code || (status === 401 ? 'UNAUTHENTICATED' : status === 403 ? 'FORBIDDEN' : 'INTERNAL_ERROR');
     if (err.code === 'WARRANTY_ALREADY_ACTIVATED') {
       return apiError('CONFLICT', err.message, 409, err.details);
     }
@@ -87,6 +88,6 @@ export async function POST(request: NextRequest) {
       );
     }
     if (err.code === 'NOT_FOUND') return apiError('NOT_FOUND', err.message, 404);
-    return apiError('INTERNAL_ERROR', err.message || 'Failed to activate warranty', 500);
+    return apiError(code, err.message || 'Failed to activate warranty', status);
   }
 }

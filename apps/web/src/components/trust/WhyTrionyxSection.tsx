@@ -4,9 +4,9 @@ import styles from './WhyTrionyxSection.module.css';
 import { SectionEyebrow } from '../ui/SectionEyebrow';
 
 const reasons = [
-  { label: 'THE PORTFOLIO', title: 'Product Range', description: 'A growing portfolio across automotive protection, care and related categories.' },
-  { label: 'THE PARTNERSHIP', title: 'Dealer Support', description: 'Product availability, practical guidance and support built around long-term dealer relationships.' },
-  { label: 'THE PERSPECTIVE', title: 'Built for India', description: 'Products and distribution shaped around Indian automotive demand and everyday operating conditions.' },
+  { label: 'OUR PRODUCTS', title: 'Protection & care', description: 'Protection films, advanced coatings and care products for your vehicle’s surfaces.' },
+  { label: 'OUR PARTNERS', title: 'Dealer support', description: 'Product guidance and availability support to help dealers serve their customers.' },
+  { label: 'OUR FOCUS', title: 'Built for India', description: 'A portfolio shaped by Indian roads, everyday driving and local automotive needs.' },
 ];
 
 export function WhyTrionyxSection() {
@@ -15,7 +15,7 @@ export function WhyTrionyxSection() {
       <div className={styles.inner}>
         <header className={styles.header}>
           <SectionEyebrow>WHY TRIONYX</SectionEyebrow>
-          <h2 id="why-trionyx-heading">Built on experience.<br /><em>Chosen for what comes with it.</em></h2>
+          <h2 id="why-trionyx-heading">Built on experience.<br /><em>Focused on your vehicle.</em></h2>
         </header>
 
         <div className={styles.layout}>
@@ -23,7 +23,7 @@ export function WhyTrionyxSection() {
             <div className={styles.foundationCopy}>
               <span className={styles.foundationLabel}>OUR FOUNDATION</span>
               <h3 id="foundation-heading"><span className={styles.since}>Since</span><span className={styles.year}>2006</span></h3>
-              <p>Nearly two decades of experience in the automotive products market.</p>
+              <p>Experience in automotive protection and care, built since 2006.</p>
             </div>
             <div className={styles.material} aria-hidden="true">
               <Image src="/trionyx-materials.png" alt="" fill sizes="(max-width: 760px) 100vw, 40vw" className={styles.image} />

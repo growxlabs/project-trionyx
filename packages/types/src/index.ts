@@ -81,10 +81,13 @@ export type AuditEvent =
   | 'WARRANTY_ACTIVATED'
   | 'WARRANTY_VOIDED'
   | 'WARRANTY_POLICY_CREATED'
-  | 'WARRANTY_POLICY_UPDATED';
+  | 'WARRANTY_POLICY_UPDATED'
+  | 'ORGANIZATION_SWITCHED'
+  | 'ORGANIZATION_MEMBER_ADDED';
 
 export interface AuditLog {
   id: string;
+  organizationId?: string | null;
   userId?: string | null;
   event: AuditEvent;
   ipAddress?: string | null;
@@ -108,11 +111,27 @@ export interface DealerApplication {
 }
 
 /**
- * PRODUCTS & SPECIFICATIONS DOMAIN
+ * BRANDS, PRODUCTS & SPECIFICATIONS DOMAIN
  */
+
+export interface Brand {
+  id: string;
+  organizationId?: string | null;
+  businessCode: 'TRIONYX' | 'LAKSHMI' | string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  status: 'ACTIVE' | 'INACTIVE';
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export interface ProductCategory {
   id: string;
+  organizationId?: string | null;
+  businessCode?: 'TRIONYX' | 'LAKSHMI' | string;
+  brandId?: string | null;
   name: string;
   slug: string;
   description?: string | null;
@@ -127,7 +146,10 @@ export type PublicVisibility = 'PRIVATE' | 'PUBLIC';
 
 export interface Product {
   id: string;
-  productCode: string; // e.g. TRX-PROD-000001
+  organizationId?: string | null;
+  productCode: string; // e.g. TRX-PROD-000001 or LAK-PROD-000001
+  businessCode?: 'TRIONYX' | 'LAKSHMI' | string;
+  brandId?: string | null;
   name: string;
   slug: string;
   categoryId: string;
@@ -166,9 +188,56 @@ export interface ProductMedia {
 }
 
 export interface ProductWithRelations extends Product {
+  brand?: Brand;
   category?: ProductCategory;
   specifications: ProductSpecification[];
   media: ProductMedia[];
+}
+
+export interface PublicProductSummary {
+  id: string;
+  productCode: string;
+  name: string;
+  slug: string;
+  brandName?: string | null;
+  brandSlug?: string | null;
+  categoryName?: string | null;
+  categorySlug?: string | null;
+  shortDescription?: string | null;
+  primaryImage?: {
+    url: string;
+    altText?: string | null;
+  } | null;
+  keySpecification?: {
+    label: string;
+    value: string;
+  } | null;
+}
+
+export interface PublicProductDetail extends PublicProductSummary {
+  description?: string | null;
+  specifications: Array<{
+    id: string;
+    label: string;
+    value: string;
+    sortOrder: number;
+  }>;
+  galleryImages: Array<{
+    id: string;
+    url: string;
+    altText?: string | null;
+    sortOrder: number;
+  }>;
+  brand?: {
+    name: string;
+    slug: string;
+    description?: string | null;
+  } | null;
+  category?: {
+    name: string;
+    slug: string;
+    description?: string | null;
+  } | null;
 }
 
 /**
@@ -177,6 +246,7 @@ export interface ProductWithRelations extends Product {
 
 export interface InventoryLocation {
   id: string;
+  organizationId?: string | null;
   code: string; // e.g. LOC-MAIN
   name: string;
   status: 'ACTIVE' | 'INACTIVE';
@@ -339,6 +409,7 @@ export type DistributorStatus = 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
 
 export interface Distributor {
   id: string;
+  organizationId?: string | null;
   distributorCode: string; // e.g. TRX-DST-000001
   businessName: string;
   legalName?: string | null;
@@ -374,6 +445,7 @@ export type DealerStatus = 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
 
 export interface Dealer {
   id: string;
+  organizationId?: string | null;
   dealerCode: string; // e.g. TRX-DLR-000001
   businessName: string;
   legalName?: string | null;
@@ -594,6 +666,7 @@ export type ContactEnquiryStatus = 'NEW' | 'IN_PROGRESS' | 'CLOSED';
 
 export interface ContactEnquiry {
   id: string;
+  organizationId?: string | null;
   enquiryCode: string; // e.g. TRX-ENQ-000001
   type: ContactEnquiryType;
   fullName: string;
@@ -683,4 +756,38 @@ export interface PublicWarrantyCheckResult {
   dealerName?: string | null;
   message?: string | null;
 }
+
+/**
+ * ORGANIZATION & MULTI-TENANCY DOMAIN
+ */
+
+export type OrganizationSlug = 'trionyx' | 'lakshmi' | string;
+
+export interface Organization {
+  id: string;
+  slug: OrganizationSlug;
+  name: string;
+  status: 'ACTIVE' | 'INACTIVE';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OrganizationMembership {
+  id: string;
+  organizationId: string;
+  userId: string;
+  role: Role;
+  status: 'ACTIVE' | 'INACTIVE';
+  organization?: Organization;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ActiveOrganization {
+  id: string;
+  slug: OrganizationSlug;
+  name: string;
+  role: Role;
+}
+
 

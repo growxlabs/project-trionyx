@@ -107,11 +107,11 @@ export function formatActivityLabel(event: AuditEvent, metadataStr?: string | nu
  * - Populate Recent Activity strictly from real persisted audit events.
  * - Keep unfinished modules (Dealers, Orders, Pending Actions) strictly null without fabrication.
  */
-export async function getInternalOverview(user: SafeUser): Promise<InternalOverview> {
+export async function getInternalOverview(user: SafeUser, organizationId?: string): Promise<InternalOverview> {
   await ensureDatabaseReady();
 
   // 1. Fetch real persisted audit events
-  const rawLogs = await auditLogsRepository.list({ limit: 8 });
+  const rawLogs = await auditLogsRepository.list({ organizationId, limit: 8 });
 
   // 2. Resolve actor details when possible
   const activities: OverviewActivity[] = [];
@@ -154,7 +154,7 @@ export async function getInternalOverview(user: SafeUser): Promise<InternalOverv
   const attentionItems: AttentionItem[] = [];
 
   try {
-    const summaries = await serialsRepository.listProductInventorySummaries();
+    const summaries = await serialsRepository.listProductInventorySummaries({ organizationId });
     const zeroStockProducts = summaries.filter((s) => s.availableCount === 0);
     zeroStockCount = zeroStockProducts.length;
 
@@ -174,7 +174,7 @@ export async function getInternalOverview(user: SafeUser): Promise<InternalOverv
   let activeDealersCount: number | null = null;
   try {
     const distributorScope = user.role === 'DISTRIBUTOR' ? user.distributorId : null;
-    activeDealersCount = await dealersRepository.countActive(distributorScope);
+    activeDealersCount = await dealersRepository.countActive(distributorScope, organizationId);
   } catch (err) {
     console.error('Failed to query active dealers for overview:', err);
   }

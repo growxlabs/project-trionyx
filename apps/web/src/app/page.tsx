@@ -52,8 +52,9 @@ export default function HomePage() {
           {/* Section 06: Frequently asked questions */}
           <FAQSection />
         </main>
+
+        <SiteFooter />
       </PageFrame>
-      <SiteFooter />
     </div>
   );
 }

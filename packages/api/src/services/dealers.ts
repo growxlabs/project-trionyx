@@ -27,6 +27,7 @@ export const dealersService = {
       exactName?: string;
       hasDistributor?: boolean;
       distributorId?: string;
+      organizationId?: string;
       page?: number;
       pageSize?: number;
     },
@@ -48,6 +49,7 @@ export const dealersService = {
       status: query.status,
       state: query.state,
       distributorId: effectiveDistributorId,
+      organizationId: query.organizationId,
       page,
       limit,
     });
@@ -62,8 +64,8 @@ export const dealersService = {
     };
   },
 
-  async getDealerById(id: string, distributorScope?: string | null) {
-    const dealer = await dealersRepository.findById(id);
+  async getDealerById(id: string, distributorScope?: string | null, organizationId?: string) {
+    const dealer = await dealersRepository.findById(id, organizationId);
     if (!dealer) return null;
 
     if (distributorScope && dealer.distributorId !== distributorScope) {
@@ -76,7 +78,11 @@ export const dealersService = {
     return dealer;
   },
 
-  async createDealer(data: CreateDealerInput, actorId: string, distributorScope?: string | null) {
+  async createDealer(
+    data: CreateDealerInput & { organizationId?: string | null },
+    actorId: string,
+    distributorScope?: string | null
+  ) {
     // If user is a distributor, enforce self-assignment
     const assignedDistributorId = distributorScope || data.distributorId || null;
 
@@ -97,10 +103,12 @@ export const dealersService = {
       ...data,
       distributorId: assignedDistributorId,
       createdBy: actorId,
+      organizationId: data.organizationId ?? null,
     });
 
     await auditLogsRepository.recordEvent({
       userId: actorId,
+      organizationId: data.organizationId ?? null,
       event: 'DEALER_CREATED',
       metadata: { dealerId: created.id, dealerCode: created.dealerCode, businessName: created.businessName },
     });
@@ -108,8 +116,14 @@ export const dealersService = {
     return created;
   },
 
-  async updateDealer(id: string, data: UpdateDealerInput, actorId: string, distributorScope?: string | null) {
-    const existing = await this.getDealerById(id, distributorScope);
+  async updateDealer(
+    id: string,
+    data: UpdateDealerInput,
+    actorId: string,
+    distributorScope?: string | null,
+    organizationId?: string
+  ) {
+    const existing = await this.getDealerById(id, distributorScope, organizationId);
     if (!existing) {
       const err = new Error('Dealer not found');
       (err as any).statusCode = 404;
@@ -122,6 +136,7 @@ export const dealersService = {
         phone: data.phone || existing.phone,
         email: data.email !== undefined ? data.email : existing.email,
         excludeId: id,
+        organizationId,
       });
 
       if (duplicate) {
@@ -135,10 +150,11 @@ export const dealersService = {
     const updated = await dealersRepository.update(id, {
       ...data,
       updatedBy: actorId,
-    });
+    }, organizationId);
 
     await auditLogsRepository.recordEvent({
       userId: actorId,
+      organizationId: organizationId || existing.organizationId || null,
       event: 'DEALER_UPDATED',
       metadata: { dealerId: id, updatedFields: Object.keys(data) },
     });
@@ -146,13 +162,26 @@ export const dealersService = {
     return updated;
   },
 
-  async updateDealerStatus(id: string, input: DealerStatusInput, actorId: string, distributorScope?: string | null) {
-    await this.getDealerById(id, distributorScope);
+  async updateDealerStatus(
+    id: string,
+    input: DealerStatusInput,
+    actorId: string,
+    distributorScope?: string | null,
+    organizationId?: string
+  ) {
+    const existing = await this.getDealerById(id, distributorScope, organizationId);
+    if (!existing) {
+      const err = new Error('Dealer not found');
+      (err as any).statusCode = 404;
+      (err as any).code = 'NOT_FOUND';
+      throw err;
+    }
 
-    const updated = await dealersRepository.updateStatus(id, input.status, actorId);
+    const updated = await dealersRepository.updateStatus(id, input.status, actorId, organizationId);
 
     await auditLogsRepository.recordEvent({
       userId: actorId,
+      organizationId: organizationId || existing.organizationId || null,
       event: 'DEALER_STATUS_CHANGED',
       metadata: { dealerId: id, newStatus: input.status },
     });

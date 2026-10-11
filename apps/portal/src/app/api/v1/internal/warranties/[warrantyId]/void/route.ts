@@ -1,6 +1,5 @@
 import { NextRequest } from 'next/server';
-import { cookies } from 'next/headers';
-import { requireInternalUser, AUTH_CONFIG } from '@trionyx/auth';
+import { getServerActiveOrg } from '@/lib/serverOrg';
 import { warrantiesService, apiSuccess, apiError } from '@trionyx/api';
 import { voidWarrantySchema } from '@trionyx/validation';
 
@@ -10,9 +9,10 @@ export async function POST(
 ) {
   try {
     const { warrantyId } = await params;
-    const cookieStore = await cookies();
-    const token = cookieStore.get(AUTH_CONFIG.cookieName)?.value;
-    const { user } = await requireInternalUser(token);
+    const { user, activeOrg } = await getServerActiveOrg(request);
+    if (activeOrg.slug !== 'trionyx') {
+      return apiError('FORBIDDEN', 'Warranty void is only available for Trionyx', 403);
+    }
 
     if (user.role !== 'MANAGING_DIRECTOR' && user.role !== 'ADMIN') {
       return apiError('FORBIDDEN', 'Only Managing Director and Admin can void warranties', 403);
@@ -37,10 +37,10 @@ export async function POST(
 
     return apiSuccess(voided, 200);
   } catch (err: any) {
-    if (err.message === 'UNAUTHENTICATED') return apiError('UNAUTHENTICATED', 'Not authenticated', 401);
-    if (err.message === 'FORBIDDEN' || err.code === 'FORBIDDEN') return apiError('FORBIDDEN', 'Access denied', 403);
+    const status = err.statusCode || (err.message === 'UNAUTHENTICATED' ? 401 : 500);
+    const code = err.code || (status === 401 ? 'UNAUTHENTICATED' : status === 403 ? 'FORBIDDEN' : 'INTERNAL_ERROR');
     if (err.code === 'NOT_FOUND') return apiError('NOT_FOUND', err.message, 404);
     if (err.code === 'CONFLICT') return apiError('CONFLICT', err.message, 409);
-    return apiError('INTERNAL_ERROR', err.message || 'Failed to void warranty', 500);
+    return apiError(code, err.message || 'Failed to void warranty', status);
   }
 }

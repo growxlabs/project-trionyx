@@ -3,23 +3,21 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { requireInternalUser, AUTH_CONFIG } from '@trionyx/auth';
 import { distributorsRepository, ensureDatabaseReady } from '@trionyx/database';
+import { getServerActiveOrg } from '@/lib/serverOrg';
 import { InternalShell } from '../../components/shell/InternalShell';
 import { DistributorsTable } from './DistributorsTable';
 
 export const dynamic = 'force-dynamic';
 
 export default async function DistributorsPage() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(AUTH_CONFIG.cookieName)?.value;
-
   let authData;
   try {
-    authData = await requireInternalUser(token);
+    authData = await getServerActiveOrg();
   } catch {
     redirect('/login');
   }
 
-  const { user } = authData;
+  const { user, activeOrg } = authData;
 
   await ensureDatabaseReady();
 
@@ -28,13 +26,13 @@ export default async function DistributorsPage() {
 
   if (user.role === 'DISTRIBUTOR') {
     if (user.distributorId) {
-      const myDistributor = await distributorsRepository.findById(user.distributorId);
+      const myDistributor = await distributorsRepository.findById(user.distributorId, activeOrg.id);
       initialDistributors = myDistributor ? [myDistributor] : [];
     } else {
       initialDistributors = [];
     }
   } else {
-    const listRes = await distributorsRepository.list({ limit: 50 });
+    const listRes = await distributorsRepository.list({ limit: 50, organizationId: activeOrg.id });
     initialDistributors = listRes.items;
   }
 

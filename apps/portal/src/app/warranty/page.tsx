@@ -8,26 +8,29 @@ import {
   productsRepository,
   ensureDatabaseReady,
 } from '@trionyx/database';
+import { getServerActiveOrg } from '@/lib/serverOrg';
 import { InternalShell } from '../../components/shell/InternalShell';
 import { WarrantyListView } from './WarrantyListView';
 
 export const dynamic = 'force-dynamic';
 
 export default async function WarrantyPage() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(AUTH_CONFIG.cookieName)?.value;
-
   let authData;
   try {
-    authData = await requireInternalUser(token);
+    authData = await getServerActiveOrg();
   } catch {
     redirect('/login');
   }
 
-  const { user } = authData;
+  const { user, activeOrg } = authData;
 
   // Distributors should not manage warranties
   if (user.role === 'DISTRIBUTOR') {
+    redirect('/overview');
+  }
+
+  // Warranty is strictly Trionyx-only
+  if (activeOrg.slug !== 'trionyx') {
     redirect('/overview');
   }
 
@@ -35,8 +38,8 @@ export default async function WarrantyPage() {
 
   const [warrantiesResult, dealersResult, productsResult] = await Promise.all([
     warrantiesRepository.list({ limit: 100 }),
-    dealersRepository.list({ limit: 200 }),
-    productsRepository.list({ limit: 200 }),
+    dealersRepository.list({ limit: 200, organizationId: activeOrg.id }),
+    productsRepository.list({ limit: 200, organizationId: activeOrg.id }),
   ]);
 
   return (

@@ -6,6 +6,9 @@ import { randomUUID } from 'crypto';
 function mapCategoryRow(row: Record<string, unknown>): ProductCategory {
   return {
     id: String(row.id),
+    businessCode: row.business_code ? String(row.business_code) : 'TRIONYX',
+    brandId: row.brand_id ? String(row.brand_id) : null,
+    organizationId: row.organization_id ? String(row.organization_id) : null,
     name: String(row.name),
     slug: String(row.slug),
     description: row.description ? String(row.description) : null,
@@ -19,6 +22,9 @@ function mapCategoryRow(row: Record<string, unknown>): ProductCategory {
 export const categoriesRepository = {
   async create(
     data: {
+      organizationId?: string | null;
+      businessCode?: 'TRIONYX' | 'LAKSHMI' | string;
+      brandId?: string | null;
       name: string;
       slug: string;
       description?: string | null;
@@ -31,15 +37,21 @@ export const categoriesRepository = {
     const now = new Date().toISOString();
     const status = data.status || 'ACTIVE';
     const sortOrder = data.sortOrder ?? 0;
+    const businessCode = data.businessCode || 'TRIONYX';
+    const brandId = data.brandId || null;
+    const organizationId = data.organizationId || (businessCode === 'LAKSHMI' ? 'org-lakshmi' : 'org-trionyx');
 
     await client.execute({
-      sql: `INSERT INTO product_categories (id, name, slug, description, status, sort_order, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      args: [id, data.name, data.slug, data.description || null, status, sortOrder, now, now],
+      sql: `INSERT INTO product_categories (id, business_code, brand_id, organization_id, name, slug, description, status, sort_order, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: [id, businessCode, brandId, organizationId, data.name, data.slug, data.description || null, status, sortOrder, now, now],
     });
 
     return {
       id,
+      businessCode,
+      brandId,
+      organizationId,
       name: data.name,
       slug: data.slug,
       description: data.description || null,
@@ -59,9 +71,21 @@ export const categoriesRepository = {
       status: 'ACTIVE' | 'INACTIVE';
       sortOrder: number;
     }>,
-    client: Client = getDbClient()
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
   ): Promise<ProductCategory | null> {
-    const existing = await this.findById(id, client);
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
+    const existing = await this.findById(id, client, organizationId);
     if (!existing) return null;
 
     const name = data.name !== undefined ? data.name : existing.name;
@@ -80,6 +104,9 @@ export const categoriesRepository = {
 
     return {
       id,
+      businessCode: existing.businessCode,
+      brandId: existing.brandId,
+      organizationId: existing.organizationId,
       name,
       slug,
       description,
@@ -90,31 +117,72 @@ export const categoriesRepository = {
     };
   },
 
-  async findById(id: string, client: Client = getDbClient()): Promise<ProductCategory | null> {
-    const result = await client.execute({
-      sql: 'SELECT * FROM product_categories WHERE id = ? LIMIT 1',
-      args: [id],
-    });
+  async findById(
+    id: string,
+    clientOrOrgId?: Client | string,
+    maybeOrgOrClient?: string | Client
+  ): Promise<ProductCategory | null> {
+    const client = (clientOrOrgId && typeof clientOrOrgId === 'object' && 'execute' in clientOrOrgId)
+      ? clientOrOrgId
+      : (maybeOrgOrClient && typeof maybeOrgOrClient === 'object' && 'execute' in maybeOrgOrClient)
+        ? maybeOrgOrClient
+        : getDbClient();
+    const organizationId = typeof clientOrOrgId === 'string'
+      ? clientOrOrgId
+      : typeof maybeOrgOrClient === 'string'
+        ? maybeOrgOrClient
+        : undefined;
+
+    let sql = 'SELECT * FROM product_categories WHERE id = ?';
+    const args: string[] = [id];
+    if (organizationId) {
+      sql += ' AND organization_id = ?';
+      args.push(organizationId);
+    }
+    sql += ' LIMIT 1';
+
+    const result = await client.execute({ sql, args });
     if (result.rows.length === 0) return null;
     return mapCategoryRow(result.rows[0]);
   },
 
-  async findBySlug(slug: string, client: Client = getDbClient()): Promise<ProductCategory | null> {
-    const result = await client.execute({
-      sql: 'SELECT * FROM product_categories WHERE slug = ? LIMIT 1',
-      args: [slug],
-    });
+  async findBySlug(slug: string, businessCodeOrOrgId?: string, client: Client = getDbClient()): Promise<ProductCategory | null> {
+    let sql = 'SELECT * FROM product_categories WHERE slug = ?';
+    const args: string[] = [slug];
+    if (businessCodeOrOrgId) {
+      if (businessCodeOrOrgId.startsWith('org-')) {
+        sql += ' AND organization_id = ?';
+      } else {
+        sql += ' AND business_code = ?';
+      }
+      args.push(businessCodeOrOrgId);
+    }
+    sql += ' LIMIT 1';
+
+    const result = await client.execute({ sql, args });
     if (result.rows.length === 0) return null;
     return mapCategoryRow(result.rows[0]);
   },
 
   async list(
-    filter?: { status?: 'ACTIVE' | 'INACTIVE'; search?: string },
+    filter?: { organizationId?: string; businessCode?: string; brandId?: string; status?: 'ACTIVE' | 'INACTIVE'; search?: string },
     client: Client = getDbClient()
   ): Promise<ProductCategory[]> {
     let sql = 'SELECT * FROM product_categories WHERE 1=1';
     const args: (string | number)[] = [];
 
+    if (filter?.organizationId) {
+      sql += ' AND organization_id = ?';
+      args.push(filter.organizationId);
+    }
+    if (filter?.businessCode) {
+      sql += ' AND business_code = ?';
+      args.push(filter.businessCode);
+    }
+    if (filter?.brandId) {
+      sql += ' AND brand_id = ?';
+      args.push(filter.brandId);
+    }
     if (filter?.status) {
       sql += ' AND status = ?';
       args.push(filter.status);
@@ -130,12 +198,18 @@ export const categoriesRepository = {
     return result.rows.map(mapCategoryRow);
   },
 
-  async listAllActive(client: Client = getDbClient()): Promise<ProductCategory[]> {
-    return this.list({ status: 'ACTIVE' }, client);
+  async listAllActive(organizationId?: string, client: Client = getDbClient()): Promise<ProductCategory[]> {
+    return this.list({ status: 'ACTIVE', organizationId }, client);
   },
 
-  async count(client: Client = getDbClient()): Promise<number> {
-    const result = await client.execute('SELECT COUNT(*) as count FROM product_categories');
+  async count(organizationId?: string, client: Client = getDbClient()): Promise<number> {
+    let sql = 'SELECT COUNT(*) as count FROM product_categories';
+    const args: string[] = [];
+    if (organizationId) {
+      sql += ' WHERE organization_id = ?';
+      args.push(organizationId);
+    }
+    const result = await client.execute({ sql, args });
     return Number(result.rows[0]?.count ?? 0);
   },
 };

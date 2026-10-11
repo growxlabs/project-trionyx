@@ -3,6 +3,7 @@ import type { ContactEnquiryStatus, ContactEnquiryType } from '@trionyx/types';
 import { getDbClient, getDatabaseUrl, isPostgresUrl } from '../db';
 
 export type EnquiryFilter = {
+  organizationId?: string;
   type?: ContactEnquiryType | 'ALL'; status?: ContactEnquiryStatus | 'ALL'; state?: string;
   assignedTo?: string; search?: string; page?: number; limit?: number;
   enquiryId?: string; enquiryCode?: string; city?: string; pincode?: string;
@@ -11,6 +12,7 @@ export type EnquiryFilter = {
 export function enquiryWhere(filter: EnquiryFilter = {}) {
   const conditions = ['1=1']; const args: (string | number)[] = [];
   const add = (sql: string, value: string) => { conditions.push(sql); args.push(value); };
+  if (filter.organizationId) add('ce.organization_id = ?', filter.organizationId);
   if (filter.type && filter.type !== 'ALL') add('ce.type = ?', filter.type);
   if (filter.status && filter.status !== 'ALL') add('ce.status = ?', filter.status);
   for (const key of ['state', 'city', 'pincode'] as const) if (filter[key] && filter[key] !== 'ALL') add(`LOWER(ce.${key}) = LOWER(?)`, filter[key]!);
@@ -52,16 +54,21 @@ export const enquiryReadsRepository = {
     const rows = await client.execute({ sql: `SELECT ${expression} AS key, COUNT(*) AS count FROM contact_enquiries ce ${whereSql} GROUP BY ${expression} ORDER BY count DESC, key LIMIT ? OFFSET ?`, args: [...args, limit, (page - 1) * limit] });
     return { total: Number(total.rows[0].count), groupsTotal: Number(groupsTotal.rows[0].count), groups: rows.rows.map(row => ({ key: String(row.key), label: String(row.key), count: Number(row.count) })) };
   },
-  async attention(filter: { rule?: 'NEW_UNASSIGNED' | 'MISSING_OWNER'; page?: number; limit?: number }, client: Client = getDbClient()) {
+  async attention(filter: { rule?: 'NEW_UNASSIGNED' | 'MISSING_OWNER'; organizationId?: string; page?: number; limit?: number }, client: Client = getDbClient()) {
     const rules = { NEW_UNASSIGNED: "ce.status = 'NEW' AND ce.assigned_to IS NULL", MISSING_OWNER: 'ce.assigned_to IS NOT NULL AND u.id IS NULL' };
-    const condition = filter.rule ? rules[filter.rule] : `(${rules.NEW_UNASSIGNED}) OR (${rules.MISSING_OWNER})`;
+    let condition = filter.rule ? rules[filter.rule] : `(${rules.NEW_UNASSIGNED}) OR (${rules.MISSING_OWNER})`;
+    const args: (string | number)[] = [];
+    if (filter.organizationId) {
+      condition += ' AND ce.organization_id = ?';
+      args.push(filter.organizationId);
+    }
     const from = `FROM contact_enquiries ce LEFT JOIN users u ON ce.assigned_to = u.id WHERE ${condition}`;
-    const total = await client.execute(`SELECT COUNT(*) AS count ${from}`);
+    const total = await client.execute({ sql: `SELECT COUNT(*) AS count ${from}`, args });
     const page = filter.page ?? 1, limit = filter.limit ?? 20;
-    const result = await client.execute({ sql: `SELECT ce.id, ce.enquiry_code, ce.created_at, CASE WHEN ce.assigned_to IS NOT NULL AND u.id IS NULL THEN 'MISSING_OWNER' ELSE 'NEW_UNASSIGNED' END AS rule ${from} ORDER BY ce.created_at DESC, ce.id LIMIT ? OFFSET ?`, args: [limit, (page - 1) * limit] });
+    const result = await client.execute({ sql: `SELECT ce.id, ce.enquiry_code, ce.created_at, CASE WHEN ce.assigned_to IS NOT NULL AND u.id IS NULL THEN 'MISSING_OWNER' ELSE 'NEW_UNASSIGNED' END AS rule ${from} ORDER BY ce.created_at DESC, ce.id LIMIT ? OFFSET ?`, args: [...args, limit, (page - 1) * limit] });
     return { total: Number(total.rows[0].count), items: result.rows.map(row => ({ enquiryId: String(row.id), enquiryCode: String(row.enquiry_code), createdAt: String(row.created_at), rule: row.rule as 'NEW_UNASSIGNED' | 'MISSING_OWNER' })) };
   },
-  async changes(filter: { enquiryId?: string; changeType?: EnquiryChangeType; from?: string; to?: string; page?: number; limit?: number }, client: Client = getDbClient(), postgres = isPostgresUrl(getDatabaseUrl())) {
+  async changes(filter: { organizationId?: string; enquiryId?: string; changeType?: EnquiryChangeType; from?: string; to?: string; page?: number; limit?: number }, client: Client = getDbClient(), postgres = isPostgresUrl(getDatabaseUrl())) {
     // Audit events are the actual source of lifecycle history, never current-state timestamps.
     const field = (name: string) => postgres ? `(a.metadata::jsonb ->> '${name}')` : `json_extract(CASE WHEN json_valid(a.metadata) THEN a.metadata ELSE '{}' END, '$.${name}')`;
     if (!postgres) {
@@ -69,6 +76,7 @@ export const enquiryReadsRepository = {
       if (Number(malformed.rows[0].count)) throw new Error('INVALID_STORED_HISTORY');
     }
     const conditions = [`a.event IN (${Object.values(events).map(() => '?').join(',')})`]; const args: (string | number)[] = Object.values(events);
+    if (filter.organizationId) { conditions.push('ce.organization_id = ?'); args.push(filter.organizationId); }
     if (filter.changeType) { conditions.push('a.event = ?'); args.push(events[filter.changeType]); }
     if (filter.enquiryId) { conditions.push(`${field('enquiryId')} = ?`); args.push(filter.enquiryId); }
     if (filter.from) { conditions.push('a.created_at >= ?'); args.push(filter.from); }

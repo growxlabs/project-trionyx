@@ -1,9 +1,8 @@
 import React from 'react';
 import Image from 'next/image';
-import { Button } from '../ui/Button';
+import { SectionFrame } from '../frame';
 import { ArrowRightIcon } from '../ui/Icons';
-import { SectionFrame, ContentGrid } from '../frame';
-import { SectionEyebrow } from '../ui/SectionEyebrow';
+import styles from './AboutSection.module.css';
 
 export interface AboutSectionProps {
   onCtaClick?: () => void;
@@ -11,104 +10,67 @@ export interface AboutSectionProps {
 
 /**
  * TRIONYX ABOUT SECTION
- * 
- * Editorial, calm, and spacious two-column layout:
- * - Left (44% visual): Restrained layered automotive image composition showing
- *   precision workshop application and finished protected surface.
- * - Right (56% content): Context eyebrow, substantial heading, 2-paragraph story,
- *   restrained "EST. 2006 · 20 YEARS" proof line, and single CTA.
- * - Canvas: Continues warm Trionyx canvas (#F5F5EE) within continuous page rails.
+ *
+ * Premium floating editorial section in Deep Petrol Green (#075B50) sitting
+ * on top of the permanent warm Trionyx page canvas (#F5F5EE).
+ *
+ * - Canvas rhythm: warm page canvas → floating deep petrol green About section → warm page canvas
+ * - Layout: ~46% imagery / 54% content on desktop, stacked on mobile (images first, text second)
+ * - Eyebrow: #F26522
+ * - Heading: #F7F6F0
+ * - Body copy: #DAD8CF
+ * - Metadata line: #F7F6F0 with subtle 1px border rgba(247, 246, 240, 0.18)
+ * - CTA Button: transparent with warm-light border, hovering to #F7F6F0 / #075B50
  */
 export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
   return (
     <SectionFrame
       id="about"
       hasBottomBorder
-      className="bg-[#F5F5EE] overflow-hidden"
+      className={styles.outerSection}
     >
-      <ContentGrid className="md:grid-cols-12 py-[var(--section-space)] items-center gap-10 md:gap-10 lg:gap-16">
-        {/* DESKTOP / TABLET VISUAL COLUMN (Hidden on mobile <768px, left on tablet/desktop) */}
-        <div className="hidden md:flex md:col-span-5 relative w-full justify-start">
-          <div className="relative w-full max-w-[460px] lg:max-w-none group pb-8 pr-6 sm:pr-10 lg:pr-12">
+      <div className={styles.panel}>
+        {/* Imagery Column (Left on desktop/tablet, stacked first on mobile) */}
+        <div className={styles.imageryCol}>
+          <div className={styles.imageComposition}>
             {/* Primary Base Image: Precision workshop installation & coating activity */}
-            <div className="relative w-[82%] sm:w-[80%] aspect-[4/5] overflow-hidden rounded-[4px] border border-[rgba(23,23,20,0.08)] shadow-[0_12px_36px_rgba(23,23,20,0.05)] bg-[#EFECE3]">
+            <div className={styles.baseImageWrapper}>
               <Image
                 src="/images/about/ppf-installation.jpg"
                 alt="Automotive protective film and ceramic coating installation workshop"
                 fill
-                sizes="(max-width: 768px) 80vw, 35vw"
-                className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+                sizes="(max-width: 768px) 80vw, 40vw"
+                className={styles.baseImage}
                 priority={false}
               />
             </div>
 
             {/* Overlapping Secondary Accent Image: Premium vehicle finish & surface reflection */}
-            <div className="absolute right-0 bottom-0 w-[58%] sm:w-[56%] aspect-[4/3] overflow-hidden rounded-[4px] border-2 border-[#F5F5EE] shadow-[0_16px_40px_rgba(23,23,20,0.09)] bg-[#EFECE3] transition-transform duration-700 ease-out group-hover:translate-x-1 group-hover:-translate-y-1">
+            <div className={styles.accentImageWrapper}>
               <Image
                 src="/images/about/ceramic-coating-surface.jpg"
                 alt="Hydrophobic ceramic coating and clearcoat finish on automotive surface"
                 fill
                 sizes="(max-width: 768px) 55vw, 25vw"
-                className="object-cover"
+                className={styles.accentImage}
                 priority={false}
               />
             </div>
           </div>
         </div>
 
-        {/* CONTENT COLUMN (Full width on mobile, right on tablet/desktop) */}
-        <div
-          style={{ fontFamily: '"Instrument Sans", sans-serif' }}
-          className="w-full md:col-span-7 flex flex-col justify-center md:pl-6 lg:pl-8 xl:pl-12"
-        >
-          {/* About Title */}
-          <SectionEyebrow>ABOUT TRIONYX</SectionEyebrow>
+        {/* Content Column (Right on desktop/tablet, stacked second on mobile) */}
+        <div className={styles.contentCol}>
+          {/* Eyebrow */}
+          <span className={styles.eyebrow}>ABOUT TRIONYX</span>
 
-          {/* Two Decades Heading — Styled with same font style & normal weight as Founded */}
-          <h2
-            style={{
-              fontFamily: '"Instrument Sans", sans-serif',
-              letterSpacing: '-0.025em',
-            }}
-            className="section-heading text-[#171714] text-[28px] xs:text-[32px] sm:text-[36px] lg:text-[42px] leading-[1.18] max-w-[540px]"
-          >
+          {/* Heading */}
+          <h2 className={styles.heading}>
             Two decades in the automotive industry.
           </h2>
 
-          {/* Mobile Overlapping Imagery: Bold presence, aligned with left narrative flow */}
-          <div className="md:hidden mt-7 mb-8 w-full max-w-[420px]">
-            <div className="relative w-full pb-8 pr-7 sm:pr-9 group">
-              {/* Primary Base Image: around 72% width */}
-              <div className="relative w-[72%] aspect-[4/5] overflow-hidden rounded-[4px] border border-[rgba(23,23,20,0.08)] shadow-[0_12px_32px_rgba(23,23,20,0.06)] bg-[#EFECE3]">
-                <Image
-                  src="/images/about/ppf-installation.jpg"
-                  alt="Automotive protective film and ceramic coating installation workshop"
-                  fill
-                  sizes="(max-width: 768px) 75vw, 35vw"
-                  className="object-cover"
-                  priority={false}
-                />
-              </div>
-
-              {/* Overlapping Secondary Accent Image: around 52% width, overlapping bottom-right */}
-              <div className="absolute right-0 bottom-0 w-[52%] aspect-[4/3] overflow-hidden rounded-[4px] border-2 border-[#F5F5EE] shadow-[0_16px_36px_rgba(23,23,20,0.10)] bg-[#EFECE3]">
-                <Image
-                  src="/images/about/ceramic-coating-surface.jpg"
-                  alt="Hydrophobic ceramic coating and clearcoat finish on automotive surface"
-                  fill
-                  sizes="(max-width: 768px) 55vw, 25vw"
-                  className="object-cover"
-                  priority={false}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Full Body Copy — Uniform #171714 text color matching the heading */}
-          <div
-            style={{ fontFamily: '"Instrument Sans", sans-serif' }}
-            className="body-copy mt-6 space-y-4 sm:space-y-5 max-w-[480px] lg:max-w-[500px] font-normal"
-          >
+          {/* Body Copy */}
+          <div className={styles.bodyCopy}>
             <p>
               Founded in 2006, Trionyx has spent nearly two decades working across the automotive products market, building experience around vehicle protection, care and related product categories.
             </p>
@@ -117,31 +79,26 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onCtaClick }) => {
             </p>
           </div>
 
-          {/* Proof Line */}
-          <div className="mt-7 sm:mt-8 pt-6 border-t border-[var(--section-divider)] max-w-[480px] lg:max-w-[500px]">
-            <span
-              style={{ fontFamily: '"Instrument Sans", sans-serif' }}
-              className="text-[12px] font-medium tracking-[0.16em] uppercase text-[#68665F]"
-            >
+          {/* Small Metadata Line */}
+          <div className={styles.metadataLine}>
+            <span className={styles.metadataText}>
               EST. 2006 &nbsp;·&nbsp; 20 YEARS
             </span>
           </div>
 
           {/* Single Action CTA */}
-          <div className="mt-6 sm:mt-8 lg:mt-10">
-            <Button
-              variant="outline"
-              size="lg"
+          <div className={styles.ctaWrapper}>
+            <button
+              type="button"
               onClick={onCtaClick}
-              trailingIcon={<ArrowRightIcon size={16} strokeWidth={2} />}
-              className="w-full sm:w-auto justify-center h-12 text-[15px] group hover:border-[rgba(23,23,20,0.28)]"
-              style={{ fontFamily: '"Instrument Sans", sans-serif' }}
+              className={styles.ctaButton}
             >
-              About Trionyx
-            </Button>
+              <span>About Trionyx</span>
+              <ArrowRightIcon size={16} strokeWidth={2} />
+            </button>
           </div>
         </div>
-      </ContentGrid>
+      </div>
     </SectionFrame>
   );
 };

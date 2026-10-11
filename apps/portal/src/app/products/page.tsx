@@ -8,29 +8,27 @@ import {
   serialsRepository,
   ensureDatabaseReady,
 } from '@trionyx/database';
+import { getServerActiveOrg } from '@/lib/serverOrg';
 import { InternalShell } from '../../components/shell/InternalShell';
 import { ProductsTable } from './ProductsTable';
 
 export const dynamic = 'force-dynamic';
 
 export default async function ProductsPage() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(AUTH_CONFIG.cookieName)?.value;
-
   let authData;
   try {
-    authData = await requireInternalUser(token);
+    authData = await getServerActiveOrg();
   } catch {
     redirect('/login');
   }
 
-  const { user } = authData;
+  const { user, activeOrg } = authData;
 
   await ensureDatabaseReady();
 
   const [rawProducts, categories] = await Promise.all([
-    productsRepository.list({ limit: 100 }),
-    categoriesRepository.list({ status: 'ACTIVE' }),
+    productsRepository.list({ limit: 100, organizationId: activeOrg.id }),
+    categoriesRepository.list({ status: 'ACTIVE', organizationId: activeOrg.id }),
   ]);
 
   const categoryMap = new Map(categories.map((c) => [c.id, c.name]));

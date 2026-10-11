@@ -1,0 +1,18 @@
+warning: in the working copy of 'packages/database/src/repositories/specifications.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'packages/database/src/repositories/warrantyPolicies.ts', LF will be replaced by CRLF the next time Git touches it
+C:\growxlabs\trionyx\trion-yx\docs\trix\stage-pr.cjs:47
+if(mobileStart<0||mobileEnd<mobileStart)throw new Error('Cannot isolate mobile guide navigation');
+                                        ^
+
+Error: Cannot isolate mobile guide navigation
+    at Object.<anonymous> (C:\growxlabs\trionyx\trion-yx\docs\trix\stage-pr.cjs:47:47)
+    at Module._compile (node:internal/modules/cjs/loader:1804:14)
+    at Object..js (node:internal/modules/cjs/loader:1936:10)
+    at Module.load (node:internal/modules/cjs/loader:1525:32)
+    at Module._load (node:internal/modules/cjs/loader:1327:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+
+Node.js v24.13.1

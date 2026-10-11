@@ -1,0 +1,11 @@
+Scope: 5 of 14 workspace projects
+packages/database typecheck$ tsc --noEmit
+packages/validation typecheck$ tsc --noEmit
+packages/validation typecheck: Done
+packages/database typecheck: Done
+packages/api typecheck$ tsc --noEmit
+packages/api typecheck: Done
+packages/ai typecheck$ tsc --noEmit
+packages/ai typecheck: Done
+apps/portal typecheck$ tsc --noEmit
+apps/portal typecheck: Done

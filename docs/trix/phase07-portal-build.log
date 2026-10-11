@@ -1,0 +1,135 @@
+$ next build
+▲ Next.js 16.3.6 (Turbopack)
+- Environments: .env.local, .env
+✓ Running next.config.ts took 48ms
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead.
+
+  To migrate automatically, run:
+  npx @next/codemod@canary middleware-to-proxy .
+
+  Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 5.6s
+  Running TypeScript ...
+  Finished TypeScript in 5.5s ...
+  Collecting page data using 11 workers ...
+  Generating static pages using 11 workers (0/40) ...
+  Generating static pages using 11 workers (10/40) 
+  Generating static pages using 11 workers (20/40) 
+  Generating static pages using 11 workers (30/40) 
+✓ Generating static pages using 11 workers (40/40) in 370ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ƒ /_not-found
+├ ƒ /api/auth/login
+├ ƒ /api/auth/logout
+├ ƒ /api/auth/me
+├ ƒ /api/categories
+├ ƒ /api/dealers
+├ ƒ /api/dealers/[id]
+├ ƒ /api/dealers/[id]/history
+├ ƒ /api/dealers/[id]/notes
+├ ƒ /api/dealers/[id]/reassign
+├ ƒ /api/dealers/[id]/requests
+├ ƒ /api/dealers/[id]/requests/[requestId]
+├ ƒ /api/dealers/[id]/status
+├ ƒ /api/dealers/[id]/users
+├ ƒ /api/dealers/[id]/users/invite
+├ ƒ /api/distributors
+├ ƒ /api/distributors/[id]
+├ ƒ /api/distributors/[id]/notes
+├ ƒ /api/distributors/[id]/status
+├ ƒ /api/inventory/adjust
+├ ƒ /api/inventory/locations
+├ ƒ /api/inventory/receive
+├ ƒ /api/inventory/serials/lookup
+├ ƒ /api/inventory/transfer
+├ ƒ /api/media/[id]
+├ ƒ /api/products
+├ ƒ /api/products/[id]
+├ ƒ /api/products/[id]/archive
+├ ƒ /api/upload
+├ ƒ /api/v1/internal/auth/login
+├ ƒ /api/v1/internal/auth/logout
+├ ƒ /api/v1/internal/auth/session
+├ ƒ /api/v1/internal/dealer-requests/[requestId]
+├ ƒ /api/v1/internal/dealer-users/[dealerUserId]/disable
+├ ƒ /api/v1/internal/dealers
+├ ƒ /api/v1/internal/dealers/[dealerId]
+├ ƒ /api/v1/internal/dealers/[dealerId]/assign-distributor
+├ ƒ /api/v1/internal/dealers/[dealerId]/history
+├ ƒ /api/v1/internal/dealers/[dealerId]/notes
+├ ƒ /api/v1/internal/dealers/[dealerId]/requests
+├ ƒ /api/v1/internal/dealers/[dealerId]/requests/[requestId]
+├ ƒ /api/v1/internal/dealers/[dealerId]/status
+├ ƒ /api/v1/internal/dealers/[dealerId]/users
+├ ƒ /api/v1/internal/dealers/[dealerId]/users/invite
+├ ƒ /api/v1/internal/distributors
+├ ƒ /api/v1/internal/distributors/[distributorId]
+├ ƒ /api/v1/internal/distributors/[distributorId]/dealers
+├ ƒ /api/v1/internal/distributors/[distributorId]/notes
+├ ƒ /api/v1/internal/distributors/[distributorId]/status
+├ ƒ /api/v1/internal/enquiries
+├ ƒ /api/v1/internal/enquiries/[enquiryId]
+├ ƒ /api/v1/internal/enquiries/[enquiryId]/assign
+├ ƒ /api/v1/internal/enquiries/[enquiryId]/notes
+├ ƒ /api/v1/internal/enquiries/[enquiryId]/status
+├ ƒ /api/v1/internal/inventory
+├ ƒ /api/v1/internal/inventory/adjust
+├ ƒ /api/v1/internal/inventory/locations
+├ ƒ /api/v1/internal/inventory/locations/[locationId]
+├ ƒ /api/v1/internal/inventory/movements
+├ ƒ /api/v1/internal/inventory/receive
+├ ƒ /api/v1/internal/inventory/serials
+├ ƒ /api/v1/internal/inventory/serials/[serialNumber]
+├ ƒ /api/v1/internal/inventory/transfer
+├ ƒ /api/v1/internal/media/[mediaId]
+├ ƒ /api/v1/internal/media/upload
+├ ƒ /api/v1/internal/overview
+├ ƒ /api/v1/internal/product-categories
+├ ƒ /api/v1/internal/product-categories/[categoryId]
+├ ƒ /api/v1/internal/products
+├ ƒ /api/v1/internal/products/[productId]
+├ ƒ /api/v1/internal/products/[productId]/archive
+├ ƒ /api/v1/internal/products/[productId]/restore
+├ ƒ /api/v1/internal/products/[productId]/warranty-policy
+├ ƒ /api/v1/internal/trix
+├ ƒ /api/v1/internal/trix/actions
+├ ƒ /api/v1/internal/warranties
+├ ƒ /api/v1/internal/warranties/[warrantyId]
+├ ƒ /api/v1/internal/warranties/[warrantyId]/void
+├ ƒ /api/v1/internal/warranties/validate-serial
+├ ƒ /dealers
+├ ƒ /dealers/[dealerId]
+├ ƒ /dealers/[dealerId]/edit
+├ ƒ /dealers/new
+├ ƒ /distributors
+├ ƒ /distributors/[distributorId]
+├ ƒ /distributors/[distributorId]/edit
+├ ƒ /distributors/new
+├ ƒ /enquiries
+├ ƒ /enquiries/[enquiryId]
+├ ƒ /guide
+├ ƒ /inventory
+├ ƒ /inventory/locations
+├ ƒ /inventory/movements
+├ ƒ /inventory/serials/[serialId]
+├ ƒ /login
+├ ƒ /overview
+├ ƒ /products
+├ ƒ /products/[productId]
+├ ƒ /products/[productId]/edit
+├ ƒ /products/new
+├ ƒ /settings/appearance
+├ ƒ /trix
+├ ƒ /warranty
+└ ƒ /warranty/[warrantyId]
+
+
+ƒ Proxy (Middleware)
+
+ƒ  (Dynamic)  server-rendered on demand
+

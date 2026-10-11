@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     });
 
     return apiSuccess(result, 200);
-  } catch (err: any) {
+  } catch (err) {
     console.error('[Public Warranty API] Error:', err);
     return apiError(
       'INTERNAL_ERROR',

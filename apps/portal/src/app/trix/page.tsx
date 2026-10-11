@@ -1,15 +1,14 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { AUTH_CONFIG, requireInternalUser } from '@trionyx/auth';
+import { getServerActiveOrg } from '@/lib/serverOrg';
 import { InternalShell } from '../../components/shell/InternalShell';
 import { TrixConversation } from './TrixConversation';
 
 export const dynamic = 'force-dynamic';
 export default async function TrixPage() {
-  const token = (await cookies()).get(AUTH_CONFIG.cookieName)?.value;
   let auth;
-  try { auth = await requireInternalUser(token); }
+  try { auth = await getServerActiveOrg(); }
   catch { redirect('/login'); }
   if (auth.user.role !== 'MANAGING_DIRECTOR') {
     return <InternalShell user={auth.user}>

@@ -13,6 +13,7 @@ import {
   usersRepository,
   ensureDatabaseReady,
 } from '@trionyx/database';
+import { getServerActiveOrg } from '@/lib/serverOrg';
 import { InternalShell } from '../../components/shell/InternalShell';
 
 import { OverviewCockpit } from './OverviewCockpit';
@@ -20,18 +21,17 @@ import { OverviewCockpit } from './OverviewCockpit';
 export const dynamic = 'force-dynamic';
 
 export default async function OverviewPage() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(AUTH_CONFIG.cookieName)?.value;
-
   let authData;
   try {
-    authData = await requireInternalUser(token);
+    authData = await getServerActiveOrg();
   } catch {
     redirect('/login');
   }
 
-  const { user } = authData;
+  const { user, activeOrg } = authData;
   await ensureDatabaseReady();
+
+  const isTrionyx = activeOrg.slug === 'trionyx';
 
   // Authoritative operational queries across all ERP master tables
   const [
@@ -43,12 +43,12 @@ export default async function OverviewPage() {
     auditLogs,
     allUsers,
   ] = await Promise.all([
-    dealersRepository.list({ limit: 500 }),
-    productsRepository.list({ limit: 500 }),
-    serialsRepository.listProductInventorySummaries().catch(() => []),
-    contactEnquiriesRepository.list({ limit: 500 }).catch(() => ({ items: [], total: 0 })),
-    warrantiesRepository.list({ limit: 500 }).catch(() => ({ items: [], total: 0 })),
-    auditLogsRepository.list({ limit: 14 }),
+    dealersRepository.list({ limit: 500, organizationId: activeOrg.id }),
+    productsRepository.list({ limit: 500, organizationId: activeOrg.id }),
+    serialsRepository.listProductInventorySummaries({ organizationId: activeOrg.id }).catch(() => []),
+    contactEnquiriesRepository.list({ limit: 500, organizationId: activeOrg.id }).catch(() => ({ items: [], total: 0 })),
+    isTrionyx ? warrantiesRepository.list({ limit: 500 }).catch(() => ({ items: [], total: 0 })) : Promise.resolve({ items: [], total: 0 }),
+    auditLogsRepository.list({ limit: 14, organizationId: activeOrg.id }),
     usersRepository.listInternalUsers().catch(() => []),
   ]);
 
