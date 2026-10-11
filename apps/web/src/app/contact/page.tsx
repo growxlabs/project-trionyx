@@ -50,91 +50,96 @@ export default function ContactPage() {
 
                 {/* Right: Contact Details Sidebar */}
                 <aside className="lg:col-span-5 xl:col-span-4">
-                  <div className="space-y-8 lg:sticky lg:top-32">
-                    {/* Direct Contact */}
-                    <div>
-                      <h3 className="text-[14px] font-semibold text-[#171714] mb-4 uppercase tracking-[0.05em]">
-                        Reach us directly
-                      </h3>
-                      <div className="space-y-4">
-                        <a
-                          href={companyContact.phoneHref}
-                          className="flex items-start gap-3 group"
-                        >
-                          <span className="w-9 h-9 rounded-[4px] bg-[#EFECE3] flex items-center justify-center shrink-0 mt-0.5">
-                            <PhoneIcon size={16} color="muted" />
-                          </span>
-                          <div>
-                            <p className="text-[13px] text-[#68665F] mb-0.5">Phone</p>
-                            <p className="text-[15px] font-medium text-[#171714] group-hover:text-[#F26522] transition-colors">
-                              {companyContact.phone}
-                            </p>
-                          </div>
-                        </a>
+                  <div className="lg:sticky lg:top-32">
+                    <div
+                      className="bg-[#38263F] rounded-[24px] p-7 sm:p-[40px_36px] space-y-7 sm:space-y-8 text-[#FFFFEB]"
+                      style={{ backgroundColor: '#38263F', borderRadius: '24px' }}
+                    >
+                      {/* Direct Contact */}
+                      <div>
+                        <h3 className="text-[14px] font-semibold text-[#FFFFEB] mb-4 uppercase tracking-[0.05em]">
+                          Reach us directly
+                        </h3>
+                        <div className="space-y-4">
+                          <a
+                            href={companyContact.phoneHref}
+                            className="flex items-start gap-3 group"
+                          >
+                            <span className="w-9 h-9 rounded-[8px] bg-[rgba(255,255,235,0.08)] text-[#FFFFEB] flex items-center justify-center shrink-0 mt-0.5">
+                              <PhoneIcon size={16} color="inherit" />
+                            </span>
+                            <div>
+                              <p className="text-[13px] text-[rgba(255,255,235,0.62)] mb-0.5">Phone</p>
+                              <p className="text-[15px] font-medium text-[#FFFFEB] group-hover:text-[#F26522] transition-colors">
+                                {companyContact.phone}
+                              </p>
+                            </div>
+                          </a>
 
-                        <a
-                          href={companyContact.emailHref}
-                          className="flex items-start gap-3 group"
-                        >
-                          <span className="w-9 h-9 rounded-[4px] bg-[#EFECE3] flex items-center justify-center shrink-0 mt-0.5">
-                            <MailIcon size={16} color="muted" />
-                          </span>
-                          <div>
-                            <p className="text-[13px] text-[#68665F] mb-0.5">Email</p>
-                            <p className="text-[15px] font-medium text-[#171714] group-hover:text-[#F26522] transition-colors">
-                              {companyContact.email}
-                            </p>
-                          </div>
-                        </a>
+                          <a
+                            href={companyContact.emailHref}
+                            className="flex items-start gap-3 group"
+                          >
+                            <span className="w-9 h-9 rounded-[8px] bg-[rgba(255,255,235,0.08)] text-[#FFFFEB] flex items-center justify-center shrink-0 mt-0.5">
+                              <MailIcon size={16} color="inherit" />
+                            </span>
+                            <div>
+                              <p className="text-[13px] text-[rgba(255,255,235,0.62)] mb-0.5">Email</p>
+                              <p className="text-[15px] font-medium text-[#FFFFEB] group-hover:text-[#F26522] transition-colors">
+                                {companyContact.email}
+                              </p>
+                            </div>
+                          </a>
 
-                        <div className="flex items-start gap-3">
-                          <span className="w-9 h-9 rounded-[4px] bg-[#EFECE3] flex items-center justify-center shrink-0 mt-0.5">
-                            <MapPinIcon size={16} color="muted" />
-                          </span>
-                          <div>
-                            <p className="text-[13px] text-[#68665F] mb-0.5">Office</p>
-                            <p className="text-[15px] font-medium text-[#171714] leading-snug">
-                              {companyContact.location.city}, {companyContact.location.region}
-                              <br />
-                              <span className="text-[#68665F] font-normal">{companyContact.location.country}</span>
-                            </p>
+                          <div className="flex items-start gap-3">
+                            <span className="w-9 h-9 rounded-[8px] bg-[rgba(255,255,235,0.08)] text-[#FFFFEB] flex items-center justify-center shrink-0 mt-0.5">
+                              <MapPinIcon size={16} color="inherit" />
+                            </span>
+                            <div>
+                              <p className="text-[13px] text-[rgba(255,255,235,0.62)] mb-0.5">Office</p>
+                              <p className="text-[15px] font-medium text-[#FFFFEB] leading-snug">
+                                {companyContact.location.city}, {companyContact.location.region}
+                                <br />
+                                <span className="text-[rgba(255,255,235,0.62)] font-normal">{companyContact.location.country}</span>
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Divider */}
-                    <div className="border-t border-[rgba(23,23,20,0.07)]" />
+                      {/* Divider */}
+                      <div className="border-t border-[rgba(255,255,235,0.12)]" />
 
-                    {/* Response Time */}
-                    <div>
-                      <h3 className="text-[14px] font-semibold text-[#171714] mb-3 uppercase tracking-[0.05em]">
-                        Response time
-                      </h3>
-                      <p className="text-[14px] text-[#68665F] leading-relaxed">
-                        We typically respond within 1–2 business days.
-                        For urgent product support, call us directly.
-                      </p>
-                    </div>
+                      {/* Response Time */}
+                      <div>
+                        <h3 className="text-[14px] font-semibold text-[#FFFFEB] mb-3 uppercase tracking-[0.05em]">
+                          Response time
+                        </h3>
+                        <p className="text-[14px] text-[rgba(255,255,235,0.72)] leading-relaxed m-0">
+                          We typically respond within 1–2 business days.
+                          For urgent product support, call us directly.
+                        </p>
+                      </div>
 
-                    {/* Divider */}
-                    <div className="border-t border-[rgba(23,23,20,0.07)]" />
+                      {/* Divider */}
+                      <div className="border-t border-[rgba(255,255,235,0.12)]" />
 
-                    {/* Dealer / Partner callout */}
-                    <div className="bg-[#EFECE3] rounded-[6px] p-5">
-                      <p className="text-[13px] font-semibold text-[#171714] mb-1.5">
-                        Existing dealers
-                      </p>
-                      <p className="text-[13px] text-[#68665F] leading-relaxed">
-                        If you are an existing Trionyx dealer, sign in to the{' '}
-                        <a
-                          href="/dealer-access"
-                          className="text-[#F26522] font-medium hover:underline"
-                        >
-                          Dealer Portal
-                        </a>{' '}
-                        for account support and requests.
-                      </p>
+                      {/* Dealer / Partner callout */}
+                      <div className="bg-[rgba(255,255,235,0.06)] border border-[rgba(255,255,235,0.10)] rounded-[14px] p-5">
+                        <p className="text-[13px] font-semibold text-[#FFFFEB] mb-1.5">
+                          Existing dealers
+                        </p>
+                        <p className="text-[13px] text-[rgba(255,255,235,0.72)] leading-relaxed m-0">
+                          If you are an existing Trionyx dealer, sign in to the{' '}
+                          <a
+                            href="/dealer-access"
+                            className="text-[#F26522] font-medium hover:underline"
+                          >
+                            Dealer Portal
+                          </a>{' '}
+                          for account support and requests.
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </aside>
