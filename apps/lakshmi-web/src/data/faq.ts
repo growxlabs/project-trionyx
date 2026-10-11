@@ -8,7 +8,7 @@ export const faqs: readonly FaqItem[] = [
   {
     id: 'faq-brands',
     question: 'Which brands are available through Lakshmi Distributions?',
-    answer: 'Lakshmi Distributions currently showcases products from Azoom and Hoggon.',
+    answer: 'Lakshmi Distributions currently showcases products from Aozoom and Hogonn.',
   },
   {
     id: 'faq-categories',

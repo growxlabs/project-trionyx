@@ -13,10 +13,22 @@ import '../../styles/discovery.css';
 export const getStaticPaths = (async () => {
   try {
     const brands = await publicCatalogueService.listPublishedBrands('LAKSHMI');
-    return brands.map((brand) => ({
+    const paths = brands.map((brand) => ({
       params: { brand: brand.slug },
       props: { brand },
     }));
+
+    // Support canonical aliases so both /brands/aozoom and /brands/azoom, /brands/hogonn and /brands/hoggon work
+    const azoomBrand = brands.find((b) => b.slug === 'azoom' || b.slug === 'aozoom');
+    if (azoomBrand && !paths.some((p) => p.params.brand === 'aozoom')) {
+      paths.push({ params: { brand: 'aozoom' }, props: { brand: azoomBrand } });
+    }
+    const hoggonBrand = brands.find((b) => b.slug === 'hoggon' || b.slug === 'hogonn');
+    if (hoggonBrand && !paths.some((p) => p.params.brand === 'hogonn')) {
+      paths.push({ params: { brand: 'hogonn' }, props: { brand: hoggonBrand } });
+    }
+
+    return paths;
   } catch (err) {
     console.error('[Brand Detail] Failed to get static paths:', err);
     return [];
@@ -38,9 +50,10 @@ const [brandCategories, { items: brandProducts }] = await Promise.all([
   publicCatalogueService.listPublishedProducts('LAKSHMI', { brandSlug: brand.slug }),
 ]);
 
-const brandLogo = brand.slug === 'hoggon' ? '/images/brands/hoggon.png' : '/images/brands/azoom.png';
-const brandImage = brand.slug === 'hoggon' ? '/images/categories/paint-protection.jpg' : '/images/about/about-secondary.jpg';
-const brandImageAlt = brand.slug === 'hoggon' ? 'Hoggon automotive surface protection and film engineering' : `${brand.name} automotive lighting engineering`;
+const isHogonn = brand.slug === 'hoggon' || brand.slug === 'hogonn';
+const brandLogo = isHogonn ? '/images/brands/hoggon.png' : '/images/brands/aozoom.png';
+const brandImage = isHogonn ? '/images/categories/paint-protection.jpg' : '/images/about/about-secondary.jpg';
+const brandImageAlt = isHogonn ? 'Hogonn automotive surface protection and film engineering' : `${brand.name} automotive lighting engineering`;
 ---
 
 <SiteLayout title={brand.name} description={brand.description || `Explore ${brand.name} products.`}>

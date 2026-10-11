@@ -246,13 +246,13 @@ export async function runPostgresMigrations(client: Client = getDbClient()): Pro
   // Seed brands
   await client.execute({
     sql: `INSERT INTO brands (id, organization_id, business_code, name, slug, description, status, sort_order)
-          VALUES ('brand-azoom-01', 'org-lakshmi', 'LAKSHMI', 'Azoom', 'azoom', 'Automotive LED lighting solutions engineered for clarity, reliability, and precision on the road.', 'ACTIVE', 1)
+          VALUES ('brand-azoom-01', 'org-lakshmi', 'LAKSHMI', 'Aozoom', 'azoom', 'Automotive LED lighting solutions engineered for clarity, reliability, and precision on the road.', 'ACTIVE', 1)
           ON CONFLICT (id) DO NOTHING`,
     args: [],
   });
   await client.execute({
     sql: `INSERT INTO brands (id, organization_id, business_code, name, slug, description, status, sort_order)
-          VALUES ('brand-hoggon-01', 'org-lakshmi', 'LAKSHMI', 'Hoggon', 'hoggon', 'Automotive surface protection, sun control window films, and acoustic damping solutions.', 'ACTIVE', 2)
+          VALUES ('brand-hoggon-01', 'org-lakshmi', 'LAKSHMI', 'Hogonn', 'hoggon', 'Automotive surface protection, sun control window films, and acoustic damping solutions.', 'ACTIVE', 2)
           ON CONFLICT (id) DO NOTHING`,
     args: [],
   });
@@ -283,16 +283,16 @@ export async function runPostgresMigrations(client: Client = getDbClient()): Pro
     args: [],
   });
 
-  // Seed Azoom product
+  // Seed Aozoom product
   await client.execute({
     sql: `INSERT INTO products (
             id, organization_id, product_code, business_code, brand_id, category_id, name, slug,
             short_description, description, status, public_visibility, dealer_visibility
           ) VALUES (
             'prod-azoom-led-01', 'org-lakshmi', 'LAK-PROD-000001', 'LAKSHMI', 'brand-azoom-01', 'cat-azoom-led-lamps-01',
-            'Azoom LED Lamp', 'azoom-led-lamp',
+            'Aozoom LED Lamp', 'azoom-led-lamp',
             'Automotive LED lamp upgrade engineered for durability, optical clarity, and dependable beam projection.',
-            'Azoom automotive LED lamp provides a modern lighting upgrade designed for clean beam cutoff and reliable road illumination. Built for automotive workshops, dealers, and vehicle owners seeking trusted lighting performance.',
+            'Aozoom automotive LED lamp provides a modern lighting upgrade designed for clean beam cutoff and reliable road illumination. Built for automotive workshops, dealers, and vehicle owners seeking trusted lighting performance.',
             'ACTIVE', 'PUBLIC', 1
           ) ON CONFLICT (id) DO NOTHING`,
     args: [],
@@ -313,11 +313,11 @@ export async function runPostgresMigrations(client: Client = getDbClient()): Pro
   await client.execute({
     sql: `INSERT INTO product_media (id, product_id, type, storage_path, file_name, file_size, mime_type, alt_text, sort_order)
           VALUES
-            ('media-azoom-01', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-1.jpg', 'azoom-led-lamp-1.jpg', 700723, 'image/jpeg', 'Azoom automotive LED lamp projector module', 1),
-            ('media-azoom-02', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-2.jpg', 'azoom-led-lamp-2.jpg', 613533, 'image/jpeg', 'Azoom projector optical lens detail', 2),
-            ('media-azoom-03', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-3.jpg', 'azoom-led-lamp-3.jpg', 587411, 'image/jpeg', 'Azoom automotive LED lamp front beam illumination', 3),
-            ('media-azoom-04', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-4.jpg', 'azoom-led-lamp-4.jpg', 438149, 'image/jpeg', 'Azoom headlamp assembly profile perspective', 4),
-            ('media-azoom-05', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-5.jpg', 'azoom-led-lamp-5.jpg', 439349, 'image/jpeg', 'Azoom automotive LED lamp vehicle installed perspective', 5)
+            ('media-azoom-01', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-1.jpg', 'azoom-led-lamp-1.jpg', 700723, 'image/jpeg', 'Aozoom automotive LED lamp projector module', 1),
+            ('media-azoom-02', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-2.jpg', 'azoom-led-lamp-2.jpg', 613533, 'image/jpeg', 'Aozoom projector optical lens detail', 2),
+            ('media-azoom-03', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-3.jpg', 'azoom-led-lamp-3.jpg', 587411, 'image/jpeg', 'Aozoom automotive LED lamp front beam illumination', 3),
+            ('media-azoom-04', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-4.jpg', 'azoom-led-lamp-4.jpg', 438149, 'image/jpeg', 'Aozoom headlamp assembly profile perspective', 4),
+            ('media-azoom-05', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-5.jpg', 'azoom-led-lamp-5.jpg', 439349, 'image/jpeg', 'Aozoom automotive LED lamp vehicle installed perspective', 5)
           ON CONFLICT (id) DO NOTHING`,
     args: [],
   });
@@ -364,6 +364,9 @@ export async function runPostgresMigrations(client: Client = getDbClient()): Pro
 
   // Backfill operational data
   await client.execute(`UPDATE brands SET organization_id = 'org-lakshmi' WHERE business_code = 'LAKSHMI' OR slug IN ('azoom', 'hoggon')`);
+  await client.execute(`UPDATE brands SET name = 'Aozoom' WHERE id = 'brand-azoom-01'`);
+  await client.execute(`UPDATE brands SET name = 'Hogonn' WHERE id = 'brand-hoggon-01'`);
+  await client.execute(`UPDATE products SET name = 'Aozoom LED Lamp' WHERE id = 'prod-azoom-led-01'`);
   await client.execute(`UPDATE brands SET organization_id = 'org-trionyx' WHERE organization_id IS NULL OR organization_id = ''`);
 
   await client.execute(`UPDATE product_categories SET organization_id = 'org-lakshmi' WHERE business_code = 'LAKSHMI' OR brand_id IN (SELECT id FROM brands WHERE organization_id = 'org-lakshmi')`);
@@ -1215,10 +1218,10 @@ export async function runMigrations(client: Client = getDbClient()): Promise<voi
           `CREATE INDEX IF NOT EXISTS idx_products_brand ON products(brand_id);`,
           `CREATE INDEX IF NOT EXISTS idx_categories_business ON product_categories(business_code);`,
           `CREATE INDEX IF NOT EXISTS idx_categories_brand ON product_categories(brand_id);`,
-          // Seed Lakshmi Brand: Azoom
+          // Seed Lakshmi Brand: Aozoom
           {
             sql: `INSERT INTO brands (id, business_code, name, slug, description, status, sort_order)
-                  VALUES ('brand-azoom-01', 'LAKSHMI', 'Azoom', 'azoom', 'Automotive LED lighting solutions engineered for clarity, reliability, and precision on the road.', 'ACTIVE', 1)`,
+                  VALUES ('brand-azoom-01', 'LAKSHMI', 'Aozoom', 'azoom', 'Automotive LED lighting solutions engineered for clarity, reliability, and precision on the road.', 'ACTIVE', 1)`,
             args: [],
           },
           // Seed Lakshmi Category: LED Lamps
@@ -1227,21 +1230,21 @@ export async function runMigrations(client: Client = getDbClient()): Promise<voi
                   VALUES ('cat-azoom-led-lamps-01', 'LAKSHMI', 'brand-azoom-01', 'LED Lamps', 'led-lamps', 'High-performance automotive LED lamps and headlight upgrades.', 'ACTIVE', 1)`,
             args: [],
           },
-          // Seed Lakshmi Product: Azoom LED Lamp
+          // Seed Lakshmi Product: Aozoom LED Lamp
           {
             sql: `INSERT INTO products (
                     id, product_code, business_code, brand_id, category_id, name, slug,
                     short_description, description, status, public_visibility, dealer_visibility
                   ) VALUES (
                     'prod-azoom-led-01', 'LAK-PROD-000001', 'LAKSHMI', 'brand-azoom-01', 'cat-azoom-led-lamps-01',
-                    'Azoom LED Lamp', 'azoom-led-lamp',
+                    'Aozoom LED Lamp', 'azoom-led-lamp',
                     'Automotive LED lamp upgrade engineered for durability, optical clarity, and dependable beam projection.',
-                    'Azoom automotive LED lamp provides a modern lighting upgrade designed for clean beam cutoff and reliable road illumination. Built for automotive workshops, dealers, and vehicle owners seeking trusted lighting performance.',
+                    'Aozoom automotive LED lamp provides a modern lighting upgrade designed for clean beam cutoff and reliable road illumination. Built for automotive workshops, dealers, and vehicle owners seeking trusted lighting performance.',
                     'ACTIVE', 'PUBLIC', 1
                   )`,
             args: [],
           },
-          // Seed Specifications for Azoom LED Lamp (genuine verified specs only, no fabricated values)
+          // Seed Specifications for Aozoom LED Lamp (genuine verified specs only, no fabricated values)
           {
             sql: `INSERT INTO product_specifications (id, product_id, label, value, sort_order)
                   VALUES ('spec-azoom-01', 'prod-azoom-led-01', 'Lighting Technology', 'LED', 1)`,
@@ -1257,10 +1260,10 @@ export async function runMigrations(client: Client = getDbClient()): Promise<voi
                   VALUES ('spec-azoom-03', 'prod-azoom-led-01', 'Distribution', 'Lakshmi Distributions', 3)`,
             args: [],
           },
-          // Seed Media for Azoom LED Lamp
+          // Seed Media for Aozoom LED Lamp
           {
             sql: `INSERT INTO product_media (id, product_id, type, storage_path, file_name, file_size, mime_type, alt_text, sort_order)
-                  VALUES ('media-azoom-01', 'prod-azoom-led-01', 'IMAGE', '/images/about/about-secondary.jpg', 'about-secondary.jpg', 700723, 'image/jpeg', 'Azoom automotive LED lamp projector module', 0)`,
+                  VALUES ('media-azoom-01', 'prod-azoom-led-01', 'IMAGE', '/images/about/about-secondary.jpg', 'about-secondary.jpg', 700723, 'image/jpeg', 'Aozoom automotive LED lamp projector module', 0)`,
             args: [],
           },
           {
@@ -1281,10 +1284,10 @@ export async function runMigrations(client: Client = getDbClient()): Promise<voi
     if (existingHoggonMigration.rows.length === 0) {
       await client.batch(
         [
-          // Seed Lakshmi Brand: Hoggon
+          // Seed Lakshmi Brand: Hogonn
           {
             sql: `INSERT INTO brands (id, business_code, name, slug, description, status, sort_order)
-                  VALUES ('brand-hoggon-01', 'LAKSHMI', 'Hoggon', 'hoggon', 'Automotive surface protection, sun control window films, and acoustic damping solutions.', 'ACTIVE', 2)`,
+                  VALUES ('brand-hoggon-01', 'LAKSHMI', 'Hogonn', 'hoggon', 'Automotive surface protection, sun control window films, and acoustic damping solutions.', 'ACTIVE', 2)`,
             args: [],
           },
           // Seed Lakshmi Category: Sun Control Ceramic Window Film
@@ -1330,27 +1333,27 @@ export async function runMigrations(client: Client = getDbClient()): Promise<voi
           },
           {
             sql: `INSERT INTO product_media (id, product_id, type, storage_path, file_name, file_size, mime_type, alt_text, sort_order)
-                  VALUES ('media-azoom-01', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-1.jpg', 'azoom-led-lamp-1.jpg', 700723, 'image/jpeg', 'Azoom automotive LED lamp projector module', 1)`,
+                  VALUES ('media-azoom-01', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-1.jpg', 'azoom-led-lamp-1.jpg', 700723, 'image/jpeg', 'Aozoom automotive LED lamp projector module', 1)`,
             args: [],
           },
           {
             sql: `INSERT INTO product_media (id, product_id, type, storage_path, file_name, file_size, mime_type, alt_text, sort_order)
-                  VALUES ('media-azoom-02', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-2.jpg', 'azoom-led-lamp-2.jpg', 613533, 'image/jpeg', 'Azoom projector optical lens detail', 2)`,
+                  VALUES ('media-azoom-02', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-2.jpg', 'azoom-led-lamp-2.jpg', 613533, 'image/jpeg', 'Aozoom projector optical lens detail', 2)`,
             args: [],
           },
           {
             sql: `INSERT INTO product_media (id, product_id, type, storage_path, file_name, file_size, mime_type, alt_text, sort_order)
-                  VALUES ('media-azoom-03', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-3.jpg', 'azoom-led-lamp-3.jpg', 587411, 'image/jpeg', 'Azoom automotive LED lamp front beam illumination', 3)`,
+                  VALUES ('media-azoom-03', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-3.jpg', 'azoom-led-lamp-3.jpg', 587411, 'image/jpeg', 'Aozoom automotive LED lamp front beam illumination', 3)`,
             args: [],
           },
           {
             sql: `INSERT INTO product_media (id, product_id, type, storage_path, file_name, file_size, mime_type, alt_text, sort_order)
-                  VALUES ('media-azoom-04', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-4.jpg', 'azoom-led-lamp-4.jpg', 438149, 'image/jpeg', 'Azoom headlamp assembly profile perspective', 4)`,
+                  VALUES ('media-azoom-04', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-4.jpg', 'azoom-led-lamp-4.jpg', 438149, 'image/jpeg', 'Aozoom headlamp assembly profile perspective', 4)`,
             args: [],
           },
           {
             sql: `INSERT INTO product_media (id, product_id, type, storage_path, file_name, file_size, mime_type, alt_text, sort_order)
-                  VALUES ('media-azoom-05', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-5.jpg', 'azoom-led-lamp-5.jpg', 439349, 'image/jpeg', 'Azoom automotive LED lamp vehicle installed perspective', 5)`,
+                  VALUES ('media-azoom-05', 'prod-azoom-led-01', 'IMAGE', '/images/products/azoom-led-lamp-5.jpg', 'azoom-led-lamp-5.jpg', 439349, 'image/jpeg', 'Aozoom automotive LED lamp vehicle installed perspective', 5)`,
             args: [],
           },
           {
