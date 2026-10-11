@@ -83,9 +83,9 @@ try {
               {categories.map((c) => (
                 <option
                   value={c.slug}
-                  data-brand={c.brandSlug || (c.slug === 'led-lamps' ? 'aozoom' : 'hogonn')}
+                  data-brand={c.brandSlug ? (c.brandSlug === 'hoggon' ? 'hogonn' : c.brandSlug === 'azoom' ? 'aozoom' : c.brandSlug) : (c.slug === 'led-lamps' ? 'aozoom' : 'hogonn')}
                 >
-                  {c.name}
+                  {c.name === 'Sun Control Ceramic Window Film' ? 'Sun Control Window Film' : c.name}
                 </option>
               ))}
             </select>

@@ -18,10 +18,10 @@ const isPpf = name === 'Paint Protection Film';
 
 const formatBrand = (b?: string) => {
   if (!b) return '';
-  const upper = b.toUpperCase();
-  if (upper === 'HOGGON') return 'HOGONN';
-  if (upper === 'AZOOM') return 'AOZOOM';
-  return upper;
+  const lower = b.toLowerCase();
+  if (lower === 'hoggon' || lower === 'hogonn') return 'Hogonn';
+  if (lower === 'azoom' || lower === 'aozoom') return 'Aozoom';
+  return b;
 };
 ---
 
@@ -69,7 +69,7 @@ const formatBrand = (b?: string) => {
 .category-card:hover .category-visual > img { transform:scale(1.035); }
 .ppf-visual-wrap { background:#0b1014; }
 .category-content { display:flex; flex-direction:column; justify-content:space-between; gap:24px; padding:28px; min-width:0; }
-.category-brand { display:block; margin-bottom:13px; color:#f28b61; font-size:10px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; }
+.category-brand { display:block; margin-bottom:13px; color:#f28b61; font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:none; }
 .category-title-link { text-decoration:none; color:inherit; }
 .category-title-link:hover h3 { color:#ffffff; }
 h3 { margin:0; font-size:clamp(20px,1.6vw,26px); font-weight:600; line-height:1.22; letter-spacing:-.025em; color:#f4f5f6; text-wrap:balance; }
