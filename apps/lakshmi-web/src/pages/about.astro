@@ -26,9 +26,6 @@ import Header from '../components/Header.astro';
     <Container>
       <div class="about-hero-stack">
         <h1 id="page-title" class="page-title">About Us</h1>
-        <nav class="hero-breadcrumb" aria-label="Breadcrumb">
-          <ol><li><a href="/">Home</a></li><li aria-current="page">About Us</li></ol>
-        </nav>
       </div>
     </Container>
   </section>
@@ -176,11 +173,7 @@ import Header from '../components/Header.astro';
   }
   .about-hero-stack { width: 100%; max-width: 56rem; margin-inline: auto; text-align: center; }
   .page-title { margin: 0; font-size: clamp(2.25rem, 3.5vw, 3.25rem); line-height: 1.15; letter-spacing: -.025em; color: #fff; }
-  .hero-breadcrumb { margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,.22); }
-  .hero-breadcrumb ol { display: flex; justify-content: center; flex-wrap: wrap; gap: .75rem; list-style: none; margin: 0; padding: 0; font-size: .9375rem; font-weight: 600; }
-  .hero-breadcrumb li + li::before { content: '/'; margin-right: .75rem; color: #b7bfc5; }
-  .hero-breadcrumb a { color: #c4cbd0; text-decoration: none; }
-  .hero-breadcrumb a:hover { color: #fff; text-decoration: underline; }
+
   .about-overview-section {
     border-top: var(--border-width) solid var(--color-border);
     padding-block: clamp(3.5rem, 6vw, 6rem);
@@ -383,7 +376,6 @@ import Header from '../components/Header.astro';
 
   @media (max-width: 47.999rem) {
     .about-hero-banner { height: 280px; min-height: 280px; max-height: 280px; padding-block: 5.5rem 2rem; }
-    .hero-breadcrumb { margin-top: 1.5rem; padding-top: 1.25rem; }
     .overview-imagery {
       max-width: 24rem;
     }
