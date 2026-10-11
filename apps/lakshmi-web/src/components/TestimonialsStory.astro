@@ -95,6 +95,7 @@ const { items = testimonials } = Astro.props;
     letter-spacing: -0.03em;
     color: #F7F7F5;
     margin: 0;
+    text-wrap: balance;
   }
 
   /* Editorial Serif Quote */
@@ -105,6 +106,7 @@ const { items = testimonials } = Astro.props;
     font-weight: 500;
     letter-spacing: -0.015em;
     line-height: 1.32;
+    text-wrap: pretty;
   }
 
   .wispr-author {
@@ -238,9 +240,6 @@ const { items = testimonials } = Astro.props;
       max-width: 100%;
     }
 
-    .eyebrow {
-      margin-bottom: 8px;
-    }
 
     .heading {
       font-size: clamp(2rem, 7.5vw, 2.5rem);

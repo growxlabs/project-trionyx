@@ -90,7 +90,7 @@ const { items = faqs } = Astro.props;
 
   .faq-header {
     text-align: left;
-    max-width: 420px;
+    max-width: 440px;
     position: sticky;
     top: 140px;
     align-self: start;
@@ -102,6 +102,7 @@ const { items = faqs } = Astro.props;
     letter-spacing: -0.025em;
     color: var(--color-text);
     margin: 0;
+    text-wrap: balance;
   }
 
   /* Accordion list */
@@ -223,7 +224,8 @@ const { items = faqs } = Astro.props;
     font-size: clamp(0.925rem, 0.98vw, 1rem);
     line-height: 1.7;
     color: #9aa7b1;
-    max-width: 72ch;
+    max-width: 65ch;
+    text-wrap: pretty;
   }
 
   @media (max-width: 768px) {
