@@ -15,7 +15,7 @@ import Header from '../components/Header.astro';
 
   <section class="about-hero-banner" aria-labelledby="page-title">
     <img
-      src="/images/about/carmodify2.png"
+      src="/images/about/about-hero-technician.jpg"
       alt="Automotive surface protection film installation and workshop detailing"
       class="about-banner-img"
       width="1920"
@@ -26,9 +26,6 @@ import Header from '../components/Header.astro';
     <Container>
       <div class="about-hero-stack">
         <h1 id="page-title" class="page-title">About Us</h1>
-        <nav class="hero-breadcrumb" aria-label="Breadcrumb">
-          <ol><li><a href="/">Home</a></li><li aria-current="page">About Us</li></ol>
-        </nav>
       </div>
     </Container>
   </section>
@@ -90,21 +87,36 @@ import Header from '../components/Header.astro';
       </div>
       <div class="principles-grid">
         <div class="principle-card">
-          <div class="principle-num">01</div>
+          <div class="principle-meta">
+            <span class="principle-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 15l3 3 5-6"/></svg>
+            </span>
+            <span class="principle-num">01</span>
+          </div>
           <h3 class="principle-heading">Verified Technical Specifications</h3>
           <p class="principle-body">
             Every product in our catalogue is documented with accurate technical details and real photography—never fabricated metrics or stock claims.
           </p>
         </div>
         <div class="principle-card">
-          <div class="principle-num">02</div>
+          <div class="principle-meta">
+            <span class="principle-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14v-3a9 9 0 0 1 18 0v7a4 4 0 0 1-4 4h-3"/><rect x="3" y="11" width="4" height="7" rx="2"/><rect x="17" y="11" width="4" height="7" rx="2"/></svg>
+            </span>
+            <span class="principle-num">02</span>
+          </div>
           <h3 class="principle-heading">Direct Workshop & Trade Support</h3>
           <p class="principle-body">
             We provide responsive enquiry handling, technical documentation, and product guidance for automotive installers and retail partners.
           </p>
         </div>
         <div class="principle-card">
-          <div class="principle-num">03</div>
+          <div class="principle-meta">
+            <span class="principle-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17H1V4h13v13H7M14 8h4l4 5v4h-3M14 17h1M14 13h8"/><circle cx="5" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+            </span>
+            <span class="principle-num">03</span>
+          </div>
           <h3 class="principle-heading">Consistent Distribution</h3>
           <p class="principle-body">
             From initial product enquiries to order fulfilment, we prioritize dependable product availability and straightforward trade communication.
@@ -150,7 +162,7 @@ import Header from '../components/Header.astro';
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center;
+    object-position: center 35%;
   }
   .about-hero-banner::before {
     content: '';
@@ -161,11 +173,7 @@ import Header from '../components/Header.astro';
   }
   .about-hero-stack { width: 100%; max-width: 56rem; margin-inline: auto; text-align: center; }
   .page-title { margin: 0; font-size: clamp(2.25rem, 3.5vw, 3.25rem); line-height: 1.15; letter-spacing: -.025em; color: #fff; }
-  .hero-breadcrumb { margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,.22); }
-  .hero-breadcrumb ol { display: flex; justify-content: center; flex-wrap: wrap; gap: .75rem; list-style: none; margin: 0; padding: 0; font-size: .9375rem; font-weight: 600; }
-  .hero-breadcrumb li + li::before { content: '/'; margin-right: .75rem; color: #b7bfc5; }
-  .hero-breadcrumb a { color: #c4cbd0; text-decoration: none; }
-  .hero-breadcrumb a:hover { color: #fff; text-decoration: underline; }
+
   .about-overview-section {
     border-top: var(--border-width) solid var(--color-border);
     padding-block: clamp(3.5rem, 6vw, 6rem);
@@ -291,6 +299,44 @@ import Header from '../components/Header.astro';
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
+    transition: border-color 180ms ease, box-shadow 180ms ease;
+  }
+
+  .principle-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-2);
+  }
+
+  .principle-icon {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    flex-shrink: 0;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+    border-radius: var(--radius-md);
+  }
+
+  .principle-icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .principle-card:hover {
+      border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+      box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .principle-card {
+      transition: none;
+    }
   }
 
   .principle-num {
@@ -330,7 +376,6 @@ import Header from '../components/Header.astro';
 
   @media (max-width: 47.999rem) {
     .about-hero-banner { height: 280px; min-height: 280px; max-height: 280px; padding-block: 5.5rem 2rem; }
-    .hero-breadcrumb { margin-top: 1.5rem; padding-top: 1.25rem; }
     .overview-imagery {
       max-width: 24rem;
     }
