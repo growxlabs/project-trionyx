@@ -17,29 +17,17 @@ export default function WarrantyPage() {
   return (
     <div className="min-h-screen bg-[#F5F5EE] text-[#171714] flex flex-col">
       <PageFrame>
-        {/* Shared image backdrop for the header and compact hero. Menus remain unclipped. */}
-        {/* Sticky header across entire warranty screen - never hides while scrolling */}
-        <HeaderShell appearance="overlay" />
-
-        {/* Shared image backdrop for compact hero positioned directly beneath header */}
-        <div className="relative isolate z-10 -mt-16 md:-mt-20 h-[240px] bg-[#17191C] sm:h-[300px] lg:h-[320px]">
-          <Image
-            src="/images/warranty/trionyx-warranty-car.png"
-            alt="Glossy graphite car with water beading on its hood and subtle orange studio lighting"
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1440px) 96vw, 1440px"
-            className="object-cover object-center"
-            preload
-          />
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(8,10,12,0.92)_0%,rgba(8,10,12,0.72)_24%,rgba(8,10,12,0.08)_62%,rgba(8,10,12,0.12)_100%)]" />
+        {/* Header */}
+        <div className="relative isolate overflow-hidden">
+          <HeaderShell />
         </div>
 
         {/* Main Content */}
         <main className="flex-1 flex flex-col">
           <SectionFrame hasBottomBorder={false}>
-            <div className="px-5 sm:px-6 lg:px-8 pt-8 lg:pt-10 pb-[var(--section-space)]">
+            <div className="px-5 sm:px-6 lg:px-8 py-[var(--section-space)]">
               {/* Page Header */}
-              <div className="max-w-2xl mb-8 lg:mb-10">
+              <div className="max-w-2xl mb-12 lg:mb-16">
                 <SectionEyebrow>WARRANTY</SectionEyebrow>
                 <h1 className="section-heading text-[32px] sm:text-[40px] lg:text-[48px] tracking-[-0.025em] leading-[1.1] text-[#171714] mb-4">
                   Check your Trionyx warranty.
