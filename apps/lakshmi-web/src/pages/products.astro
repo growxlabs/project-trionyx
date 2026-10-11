@@ -3,6 +3,7 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 import Container from '../components/Container.astro';
 import Section from '../components/Section.astro';
 import ProductCard from '../components/ProductCard.astro';
+import CategoryBanners from '../components/CategoryBanners.astro';
 import EnquiryCTA from '../components/EnquiryCTA.astro';
 import { publicCatalogueService } from '@trionyx/api/catalogue';
 import { categories as fallbackCategories } from '../data/catalogue';
@@ -40,9 +41,10 @@ try {
       <div class="catalogue-header">
         <p class="catalogue-eyebrow">PRODUCTS</p>
         <h1 id="page-title" class="catalogue-title">Explore the catalogue</h1>
-        <p class="catalogue-lead">
-          Browse automotive lighting, protection and damping products available through Lakshmi Distributions.
-        </p>
+      </div>
+
+      <div style="margin-bottom: 2.5rem">
+        <CategoryBanners />
       </div>
 
       <!-- Catalogue Filter Toolbar -->
