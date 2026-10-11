@@ -46,13 +46,13 @@ export const categories: readonly Category[] = [
   },
   {
     slug: 'sun-control-ceramic-window-film',
-    name: 'Sun Control Ceramic Window Film',
+    name: 'Sun Control Window Film',
     brandSlug: 'hogonn',
     brandName: 'Hogonn',
-    description: 'Discover ceramic window films for cabin comfort and sun control.',
+    description: 'Discover sun control window films for cabin comfort and solar protection.',
     image: {
       src: '/images/categories/window-film.jpg',
-      alt: 'Transparent ceramic automotive window tint film unrolling under cool studio light',
+      alt: 'Transparent automotive sun control window tint film unrolling under cool studio light',
     },
   },
   {

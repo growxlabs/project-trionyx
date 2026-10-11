@@ -266,7 +266,7 @@ export async function runPostgresMigrations(client: Client = getDbClient()): Pro
   });
   await client.execute({
     sql: `INSERT INTO product_categories (id, organization_id, business_code, brand_id, name, slug, description, status, sort_order)
-          VALUES ('cat-hoggon-window-film-01', 'org-lakshmi', 'LAKSHMI', 'brand-hoggon-01', 'Sun Control Ceramic Window Film', 'sun-control-ceramic-window-film', 'Automotive window film products available through Lakshmi Distributions.', 'ACTIVE', 2)
+          VALUES ('cat-hoggon-window-film-01', 'org-lakshmi', 'LAKSHMI', 'brand-hoggon-01', 'Sun Control Window Film', 'sun-control-ceramic-window-film', 'Automotive window film products available through Lakshmi Distributions.', 'ACTIVE', 2)
           ON CONFLICT (id) DO NOTHING`,
     args: [],
   });
@@ -280,6 +280,11 @@ export async function runPostgresMigrations(client: Client = getDbClient()): Pro
     sql: `INSERT INTO product_categories (id, organization_id, business_code, brand_id, name, slug, description, status, sort_order)
           VALUES ('cat-hoggon-damping-01', 'org-lakshmi', 'LAKSHMI', 'brand-hoggon-01', 'Shumoff Damping', 'shumoff-damping', 'Automotive damping products for vehicle acoustic applications.', 'ACTIVE', 4)
           ON CONFLICT (id) DO NOTHING`,
+    args: [],
+  });
+
+  await client.execute({
+    sql: `UPDATE product_categories SET name = 'Sun Control Window Film' WHERE id = 'cat-hoggon-window-film-01' OR slug = 'sun-control-ceramic-window-film'`,
     args: [],
   });
 
@@ -1290,10 +1295,10 @@ export async function runMigrations(client: Client = getDbClient()): Promise<voi
                   VALUES ('brand-hoggon-01', 'LAKSHMI', 'Hogonn', 'hoggon', 'Automotive surface protection, sun control window films, and acoustic damping solutions.', 'ACTIVE', 2)`,
             args: [],
           },
-          // Seed Lakshmi Category: Sun Control Ceramic Window Film
+          // Seed Lakshmi Category: Sun Control Window Film
           {
             sql: `INSERT INTO product_categories (id, business_code, brand_id, name, slug, description, status, sort_order)
-                  VALUES ('cat-hoggon-window-film-01', 'LAKSHMI', 'brand-hoggon-01', 'Sun Control Ceramic Window Film', 'sun-control-ceramic-window-film', 'Automotive window film products available through Lakshmi Distributions.', 'ACTIVE', 2)`,
+                  VALUES ('cat-hoggon-window-film-01', 'LAKSHMI', 'brand-hoggon-01', 'Sun Control Window Film', 'sun-control-ceramic-window-film', 'Automotive window film products available through Lakshmi Distributions.', 'ACTIVE', 2)`,
             args: [],
           },
           // Seed Lakshmi Category: Paint Protection Film
