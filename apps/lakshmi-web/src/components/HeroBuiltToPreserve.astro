@@ -1,0 +1,235 @@
+---
+import Container from './Container.astro';
+---
+
+<div class="hero-preserve-wrapper" data-hero-preserve>
+  <!-- Cinematic Workshop Background -->
+  <div class="hero-bg-media" aria-hidden="true">
+    <img
+      src="/images/hero-built-to-preserve.jpg"
+      alt=""
+      class="hero-bg-img"
+      loading="eager"
+      fetchpriority="high"
+    />
+    <div class="hero-bg-vignette"></div>
+    <div class="hero-bg-grid"></div>
+  </div>
+
+  <!-- Hero Content Frame (Positioned at the top above the car) -->
+  <div class="hero-content-frame">
+    <Container>
+      <div class="hero-content-stack">
+        <!-- Main Headline (Non-bold, centered above car) -->
+        <div class="hero-heading-block">
+          <h1 id="hero-title" class="hero-headline">
+            Automotive illumination, surface protection & acoustic engineering.
+          </h1>
+        </div>
+      </div>
+    </Container>
+  </div>
+
+  <!-- Abstract symbols centred beneath the car -->
+  <div class="hero-marks" aria-hidden="true">
+    <Container>
+      <div class="hero-marks-row">
+        <div class="hero-symbols">
+          <svg class="hero-symbol symbol-target" viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="21" />
+            <circle class="target-ring" cx="24" cy="24" r="13" stroke-dasharray="5 4" />
+            <circle cx="24" cy="24" r="4" fill="currentColor" stroke="none" />
+            <path d="M24 3v6M24 39v6M3 24h6M39 24h6" />
+          </svg>
+          <svg class="hero-symbol symbol-arrow" viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="21" />
+            <path class="arrow-path" d="M24 13v21M16 26l8 8 8-8" />
+          </svg>
+          <svg class="hero-symbol" viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="21" />
+            <path d="M19 14v20h12" />
+          </svg>
+        </div>
+      </div>
+    </Container>
+  </div>
+</div>
+
+<style>
+  .hero-preserve-wrapper {
+    position: relative;
+    min-height: clamp(38rem, 88vh, 56rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    background: var(--color-background);
+    color: var(--color-text);
+    overflow: hidden;
+    padding-top: clamp(3.5rem, 8vh, 5.5rem);
+    padding-bottom: 3rem;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* CINEMATIC WORKSHOP BACKGROUND                                      */
+  /* ------------------------------------------------------------------ */
+  .hero-bg-media {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .hero-bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 65%;
+    filter: brightness(0.68) contrast(1.12);
+    transform: scale(1.02);
+    transition: transform 6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .hero-preserve-wrapper:hover .hero-bg-img {
+    transform: scale(1.04);
+  }
+
+  /* Dark Vignette Overlay for Crisp Typography */
+  .hero-bg-vignette {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 50% 35%, rgba(14, 13, 11, 0.45) 0%, rgba(14, 13, 11, 0.82) 75%, var(--color-background) 100%),
+      linear-gradient(180deg, rgba(14, 13, 11, 0.75) 0%, rgba(14, 13, 11, 0.35) 40%, rgba(14, 13, 11, 0.9) 85%, var(--color-background) 100%);
+  }
+
+  .hero-bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 80px 80px;
+    opacity: 0.6;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* CONTENT STACK (CENTERED ON TOP OF THE CAR)                        */
+  /* ------------------------------------------------------------------ */
+  .hero-content-frame {
+    position: relative;
+    z-index: 5;
+    margin-top: 1rem;
+    margin-bottom: auto;
+    padding-top: clamp(1rem, 2vh, 2rem);
+  }
+
+  .hero-content-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 68rem;
+    margin-inline: auto;
+  }
+
+  .hero-heading-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Headline: bold removed (regular font-weight: 400) */
+  .hero-headline {
+    font-size: clamp(2.25rem, 4.4vw, 4.25rem);
+    line-height: 1.12;
+    font-weight: 400;
+    letter-spacing: -0.025em;
+    margin: 0;
+    color: #FFFFFF;
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85), 0 1px 3px rgba(0, 0, 0, 0.9);
+    text-wrap: balance;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* TECHNICAL MARKS                                                    */
+  /* ------------------------------------------------------------------ */
+  .hero-marks {
+    position: relative;
+    z-index: 5;
+    animation: hero-marks-in 1200ms 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .hero-marks-row {
+    display: flex;
+    justify-content: center;
+  }
+
+  .hero-symbols {
+    display: flex;
+    gap: 0.75rem;
+    color: rgba(236, 231, 222, 0.8);
+  }
+
+  .hero-symbol {
+    width: clamp(1.625rem, 1.9vw, 1.875rem);
+    height: auto;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    overflow: visible;
+  }
+
+  .target-ring {
+    transform-origin: 24px 24px;
+    animation: target-spin 24s linear infinite;
+  }
+
+  .arrow-path {
+    animation: arrow-nudge 3.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+
+  @keyframes hero-marks-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes target-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes arrow-nudge {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(3px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-marks,
+    .target-ring,
+    .arrow-path {
+      animation: none;
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* RESPONSIVE BREAKPOINTS                                             */
+  /* ------------------------------------------------------------------ */
+  @media (max-width: 600px) {
+    .hero-preserve-wrapper {
+      min-height: auto;
+      padding-top: 3.5rem;
+      padding-bottom: 2rem;
+    }
+
+    .hero-headline {
+      font-size: 2rem;
+    }
+
+    .hero-marks {
+      margin-top: 20.5rem;
+    }
+
+
+  }
+</style>

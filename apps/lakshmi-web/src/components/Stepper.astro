@@ -1,0 +1,250 @@
+---
+/**
+ * Fluid dot stepper: the active step stretches into a pill and, when autoplaying, fills over the step duration.
+ * Emits a bubbling `stepper:change` event ({ detail: { index } }) whenever the active step changes.
+ */
+interface Props {
+  count: number;
+  label: string;
+  /** Ids of the panels each step controls, in order. */
+  controls?: readonly string[];
+  /** Milliseconds per step. Omit to disable autoplay. */
+  autoplay?: number;
+  class?: string;
+}
+
+const { count, label, controls, autoplay, class: className } = Astro.props;
+---
+
+<div class:list={['stepper', className]} data-stepper data-autoplay={autoplay}>
+  <div class="stepper-track" role="tablist" aria-label={label}>
+    {Array.from({ length: count }, (_, i) => (
+      <button
+        type="button"
+        role="tab"
+        class:list={['stepper-step', { 'is-active': i === 0 }]}
+        aria-selected={i === 0 ? 'true' : 'false'}
+        aria-controls={controls?.[i]}
+        aria-label={`${i + 1} of ${count}`}
+        tabindex={i === 0 ? 0 : -1}
+        data-stepper-step
+      >
+        <span class="stepper-dot" aria-hidden="true"></span>
+      </button>
+    ))}
+  </div>
+  {autoplay && (
+    <button type="button" class="stepper-toggle" aria-label="Pause autoplay" aria-pressed="false" data-stepper-toggle>
+      <svg class="icon-pause" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><rect x="2.5" y="2" width="2" height="8" fill="currentColor" /><rect x="7.5" y="2" width="2" height="8" fill="currentColor" /></svg>
+      <svg class="icon-play" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 2v8l7-4z" fill="currentColor" /></svg>
+    </button>
+  )}
+</div>
+
+<style>
+  .stepper {
+    --stepper-dot: 6px;
+    --stepper-active: 32px;
+    --stepper-gap: 4px;
+    --stepper-bg: rgba(236, 231, 222, 0.22);
+    --stepper-active-bg: rgba(236, 231, 222, 0.32);
+    --stepper-fill-bg: var(--color-text);
+    --stepper-ease: cubic-bezier(0.215, 0.61, 0.355, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.25rem 0.25rem 0.75rem;
+    background: rgba(236, 231, 222, 0.07);
+    border: 1px solid var(--color-hairline);
+    border-radius: 999px;
+  }
+
+  .stepper:not([data-autoplay]) {
+    padding-right: 0.75rem;
+  }
+
+  .stepper-track {
+    display: flex;
+    align-items: center;
+  }
+
+  /* The button is a generous hit area; the dot inside is what animates. */
+  .stepper-step {
+    display: grid;
+    place-items: center;
+    padding: 12px var(--stepper-gap);
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .stepper-dot {
+    position: relative;
+    display: block;
+    width: var(--stepper-dot);
+    height: var(--stepper-dot);
+    border-radius: 999px;
+    background: var(--stepper-bg);
+    overflow: hidden;
+    transition: width 500ms var(--stepper-ease), background-color 500ms var(--stepper-ease);
+  }
+
+  .stepper-step:hover .stepper-dot {
+    background: rgba(236, 231, 222, 0.45);
+  }
+
+  .stepper-step.is-active .stepper-dot {
+    width: var(--stepper-active);
+    background: var(--stepper-active-bg);
+  }
+
+  /* Without autoplay the active pill is simply solid. */
+  .stepper:not([data-autoplay]) .stepper-step.is-active .stepper-dot,
+  .stepper.is-paused .stepper-step.is-active .stepper-dot {
+    background: var(--stepper-fill-bg);
+  }
+
+  .stepper-dot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--stepper-fill-bg);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .stepper-step.is-filling .stepper-dot::after {
+    transform: scaleX(1);
+    transition: transform var(--stepper-fill-duration, 6000ms) linear;
+  }
+
+  .stepper-step:focus-visible {
+    outline: none;
+  }
+
+  .stepper-step:focus-visible .stepper-dot {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+
+  .stepper-toggle {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: rgba(236, 231, 222, 0.08);
+    border: 0;
+    border-radius: 50%;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: color 200ms ease, background-color 200ms ease;
+  }
+
+  .stepper-toggle:hover {
+    color: var(--color-text);
+    background: rgba(236, 231, 222, 0.14);
+  }
+
+  .icon-play,
+  .stepper.is-paused .icon-pause {
+    display: none;
+  }
+
+  .stepper.is-paused .icon-play {
+    display: block;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stepper-dot,
+    .stepper-step.is-filling .stepper-dot::after {
+      transition-duration: 0ms;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-stepper]').forEach((root) => {
+    const steps = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-stepper-step]'));
+    const toggle = root.querySelector<HTMLButtonElement>('[data-stepper-toggle]');
+    const duration = Number(root.dataset.autoplay) || 0;
+    const scope = root.closest('section') ?? root;
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let active = 0;
+    let timer: number | undefined;
+    let userPaused = reduceMotion;
+    let focused = false;
+    let visible = false;
+
+    root.style.setProperty('--stepper-fill-duration', `${duration}ms`);
+
+    const shouldPlay = () => duration > 0 && !userPaused && !focused && visible;
+
+    const fill = () => {
+      steps.forEach((step) => step.classList.remove('is-filling'));
+      window.clearTimeout(timer);
+      if (!shouldPlay()) return;
+      const step = steps[active];
+      void step.offsetWidth; // restart the fill transition from zero
+      step.classList.add('is-filling');
+      timer = window.setTimeout(() => go((active + 1) % steps.length), duration);
+    };
+
+    const go = (index: number, focus = false) => {
+      active = index;
+      steps.forEach((step, i) => {
+        const isActive = i === index;
+        step.classList.toggle('is-active', isActive);
+        step.setAttribute('aria-selected', String(isActive));
+        step.tabIndex = isActive ? 0 : -1;
+      });
+      if (focus) steps[index].focus();
+      root.dispatchEvent(new CustomEvent('stepper:change', { bubbles: true, detail: { index } }));
+      fill();
+    };
+
+    const syncToggle = () => {
+      root.classList.toggle('is-paused', userPaused || duration === 0);
+      toggle?.setAttribute('aria-pressed', String(userPaused));
+      toggle?.setAttribute('aria-label', userPaused ? 'Play autoplay' : 'Pause autoplay');
+    };
+
+    steps.forEach((step, i) => {
+      step.addEventListener('click', () => go(i));
+      step.addEventListener('keydown', (event) => {
+        const last = steps.length - 1;
+        const next = { ArrowRight: i === last ? 0 : i + 1, ArrowLeft: i === 0 ? last : i - 1, Home: 0, End: last }[event.key];
+        if (next === undefined) return;
+        event.preventDefault();
+        go(next, true);
+      });
+    });
+
+    toggle?.addEventListener('click', () => {
+      userPaused = !userPaused;
+      syncToggle();
+      fill();
+    });
+
+    // Hold the current step while keyboard focus is inside the section.
+    // Mouse clicks also move focus, so only keyboard focus (:focus-visible) holds the step.
+    scope.addEventListener('focusin', (event) => {
+      focused = (event.target as Element).matches(':focus-visible');
+      fill();
+    });
+    scope.addEventListener('focusout', (event) => {
+      if (scope.contains(event.relatedTarget as Node)) return;
+      focused = false;
+      fill();
+    });
+
+    new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      fill();
+    }, { threshold: 0.4 }).observe(root);
+
+    syncToggle();
+  });
+</script>

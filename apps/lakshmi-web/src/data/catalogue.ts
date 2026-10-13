@@ -16,6 +16,7 @@ export interface Category {
   brandSlug: string;
   brandName?: string;
   description: string;
+  specs?: readonly string[];
   image?: CatalogueImage;
 }
 
@@ -38,10 +39,11 @@ export const categories: readonly Category[] = [
     name: 'LED Lamps',
     brandSlug: 'aozoom',
     brandName: 'Aozoom',
-    description: '',
+    description: 'High-output bi-LED projectors with precision beam optics and active thermal heatsink cooling.',
+    specs: ['Laser Bi-LED', '5800K Color Temp', 'Projector Optics'],
     image: {
-      src: '/images/about/about-secondary.jpg',
-      alt: 'Aozoom automotive LED lamp projector module and heatsink component',
+      src: '/images/categories/category-led-projector.jpg',
+      alt: 'Aozoom high-precision automotive bi-LED lamp projector module with cooling heatsink',
     },
   },
   {
@@ -49,10 +51,11 @@ export const categories: readonly Category[] = [
     name: 'Sun Control Window Film',
     brandSlug: 'hogonn',
     brandName: 'Hogonn',
-    description: '',
+    description: 'Multi-layer nano-ceramic solar control films engineered for maximum heat and UV rejection without signal interference.',
+    specs: ['Nano-Ceramic IR', '99% UV Block', '92% Heat Rejection'],
     image: {
-      src: '/images/categories/window-film.jpg',
-      alt: 'Transparent automotive sun control window tint film unrolling under cool studio light',
+      src: '/images/categories/category-window-film.jpg',
+      alt: 'Hogonn ceramic automotive window film unrolled in workshop setting',
     },
   },
   {
@@ -60,21 +63,23 @@ export const categories: readonly Category[] = [
     name: 'Paint Protection Film',
     brandSlug: 'hogonn',
     brandName: 'Hogonn',
-    description: '',
+    description: 'Optically clear aliphatic TPU film with instant self-healing topcoat, stain barrier, and deep gloss depth.',
+    specs: ['180µm Premium TPU', 'Self-Healing Topcoat', 'Hydrophobic Gloss'],
     image: {
-      src: '/images/categories/paint-protection.jpg',
-      alt: 'Technician applying clear paint protection film to a dark vehicle',
+      src: '/images/categories/category-paint-protection.jpg',
+      alt: 'Technician installing glossy paint protection film onto sports car fender',
     },
   },
   {
     slug: 'shumoff-damping',
     name: 'Shumoff Damping',
     brandSlug: 'hogonn',
-    brandName: 'Hogonn',
-    description: '',
+    brandName: 'Shumoff',
+    description: 'Multi-layer butyl vibration damping and composite thermal barriers for structural resonance elimination.',
+    specs: ['Multi-Layer Butyl', 'Vibration Control', 'Acoustic Barrier'],
     image: {
-      src: '/images/categories/sound-damping.jpg',
-      alt: 'Textured automotive sound damping sheets with a layered foil backing',
+      src: '/images/categories/category-sound-damping.jpg',
+      alt: 'Shumoff acoustic sound damping sheets and application roller on workbench',
     },
   },
 ];

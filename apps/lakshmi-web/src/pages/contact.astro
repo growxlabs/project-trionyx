@@ -1,7 +1,6 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 import Container from '../components/Container.astro';
-import Section from '../components/Section.astro';
 
 const INDIAN_STATES = [
   'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
@@ -19,180 +18,126 @@ const INDIAN_STATES = [
   title="Contact Us | Lakshmi Distributions"
   description="Get in touch with Lakshmi Distributions for trade enquiries, automotive lighting solutions, and distribution partnerships."
 >
-  <Section labelledBy="contact-heading" class="contact-section">
-    <Container>
-      <div class="contact-layout">
-        <!-- Left Column: Image-led Contact Hero Panel -->
-        <div class="contact-hero-panel">
-          <div class="contact-hero-media">
-            <img
-              src="/images/products/azoom-headlight-studio.jpg"
-              alt="Automotive LED matrix optical lighting"
-              class="contact-hero-img"
-              loading="eager"
-            />
-            <div class="contact-hero-overlay" aria-hidden="true"></div>
-          </div>
+  <Container>
+    <section class="contact" aria-labelledby="contact-heading">
+      <div class="contact-intro">
+        <span class="kicker">Contact</span>
+        <h1 id="contact-heading">Tell us what you need.</h1>
+        <p class="contact-lead">
+          Product enquiries, dealer and workshop accounts, or distribution partnerships. Send us the details and our team
+          will get back to you.
+        </p>
+        <div class="contact-media">
+          <img src="/images/studio/window-film.jpg" alt="Tinted window film curling away from a dark car door" loading="eager" />
+        </div>
+      </div>
 
-          <div class="contact-hero-content">
-            <h1 id="contact-heading" class="contact-title">Contact Lakshmi Distributions</h1>
-          </div>
+      <div class="contact-form-wrapper">
+        <div id="enquiry-success-view" class="success-banner" style="display: none;" role="status" aria-live="polite">
+          <span class="kicker">Enquiry received</span>
+          <h2 class="success-title">Thank you. We'll be in touch shortly.</h2>
+          <p class="success-lead">Our team has your enquiry. Keep this reference handy if you contact us about it.</p>
+          <p class="success-code">
+            <span class="code-label">Reference</span>
+            <span id="reference-code-display" class="code-value">TRX-ENQ-000000</span>
+          </p>
+          <button type="button" id="submit-another-btn" class="text-link reset-button">Send another enquiry</button>
         </div>
 
-        <!-- Right Column: Enquiry Form -->
-        <div class="contact-form-wrapper">
-          <div id="enquiry-success-view" class="success-banner" style="display: none;" role="status" aria-live="polite">
-            <div class="success-icon" aria-hidden="true">✓</div>
-            <h3 class="success-title">Enquiry Submitted Successfully</h3>
-            <p class="success-lead">Thank you for reaching out to Lakshmi Distributions. Your enquiry has been received and our team will contact you shortly.</p>
-            <div class="success-code-box">
-              <span class="code-label">Enquiry Reference Code:</span>
-              <span id="reference-code-display" class="code-value">TRX-ENQ-000000</span>
-            </div>
-            <button type="button" id="submit-another-btn" class="reset-button">Submit Another Enquiry</button>
+        <form id="lakshmi-contact-form" class="enquiry-form" novalidate>
+          <!-- Honeypot anti-spam field -->
+          <input type="text" name="website" id="field-website" tabindex="-1" autocomplete="off" style="position: absolute; left: -9999px; opacity: 0;" />
+
+          <div id="form-error-banner" class="form-error-banner" style="display: none;" role="alert"></div>
+
+          <div id="product-context-banner" class="product-context-box" style="display: none;">
+            <span class="product-badge">Enquiring about</span>
+            <span id="product-context-title" class="product-title-text"></span>
           </div>
 
-          <form id="lakshmi-contact-form" class="enquiry-form" novalidate>
-            <!-- Honeypot anti-spam field -->
-            <input type="text" name="website" id="field-website" tabindex="-1" autocomplete="off" style="position: absolute; left: -9999px; opacity: 0;" />
-
-            <div id="form-error-banner" class="form-error-banner" style="display: none;" role="alert"></div>
-
-            <div id="product-context-banner" class="product-context-box" style="display: none;">
-              <span class="product-badge">Product Selected</span>
-              <span id="product-context-title" class="product-title-text"></span>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="field-fullName" class="form-label">Full name <span class="required" aria-hidden="true">*</span></label>
+              <input type="text" id="field-fullName" name="fullName" class="form-input" required autocomplete="name" placeholder="Ramesh Kumar" />
+              <span class="field-error" id="err-fullName"></span>
             </div>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label for="field-fullName" class="form-label">Full Name <span class="required">*</span></label>
-                <input
-                  type="text"
-                  id="field-fullName"
-                  name="fullName"
-                  class="form-input"
-                  required
-                  placeholder="e.g. Ramesh Kumar"
-                />
-                <span class="field-error" id="err-fullName"></span>
-              </div>
-
-              <div class="form-group">
-                <label for="field-phone" class="form-label">Phone Number <span class="required">*</span></label>
-                <input
-                  type="tel"
-                  id="field-phone"
-                  name="phone"
-                  class="form-input"
-                  required
-                  placeholder="10-digit mobile number"
-                />
-                <span class="field-error" id="err-phone"></span>
-              </div>
+            <div class="form-group">
+              <label for="field-phone" class="form-label">Phone number <span class="required" aria-hidden="true">*</span></label>
+              <input type="tel" id="field-phone" name="phone" class="form-input" required autocomplete="tel" placeholder="10-digit mobile number" />
+              <span class="field-error" id="err-phone"></span>
             </div>
+          </div>
 
-            <div class="form-row">
-              <div class="form-group">
-                <label for="field-email" class="form-label">Email Address <span class="required">*</span></label>
-                <input
-                  type="email"
-                  id="field-email"
-                  name="email"
-                  class="form-input"
-                  required
-                  placeholder="your.email@domain.com"
-                />
-                <span class="field-error" id="err-email"></span>
-              </div>
-
-              <div class="form-group">
-                <label for="field-type" class="form-label">Enquiry Type <span class="required">*</span></label>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="field-email" class="form-label">Email <span class="required" aria-hidden="true">*</span></label>
+              <input type="email" id="field-email" name="email" class="form-input" required autocomplete="email" placeholder="you@company.com" />
+              <span class="field-error" id="err-email"></span>
+            </div>
+            <div class="form-group">
+              <label for="field-type" class="form-label">Enquiry type <span class="required" aria-hidden="true">*</span></label>
+              <div class="select-wrap">
                 <select id="field-type" name="type" class="form-select" required>
-                  <option value="PRODUCT_ENQUIRY">Product Enquiry</option>
-                  <option value="DEALER_ENQUIRY">Dealer / Workshop Enquiry</option>
-                  <option value="DISTRIBUTION_ENQUIRY">Distribution Partnership</option>
-                  <option value="PRODUCT_SUPPORT">Product Support</option>
-                  <option value="GENERAL_ENQUIRY">General Enquiry</option>
+                  <option value="PRODUCT_ENQUIRY">Product enquiry</option>
+                  <option value="DEALER_ENQUIRY">Dealer / workshop enquiry</option>
+                  <option value="DISTRIBUTION_ENQUIRY">Distribution partnership</option>
+                  <option value="PRODUCT_SUPPORT">Product support</option>
+                  <option value="GENERAL_ENQUIRY">General enquiry</option>
                 </select>
-                <span class="field-error" id="err-type"></span>
               </div>
+              <span class="field-error" id="err-type"></span>
             </div>
+          </div>
 
-            <div class="form-row">
-              <div class="form-group">
-                <label for="field-companyName" class="form-label">Company / Workshop Name</label>
-                <input
-                  type="text"
-                  id="field-companyName"
-                  name="companyName"
-                  class="form-input"
-                  placeholder="e.g. Precision Detailing Studio"
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="field-state" class="form-label">State <span class="required">*</span></label>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="field-companyName" class="form-label">Company / workshop</label>
+              <input type="text" id="field-companyName" name="companyName" class="form-input" autocomplete="organization" placeholder="Optional" />
+            </div>
+            <div class="form-group">
+              <label for="field-state" class="form-label">State <span class="required" aria-hidden="true">*</span></label>
+              <div class="select-wrap">
                 <select id="field-state" name="state" class="form-select" required>
-                  <option value="">Select State</option>
+                  <option value="">Select state</option>
                   {INDIAN_STATES.map((state) => (
                     <option value={state}>{state}</option>
                   ))}
                 </select>
-                <span class="field-error" id="err-state"></span>
               </div>
+              <span class="field-error" id="err-state"></span>
             </div>
+          </div>
 
-            <div class="form-row">
-              <div class="form-group">
-                <label for="field-city" class="form-label">City <span class="required">*</span></label>
-                <input
-                  type="text"
-                  id="field-city"
-                  name="city"
-                  class="form-input"
-                  required
-                  placeholder="e.g. Coimbatore"
-                />
-                <span class="field-error" id="err-city"></span>
-              </div>
-
-              <div class="form-group">
-                <label for="field-pincode" class="form-label">Pincode <span class="required">*</span></label>
-                <input
-                  type="text"
-                  id="field-pincode"
-                  name="pincode"
-                  class="form-input"
-                  required
-                  placeholder="6-digit pincode"
-                  maxlength="6"
-                />
-                <span class="field-error" id="err-pincode"></span>
-              </div>
-            </div>
-
+          <div class="form-row">
             <div class="form-group">
-              <label for="field-message" class="form-label">Message / Enquiry Details <span class="required">*</span></label>
-              <textarea
-                id="field-message"
-                name="message"
-                class="form-textarea"
-                rows="4"
-                required
-                placeholder="Please describe your requirements, vehicle models, or quantity..."
-              ></textarea>
-              <span class="field-error" id="err-message"></span>
+              <label for="field-city" class="form-label">City <span class="required" aria-hidden="true">*</span></label>
+              <input type="text" id="field-city" name="city" class="form-input" required autocomplete="address-level2" placeholder="Coimbatore" />
+              <span class="field-error" id="err-city"></span>
             </div>
+            <div class="form-group">
+              <label for="field-pincode" class="form-label">Pincode <span class="required" aria-hidden="true">*</span></label>
+              <input type="text" id="field-pincode" name="pincode" class="form-input" required inputmode="numeric" autocomplete="postal-code" placeholder="6-digit pincode" maxlength="6" />
+              <span class="field-error" id="err-pincode"></span>
+            </div>
+          </div>
 
-            <button type="submit" id="submit-button" class="submit-btn">
-              <span class="btn-text">Send Enquiry</span>
-              <span class="btn-loading" style="display: none;">Sending...</span>
+          <div class="form-group">
+            <label for="field-message" class="form-label">Message <span class="required" aria-hidden="true">*</span></label>
+            <textarea id="field-message" name="message" class="form-textarea" rows="5" required placeholder="Your requirements, vehicle models or quantities"></textarea>
+            <span class="field-error" id="err-message"></span>
+          </div>
+
+          <div class="form-footer">
+            <button type="submit" id="submit-button" class="button submit-btn">
+              <span class="btn-text">Send enquiry</span>
+              <span class="btn-loading" style="display: none;">Sending…</span>
             </button>
-          </form>
-        </div>
+            <p class="form-note"><span aria-hidden="true">*</span> Required</p>
+          </div>
+        </form>
       </div>
-    </Container>
-  </Section>
+    </section>
+  </Container>
 </SiteLayout>
 
 <script>
@@ -360,108 +305,70 @@ const INDIAN_STATES = [
 </script>
 
 <style>
-  .contact-section {
-    padding-top: clamp(2.5rem, 5vw, 4rem);
-    padding-bottom: clamp(3.5rem, 7vw, 6rem);
-  }
-
-  .contact-layout {
+  .contact {
     display: grid;
-    grid-template-columns: minmax(0, 0.42fr) minmax(0, 0.58fr);
-    gap: 48px;
-    align-items: stretch;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+    gap: 3rem clamp(2.5rem, 6vw, 6rem);
+    align-items: start;
+    padding-block: clamp(4rem, 9vw, 7.5rem) clamp(5rem, 10vw, 9rem);
   }
 
-  /* Left Column: Image-led Contact Hero Panel */
-  .contact-hero-panel {
-    position: relative;
-    border-radius: var(--radius-md);
+  .contact-intro {
+    position: sticky;
+    top: 6rem;
+  }
+
+  h1 {
+    margin-top: 1.25rem;
+    font-size: clamp(2.5rem, 5vw, 4.25rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .contact-lead {
+    margin-top: 1.5rem;
+    max-width: 40ch;
+    font-size: 1.0625rem;
+    color: var(--color-text-muted);
+  }
+
+  .contact-media {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    aspect-ratio: 4 / 3;
     overflow: hidden;
-    border: var(--border-width) solid var(--color-border);
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    min-height: 100%;
+    border-radius: 16px;
     background: var(--color-surface);
   }
 
-  .contact-hero-media {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-  }
-
-  .contact-hero-img {
+  .contact-media img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 20%;
-    display: block;
   }
 
-  .contact-hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0.18) 0%,
-      rgba(0, 0, 0, 0.42) 45%,
-      rgba(0, 0, 0, 0.82) 78%,
-      rgba(0, 0, 0, 0.95) 100%
-    );
-  }
-
-  .contact-hero-content {
-    position: relative;
-    z-index: 2;
-    padding: clamp(1.75rem, 3.5vw, 2.75rem);
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-  }
-
-  .contact-title {
-    font-size: clamp(1.75rem, 1.4rem + 1.1vw, 2.35rem);
-    line-height: 1.18;
-    letter-spacing: -0.025em;
-    color: #FFFFFF;
-    margin: 0;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
-    text-wrap: balance;
-  }
-
-  /* Form Styles */
-  .contact-form-wrapper {
-    background: var(--color-surface);
-    border: var(--border-width) solid var(--color-border);
-    border-radius: var(--radius-md);
-    padding: clamp(1.5rem, 3.5vw, 2.5rem);
-  }
-
+  /* Form */
   .enquiry-form {
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
+    gap: 1.25rem;
   }
 
   .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-4);
+    gap: 1.25rem;
   }
 
   .form-group {
     display: flex;
     flex-direction: column;
-    gap: var(--space-1);
+    gap: 0.5rem;
+    min-width: 0;
   }
 
   .form-label {
     font-size: var(--font-small);
-    font-weight: var(--weight-strong);
-    color: var(--color-text);
+    color: var(--color-text-muted);
   }
 
   .required {
@@ -472,21 +379,58 @@ const INDIAN_STATES = [
   .form-select,
   .form-textarea {
     width: 100%;
-    padding: 0.75rem 1rem;
-    background: var(--color-background);
-    border: var(--border-width) solid var(--color-border);
-    border-radius: var(--radius-md);
+    min-height: 52px;
+    padding: 0 1.125rem;
+    background: rgba(236, 231, 222, 0.05);
+    border: 1px solid var(--color-hairline);
+    border-radius: 12px;
     color: var(--color-text);
-    font-size: var(--font-small);
-    font-family: inherit;
-    transition: border-color 0.2s;
+    font: inherit;
+    font-size: 0.9375rem;
+    transition: border-color 200ms ease, background-color 200ms ease;
+  }
+
+  .form-input::placeholder,
+  .form-textarea::placeholder {
+    color: var(--color-text-faint);
+  }
+
+  .form-input:hover,
+  .form-select:hover,
+  .form-textarea:hover {
+    border-color: rgba(236, 231, 222, 0.22);
   }
 
   .form-input:focus,
   .form-select:focus,
   .form-textarea:focus {
     outline: none;
-    border-color: var(--color-primary);
+    border-color: var(--color-text);
+    background: rgba(236, 231, 222, 0.07);
+  }
+
+  .select-wrap {
+    position: relative;
+  }
+
+  .select-wrap::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 1.125rem;
+    width: 7px;
+    height: 7px;
+    border-right: 1.5px solid var(--color-text-muted);
+    border-bottom: 1.5px solid var(--color-text-muted);
+    transform: translateY(-70%) rotate(45deg);
+    pointer-events: none;
+  }
+
+  .form-select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 2.75rem;
+    cursor: pointer;
   }
 
   .form-select option {
@@ -495,68 +439,58 @@ const INDIAN_STATES = [
   }
 
   .form-textarea {
+    min-height: 9rem;
+    padding-block: 0.875rem;
     resize: vertical;
-    min-height: 6rem;
   }
 
   .field-error {
-    font-size: var(--font-label);
-    color: #FF5A5A;
-    min-height: 1.1em;
+    min-height: 1em;
+    font-size: 0.8125rem;
+    color: #E8907A;
+  }
+
+  .field-error:empty {
+    min-height: 0;
   }
 
   .form-error-banner {
-    background: rgba(255, 90, 90, 0.1);
-    border: var(--border-width) solid #FF5A5A;
-    border-radius: var(--radius-md);
-    padding: var(--space-3) var(--space-4);
+    padding: 0.875rem 1.125rem;
+    border: 1px solid rgba(232, 144, 122, 0.4);
+    border-radius: 12px;
+    background: rgba(232, 144, 122, 0.08);
     font-size: var(--font-small);
-    color: #FF8585;
+    color: #E8907A;
   }
 
   .product-context-box {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    background: rgba(233, 93, 44, 0.1);
-    border: var(--border-width) solid rgba(233, 93, 44, 0.3);
-    border-radius: var(--radius-md);
-    padding: var(--space-3) var(--space-4);
-    margin-bottom: var(--space-2);
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--color-hairline);
+    border-radius: 12px;
+    background: rgba(236, 231, 222, 0.05);
   }
 
   .product-badge {
-    font-size: var(--font-label);
-    font-weight: var(--weight-strong);
-    color: var(--color-primary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
   }
 
   .product-title-text {
-    font-size: var(--font-small);
-    font-weight: var(--weight-strong);
-    color: var(--color-text);
+    font-size: 1rem;
+  }
+
+  .form-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.5rem;
   }
 
   .submit-btn {
-    background: var(--color-primary);
-    color: var(--color-on-primary);
-    border: none;
-    border-radius: var(--radius-md);
-    padding: 0.875rem 1.75rem;
-    font-size: var(--font-small);
-    font-weight: var(--weight-strong);
-    cursor: pointer;
-    transition: background-color 0.2s, opacity 0.2s;
-    margin-top: var(--space-2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .submit-btn:hover:not(:disabled) {
-    background: var(--color-primary-hover);
+    min-width: 12rem;
   }
 
   .submit-btn:disabled {
@@ -564,127 +498,83 @@ const INDIAN_STATES = [
     cursor: not-allowed;
   }
 
-  /* Success Banner */
-  .success-banner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: var(--space-6) var(--space-4);
-    gap: var(--space-4);
+  .form-note {
+    font-size: 0.8125rem;
+    color: var(--color-text-faint);
   }
 
-  .success-icon {
-    width: 3.5rem;
-    height: 3.5rem;
-    border-radius: 50%;
-    background: rgba(40, 167, 69, 0.15);
-    color: #48D065;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.75rem;
-    font-weight: bold;
+  /* Success */
+  .success-banner {
+    padding-top: 1rem;
   }
 
   .success-title {
-    font-size: 1.5rem;
-    font-weight: var(--weight-strong);
-    color: var(--color-text);
+    margin-top: 1rem;
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
   }
 
   .success-lead {
-    font-size: var(--font-body);
-    line-height: 1.6;
-    color: var(--color-text-muted);
+    margin-top: 1rem;
     max-width: 44ch;
+    color: var(--color-text-muted);
   }
 
-  .success-code-box {
-    background: var(--color-background);
-    border: var(--border-width) solid var(--color-border);
-    border-radius: var(--radius-md);
-    padding: var(--space-3) var(--space-5);
+  .success-code {
     display: flex;
     flex-direction: column;
-    gap: var(--space-1);
-    margin-block: var(--space-2);
+    gap: 0.25rem;
+    margin-top: 2rem;
+    padding-block: 1.25rem;
+    border-block: 1px solid var(--color-hairline);
   }
 
   .code-label {
-    font-size: var(--font-label);
-    color: var(--color-text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    font-size: var(--font-small);
+    color: var(--color-text-faint);
   }
 
   .code-value {
-    font-family: monospace;
-    font-size: 1.25rem;
-    font-weight: bold;
-    color: var(--color-primary);
+    font-size: 1.5rem;
+    letter-spacing: 0.02em;
   }
 
   .reset-button {
-    background: transparent;
-    border: var(--border-width) solid var(--color-border);
-    color: var(--color-text);
-    border-radius: var(--radius-md);
-    padding: 0.625rem 1.25rem;
-    font-size: var(--font-small);
+    margin-top: 1.5rem;
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
     cursor: pointer;
-    transition: border-color 0.2s;
   }
 
-  .reset-button:hover {
-    border-color: var(--color-primary);
-  }
-
-  @media (max-width: 63.999rem) and (min-width: 48rem) {
-    .contact-layout {
-      grid-template-columns: minmax(0, 0.4fr) minmax(0, 0.6fr);
-      gap: 32px;
-    }
-    .contact-hero-content {
-      padding: 1.75rem;
-    }
-  }
-
-  @media (max-width: 47.999rem) {
-    .contact-layout {
+  @media (max-width: 56rem) {
+    .contact {
       grid-template-columns: 1fr;
-      gap: var(--space-6);
     }
 
-    .contact-hero-panel {
-      min-height: clamp(280px, 60vw, 340px);
+    .contact-intro {
+      position: static;
     }
 
-    .contact-hero-img {
-      object-position: center 25%;
+    .contact-media {
+      aspect-ratio: 16 / 9;
     }
+  }
 
-    .contact-hero-content {
-      padding: 1.5rem;
-      gap: var(--space-3);
-    }
-
-    .contact-title {
-      font-size: 1.5rem;
-    }
-
-    .contact-lead {
-      font-size: 0.875rem;
-      line-height: 1.55;
-    }
-
+  @media (max-width: 36rem) {
     .form-row {
       grid-template-columns: 1fr;
-      gap: var(--space-4);
     }
 
-    .contact-form-wrapper {
-      padding: 1.5rem;
+    .form-footer {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .submit-btn {
+      width: 100%;
     }
   }
 </style>

@@ -1,76 +1,192 @@
 ---
 import Container from './Container.astro';
+import { categories } from '../data/catalogue';
 const year = new Date().getFullYear();
 ---
 <footer class="site-footer">
   <Container>
     <div class="footer-grid">
       <div class="footer-brand">
-        <a class="footer-name" href="/" aria-label="Lakshmi Distributions home">
-          <span class="brand-name">LAKSHMI<span class="brand-period" aria-hidden="true">.</span></span>
-          <span class="brand-descriptor">DISTRIBUTIONS</span>
-        </a>
-        <p>Automotive lighting, protection and comfort.<br />For vehicle owners, workshops and dealers.</p>
-        <p class="brand-tagline">LIGHTING. PROTECTION. COMFORT.</p>
-        <a class="brand-story" href="/about">Get to know Lakshmi</a>
+        <p class="footer-tagline">Built to preserve.</p>
+        <p>Automotive lighting, surface protection and acoustic products for vehicle owners, workshops and dealers across India.</p>
       </div>
-      <nav class="footer-explore" aria-label="Footer navigation">
+      <nav class="footer-col" aria-label="Footer navigation">
         <h2>Explore</h2>
         <ul>
-          <li><a href="/products">Product catalogue</a></li>
-          <li><a href="/brands">Our brands</a></li>
-          <li><a href="/about">About Lakshmi</a></li>
+          <li><a href="/products">Products</a></li>
+          <li><a href="/brands">Brands</a></li>
+          <li><a href="/about">About</a></li>
           <li><a href="/contact">Contact</a></li>
         </ul>
       </nav>
-      <div class="footer-contact">
-        <h2>Let’s talk products</h2>
-        <p>Have a product in mind or a bulk requirement? Start a conversation with <a href="/contact" class="footer-inline-link">our team</a>.</p>
-        <p class="audience-note">Product enquiries &amp; trade requirements</p>
+      <nav class="footer-col" aria-label="Product categories">
+        <h2>Categories</h2>
+        <ul>
+          {categories.map((category) => (
+            <li><a href={`/products?category=${category.slug}`}>{category.name}</a></li>
+          ))}
+        </ul>
+      </nav>
+      <div class="footer-col">
+        <h2>Enquiries</h2>
+        <p>Have a product in mind or a bulk requirement?</p>
+        <a class="footer-cta" href="/contact">Talk to our team <span aria-hidden="true">→</span></a>
       </div>
     </div>
+  </Container>
+
+  <div class="footer-wordmark" aria-hidden="true">
+    <Container><span>Lakshmi</span></Container>
+  </div>
+
+  <Container>
     <div class="footer-bottom">
-      <p>&copy; {year} Lakshmi Distributions. All rights reserved.</p>
-      <p class="partner-credit">Technology &amp; Digital Partner by <a href="https://growxlabs.tech">Growxlabs</a></p>
+      <p>&copy; {year} Lakshmi Distributions</p>
+      <p>Technology &amp; digital partner: <a href="https://growxlabs.tech">Growxlabs</a></p>
     </div>
   </Container>
 </footer>
 <style>
-  .site-footer { background: #0b0d0f; border-top: 1px solid rgba(247, 247, 245, .06); }
-  .footer-grid { display: grid; grid-template-columns: 1.5fr .75fr 1fr; gap: clamp(2rem, 5vw, 5rem); padding-top: clamp(2.75rem, 5vw, 4rem); padding-bottom: clamp(1.75rem, 3vw, 2.5rem); }
-  .footer-grid > * { min-width: 0; }
-  .footer-name { display: inline-flex; flex-direction: column; align-items: flex-start; text-decoration: none; }
-  .brand-name { font-size: 2rem; font-weight: 800; line-height: 1; letter-spacing: -.055em; }
-  .brand-period { color: var(--color-primary); }
-  .brand-descriptor { font-size: .625rem; font-weight: 700; letter-spacing: .3em; margin-top: .625rem; }
-  .footer-brand p { margin-top: 1.5rem; color: var(--color-text-muted); font-size: .875rem; line-height: 1.8; }
-  .brand-story { display: inline-flex; align-items: center; min-height: 44px; margin-top: .5rem; font-size: .8125rem; text-decoration-color: #59616a; }
-  h2 { font-size: .75rem; line-height: 1.5; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 1.125rem; }
-  ul { list-style: none; padding: 0; margin: -.5rem 0 0; }
-  nav a { display: inline-flex; align-items: center; min-height: 44px; color: var(--color-text-muted); font-size: .875rem; text-decoration: none; }
-  nav a:hover { color: var(--color-text); text-decoration: underline; text-decoration-color: var(--color-primary); }
-  .footer-contact p { max-width: 40ch; font-size: .875rem; color: var(--color-text-muted); line-height: 1.8; text-wrap: pretty; }
-  .footer-inline-link {
-    color: #f1845d;
-    font-weight: 700;
-    text-decoration: underline;
-    text-decoration-color: currentColor;
-    text-underline-offset: .25rem;
-    transition: color 150ms ease;
+  .site-footer {
+    position: relative;
+    overflow: hidden;
+    border-top: 1px solid var(--color-hairline);
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 100%, rgba(201, 166, 107, 0.07), transparent 70%),
+      var(--color-background);
   }
-  .footer-inline-link:hover, .brand-story:hover { color: #ffa07d; text-decoration-color: currentColor; }
-  .footer-contact .audience-note { margin-top: .5rem; font-size: .6875rem; color: #959da4; }
-  .footer-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; border-top: 1px solid var(--color-border); padding-block: 1.5rem; color: #959da4; font-size: .6875rem; }
-  .footer-brand .brand-tagline { margin-top: 1rem; font-size: .625rem; letter-spacing: .14em; }
-  .partner-credit { margin-left: auto; text-align: right; font-size: .75rem; }
-  .partner-credit a { color: var(--color-text); font-weight: 700; text-decoration-color: #59616a; }
-  .partner-credit a:hover { color: #f1845d; text-decoration-color: currentColor; }
-  @media (max-width: 47.999rem) {
-    .footer-grid { grid-template-columns: .85fr 1.15fr; gap: 2rem; }
-    .footer-brand { grid-column: 1 / -1; padding-bottom: 1.75rem; border-bottom: 1px solid var(--color-border); }
-    .footer-brand p { margin-top: 1.125rem; }
-    .footer-bottom { align-items: flex-start; flex-direction: column; }
-    .partner-credit { margin-left: 0; text-align: left; }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 0.8fr 1.1fr 1.2fr;
+    gap: 2.5rem clamp(2rem, 4vw, 4rem);
+    padding-top: clamp(4rem, 7vw, 6rem);
   }
-  @media (max-width: 25rem) { .footer-grid { grid-template-columns: 1fr; } }
+
+  .footer-grid > * {
+    min-width: 0;
+  }
+
+  .footer-tagline {
+    font-size: clamp(1.75rem, 2.6vw, 2.25rem);
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    color: var(--color-text);
+  }
+
+  .footer-brand p:not(.footer-tagline) {
+    margin-top: 1rem;
+    max-width: 34ch;
+    font-size: var(--font-small);
+    color: var(--color-text-muted);
+  }
+
+  h2 {
+    margin-bottom: 1rem;
+    font-size: var(--font-small);
+    letter-spacing: 0;
+    color: var(--color-text-faint);
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer-col a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 34px;
+    color: var(--color-text-muted);
+    font-size: 0.9375rem;
+    text-decoration: none;
+    transition: color 200ms ease;
+  }
+
+  .footer-col a:hover {
+    color: var(--color-text);
+  }
+
+  .footer-col p {
+    font-size: var(--font-small);
+    color: var(--color-text-muted);
+  }
+
+  .footer-col .footer-cta {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-hairline);
+    border-radius: 999px;
+    color: var(--color-text);
+    transition: border-color 200ms ease, background-color 200ms ease;
+  }
+
+  .footer-col .footer-cta:hover {
+    border-color: rgba(236, 231, 222, 0.35);
+    background: rgba(236, 231, 222, 0.04);
+  }
+
+  /* Oversized wordmark that fades into the page, cropped by the bottom bar. */
+  .footer-wordmark {
+    margin-top: clamp(3rem, 6vw, 5rem);
+    line-height: 0.78;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* Sized in container units so the word spans the content width at every breakpoint. */
+  .footer-wordmark :global(.container) {
+    container-type: inline-size;
+  }
+
+  .footer-wordmark span {
+    display: block;
+    font-size: 29cqi;
+    font-weight: var(--weight-medium);
+    letter-spacing: -0.065em;
+    margin-left: -0.04em;
+    background: linear-gradient(180deg, rgba(236, 231, 222, 0.16) 0%, rgba(236, 231, 222, 0.02) 85%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .footer-bottom {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    padding-block: 1.5rem;
+    border-top: 1px solid var(--color-hairline);
+    font-size: 0.8125rem;
+    color: var(--color-text-faint);
+  }
+
+  .footer-bottom a {
+    color: var(--color-text-muted);
+    text-decoration-color: var(--color-hairline);
+  }
+
+  @media (max-width: 64rem) {
+    .footer-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .footer-brand {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .footer-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .footer-col:last-child {
+      grid-column: 1 / -1;
+    }
+  }
 </style>

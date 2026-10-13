@@ -1,0 +1,61 @@
+---
+interface Props {
+  kicker?: string;
+  title: string;
+  lead?: string;
+  id?: string;
+}
+
+const { kicker, title, lead, id = 'page-title' } = Astro.props;
+---
+
+<header class="page-intro">
+  <div class="page-intro-grid">
+    {kicker ? <span class="kicker">{kicker}</span> : <span aria-hidden="true"></span>}
+    <div>
+      <h1 id={id}>{title}</h1>
+      {lead && <p class="page-intro-lead">{lead}</p>}
+      <slot />
+    </div>
+  </div>
+</header>
+
+<style>
+  .page-intro {
+    padding-block: clamp(4rem, 9vw, 7.5rem) clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .page-intro-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+    gap: 1.5rem clamp(2rem, 5vw, 5rem);
+  }
+
+  .kicker {
+    padding-top: 0.9rem;
+  }
+
+  h1 {
+    max-width: 18ch;
+    font-size: clamp(2.5rem, 5vw, 4.25rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .page-intro-lead {
+    margin-top: 1.5rem;
+    max-width: 52ch;
+    font-size: 1.0625rem;
+    color: var(--color-text-muted);
+  }
+
+  @media (max-width: 48rem) {
+    .page-intro-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .kicker {
+      padding-top: 0;
+    }
+  }
+</style>

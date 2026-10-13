@@ -11,716 +11,847 @@ const { items = testimonials } = Astro.props;
 
 <section
   id="reviews-section"
-  class="reviews-story-section"
+  class="telemetry-stack-section"
   aria-labelledby="reviews-title"
-  data-reviews-section
+  data-telemetry-section
 >
-  <div class="reviews-sticky-viewport" data-sticky-viewport>
-    <div class="reviews-header-container">
-      <Container>
-        <div class="reviews-sticky-header">
-          <h2 id="reviews-title" class="heading">What customers say</h2>
+  <Container>
+    <!-- Section Header & Telemetry Controls -->
+    <div class="telemetry-header-bar">
+      <div class="telemetry-header-left">
+        <span class="telemetry-eyebrow">
+          <span class="status-pulse" aria-hidden="true"></span>
+          FEEDBACK // FIELD TELEMETRY
+        </span>
+        <h2 id="reviews-title" class="telemetry-title">What partners & drivers say</h2>
+      </div>
+
+      <div class="telemetry-controls" aria-label="Testimonial navigation">
+        <div class="telemetry-counter" aria-live="polite">
+          <span class="counter-label">INDEX</span>
+          <span class="counter-value">
+            <span data-active-index>01</span> / <span class="counter-total">0{items.length}</span>
+          </span>
         </div>
-      </Container>
+        <div class="stepper-buttons">
+          <button
+            type="button"
+            class="telemetry-btn"
+            data-prev-btn
+            aria-label="Previous testimonial"
+            title="Previous (Arrow Up)"
+          >
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M8 12V4M4 8l4-4 4 4" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="telemetry-btn"
+            data-next-btn
+            aria-label="Next testimonial"
+            title="Next (Arrow Down)"
+          >
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M8 4v8M4 8l4 4 4-4" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!-- Presentation Stage / Mobile Track -->
-    <div
-      class="reviews-stage reviews-track"
-      data-reviews-stage
-      role="region"
-      aria-label="Customer and dealer reviews"
-    >
-      {items.map((item, index) => {
-        const hasImage = Boolean(item.image);
-
-        return (
-          <article
-            class={`wispr-card review-card theme-${item.theme} type-${item.cardType || 'square'}`}
-            data-story-card
-            data-index={index}
-          >
-            {hasImage ? (
-              <div class="card-split-grid">
-                <div class="card-image-pane">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    class="card-photo"
-                    loading="lazy"
-                  />
+    <!-- Main Dual Telemetry Stage -->
+    <div class="telemetry-layout">
+      <!-- Left Rail: Telemetry Station Selector (Desktop) -->
+      <nav class="telemetry-rail" aria-label="Testimonial station index">
+        <div class="rail-track-line" aria-hidden="true">
+          <div class="rail-progress-thumb" data-rail-thumb></div>
+        </div>
+        <ul class="rail-list">
+          {items.map((item, index) => (
+            <li>
+              <button
+                type="button"
+                class={`rail-node ${index === 0 ? 'is-active' : ''}`}
+                data-rail-node
+                data-target-index={index}
+                aria-label={`Jump to review ${index + 1}: ${item.name}`}
+              >
+                <span class="node-num">0{index + 1}</span>
+                <div class="node-meta">
+                  <span class="node-category">{item.categoryLabel || 'VERIFIED FIELD REPORT'}</span>
+                  <span class="node-name">{item.name}</span>
                 </div>
-                <div class="card-copy-pane">
-                  <blockquote class="wispr-quote">
-                    “{item.quote}”
-                  </blockquote>
-                  <div class="wispr-author">
-                    <p class="author-name">{item.name}</p>
-                    <p class="author-role">
-                      {item.company}
-                      {item.location && <span class="role-location"> · {item.location}</span>}
-                    </p>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <!-- Right Main: Precision HUD Telemetry Frame -->
+      <div class="telemetry-dock" data-telemetry-dock>
+        {items.map((item, index) => {
+          const hasImage = Boolean(item.image);
+          const isActive = index === 0;
+
+          return (
+            <article
+              class={`telemetry-card ${isActive ? 'is-active' : ''} ${hasImage ? 'has-media' : 'text-only'}`}
+              data-card-index={index}
+              aria-hidden={isActive ? 'false' : 'true'}
+            >
+              <!-- Card Tactical HUD Header -->
+              <div class="card-hud-bar">
+                <div class="hud-tag">
+                  <span class="hud-status-dot" aria-hidden="true"></span>
+                  <span class="hud-tag-text">{item.categoryLabel || 'VERIFIED FIELD REPORT'}</span>
+                </div>
+                <div class="hud-id">
+                  <span>LOG #{item.id.replace('review-', '0')}</span>
+                  {item.location && <span class="hud-location">· {item.location}</span>}
+                </div>
+              </div>
+
+              <!-- Card Body Content -->
+              <div class="card-body-grid">
+                {hasImage && (
+                  <div class="card-media-panel">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      class="card-media-img"
+                      loading={index === 0 ? 'eager' : 'lazy'}
+                    />
+                    <div class="media-overlay-gradient" aria-hidden="true"></div>
+                    <div class="media-hud-bracket top-left" aria-hidden="true"></div>
+                    <div class="media-hud-bracket bottom-right" aria-hidden="true"></div>
+                  </div>
+                )}
+
+                <div class="card-content-panel">
+                  <div class="quote-wrapper">
+                    <span class="quote-mark" aria-hidden="true">“</span>
+                    <blockquote class="card-quote">
+                      {item.quote}
+                    </blockquote>
+                  </div>
+
+                  <div class="card-footer-author">
+                    <div class="author-avatar-badge" aria-hidden="true">
+                      {item.name.split(' ').map(n => n[0]).join('')}
+                    </div>
+                    <div class="author-details">
+                      <p class="author-name">{item.name}</p>
+                      <p class="author-company">
+                        {item.company}
+                        {item.type && (
+                          <span class="author-type-badge">
+                            {item.type === 'dealer' ? 'TRADE PARTNER' : 'VERIFIED UPGRADE'}
+                          </span>
+                        )}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
-            ) : (
-              <div class="card-quote-box">
-                <blockquote class="wispr-quote">
-                  “{item.quote}”
-                </blockquote>
-                <div class="wispr-author">
-                  <p class="author-name">{item.name}</p>
-                  <p class="author-role">
-                    {item.company}
-                    {item.location && <span class="role-location"> · {item.location}</span>}
-                  </p>
-                </div>
-              </div>
-            )}
-          </article>
-        );
-      })}
+
+              <!-- Precision Corner Accents -->
+              <div class="corner-tick corner-tl" aria-hidden="true"></div>
+              <div class="corner-tick corner-tr" aria-hidden="true"></div>
+              <div class="corner-tick corner-bl" aria-hidden="true"></div>
+              <div class="corner-tick corner-br" aria-hidden="true"></div>
+            </article>
+          );
+        })}
+      </div>
     </div>
-  </div>
+  </Container>
 </section>
 
 <style>
-  .reviews-story-section {
+  /* ------------------------------------------------------------------ */
+  /* SECTION FOUNDATION & ENVIRONMENT                                   */
+  /* ------------------------------------------------------------------ */
+  .telemetry-stack-section {
     position: relative;
-    background: #111215;
-    border-top: 1px solid var(--color-border, #2A2E32);
-  }
-
-  .heading {
-    letter-spacing: -0.03em;
+    background: #0B0D10;
     color: #F7F7F5;
-    margin: 0;
-    text-wrap: balance;
+    padding-block: clamp(4rem, 8vh, 6.5rem);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
   }
 
-  /* Editorial Serif Quote */
-  .wispr-quote {
-    margin: 0;
-    font-family: ui-serif, Georgia, Cambria, 'Times New Roman', serif;
-    font-style: normal;
-    font-weight: 500;
-    letter-spacing: -0.015em;
-    line-height: 1.32;
-    text-wrap: pretty;
+  /* Subtle ambient beam glow in background */
+  .telemetry-stack-section::before {
+    content: '';
+    position: absolute;
+    top: 25%;
+    right: 15%;
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(233, 93, 44, 0.06) 0%, transparent 70%);
+    pointer-events: none;
+    filter: blur(40px);
   }
 
-  .wispr-author {
+  /* ------------------------------------------------------------------ */
+  /* TELEMETRY HEADER & CONTROLS                                       */
+  /* ------------------------------------------------------------------ */
+  .telemetry-header-bar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: clamp(2.5rem, 5vh, 3.5rem);
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .telemetry-header-left {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 0.5rem;
+  }
+
+  .telemetry-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: #E95D2C;
+    text-transform: uppercase;
+  }
+
+  .status-pulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #E95D2C;
+    box-shadow: 0 0 8px rgba(233, 93, 44, 0.8);
+    animation: statusPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes statusPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+  }
+
+  .telemetry-title {
+    font-size: clamp(1.75rem, 2.5vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+    margin: 0;
+    color: #F7F7F5;
+  }
+
+  .telemetry-controls {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .telemetry-counter {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.875rem;
+  }
+
+  .counter-label {
+    color: #71767C;
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+  }
+
+  .counter-value {
+    color: #F7F7F5;
+    font-weight: 700;
+  }
+
+  .counter-value [data-active-index] {
+    color: #E95D2C;
+  }
+
+  .counter-total {
+    color: #71767C;
+    font-weight: 400;
+  }
+
+  .stepper-buttons {
+    display: flex;
+    gap: 0.375rem;
+  }
+
+  .telemetry-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: #14171B;
+    color: #F7F7F5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 150ms ease, border-color 150ms ease, transform 100ms ease;
+  }
+
+  .telemetry-btn:hover {
+    background: #1C2127;
+    border-color: #E95D2C;
+    color: #FFFFFF;
+  }
+
+  .telemetry-btn:active {
+    transform: scale(0.95);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* TELEMETRY LAYOUT (RAIL + DOCK)                                     */
+  /* ------------------------------------------------------------------ */
+  .telemetry-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  /* Left Rail */
+  .telemetry-rail {
+    position: relative;
+    padding-left: 1.5rem;
+  }
+
+  .rail-track-line {
+    position: absolute;
+    left: 0;
+    top: 10px;
+    bottom: 10px;
+    width: 2px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 2px;
+  }
+
+  .rail-progress-thumb {
+    position: absolute;
+    top: 0;
+    left: -1px;
+    width: 4px;
+    height: 20%;
+    background: #E95D2C;
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(233, 93, 44, 0.6);
+    transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1), height 300ms ease;
+  }
+
+  .rail-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .rail-node {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+    padding: 0.75rem 1rem;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: #8C939A;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease;
+  }
+
+  .rail-node:hover {
+    background: rgba(255, 255, 255, 0.03);
+    color: #F7F7F5;
+  }
+
+  .rail-node.is-active {
+    background: rgba(233, 93, 44, 0.08);
+    border-color: rgba(233, 93, 44, 0.3);
+    color: #F7F7F5;
+  }
+
+  .node-num {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #71767C;
+    margin-top: 2px;
+  }
+
+  .rail-node.is-active .node-num {
+    color: #E95D2C;
+  }
+
+  .node-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .node-category {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: #71767C;
+  }
+
+  .rail-node.is-active .node-category {
+    color: rgba(233, 93, 44, 0.9);
+  }
+
+  .node-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* TELEMETRY DOCK & CARDS (VERTICAL STACK)                            */
+  /* ------------------------------------------------------------------ */
+  .telemetry-dock {
+    position: relative;
+    min-height: 440px;
+  }
+
+  .telemetry-card {
+    position: absolute;
+    inset: 0;
+    background: #121519;
+    background: linear-gradient(175deg, rgba(255, 255, 255, 0.02) 0%, rgba(18, 21, 25, 0.98) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 12px;
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transform: translateY(28px) scale(0.98);
+    pointer-events: none;
+    transition: opacity 320ms cubic-bezier(0.16, 1, 0.3, 1),
+                transform 320ms cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 200ms ease;
+  }
+
+  .telemetry-card.is-active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+    border-color: rgba(233, 93, 44, 0.4);
+    z-index: 5;
+  }
+
+  /* Exiting card upwards */
+  .telemetry-card.is-exiting-up {
+    opacity: 0;
+    transform: translateY(-28px) scale(0.98);
+    z-index: 2;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* CARD HUD TOP BAR                                                   */
+  /* ------------------------------------------------------------------ */
+  .card-hud-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    font-family: var(--font-mono, monospace);
+  }
+
+  .hud-tag {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: #E95D2C;
+    text-transform: uppercase;
+  }
+
+  .hud-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #18C88A;
+    box-shadow: 0 0 6px rgba(24, 200, 138, 0.6);
+  }
+
+  .hud-id {
+    font-size: 0.6875rem;
+    color: #71767C;
+    letter-spacing: 0.08em;
+  }
+
+  .hud-location {
+    color: #A7ADB2;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* CARD BODY & MEDIA                                                 */
+  /* ------------------------------------------------------------------ */
+  .card-body-grid {
+    display: grid;
+    gap: 2rem;
+    flex: 1;
+    align-items: center;
+  }
+
+  .has-media .card-body-grid {
+    grid-template-columns: 42% 58%;
+  }
+
+  .text-only .card-body-grid {
+    grid-template-columns: 1fr;
+    max-width: 50rem;
+  }
+
+  .card-media-panel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 250px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #090B0D;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .card-media-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    filter: brightness(0.95) contrast(1.05);
+  }
+
+  .media-overlay-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 50%, rgba(11, 13, 16, 0.8) 100%);
+    pointer-events: none;
+  }
+
+  /* HUD Micro-Brackets */
+  .media-hud-bracket {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-color: #E95D2C;
+    border-style: solid;
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  .media-hud-bracket.top-left {
+    top: 8px;
+    left: 8px;
+    border-width: 2px 0 0 2px;
+  }
+
+  .media-hud-bracket.bottom-right {
+    bottom: 8px;
+    right: 8px;
+    border-width: 0 2px 2px 0;
+  }
+
+  .card-content-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    gap: 1.75rem;
+  }
+
+  .quote-wrapper {
+    position: relative;
+  }
+
+  .quote-mark {
+    position: absolute;
+    top: -1.75rem;
+    left: -0.75rem;
+    font-size: 3.5rem;
+    line-height: 1;
+    color: rgba(233, 93, 44, 0.2);
+    font-family: var(--font-mono, monospace);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .card-quote {
+    margin: 0;
+    font-size: clamp(1.2rem, 1.8vw, 1.6rem);
+    line-height: 1.42;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    color: #F7F7F5;
+  }
+
+  /* Author block */
+  .card-footer-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .author-avatar-badge {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    background: rgba(233, 93, 44, 0.12);
+    border: 1px solid rgba(233, 93, 44, 0.3);
+    color: #E95D2C;
+    font-family: var(--font-mono, monospace);
+    font-weight: 700;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .author-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
   }
 
   .author-name {
     margin: 0;
-    font-family: var(--font-body, system-ui, sans-serif);
-    font-size: 1.0625rem;
+    font-size: 1rem;
     font-weight: 700;
-    letter-spacing: -0.01em;
-    line-height: 1.25;
-  }
-
-  .author-role {
-    margin: 0;
-    font-family: var(--font-body, system-ui, sans-serif);
-    font-size: 0.875rem;
-    line-height: 1.35;
-    font-weight: 500;
-  }
-
-  .role-location {
-    opacity: 0.85;
-  }
-
-  /* ------------------------------------------------------------------ */
-  /* COLOR THEMES MATCHING EDITORIAL REFERENCE                          */
-  /* ------------------------------------------------------------------ */
-
-  /* 1. Emerald Green (#18C88A) */
-  .theme-green {
-    background: #18C88A;
-    color: #062C1C;
-  }
-  .theme-green .wispr-quote,
-  .theme-green .author-name {
-    color: #062C1C;
-  }
-  .theme-green .author-role {
-    color: rgba(6, 44, 28, 0.76);
-  }
-
-  /* 2. Warm Cream / Ivory (#EDE9D5) */
-  .theme-cream {
-    background: #EDE9D5;
-    color: #161616;
-  }
-  .theme-cream .wispr-quote,
-  .theme-cream .author-name {
-    color: #161616;
-  }
-  .theme-cream .author-role {
-    color: rgba(22, 22, 22, 0.72);
-  }
-
-  /* 3. Warm Orange / Amber (#FFA946) */
-  .theme-orange {
-    background: #FFA946;
-    color: #281404;
-  }
-  .theme-orange .wispr-quote,
-  .theme-orange .author-name {
-    color: #281404;
-  }
-  .theme-orange .author-role {
-    color: rgba(40, 20, 4, 0.76);
-  }
-
-  /* 4. Soft Lavender / Lilac (#E8DAFF) */
-  .theme-lavender {
-    background: #E8DAFF;
-    color: #23123D;
-  }
-  .theme-lavender .wispr-quote,
-  .theme-lavender .author-name {
-    color: #23123D;
-  }
-  .theme-lavender .author-role {
-    color: rgba(35, 18, 61, 0.74);
-  }
-
-  /* 5. Deep Oxblood / Burgundy (#7F1C34) */
-  .theme-oxblood {
-    background: #7F1C34;
-    color: #FFF5F5;
-  }
-  .theme-oxblood .wispr-quote {
-    color: #FFF5F5;
-  }
-  .theme-oxblood .author-name {
     color: #FFFFFF;
   }
-  .theme-oxblood .author-role {
-    color: rgba(255, 245, 245, 0.78);
+
+  .author-company {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: #8C939A;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .author-type-badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-family: var(--font-mono, monospace);
+    font-size: 0.625rem;
+    font-weight: 600;
+    color: #CCD2D8;
+    letter-spacing: 0.06em;
   }
 
   /* ------------------------------------------------------------------ */
-  /* MOBILE (< 768px): Natural Stacked Section & Horizontal Snap Swipe   */
+  /* PRECISION CORNER TICKS                                             */
   /* ------------------------------------------------------------------ */
-  @media (max-width: 767.98px) {
-    .reviews-story-section {
-      position: relative;
-      min-height: auto;
-      height: auto;
-      padding-top: 56px;
-      padding-bottom: 56px;
-      padding-block: 56px;
-      overflow: clip;
+  .corner-tick {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-color: rgba(255, 255, 255, 0.2);
+    border-style: solid;
+    pointer-events: none;
+    transition: border-color 200ms ease;
+  }
+
+  .telemetry-card.is-active .corner-tick {
+    border-color: rgba(233, 93, 44, 0.6);
+  }
+
+  .corner-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; border-top-left-radius: 12px; }
+  .corner-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; border-top-right-radius: 12px; }
+  .corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; border-bottom-left-radius: 12px; }
+  .corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; border-bottom-right-radius: 12px; }
+
+  /* ------------------------------------------------------------------ */
+  /* RESPONSIVE BREAKPOINTS                                             */
+  /* ------------------------------------------------------------------ */
+  @media (max-width: 900px) {
+    .telemetry-layout {
+      grid-template-columns: 1fr;
     }
 
-    .reviews-sticky-viewport {
-      position: static;
-      height: auto;
-      min-height: auto;
-      overflow: visible;
-      display: block;
-      padding: 0;
-    }
-
-    .reviews-header-container {
-      width: 100%;
-      margin-bottom: 36px;
-      pointer-events: auto;
-    }
-
-    .reviews-sticky-header {
-      max-width: 100%;
-    }
-
-
-    .heading {
-      font-size: clamp(2rem, 7.5vw, 2.5rem);
-      line-height: 1.15;
-    }
-
-    /* Horizontal swipe & scroll-snap track */
-    .reviews-stage,
-    .reviews-track {
-      position: static;
-      inset: auto;
-      transform: none !important;
-      display: flex;
-      flex-direction: row;
-      align-items: stretch;
-      justify-content: flex-start;
-      gap: 16px;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scroll-snap-type: x mandatory;
-      padding-inline: var(--page-gutter, 1.25rem);
-      padding-bottom: 8px;
-      margin: 0;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      pointer-events: auto;
-      z-index: 1;
-    }
-
-    .reviews-stage::-webkit-scrollbar,
-    .reviews-track::-webkit-scrollbar {
+    .telemetry-rail {
       display: none;
     }
 
-    /* Single dominant card (86vw) + peek of next */
-    .wispr-card,
-    .review-card {
-      position: relative !important;
-      inset: auto !important;
-      transform: none !important;
-      rotate: 0deg !important;
-      opacity: 1 !important;
-      flex: 0 0 86vw;
-      width: 86vw;
-      max-width: 420px;
-      min-height: auto;
-      border-radius: 28px;
-      scroll-snap-align: center;
-      scroll-snap-stop: normal;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
-      pointer-events: auto;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
+    .telemetry-dock {
+      min-height: 480px;
     }
 
-    /* Landscape image card (Image on top, quote below) */
-    .type-landscape-image {
-      padding: 14px;
-      width: 86vw;
-      max-width: 420px;
-      min-height: auto;
+    .has-media .card-body-grid {
+      grid-template-columns: 1fr;
     }
 
-    .card-split-grid {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      min-height: auto;
-      gap: 16px;
-    }
-
-    .card-image-pane {
-      flex: 0 0 auto;
-      width: 100%;
-      height: 190px;
-      border-radius: 20px;
-      overflow: hidden;
-      background: #000;
-    }
-
-    .card-photo {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-      display: block;
-    }
-
-    .card-copy-pane {
-      flex: 1 1 auto;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 4px 8px 12px 8px;
-      gap: 16px;
-    }
-
-    .type-landscape-image .wispr-quote {
-      font-size: 1.25rem !important;
-      line-height: 1.38;
-    }
-
-    /* Quote-only cards (Square & Wide) */
-    .type-square,
-    .type-wide {
-      padding: 28px 22px;
-      width: 86vw;
-      max-width: 420px;
-      min-height: auto;
-    }
-
-    .card-quote-box {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: 100%;
-      min-height: 230px;
-      gap: 20px;
-    }
-
-    .type-square .wispr-quote,
-    .type-wide .wispr-quote {
-      font-size: 1.25rem !important;
-      line-height: 1.38;
+    .card-media-panel {
+      height: 200px;
+      min-height: 200px;
     }
   }
 
-  /* ------------------------------------------------------------------ */
-  /* DESKTOP (>= 768px): Sticky Scroll-Story Presentation Stage         */
-  /* ------------------------------------------------------------------ */
-  @media (min-width: 768px) {
-    .reviews-story-section {
-      min-height: 320vh;
-      overflow: clip;
-    }
-
-    .reviews-sticky-viewport {
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      height: 100svh;
-      overflow: hidden;
-      display: flex;
+  @media (max-width: 600px) {
+    .telemetry-header-bar {
       flex-direction: column;
-      justify-content: space-between;
-      padding-top: clamp(4.5rem, 8vh, 6rem);
-      padding-bottom: clamp(2.5rem, 5vh, 3.5rem);
-      box-sizing: border-box;
+      align-items: flex-start;
+      gap: 1rem;
     }
 
-    .reviews-header-container {
+    .telemetry-controls {
       width: 100%;
-      z-index: 25;
-      pointer-events: none;
-    }
-
-    .reviews-sticky-header {
-      max-width: var(--content-max, 60rem);
-    }
-
-    .heading {
-      font-size: clamp(2rem, 3.2vw, 3rem);
-      line-height: var(--line-heading, 1.15);
-    }
-
-    .reviews-stage {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transform: translateY(3vh);
-      pointer-events: none;
-      z-index: 10;
-    }
-
-    .wispr-card {
-      position: absolute;
-      pointer-events: auto;
-      will-change: transform, opacity;
-      border-radius: 40px;
-      box-sizing: border-box;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), 0 4px 16px rgba(0, 0, 0, 0.3);
-      transition: box-shadow 220ms ease;
-    }
-
-    /* Landscape Image Card */
-    .type-landscape-image {
-      width: min(780px, 88vw);
-      min-height: 400px;
-      padding: 16px;
-    }
-
-    .card-split-grid {
-      display: flex;
-      flex-direction: row;
-      align-items: stretch;
-      height: 100%;
-      min-height: 368px;
-      gap: clamp(24px, 3vw, 36px);
-    }
-
-    .card-image-pane {
-      flex: 0 0 45%;
-      position: relative;
-      border-radius: 26px;
-      overflow: hidden;
-      background: #000;
-    }
-
-    .card-photo {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-      display: block;
-    }
-
-    .card-copy-pane {
-      flex: 1 1 55%;
-      display: flex;
-      flex-direction: column;
       justify-content: space-between;
-      padding: clamp(20px, 2.5vw, 32px) clamp(20px, 2.5vw, 32px) clamp(20px, 2.5vw, 32px) 0;
-      gap: 24px;
     }
 
-    .type-landscape-image .wispr-quote {
-      font-size: clamp(1.45rem, 1.9vw, 1.85rem);
+    .telemetry-dock {
+      min-height: 520px;
     }
 
-    /* Square Quote Card */
-    .type-square {
-      width: min(480px, 82vw);
-      min-height: 410px;
-      padding: clamp(36px, 4vw, 48px);
+    .telemetry-card {
+      padding: 1.25rem;
     }
 
-    .card-quote-box {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: 100%;
-      min-height: 320px;
-      gap: 28px;
-    }
-
-    .type-square .wispr-quote {
-      font-size: clamp(1.6rem, 2.1vw, 2.05rem);
-    }
-
-    /* Wide Card */
-    .type-wide {
-      width: min(700px, 86vw);
-      min-height: 370px;
-      padding: clamp(36px, 4vw, 48px);
-    }
-
-    .type-wide .wispr-quote {
-      font-size: clamp(1.6rem, 2.1vw, 2.05rem);
-    }
-  }
-
-  /* ------------------------------------------------------------------ */
-  /* Accessibility: Prefers Reduced Motion                              */
-  /* ------------------------------------------------------------------ */
-  @media (prefers-reduced-motion: reduce) and (min-width: 768px) {
-    .reviews-story-section {
-      min-height: auto;
-      padding-block: 4rem;
-    }
-
-    .reviews-sticky-viewport {
-      position: static;
-      height: auto;
-      overflow: visible;
-      padding-top: 0;
-      padding-bottom: 0;
-    }
-
-    .reviews-header-container {
-      margin-bottom: 2rem;
-    }
-
-    .reviews-stage {
-      position: static;
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      align-items: stretch;
-      justify-content: flex-start;
-      transform: none;
-      gap: 24px;
-      padding-inline: 1.5rem;
-      pointer-events: auto;
-    }
-
-    .wispr-card {
-      position: static;
-      flex: 1 1 calc(50% - 24px);
-      max-width: 100%;
-      min-height: auto;
-      transform: none !important;
-      opacity: 1 !important;
-      pointer-events: auto;
+    .card-quote {
+      font-size: 1.125rem;
     }
   }
 </style>
 
 <script>
-  function initReviewsStory() {
-    const section = document.querySelector<HTMLElement>('[data-reviews-section]');
+  function initTelemetryStack() {
+    const section = document.querySelector<HTMLElement>('[data-telemetry-section]');
     if (!section) return;
 
-    const cards = Array.from(section.querySelectorAll<HTMLElement>('[data-story-card]'));
+    const cards = Array.from(section.querySelectorAll<HTMLElement>('[data-card-index]'));
+    const railNodes = Array.from(section.querySelectorAll<HTMLButtonElement>('[data-rail-node]'));
+    const railThumb = section.querySelector<HTMLElement>('[data-rail-thumb]');
+    const activeIndexEl = section.querySelector<HTMLElement>('[data-active-index]');
+    const prevBtn = section.querySelector<HTMLButtonElement>('[data-prev-btn]');
+    const nextBtn = section.querySelector<HTMLButtonElement>('[data-next-btn]');
+
     if (cards.length === 0) return;
 
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const desktopMedia = window.matchMedia('(min-width: 768px)');
+    let currentIndex = 0;
+    const total = cards.length;
 
-    function clearCardStyles() {
-      cards.forEach((card) => {
-        card.style.transform = '';
-        card.style.opacity = '';
-        card.style.zIndex = '';
-        card.style.pointerEvents = '';
-      });
-    }
+    function goToIndex(targetIndex: number, direction: 'up' | 'down' = 'down') {
+      if (targetIndex < 0) targetIndex = total - 1;
+      if (targetIndex >= total) targetIndex = 0;
+      if (targetIndex === currentIndex) return;
 
-    // Wispr Flow Layered Deck Positions (Active >= 768px):
-    // - Active dominant in center: (0, -10px), scale 1.0, rot 0deg
-    // - Peeking bottom-left: (-330px, 150px), scale 0.88, rot -3.5deg
-    // - Peeking upper-right: (+340px, -130px), scale 0.88, rot +3.0deg
-    const keyframesMap: Record<
-      number,
-      Array<{ p: number; x: number; y: number; scale: number; rot: number; opacity: number; zIndex: number }>
-    > = {
-      // Card 0: Starts Active Center -> shifts to bottom-left -> fades away
-      0: [
-        { p: 0.00, x: 0, y: -10, scale: 1.0, rot: 0, opacity: 1.0, zIndex: 10 },
-        { p: 0.12, x: 0, y: -10, scale: 1.0, rot: 0, opacity: 1.0, zIndex: 10 },
-        { p: 0.28, x: -330, y: 150, scale: 0.88, rot: -3.5, opacity: 0.88, zIndex: 4 },
-        { p: 0.40, x: -500, y: 240, scale: 0.82, rot: -5.0, opacity: 0.0, zIndex: 1 },
-        { p: 1.00, x: -500, y: 240, scale: 0.82, rot: -5.0, opacity: 0.0, zIndex: 1 },
-      ],
-      // Card 1 (Cream): Starts peeking at bottom-left -> glides to Center -> shifts away
-      1: [
-        { p: 0.00, x: -330, y: 150, scale: 0.88, rot: -3.5, opacity: 0.88, zIndex: 4 },
-        { p: 0.12, x: -330, y: 150, scale: 0.88, rot: -3.5, opacity: 0.88, zIndex: 4 },
-        { p: 0.28, x: 0, y: -10, scale: 1.0, rot: 0, opacity: 1.0, zIndex: 10 },
-        { p: 0.38, x: 0, y: -10, scale: 1.0, rot: 0, opacity: 1.0, zIndex: 10 },
-        { p: 0.52, x: -330, y: 150, scale: 0.88, rot: -3.5, opacity: 0.85, zIndex: 4 },
-        { p: 0.62, x: -500, y: 240, scale: 0.82, rot: -5.0, opacity: 0.0, zIndex: 1 },
-        { p: 1.00, x: -500, y: 240, scale: 0.82, rot: -5.0, opacity: 0.0, zIndex: 1 },
-      ],
-      // Card 2 (Orange): Starts peeking at upper-right -> moves into place -> Center -> shifts to bottom-left
-      2: [
-        { p: 0.00, x: 340, y: -130, scale: 0.88, rot: 3.0, opacity: 0.88, zIndex: 4 },
-        { p: 0.18, x: 340, y: -130, scale: 0.88, rot: 3.0, opacity: 0.88, zIndex: 4 },
-        { p: 0.35, x: 340, y: -130, scale: 0.88, rot: 3.0, opacity: 0.88, zIndex: 4 },
-        { p: 0.52, x: 0, y: -10, scale: 1.0, rot: 0, opacity: 1.0, zIndex: 10 },
-        { p: 0.62, x: 0, y: -10, scale: 1.0, rot: 0, opacity: 1.0, zIndex: 10 },
-        { p: 0.75, x: -330, y: 150, scale: 0.88, rot: -3.5, opacity: 0.85, zIndex: 4 },
-        { p: 0.85, x: -500, y: 240, scale: 0.82, rot: -5.0, opacity: 0.0, zIndex: 1 },
-        { p: 1.00, x: -500, y: 240, scale: 0.82, rot: -5.0, opacity: 0.0, zIndex: 1 },
-      ],
-      // Card 3 (Lavender): Waiting -> enters upper-right -> Center -> shifts to bottom-left
-      3: [
-        { p: 0.00, x: 480, y: -180, scale: 0.82, rot: 4.5, opacity: 0.0, zIndex: 1 },
-        { p: 0.38, x: 480, y: -180, scale: 0.82, rot: 4.5, opacity: 0.0, zIndex: 1 },
-        { p: 0.52, x: 340, y: -130, scale: 0.88, rot: 3.0, opacity: 0.88, zIndex: 4 },
-        { p: 0.70, x: 0, y: -10, scale: 1.0, rot: 0, opacity: 1.0, zIndex: 10 },
-        { p: 0.78, x: 0, y: -10, scale: 1.0, rot: 0, opacity: 1.0, zIndex: 10 },
-        { p: 0.88, x: -330, y: 150, scale: 0.88, rot: -3.5, opacity: 0.85, zIndex: 4 },
-        { p: 1.00, x: -330, y: 150, scale: 0.88, rot: -3.5, opacity: 0.85, zIndex: 4 },
-      ],
-      // Card 4 (Oxblood): Waiting -> enters upper-right -> Center dominant settled
-      4: [
-        { p: 0.00, x: 480, y: -180, scale: 0.82, rot: 4.5, opacity: 0.0, zIndex: 1 },
-        { p: 0.58, x: 480, y: -180, scale: 0.82, rot: 4.5, opacity: 0.0, zIndex: 1 },
-        { p: 0.72, x: 340, y: -130, scale: 0.88, rot: 3.0, opacity: 0.88, zIndex: 4 },
-        { p: 0.86, x: 0, y: -10, scale: 1.0, rot: 0, opacity: 1.0, zIndex: 10 },
-        { p: 1.00, x: 0, y: -10, scale: 1.0, rot: 0, opacity: 1.0, zIndex: 10 },
-      ],
-    };
+      const oldCard = cards[currentIndex];
+      const newCard = cards[targetIndex];
 
-    function interpolate(
-      kfs: Array<{ p: number; x: number; y: number; scale: number; rot: number; opacity: number; zIndex: number }>,
-      p: number
-    ) {
-      if (p <= kfs[0].p) return kfs[0];
-      if (p >= kfs[kfs.length - 1].p) return kfs[kfs.length - 1];
-      for (let i = 0; i < kfs.length - 1; i++) {
-        const kA = kfs[i];
-        const kB = kfs[i + 1];
-        if (p >= kA.p && p <= kB.p) {
-          const span = kB.p - kA.p;
-          const t = span > 0 ? (p - kA.p) / span : 0;
-          const easeT = t * t * (3 - 2 * t); // smoothstep
-          return {
-            x: kA.x + (kB.x - kA.x) * easeT,
-            y: kA.y + (kB.y - kA.y) * easeT,
-            scale: kA.scale + (kB.scale - kA.scale) * easeT,
-            rot: kA.rot + (kB.rot - kA.rot) * easeT,
-            opacity: kA.opacity + (kB.opacity - kA.opacity) * easeT,
-            zIndex: t > 0.5 ? kB.zIndex : kA.zIndex,
-          };
+      // Mark old card exiting
+      if (oldCard) {
+        oldCard.classList.remove('is-active');
+        oldCard.setAttribute('aria-hidden', 'true');
+        oldCard.classList.add(direction === 'down' ? 'is-exiting-up' : '');
+        setTimeout(() => {
+          oldCard.classList.remove('is-exiting-up');
+        }, 350);
+      }
+
+      // Activate new card
+      if (newCard) {
+        newCard.classList.add('is-active');
+        newCard.setAttribute('aria-hidden', 'false');
+      }
+
+      // Update counter
+      if (activeIndexEl) {
+        activeIndexEl.textContent = `0${targetIndex + 1}`;
+      }
+
+      // Update rail active state
+      railNodes.forEach((node, idx) => {
+        if (idx === targetIndex) {
+          node.classList.add('is-active');
+        } else {
+          node.classList.remove('is-active');
         }
-      }
-      return kfs[0];
-    }
-
-    const sectionEl = section;
-    let isTicking = false;
-
-    function update() {
-      if (!desktopMedia.matches || prefersReducedMotion.matches) {
-        clearCardStyles();
-        isTicking = false;
-        return;
-      }
-
-      const rect = sectionEl.getBoundingClientRect();
-      const scrollableDistance = sectionEl.offsetHeight - window.innerHeight;
-      if (scrollableDistance <= 0) {
-        isTicking = false;
-        return;
-      }
-
-      const rawProgress = -rect.top / scrollableDistance;
-      const progress = Math.max(0, Math.min(1, rawProgress));
-
-      cards.forEach((card, index) => {
-        const kfs = keyframesMap[index];
-        if (!kfs) return;
-        const state = interpolate(kfs, progress);
-
-        card.style.transform = `translate3d(${state.x.toFixed(1)}px, ${state.y.toFixed(1)}px, 0) scale(${state.scale.toFixed(3)}) rotate(${state.rot.toFixed(2)}deg)`;
-        card.style.opacity = state.opacity.toFixed(3);
-        card.style.zIndex = String(state.zIndex);
-        card.style.pointerEvents = state.opacity > 0.4 ? 'auto' : 'none';
       });
 
-      isTicking = false;
-    }
-
-    function onScroll() {
-      if (!desktopMedia.matches || prefersReducedMotion.matches) return;
-      if (!isTicking) {
-        isTicking = true;
-        window.requestAnimationFrame(update);
+      // Update rail progress thumb
+      if (railThumb && railNodes.length > 0) {
+        
+        railThumb.style.transform = `translateY(${(targetIndex * 48)}px)`;
       }
+
+      currentIndex = targetIndex;
     }
 
-    function onViewportChange() {
-      if (!desktopMedia.matches || prefersReducedMotion.matches) {
-        clearCardStyles();
-      } else {
-        update();
+    // Button event listeners
+    prevBtn?.addEventListener('click', () => goToIndex(currentIndex - 1, 'up'));
+    nextBtn?.addEventListener('click', () => goToIndex(currentIndex + 1, 'down'));
+
+    // Rail nodes event listeners
+    railNodes.forEach((node) => {
+      node.addEventListener('click', () => {
+        const target = Number(node.getAttribute('data-target-index'));
+        if (!isNaN(target)) {
+          goToIndex(target, target > currentIndex ? 'down' : 'up');
+        }
+      });
+    });
+
+    // Keyboard navigation (Arrow Up / Down) when section has focus
+    section.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        goToIndex(currentIndex - 1, 'up');
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        goToIndex(currentIndex + 1, 'down');
       }
-    }
+    });
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    desktopMedia.addEventListener('change', onViewportChange);
-    prefersReducedMotion.addEventListener('change', onViewportChange);
-    window.addEventListener('resize', onViewportChange, { passive: true });
-
-    // Initial check
-    if (desktopMedia.matches && !prefersReducedMotion.matches) {
-      update();
-    } else {
-      clearCardStyles();
-    }
+    // Optional subtle wheel support when hovering over the dock
+    let isWheeling = false;
+    section.addEventListener('wheel', (e) => {
+      if (Math.abs(e.deltaY) < 30 || isWheeling) return;
+      if (e.deltaY > 0 && currentIndex < total - 1) {
+        isWheeling = true;
+        goToIndex(currentIndex + 1, 'down');
+        setTimeout(() => { isWheeling = false; }, 600);
+      } else if (e.deltaY < 0 && currentIndex > 0) {
+        isWheeling = true;
+        goToIndex(currentIndex - 1, 'up');
+        setTimeout(() => { isWheeling = false; }, 600);
+      }
+    }, { passive: true });
   }
 
+  // Initialize on DOM load and view transitions
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initReviewsStory);
+    document.addEventListener('DOMContentLoaded', initTelemetryStack);
   } else {
-    initReviewsStory();
+    initTelemetryStack();
   }
-  document.addEventListener('astro:page-load', initReviewsStory);
+  document.addEventListener('astro:page-load', initTelemetryStack);
 </script>

@@ -1,57 +1,45 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 import Container from '../components/Container.astro';
-import Section from '../components/Section.astro';
+import PageIntro from '../components/PageIntro.astro';
 import BrandCard from '../components/BrandCard.astro';
-import EnquiryCTA from '../components/EnquiryCTA.astro';
 import { publicCatalogueService } from '@trionyx/api/catalogue';
-import '../styles/discovery.css';
+import { getBrandMedia } from '../data/brandMedia';
 
 const brands = await publicCatalogueService.listPublishedBrands('LAKSHMI');
-
-const BRAND_MEDIA: Record<string, { src: string; alt: string }> = {
-  azoom: {
-    src: '/images/brands/aozoom.png',
-    alt: 'Aozoom automotive lighting logo',
-  },
-  aozoom: {
-    src: '/images/brands/aozoom.png',
-    alt: 'Aozoom automotive lighting logo',
-  },
-  hoggon: {
-    src: '/images/brands/hoggon.png',
-    alt: 'Hogonn automotive surface protection logo',
-  },
-  hogonn: {
-    src: '/images/brands/hoggon.png',
-    alt: 'Hogonn automotive surface protection logo',
-  },
-};
 ---
 <SiteLayout title="Brands" description="Explore brands available through Lakshmi Distributions.">
-  <Section labelledBy="page-title">
-    <Container>
-      <div class="stack text-width">
-        <p class="discovery-eyebrow">BRANDS</p>
-        <h1 id="page-title">Explore our brands</h1>
-        <p class="text-muted">Browse brands available through Lakshmi Distributions.</p>
-      </div>
-    </Container>
-  </Section>
-  <Section labelledBy="available-brands-title">
-    <Container>
-      <h2 id="available-brands-title" class="discovery-heading">Available brands</h2>
-      <div class="discovery-grid">
-        {brands.map((brand) => (
-          <BrandCard
-            name={brand.name}
-            description={brand.description || undefined}
-            href={`/brands/${brand.slug}`}
-            image={BRAND_MEDIA[brand.slug.toLowerCase()]}
-          />
-        ))}
-      </div>
-    </Container>
-  </Section>
-  <EnquiryCTA />
+  <Container>
+    <PageIntro
+      kicker="Brands"
+      title="The manufacturers we work with."
+      lead="We partner directly with each brand we carry, so every product comes with authentic inventory and verified specifications."
+    />
+
+    <section class="brands" aria-label="Available brands">
+      {brands.map((brand) => (
+        <BrandCard
+          name={brand.name}
+          description={brand.description || undefined}
+          href={`/brands/${brand.slug}`}
+          media={getBrandMedia(brand.slug)}
+        />
+      ))}
+    </section>
+  </Container>
 </SiteLayout>
+
+<style>
+  .brands {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3rem clamp(1rem, 2vw, 1.5rem);
+    padding-bottom: clamp(5rem, 10vw, 9rem);
+  }
+
+  @media (max-width: 48rem) {
+    .brands {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

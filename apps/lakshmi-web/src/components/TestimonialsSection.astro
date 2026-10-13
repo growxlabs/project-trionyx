@@ -1,12 +1,142 @@
 ---
-import TestimonialsStory from './TestimonialsStory.astro';
-import type { Testimonial } from '../data/testimonials';
+import Container from './Container.astro';
+import Stepper from './Stepper.astro';
+import { testimonials, type Testimonial } from '../data/testimonials';
 
 interface Props {
   items?: readonly Testimonial[];
 }
 
-const { items } = Astro.props;
+const { items = testimonials } = Astro.props;
+const panelIds = items.map((item) => `testimonial-${item.id}`);
 ---
 
-<TestimonialsStory items={items} />
+<section class="testimonials" aria-labelledby="testimonials-title" data-testimonials>
+  <Container>
+    <h2 id="testimonials-title" class="kicker">From workshops and dealers</h2>
+
+    <div class="testimonial-panels">
+      {items.map((item, i) => (
+        <figure
+          class="testimonial-panel"
+          id={panelIds[i]}
+          role="tabpanel"
+          aria-label={`Testimonial ${i + 1} of ${items.length}`}
+          hidden={i !== 0}
+          data-testimonial-panel
+        >
+          <blockquote>
+            <p>{item.quote}</p>
+          </blockquote>
+          <figcaption>
+            <span class="testimonial-name">{item.name}</span>
+            <span class="testimonial-org">{[item.company, item.location].filter(Boolean).join(', ')}</span>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+
+    <div class="testimonials-foot">
+      <Stepper count={items.length} label="Choose a testimonial" controls={panelIds} autoplay={6000} />
+    </div>
+  </Container>
+</section>
+
+<style>
+  .testimonials {
+    padding-block: clamp(5rem, 10vw, 9rem);
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .testimonials {
+    text-align: center;
+  }
+
+  .testimonials h2 {
+    margin: 0 0 clamp(2.5rem, 5vw, 4rem);
+    font-size: var(--font-small);
+    font-weight: var(--weight-normal);
+    letter-spacing: 0;
+  }
+
+  /* Panels share one grid cell so the section height stays fixed to the longest quote. */
+  .testimonial-panels {
+    display: grid;
+  }
+
+  .testimonial-panel {
+    grid-area: 1 / 1;
+    margin: 0 auto;
+    max-width: 56rem;
+  }
+
+  .testimonial-panel[hidden] {
+    display: block;
+    visibility: hidden;
+  }
+
+  .testimonial-panel:not([hidden]) {
+    animation: testimonial-in 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  blockquote {
+    margin: 0;
+  }
+
+  blockquote p {
+    font-size: clamp(1.5rem, 2.6vw, 2.375rem);
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    text-wrap: pretty;
+  }
+
+  /* M PLUS Rounded draws curly quotes as narrow Japanese-style glyphs; use the system face for them. */
+  blockquote p::before,
+  blockquote p::after {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  blockquote p::before { content: '“'; }
+  blockquote p::after { content: '”'; }
+
+  figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem 0.75rem;
+    margin-top: 2rem;
+    font-size: var(--font-small);
+  }
+
+  .testimonial-org {
+    color: var(--color-text-muted);
+  }
+
+  .testimonials-foot {
+    display: flex;
+    justify-content: center;
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  }
+
+  @keyframes testimonial-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .testimonial-panel:not([hidden]) {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-testimonials]').forEach((root) => {
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-testimonial-panel]'));
+
+    root.addEventListener('stepper:change', (event) => {
+      const { index } = (event as CustomEvent<{ index: number }>).detail;
+      panels.forEach((panel, i) => { panel.hidden = i !== index; });
+    });
+  });
+</script>

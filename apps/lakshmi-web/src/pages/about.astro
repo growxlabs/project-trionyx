@@ -1,395 +1,206 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 import Container from '../components/Container.astro';
-import Section from '../components/Section.astro';
-import Button from '../components/Button.astro';
-import EnquiryCTA from '../components/EnquiryCTA.astro';
-import Header from '../components/Header.astro';
+import PageIntro from '../components/PageIntro.astro';
+import { getBrandMedia } from '../data/brandMedia';
+
+const brands = [
+  {
+    slug: 'aozoom',
+    name: 'Aozoom',
+    description: 'High-performance automotive LED lamps and optical projector modules engineered for clean beam cutoff, high optical clarity, and thermal reliability.',
+  },
+  {
+    slug: 'hogonn',
+    name: 'Hogonn',
+    description: 'Automotive surface protection films, sun control window films, and Shumoff acoustic damping materials engineered for cabin comfort and vehicle preservation.',
+  },
+].map((brand) => ({ ...brand, media: getBrandMedia(brand.slug) }));
+
+const principles = [
+  {
+    title: 'Verified technical specifications',
+    body: 'Every product in our catalogue is documented with accurate technical details and real photography — never fabricated metrics or stock claims.',
+  },
+  {
+    title: 'Direct workshop and trade support',
+    body: 'Responsive enquiry handling, technical documentation and product guidance for automotive installers and retail partners.',
+  },
+  {
+    title: 'Consistent distribution',
+    body: 'From the first product enquiry to order fulfilment, we prioritise dependable availability and straightforward trade communication.',
+  },
+];
 ---
 
 <SiteLayout
   title="About Us"
   description="Lakshmi Distributions provides automotive lighting, surface protection films, and acoustic materials to workshops, retailers, and automotive professionals."
 >
-  <div slot="header" class="about-overlay-header"><Header dark /></div>
-
-  <section class="about-hero-banner" aria-labelledby="page-title">
-    <img
-      src="/images/about/about-hero-technician.jpg"
-      alt="Automotive surface protection film installation and workshop detailing"
-      class="about-banner-img"
-      width="1920"
-      height="1080"
-      loading="eager"
-      fetchpriority="high"
+  <Container>
+    <PageIntro
+      kicker="About Lakshmi Distributions"
+      title="Reliable components. Transparent specifications."
+      lead="We distribute automotive lighting, surface protection films and acoustic solutions to retailers, workshops and installers across India. Our catalogue is built around dependable performance, so the people who fit our products can recommend them with confidence."
     />
-    <Container>
-      <div class="about-hero-stack">
-        <h1 id="page-title" class="page-title">About Us</h1>
-      </div>
-    </Container>
-  </section>
 
-  <Section labelledBy="overview-title" class="about-overview-section">
-    <Container>
-      <div class="overview-grid">
-        <div class="overview-imagery">
-          <div class="overview-image-primary-wrap">
-            <img
-              src="/images/about/about-primary.jpg"
-              alt="Automotive LED matrix optical module"
-              class="overview-img"
-              loading="lazy"
-            />
-          </div>
-          <div class="overview-image-secondary-wrap">
-            <img
-              src="/images/about/about-secondary.jpg"
-              alt="Automotive projector assembly and heatsink component"
-              class="overview-img"
-              loading="lazy"
-            />
-          </div>
+    <figure class="about-banner">
+      <img
+        src="/images/hero-built-to-preserve.jpg"
+        alt="A classic yellow sports car parked in a sunlit restoration workshop"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </figure>
+
+    <section class="about-section" aria-labelledby="brands-title">
+      <div class="section-grid">
+        <h2 id="brands-title" class="kicker">The brands we carry</h2>
+        <div class="brand-rows">
+          {brands.map((brand) => (
+            <article class="brand-row">
+              <div class="brand-row-copy">
+                <h3>{brand.name}</h3>
+                <p>{brand.description}</p>
+                <a class="text-link" href={`/brands/${brand.slug}`}>About {brand.name} <span aria-hidden="true">→</span></a>
+              </div>
+              {brand.media && (
+                <div class="brand-row-media">
+                  <img src={brand.media.image.src} alt={brand.media.image.alt} loading="lazy" />
+                </div>
+              )}
+            </article>
+          ))}
         </div>
-        <div class="overview-content">
-          <h2 id="overview-title" class="section-title">Reliable components. Transparent specifications.</h2>
-          <p class="body-text">
-            We focus on curated automotive product lines with verified technical standards. Our catalogue is built around dependable performance, allowing automotive workshops and retailers to recommend and install solutions with confidence.
-          </p>
-          <div class="brand-focus-list">
-            <div class="brand-focus-item">
-              <h3 class="brand-focus-name">Aozoom</h3>
-              <p class="brand-focus-desc">
-                High-performance automotive LED lamps and optical projector modules engineered for clean beam cutoff, high optical clarity, and thermal reliability.
-              </p>
+      </div>
+    </section>
+
+    <section class="about-section" aria-labelledby="principles-title">
+      <div class="section-grid">
+        <h2 id="principles-title" class="kicker">What trade partners rely on</h2>
+        <div class="principles">
+          {principles.map((principle) => (
+            <div class="principle">
+              <h3>{principle.title}</h3>
+              <p>{principle.body}</p>
             </div>
-            <div class="brand-focus-item">
-              <h3 class="brand-focus-name">Hogonn</h3>
-              <p class="brand-focus-desc">
-                Automotive surface protection films, Sun Control Window Films, and Shumoff acoustic damping materials engineered for cabin comfort and vehicle preservation.
-              </p>
-            </div>
-          </div>
-          <div class="overview-actions">
-            <Button href="/products">Browse Catalogue</Button>
-            <Button href="/contact" variant="secondary">Contact Distribution</Button>
-          </div>
+          ))}
         </div>
       </div>
-    </Container>
-  </Section>
-
-  <Section labelledBy="principles-title" class="principles-section">
-    <Container>
-      <div class="principles-header">
-        <p class="eyebrow">DISTRIBUTION STANDARDS</p>
-        <h2 id="principles-title" class="section-title">What trade partners rely on</h2>
-      </div>
-      <div class="principles-grid">
-        <div class="principle-card">
-          <div class="principle-meta">
-            <span class="principle-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 15l3 3 5-6"/></svg>
-            </span>
-            <span class="principle-num">01</span>
-          </div>
-          <h3 class="principle-heading">Verified Technical Specifications</h3>
-          <p class="principle-body">
-            Every product in our catalogue is documented with accurate technical details and real photography—never fabricated metrics or stock claims.
-          </p>
-        </div>
-        <div class="principle-card">
-          <div class="principle-meta">
-            <span class="principle-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14v-3a9 9 0 0 1 18 0v7a4 4 0 0 1-4 4h-3"/><rect x="3" y="11" width="4" height="7" rx="2"/><rect x="17" y="11" width="4" height="7" rx="2"/></svg>
-            </span>
-            <span class="principle-num">02</span>
-          </div>
-          <h3 class="principle-heading">Direct Workshop & Trade Support</h3>
-          <p class="principle-body">
-            We provide responsive enquiry handling, technical documentation, and product guidance for automotive installers and retail partners.
-          </p>
-        </div>
-        <div class="principle-card">
-          <div class="principle-meta">
-            <span class="principle-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17H1V4h13v13H7M14 8h4l4 5v4h-3M14 17h1M14 13h8"/><circle cx="5" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
-            </span>
-            <span class="principle-num">03</span>
-          </div>
-          <h3 class="principle-heading">Consistent Distribution</h3>
-          <p class="principle-body">
-            From initial product enquiries to order fulfilment, we prioritize dependable product availability and straightforward trade communication.
-          </p>
-        </div>
-      </div>
-    </Container>
-  </Section>
-
-  <EnquiryCTA />
+    </section>
+  </Container>
 </SiteLayout>
 
 <style>
-  .eyebrow {
-    font-size: var(--font-label);
-    font-weight: var(--weight-strong);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--color-primary);
-    margin-bottom: var(--space-2);
-  }
-
-  .about-overlay-header { position: absolute; inset: 0 0 auto; z-index: 5; }
-  .about-hero-banner {
-    position: relative;
-    isolation: isolate;
-    height: 400px;
-    min-height: 400px;
-    max-height: 400px;
-    padding-top: clamp(4.5rem, 8vh, 5.5rem);
-    padding-bottom: 2rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  .about-banner {
+    margin: 0;
+    aspect-ratio: 21 / 9;
     overflow: hidden;
-    background: #0B0D0F;
-  }
-  .about-banner-img {
-    position: absolute;
-    inset: 0;
-    z-index: -2;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 35%;
-  }
-  .about-hero-banner::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: rgba(0, 0, 0, 0.65);
-  }
-  .about-hero-stack { width: 100%; max-width: 56rem; margin-inline: auto; text-align: center; }
-  .page-title { margin: 0; font-size: clamp(2.25rem, 3.5vw, 3.25rem); line-height: 1.15; letter-spacing: -.025em; color: #fff; text-wrap: balance; }
-
-  .about-overview-section {
-    border-top: var(--border-width) solid var(--color-border);
-    padding-block: clamp(3.5rem, 6vw, 6rem);
-  }
-
-  .overview-grid {
-    display: grid;
-    grid-template-columns: 1.1fr 1fr;
-    gap: clamp(3rem, 5vw, 5.5rem);
-    align-items: center;
-  }
-
-  .overview-imagery {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    grid-template-rows: repeat(12, 1fr);
-    aspect-ratio: 4 / 3.2;
-    width: 100%;
-  }
-
-  .overview-image-primary-wrap {
-    grid-column: 1 / 10;
-    grid-row: 1 / 11;
-    position: relative;
-    z-index: 1;
-    overflow: hidden;
-    border-radius: var(--radius-md);
-    border: var(--border-width) solid var(--color-border);
+    border-radius: 16px;
     background: var(--color-surface);
   }
 
-  .overview-image-secondary-wrap {
-    grid-column: 7 / 13;
-    grid-row: 5 / 13;
-    position: relative;
-    z-index: 2;
-    overflow: hidden;
-    border-radius: var(--radius-md);
-    border: var(--border-width) solid var(--color-border);
-    background: var(--color-surface);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-  }
-
-  .overview-img {
+  .about-banner img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    display: block;
+    object-position: center 62%;
+    filter: brightness(0.82) contrast(1.06);
   }
 
-  .overview-content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
+  .about-section {
+    padding-top: clamp(5rem, 10vw, 9rem);
   }
 
-  .section-title {
-    font-size: clamp(1.625rem, 1.3rem + 1vw, 2.25rem);
-    line-height: 1.2;
-    letter-spacing: -0.015em;
-    text-wrap: balance;
-    max-width: 28ch;
+  .about-section:last-child {
+    padding-bottom: clamp(5rem, 10vw, 9rem);
   }
 
-  .body-text {
-    font-size: var(--font-body);
-    line-height: var(--line-body);
-    color: var(--color-text-muted);
-    max-width: 62ch;
-    text-wrap: pretty;
+  .section-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+    gap: 2rem clamp(2rem, 5vw, 5rem);
   }
 
-  .brand-focus-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-    margin-block: var(--space-2);
-  }
-
-  .brand-focus-item {
-    border-left: 2px solid var(--color-primary);
-    padding-left: var(--space-4);
-  }
-
-  .brand-focus-name {
-    font-size: 1.125rem;
-    font-weight: var(--weight-strong);
-    color: var(--color-text);
-    margin-bottom: var(--space-1);
-  }
-
-  .brand-focus-desc {
+  .section-grid > h2 {
+    margin: 0;
     font-size: var(--font-small);
-    line-height: 1.6;
+    letter-spacing: 0;
+  }
+
+  .brand-rows {
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .brand-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 2rem clamp(2rem, 4vw, 4rem);
+    align-items: center;
+    padding-block: clamp(2rem, 4vw, 3rem);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .brand-row h3 {
+    font-size: clamp(1.75rem, 2.8vw, 2.5rem);
+    letter-spacing: -0.025em;
+  }
+
+  .brand-row p {
+    margin-block: 1rem 0.75rem;
+    max-width: 44ch;
     color: var(--color-text-muted);
-    max-width: 60ch;
-    text-wrap: pretty;
   }
 
-  .overview-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    margin-top: var(--space-2);
-  }
-
-  .principles-section {
-    border-top: var(--border-width) solid var(--color-border);
-    padding-block: clamp(3.5rem, 6vw, 6rem);
+  .brand-row-media {
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    border-radius: 16px;
     background: var(--color-surface);
   }
 
-  .principles-header {
-    margin-bottom: clamp(2rem, 4vw, 3.5rem);
+  .brand-row-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
-  .principles-grid {
+  .principles {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-6);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2.5rem clamp(1.5rem, 3vw, 2.5rem);
   }
 
-  .principle-card {
-    background: var(--color-background);
-    border: var(--border-width) solid var(--color-border);
-    border-radius: var(--radius-md);
-    padding: var(--space-6);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-    transition: border-color 180ms ease, box-shadow 180ms ease;
+  .principle {
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-hairline);
   }
 
-  .principle-meta {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    margin-bottom: var(--space-2);
-  }
-
-  .principle-icon {
-    display: grid;
-    place-items: center;
-    width: 3rem;
-    height: 3rem;
-    flex-shrink: 0;
-    color: var(--color-primary);
-    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
-    border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
-    border-radius: var(--radius-md);
-  }
-
-  .principle-icon svg {
-    width: 1.5rem;
-    height: 1.5rem;
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .principle-card:hover {
-      border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
-      box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .principle-card {
-      transition: none;
-    }
-  }
-
-  .principle-num {
-    font-size: var(--font-label);
-    font-weight: var(--weight-strong);
-    color: var(--color-primary);
-    letter-spacing: 0.1em;
-  }
-
-  .principle-heading {
-    font-size: 1.125rem;
-    font-weight: var(--weight-strong);
-    color: var(--color-text);
+  .principle h3 {
+    font-size: 1.25rem;
     line-height: 1.3;
-    text-wrap: balance;
   }
 
-  .principle-body {
-    font-size: var(--font-small);
-    line-height: 1.65;
+  .principle p {
+    margin-top: 0.75rem;
+    font-size: 0.9375rem;
     color: var(--color-text-muted);
-    max-width: 56ch;
-    text-wrap: pretty;
   }
 
-  @media (max-width: 63.999rem) {
-    .overview-grid {
+  @media (max-width: 64rem) {
+    .principles {
       grid-template-columns: 1fr;
-      gap: var(--space-7);
-    }
-    .overview-imagery {
-      max-width: 32rem;
-      margin-inline: auto;
-    }
-    .principles-grid {
-      grid-template-columns: 1fr;
-      gap: var(--space-4);
     }
   }
 
-  @media (max-width: 47.999rem) {
-    .about-hero-banner { height: 280px; min-height: 280px; max-height: 280px; padding-block: 5.5rem 2rem; }
-    .overview-imagery {
-      max-width: 24rem;
+  @media (max-width: 48rem) {
+    .about-banner {
+      aspect-ratio: 4 / 3;
     }
-    .overview-actions {
-      flex-direction: column;
+
+    .section-grid,
+    .brand-row {
+      grid-template-columns: 1fr;
     }
   }
 </style>

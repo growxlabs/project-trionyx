@@ -1,4 +1,6 @@
 ---
+import Container from './Container.astro';
+
 interface BrandLogo {
   name: string;
   src: string;
@@ -6,234 +8,89 @@ interface BrandLogo {
 }
 
 const BRANDS: BrandLogo[] = [
-  { name: 'Trionyx', src: '/images/brands/trionyx.png', class: 'logo-trionyx' },
   { name: 'Aozoom', src: '/images/brands/aozoom.png', class: 'logo-aozoom' },
   { name: 'Hogonn', src: '/images/brands/hoggon.png', class: 'logo-hogonn' },
+  { name: 'Trionyx', src: '/images/brands/trionyx.png', class: 'logo-trionyx' },
 ];
 ---
 
-<section class="brand-marquee" aria-label="Brands we work with">
-  <div class="marquee-header">
-    <span class="marquee-label">BRANDS WE WORK WITH</span>
-  </div>
-
-  <div class="marquee-viewport">
-    <div class="marquee-track">
-      <div class="marquee-set">
+<section class="brand-strip" aria-labelledby="brand-strip-title">
+  <Container>
+    <div class="brand-strip-inner">
+      <h2 id="brand-strip-title" class="brand-strip-label">Brands we distribute</h2>
+      <ul class="brand-list">
         {BRANDS.map((brand) => (
-          <div class="brand-item">
-            <img
-              src={brand.src}
-              alt={brand.name}
-              class={`brand-logo ${brand.class}`}
-              loading="lazy"
-              draggable="false"
-            />
-          </div>
+          <li>
+            <img src={brand.src} alt={brand.name} class={`brand-logo ${brand.class}`} loading="lazy" draggable="false" />
+          </li>
         ))}
-      </div>
-
-      <div class="marquee-set" aria-hidden="true">
-        {BRANDS.map((brand) => (
-          <div class="brand-item">
-            <img
-              src={brand.src}
-              alt=""
-              class={`brand-logo ${brand.class}`}
-              loading="lazy"
-              draggable="false"
-            />
-          </div>
-        ))}
-      </div>
+      </ul>
     </div>
-  </div>
+  </Container>
 </section>
 
 <style>
-  .brand-marquee {
-    position: relative;
-    background: #0B0D0E;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    padding: clamp(24px, 3vh, 28px) 0;
-    min-height: 130px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    user-select: none;
-    box-sizing: border-box;
+  .brand-strip {
+    border-block: 1px solid var(--color-hairline);
+    padding-block: clamp(1.75rem, 3vw, 2.25rem);
   }
 
-  .marquee-header {
+  .brand-strip-inner {
     display: flex;
     align-items: center;
-    justify-content: center;
-    margin-bottom: clamp(14px, 2vh, 18px);
+    justify-content: space-between;
+    gap: 2rem;
   }
 
-  .marquee-label {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.42);
-    font-family: inherit;
+  .brand-strip-label {
+    margin: 0;
+    font-size: var(--font-small);
+    font-weight: var(--weight-normal);
+    letter-spacing: 0;
+    color: var(--color-text-muted);
+    white-space: nowrap;
   }
 
-  .marquee-viewport {
-    width: 100%;
-    overflow: hidden;
-    position: relative;
+  .brand-list {
     display: flex;
     align-items: center;
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      black 7%,
-      black 93%,
-      transparent 100%
-    );
-    mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      black 7%,
-      black 93%,
-      transparent 100%
-    );
+    gap: clamp(2.5rem, 7vw, 6rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
 
-  .marquee-track {
-    display: flex;
-    width: max-content;
-    flex-shrink: 0;
-    will-change: transform;
-    animation: marquee-scroll 40s linear infinite;
-  }
-
-  .brand-marquee:hover .marquee-track {
-    animation-play-state: paused;
-  }
-
-  .marquee-set {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-    width: 110vw;
-    min-width: 110vw;
-    box-sizing: border-box;
-  }
-
-  .brand-item {
-    flex: 1 0 calc(110vw / 3);
-    width: calc(110vw / 3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    box-sizing: border-box;
-  }
-
+  /* Logos are rendered as a single bone tone so they sit quietly in the palette. */
   .brand-logo {
-    display: block;
     width: auto;
-    object-fit: contain;
-    filter: brightness(1);
-    opacity: 0.92;
-    transition: opacity 180ms ease;
+    filter: brightness(0) invert(0.92) sepia(0.12);
+    opacity: 0.62;
+    transition: opacity 250ms ease;
   }
 
-  .brand-marquee:hover .brand-logo {
-    opacity: 1;
+  .brand-logo:hover {
+    opacity: 0.95;
   }
 
-  .logo-trionyx {
-    height: 44px;
-    max-height: 46px;
-  }
+  .logo-aozoom { height: 26px; }
+  .logo-hogonn { height: 50px; }
+  .logo-trionyx { height: 40px; }
 
-  .logo-aozoom,
-  .logo-azoom {
-    height: 40px;
-    max-height: 42px;
-  }
-
-  .logo-hogonn,
-  .logo-hoggon {
-    height: 36px;
-    max-height: 38px;
-  }
-
-  @keyframes marquee-scroll {
-    from {
-      transform: translate3d(0, 0, 0);
-    }
-    to {
-      transform: translate3d(-50%, 0, 0);
-    }
-  }
-
-  @media (max-width: 768px) {
-    .brand-marquee {
-      padding: clamp(18px, 2.5vh, 22px) 0;
-      min-height: 105px;
+  @media (max-width: 48rem) {
+    .brand-strip-inner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.25rem;
     }
 
-    .marquee-header {
-      margin-bottom: 12px;
-    }
-
-    .marquee-label {
-      font-size: 10px;
-      letter-spacing: 0.14em;
-    }
-
-    .logo-trionyx {
-      height: 32px;
-      max-height: 34px;
-    }
-
-    .logo-aozoom,
-    .logo-azoom {
-      height: 28px;
-      max-height: 30px;
-    }
-
-    .logo-hogonn,
-    .logo-hoggon {
-      height: 25px;
-      max-height: 26px;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .marquee-viewport {
-      -webkit-mask-image: none;
-      mask-image: none;
-    }
-
-    .marquee-track {
-      animation: none;
+    .brand-list {
       width: 100%;
-      justify-content: center;
+      justify-content: space-between;
+      gap: 1.5rem;
     }
 
-    .marquee-set:last-child {
-      display: none;
-    }
-
-    .marquee-set {
-      width: 100%;
-      min-width: 0;
-      justify-content: center;
-      gap: 48px;
-    }
-
-    .brand-item {
-      flex: 0 0 auto;
-      width: auto;
-    }
+    .logo-aozoom { height: 16px; }
+    .logo-hogonn { height: 30px; }
+    .logo-trionyx { height: 26px; }
   }
 </style>
