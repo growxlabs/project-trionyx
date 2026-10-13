@@ -1,321 +1,154 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { TrionyxLogo } from '../ui/TrionyxLogo';
-import { NavLink } from '../navigation';
-import { Button } from '../ui/Button';
 import { ProductsMegaMenu } from './ProductsMegaMenu';
 import styles from './HeaderShell.module.css';
-import { MenuIcon, CloseIcon, ChevronDownIcon } from '../ui/Icons';
 
 export interface HeaderShellProps {
+  /** `overlay` sits transparently over a full-bleed hero until the page scrolls. */
   appearance?: 'default' | 'overlay';
 }
 
+const links = [
+  { href: '/installer-network', label: 'Installer Network' },
+  { href: '/warranty', label: 'Warranty' },
+  { href: '/#about', label: 'About' },
+];
+
+const productLinks = [
+  { href: '/products/ceramic-coating', label: 'Ceramic Coating' },
+  { href: '/products/graphene-coating', label: 'Graphene Coating' },
+  { href: '/products/borophene-coating', label: 'Borophene Coating' },
+];
+
 export const HeaderShell = ({ appearance = 'default' }: HeaderShellProps = {}) => {
+  const pathname = usePathname();
   const [isProductsOpen, setIsProductsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [mobileProductsOpen, setMobileProductsOpen] = useState(false);
-
   const productsButtonRef = useRef<HTMLButtonElement>(null);
   const headerRef = useRef<HTMLElement>(null);
-  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Forgiving hover interaction
-  const handleMouseEnter = () => {
-    if (closeTimeoutRef.current) {
-      clearTimeout(closeTimeoutRef.current);
-      closeTimeoutRef.current = null;
-    }
+  const isActive = (href: string) => href !== '/#about' && (pathname === href || pathname.startsWith(`${href}/`));
+  const closeAll = () => {
+    setIsProductsOpen(false);
+    setMobileMenuOpen(false);
+  };
+
+  // Forgiving hover so the pointer can travel from the trigger into the menu.
+  const openProducts = () => {
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
     setIsProductsOpen(true);
   };
-
-  const handleMouseLeave = () => {
-    closeTimeoutRef.current = setTimeout(() => {
-      setIsProductsOpen(false);
-    }, 220); // Safe transition buffer
+  const scheduleCloseProducts = () => {
+    closeTimeoutRef.current = setTimeout(() => setIsProductsOpen(false), 220);
   };
 
-  const toggleProducts = () => {
-    setIsProductsOpen((prev) => !prev);
-  };
-
-  // Keyboard navigation & outside click handlers
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isProductsOpen) {
-        setIsProductsOpen(false);
-        productsButtonRef.current?.focus();
-      }
+    if (!isProductsOpen && !mobileMenuOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      if (isProductsOpen) productsButtonRef.current?.focus();
+      closeAll();
     };
-
-    const handleClickOutside = (e: MouseEvent) => {
-      if (headerRef.current && !headerRef.current.contains(e.target as Node)) {
-        setIsProductsOpen(false);
-      }
+    const onPointerDown = (event: MouseEvent) => {
+      if (headerRef.current && !headerRef.current.contains(event.target as Node)) closeAll();
     };
-
-    if (isProductsOpen) {
-      document.addEventListener('keydown', handleKeyDown);
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('mousedown', onPointerDown);
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('mousedown', onPointerDown);
     };
-  }, [isProductsOpen]);
+  }, [isProductsOpen, mobileMenuOpen]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 15);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setIsScrolled(window.scrollY > 24);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  const transparent = appearance === 'overlay' && !isScrolled && !mobileMenuOpen;
+
   return (
-    <>
-      <header
-        ref={headerRef}
-        className={
-          appearance === 'overlay'
-            ? `sticky top-0 z-50 w-full transition-all duration-200 ${styles.overlay} ${
-                isScrolled ? styles.overlayScrolled : ''
-              }`
-            : `sticky top-0 z-50 w-full transition-colors duration-200 ${
-                isScrolled
-                  ? 'bg-[#FFFFEB]/95 backdrop-blur-sm border-b border-[rgba(23,23,20,0.07)] shadow-xs'
-                  : 'bg-transparent md:bg-[#FFFFEB]/90 lg:bg-transparent border-b-0 md:border-b md:border-[rgba(23,23,20,0.07)]'
-              }`
-        }
-      >
-        <div className="w-full px-5 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between">
-          {/* Official Brand Logo */}
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="inline-flex items-center group py-1"
-              aria-label="Trionyx Home"
-              onClick={() => {
-                setIsProductsOpen(false);
-                setMobileMenuOpen(false);
-              }}
-            >
-              <TrionyxLogo variant={appearance === 'overlay' ? 'light' : 'dark'} size="md" className="h-8 sm:h-10 lg:h-11" />
-            </Link>
-          </div>
+    <header
+      ref={headerRef}
+      className={`${styles.header} ${appearance === 'overlay' ? styles.overlay : ''} ${transparent ? styles.transparent : ''}`}
+    >
+      <div className={`site-container ${styles.inner}`}>
+        <Link href="/" className={styles.brand} aria-label="Trionyx home" onClick={closeAll}>
+          <TrionyxLogo variant="light" size="md" className={styles.logo} />
+        </Link>
 
-          {/* 
-            MAIN DESKTOP NAVIGATION
-            - Products (Mega Menu Trigger)
-            - Installer Network
-            - About
-          */}
-          <nav className="hidden md:flex items-center gap-1.5" aria-label="Main Navigation">
-            {/* Products Interaction Trigger */}
-            <div
-              className="relative inline-flex items-center"
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-            >
-              <button
-                ref={productsButtonRef}
-                type="button"
-                onClick={toggleProducts}
-                aria-expanded={isProductsOpen}
-                aria-haspopup="true"
-                aria-controls="products-mega-menu"
-                className={`text-[14px] font-medium transition-colors duration-150 inline-flex items-center gap-1.5 py-2 px-3 rounded-[3px] cursor-pointer select-none outline-none focus-visible:ring-2 focus-visible:ring-[#F26522] ${
-                  isProductsOpen
-                    ? 'rounded-[1px] text-[#F26522] font-semibold bg-transparent'
-                    : 'text-[#171714] hover:text-[#171714] hover:bg-[#EFECE3]'
-                }`}
-              >
-                <span>Products</span>
-                <ChevronDownIcon
-                  size={14}
-                  color={isProductsOpen ? 'brandOrange' : 'default'}
-                  className={`transition-transform duration-200 ${
-                    isProductsOpen ? 'rotate-180 text-[#F26522]' : ''
-                  }`}
-                />
-              </button>
-            </div>
-
-            <NavLink href="/installer-network">Installer Network</NavLink>
-            <NavLink href="/warranty">Warranty</NavLink>
-            <NavLink href="/about">About</NavLink>
-          </nav>
-
-          {/* 
-            RIGHT UTILITY & ACTIONS CLUSTER (DESKTOP)
-            - Contact: Restrained neutral secondary action
-            - Dealer Access: Visually distinct primary utility action (concentrated orange)
-          */}
-          <div className="hidden md:flex items-center gap-3">
-            <Link href="/contact" tabIndex={-1}>
-              <Button variant="outline" size="sm" className="px-5">
-                Contact
-              </Button>
-            </Link>
-            <Link href="/dealer-access" tabIndex={-1}>
-              <Button
-                variant="primary"
-                size="sm"
-                className="px-5"
-              >
-                Distributor
-              </Button>
-            </Link>
-          </div>
-
-          {/* Mobile Menu Button — Clean 48px Square Button */}
-          <div className="flex md:hidden items-center">
+        <nav className={styles.desktopNav} aria-label="Main navigation">
+          <div className={styles.productsTrigger} onMouseEnter={openProducts} onMouseLeave={scheduleCloseProducts}>
             <button
+              ref={productsButtonRef}
               type="button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label={mobileMenuOpen ? 'Close Menu' : 'Open Menu'}
-              aria-expanded={mobileMenuOpen}
-              className="w-12 h-12 rounded-[6px] border border-[rgba(23,23,20,0.12)] bg-[#FFFFEB] active:bg-[#EFECE3] flex items-center justify-center text-[#171714] hover:border-[rgba(23,23,20,0.22)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26522]"
+              className={`${styles.navLink} ${isProductsOpen || pathname.startsWith('/products') ? styles.active : ''}`}
+              aria-expanded={isProductsOpen}
+              aria-haspopup="true"
+              aria-controls="products-mega-menu"
+              onClick={() => setIsProductsOpen((open) => !open)}
             >
-              {mobileMenuOpen ? <CloseIcon size={20} /> : <MenuIcon size={20} />}
+              Products
+              <svg className={`${styles.chevron} ${isProductsOpen ? styles.chevronOpen : ''}`} viewBox="0 0 12 12" width="10" height="10" aria-hidden="true">
+                <path d="M3 4.5 6 7.5l3-3" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </button>
+            <ProductsMegaMenu
+              isOpen={isProductsOpen}
+              links={productLinks}
+              onClose={() => setIsProductsOpen(false)}
+              onMouseEnter={openProducts}
+              onMouseLeave={scheduleCloseProducts}
+            />
           </div>
+          {links.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`${styles.navLink} ${isActive(link.href) ? styles.active : ''}`}
+              aria-current={isActive(link.href) ? 'page' : undefined}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        <button
+          type="button"
+          className={styles.menuToggle}
+          aria-expanded={mobileMenuOpen}
+          aria-controls="mobile-menu"
+          onClick={() => setMobileMenuOpen((open) => !open)}
+        >
+          {mobileMenuOpen ? 'Close' : 'Menu'}
+        </button>
+      </div>
+
+      {mobileMenuOpen && (
+        <div id="mobile-menu" className={styles.mobileMenu}>
+          <nav className="site-container" aria-label="Mobile navigation">
+            <p className={styles.mobileGroupLabel}>Products</p>
+            {productLinks.map((link) => (
+              <Link key={link.href} href={link.href} className={`${styles.mobileLink} ${styles.mobileSubLink}`} onClick={closeAll}>
+                {link.label}
+              </Link>
+            ))}
+            {links.map((link) => (
+              <Link key={link.href} href={link.href} className={styles.mobileLink} onClick={closeAll}>
+                {link.label}
+              </Link>
+            ))}
+          </nav>
         </div>
-
-        {/* 
-          DESKTOP PRODUCTS MEGA MENU PANEL
-          Attaches directly underneath the header using Elevated Surface (#FFFFEB)
-        */}
-        <ProductsMegaMenu
-          isOpen={isProductsOpen}
-          onClose={() => setIsProductsOpen(false)}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        />
-
-        {/* MOBILE EXPANDABLE MENU */}
-        {mobileMenuOpen && (
-          <div className="md:hidden border-t border-[rgba(23,23,20,0.07)] bg-[#FFFFEB] px-5 py-5 shadow-[0_12px_24px_rgba(23,23,20,0.04)] animate-in fade-in slide-in-from-top-2 duration-150">
-            <div className="flex flex-col space-y-1">
-              {/* Products Expandable Group */}
-              <div>
-                <button
-                  type="button"
-                  onClick={() => setMobileProductsOpen(!mobileProductsOpen)}
-                  className="w-full flex items-center justify-between py-3 px-3.5 rounded-[4px] text-[15.5px] font-semibold text-[#171714] hover:bg-[#EFECE3] transition-colors"
-                >
-                  <span>Products</span>
-                  <ChevronDownIcon
-                    size={16}
-                    color={mobileProductsOpen ? 'brandOrange' : 'default'}
-                    className={`transition-transform duration-200 ${
-                      mobileProductsOpen ? 'rotate-180 text-[#F26522]' : 'text-[#171714]'
-                    }`}
-                  />
-                </button>
-
-                {mobileProductsOpen && (
-                  <div className="pl-4 pr-2 py-2 space-y-1 border-l-2 border-[#F26522]/40 ml-4 mt-1 mb-2">
-                    <Link
-                      href="/products/ceramic-coating"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block py-2 text-[14px] font-medium text-[#171714] hover:text-[#F26522] transition-colors"
-                    >
-                      Ceramic Coating
-                    </Link>
-                    <Link
-                      href="/products/graphene-coating"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block py-2 text-[14px] font-medium text-[#171714] hover:text-[#F26522] transition-colors"
-                    >
-                      Graphene Coating
-                    </Link>
-                    <Link
-                      href="/products/borophene-coating"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block py-2 text-[14px] font-medium text-[#171714] hover:text-[#F26522] transition-colors"
-                    >
-                      Borophene Coating
-                    </Link>
-                    <Link
-                      href="/products"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block py-1.5 text-[12px] font-mono font-semibold uppercase text-[#F26522] mt-1"
-                    >
-                      All Products →
-                    </Link>
-                  </div>
-                )}
-              </div>
-
-              <Link
-                href="/installer-network"
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-3 px-3.5 rounded-[4px] text-[15.5px] font-medium text-[#171714] hover:bg-[#EFECE3] transition-colors"
-              >
-                Installer Network
-              </Link>
-
-              <Link
-                href="/warranty"
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-3 px-3.5 rounded-[4px] text-[15.5px] font-medium text-[#171714] hover:bg-[#EFECE3] transition-colors"
-              >
-                Warranty
-              </Link>
-
-              <Link
-                href="/#about"
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-3 px-3.5 rounded-[4px] text-[15.5px] font-medium text-[#171714] hover:bg-[#EFECE3] transition-colors"
-              >
-                About
-              </Link>
-
-              <Link
-                href="/contact"
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-3 px-3.5 rounded-[4px] text-[15.5px] font-medium text-[#171714] hover:bg-[#EFECE3] transition-colors"
-              >
-                Contact
-              </Link>
-            </div>
-
-            {/* Dealer Access visually emphasized */}
-            <div className="mt-5 pt-4 border-t border-[rgba(23,23,20,0.07)]">
-              <Link href="/dealer-access" onClick={() => setMobileMenuOpen(false)} className="w-full block">
-                <Button
-                  variant="primary"
-                  size="md"
-                  fullWidth
-                  className="h-11 text-[15px] font-semibold tracking-[-0.01em]"
-                >
-                  Distributor
-                </Button>
-              </Link>
-            </div>
-          </div>
-        )}
-      </header>
-
-      {/* The mobile menu keeps its backdrop; the desktop dropdown remains part of the header surface. */}
-      {(isProductsOpen || mobileMenuOpen) && (
-        <div
-          className={`fixed inset-0 top-16 md:top-20 transition-opacity duration-200 z-40 pointer-events-auto ${
-            mobileMenuOpen ? 'bg-[#171714]/[0.05] backdrop-blur-[2px]' : 'bg-transparent'
-          }`}
-          onClick={() => {
-            setIsProductsOpen(false);
-            setMobileMenuOpen(false);
-          }}
-          aria-hidden="true"
-        />
       )}
-    </>
+    </header>
   );
 };

@@ -1,0 +1,110 @@
+.stepper {
+  --dot: 6px;
+  --dot-active: 32px;
+  --gap: 4px;
+  --ease: cubic-bezier(0.215, 0.61, 0.355, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  background: rgba(236, 231, 222, 0.07);
+  border: 1px solid var(--color-hairline);
+  border-radius: 999px;
+}
+
+.autoplay {
+  padding-right: 0.25rem;
+}
+
+.track {
+  display: flex;
+  align-items: center;
+}
+
+.step {
+  display: grid;
+  place-items: center;
+  padding: 12px var(--gap);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.dot {
+  position: relative;
+  display: block;
+  width: var(--dot);
+  height: var(--dot);
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(236, 231, 222, 0.22);
+  transition: width 500ms var(--ease), background-color 500ms var(--ease);
+}
+
+.step:hover .dot {
+  background: rgba(236, 231, 222, 0.45);
+}
+
+.active .dot {
+  width: var(--dot-active);
+  background: rgba(236, 231, 222, 0.32);
+}
+
+/* Without a running fill the active pill is simply solid. */
+.paused .active .dot,
+.stepper:not(.autoplay) .active .dot {
+  background: var(--color-text);
+}
+
+.fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--color-text);
+  transform-origin: left;
+  animation: fill var(--fill-duration) linear forwards;
+}
+
+@keyframes fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.step:focus-visible {
+  outline: none;
+}
+
+.step:focus-visible .dot {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+.toggle {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: rgba(236, 231, 222, 0.08);
+  border: 0;
+  border-radius: 50%;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color 200ms ease, background-color 200ms ease;
+}
+
+.toggle:hover {
+  color: var(--color-text);
+  background: rgba(236, 231, 222, 0.14);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dot {
+    transition-duration: 0ms;
+  }
+
+  .fill {
+    animation: none;
+    transform: scaleX(1);
+  }
+}

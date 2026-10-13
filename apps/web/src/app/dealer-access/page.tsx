@@ -33,7 +33,7 @@ export default function DealerAccessPage() {
             <Link href="/" className={styles.brandLink} aria-label="Back to Trionyx home">
               <Image
                 className={styles.logo}
-                src="/brand/trionyx-logo-dark.png"
+                src="/brand/trionyx-logo-light.png"
                 alt="Trionyx — Always Exceed Expectations"
                 width={2092}
                 height={752}
@@ -44,16 +44,12 @@ export default function DealerAccessPage() {
               <span aria-hidden="true">←</span> Back to site
             </Link>
           </div>
-          <p className={styles.eyebrow}>DISTRIBUTOR ACCESS</p>
           <h1 id="dealer-access-title" className={styles.title}>
             Distributor Access
           </h1>
-          <p className={styles.intro}>The distributor workspace is currently unavailable from this site.</p>
           <section className={styles.formCard} aria-label="Distributor access information">
-            <p>For account access, please contact Trionyx headquarters.</p>
-            <Link href="/contact" className={styles.contactLink}>Contact Trionyx →</Link>
+            <Link href="/contact" className="pill-button">Contact Trionyx</Link>
           </section>
-          <p className={styles.accessNote}>FOR AUTHORISED TRIONYX DISTRIBUTORS <span>·</span> INDIA</p>
         </div>
       </div>
       <div className={styles.visual}>
@@ -65,10 +61,7 @@ export default function DealerAccessPage() {
           className={styles.coatingImage}
           priority
         />
-        <div className={styles.visualCaption}>
-          <span>01 / SURFACE PROTECTION</span>
-          <span>ALWAYS EXCEED EXPECTATIONS</span>
-        </div>
+        <div className={styles.visualCaption}>Always exceed expectations.</div>
       </div>
     </main>
   );

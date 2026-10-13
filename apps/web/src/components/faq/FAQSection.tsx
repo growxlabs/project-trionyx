@@ -1,10 +1,5 @@
-'use client';
-
-import { useState } from 'react';
 import Link from 'next/link';
-import { SectionFrame } from '@/components/frame';
 import styles from './FAQSection.module.css';
-import { SectionEyebrow } from '../ui/SectionEyebrow';
 
 const questions = [
   {
@@ -58,54 +53,28 @@ const questions = [
 ];
 
 export function FAQSection() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-
   return (
-    <SectionFrame id="faq" className={styles.section} hasBottomBorder={false} aria-labelledby="faq-heading">
-      <div className={styles.layout}>
-        <header className={styles.heading}>
-          <SectionEyebrow>FAQ</SectionEyebrow>
-          <h2 id="faq-heading">Questions about Trionyx.</h2>
-        </header>
+    <section id="faq" className={styles.section} aria-labelledby="faq-heading">
+      <div className={`site-container ${styles.layout}`}>
+        <div className={styles.intro}>
+          <h2 id="faq-heading">Questions, answered</h2>
+          <Link className="text-link" href="/contact">
+            Ask a question <span aria-hidden="true">→</span>
+          </Link>
+        </div>
 
         <div className={styles.list}>
-          {questions.map(({ question, answer }, index) => {
-            const isOpen = openIndex === index;
-            const questionId = `faq-question-${index + 1}`;
-            const answerId = `faq-answer-${index + 1}`;
-
-            return (
-              <div className={styles.item} key={question}>
-                <h3 className={styles.questionHeading}>
-                  <button
-                    className={styles.question}
-                    id={questionId}
-                    type="button"
-                    aria-expanded={isOpen}
-                    aria-controls={answerId}
-                    onClick={() => setOpenIndex(isOpen ? null : index)}
-                  >
-                    <span>{question}</span>
-                    <span className={`${styles.icon} ${isOpen ? styles.iconOpen : ''}`} aria-hidden="true">{isOpen ? '−' : '+'}</span>
-                  </button>
-                </h3>
-                <div
-                  className={`${styles.answerMotion} ${isOpen ? styles.answerOpen : ''}`}
-                  id={answerId}
-                  role="region"
-                  aria-labelledby={questionId}
-                  aria-hidden={!isOpen}
-                  inert={!isOpen}
-                >
-                  <div className={styles.answerClip}>
-                    <p className={styles.answer}>{answer}</p>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          {questions.map(({ question, answer }) => (
+            <details key={question} className={styles.item} name="faq">
+              <summary>
+                <span>{question}</span>
+                <span className={styles.icon} aria-hidden="true" />
+              </summary>
+              <p className={styles.answer}>{answer}</p>
+            </details>
+          ))}
         </div>
       </div>
-    </SectionFrame>
+    </section>
   );
 }

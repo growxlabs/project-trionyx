@@ -37,7 +37,7 @@ const cookieSections: LegalSection[] = [
           Essential cookies are strictly necessary for the technical operation, load distribution, and navigation of our public
           website. Without these cookies, basic platform capabilities cannot function reliably.
         </p>
-        <ul className="list-disc pl-5 space-y-2 text-[#171714]/85">
+        <ul className="list-disc pl-5 space-y-2 text-[var(--color-text-muted)]">
           <li>
             <strong>Session &amp; Routing Integrity:</strong> Ephemeral server tokens that maintain routing state and prevent
             cross-site request forgery during form submissions.
@@ -47,7 +47,7 @@ const cookieSections: LegalSection[] = [
             configurations across visits.
           </li>
         </ul>
-        <p className="pt-1 text-[13.5px] text-[#68665F]">
+        <p className="pt-1 text-[13.5px] text-[var(--color-text-faint)]">
           Because essential cookies are technically imperative to deliver requested web services, they do not require consent
           under standard international data protection regulations.
         </p>
@@ -64,12 +64,12 @@ const cookieSections: LegalSection[] = [
           For authorized detailing studios and operators accessing our restricted Dealer Portal, we deploy specialized security
           cookies:
         </p>
-        <div className="bg-[#FFFFEB] border border-[#171714]/12 rounded-[6px] p-4 text-[13px] space-y-2">
+        <div className="bg-[var(--color-surface)] border border-[var(--color-hairline)] rounded-xl p-4 text-[13px] space-y-2">
           <div className="flex items-center justify-between font-mono text-[12px] font-bold text-[#F26522]">
             <span>trionyx_dealer_session</span>
-            <span className="text-[#68665F] font-normal font-sans">HTTP-Only / Secure / SameSite</span>
+            <span className="text-[var(--color-text-faint)] font-normal font-sans">HTTP-Only / Secure / SameSite</span>
           </div>
-          <p className="text-[#171714]/80 m-0">
+          <p className="text-[var(--color-text-muted)] m-0">
             Cryptographically signed session cookie maintaining authenticated state for certified detailing studio operators.
             This cookie prevents unauthorized credential spoofing and expires automatically upon session termination or manual
             logout.
@@ -139,7 +139,7 @@ const cookieSections: LegalSection[] = [
         <p>
           You have the right and technical ability to manage or block cookies through your web browser preferences:
         </p>
-        <ul className="list-disc pl-5 space-y-2 text-[#171714]/85">
+        <ul className="list-disc pl-5 space-y-2 text-[var(--color-text-muted)]">
           <li>
             <strong>Google Chrome:</strong> Settings &rarr; Privacy and security &rarr; Third-party cookies.
           </li>
@@ -153,7 +153,7 @@ const cookieSections: LegalSection[] = [
             <strong>Microsoft Edge:</strong> Settings &rarr; Cookies and site permissions &rarr; Manage and delete cookies.
           </li>
         </ul>
-        <p className="pt-1 text-[13.5px] text-[#68665F]">
+        <p className="pt-1 text-[13.5px] text-[var(--color-text-faint)]">
           Note: If you disable all cookies in your browser settings, public browsing remains functional, but authenticated
           Dealer Portal sessions cannot be sustained.
         </p>
@@ -184,47 +184,47 @@ const cookieSections: LegalSection[] = [
         </p>
 
         {/* Restrained Information Block */}
-        <div className="bg-[#FFFFEB] border border-[#171714]/12 rounded-[6px] p-5 sm:p-6 mt-4 max-w-lg space-y-3 text-[14px]">
+        <div className="bg-[var(--color-surface)] border border-[var(--color-hairline)] rounded-xl p-5 sm:p-6 mt-4 max-w-lg space-y-3 text-[14px]">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#68665F] block">
+            <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--color-text-faint)] block">
               Corporate Entity
             </span>
-            <span className="font-semibold text-[#171714] text-[15px] block mt-0.5">
+            <span className="font-semibold text-[var(--color-text)] text-[15px] block mt-0.5">
               Trionyx India Private Limited
             </span>
           </div>
 
-          <div className="pt-2 border-t border-[#171714]/08 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="pt-2 border-t border-[var(--color-hairline)] grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#68665F] block">
+              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--color-text-faint)] block">
                 Official Email
               </span>
               <a
                 href={companyContact.emailHref}
-                className="font-medium text-[#171714] hover:text-[#F26522] transition-colors block mt-0.5"
+                className="font-medium text-[var(--color-text)] hover:text-[#F26522] transition-colors block mt-0.5"
               >
                 {companyContact.email}
               </a>
             </div>
 
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#68665F] block">
+              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--color-text-faint)] block">
                 Telephone
               </span>
               <a
                 href={companyContact.phoneHref}
-                className="font-medium text-[#171714] hover:text-[#F26522] transition-colors block mt-0.5"
+                className="font-medium text-[var(--color-text)] hover:text-[#F26522] transition-colors block mt-0.5"
               >
                 {companyContact.phone}
               </a>
             </div>
           </div>
 
-          <div className="pt-2 border-t border-[#171714]/08">
-            <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#68665F] block">
+          <div className="pt-2 border-t border-[var(--color-hairline)]">
+            <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--color-text-faint)] block">
               Operating Region
             </span>
-            <p className="text-[#171714]/80 m-0 mt-0.5 text-[13px] leading-relaxed">
+            <p className="text-[var(--color-text-muted)] m-0 mt-0.5 text-[13px] leading-relaxed">
               {companyContact.location.city}, {companyContact.location.region}, {companyContact.location.country}
             </p>
           </div>
@@ -237,7 +237,6 @@ const cookieSections: LegalSection[] = [
 export default function CookiePolicyPage() {
   return (
     <LegalPageShell
-      eyebrow="LEGAL"
       title="Cookie Policy"
       supportingLine="How Trionyx uses cookies and similar technologies across its digital services."
       lastUpdated="September 27, 2026"

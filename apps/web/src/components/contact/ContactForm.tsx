@@ -104,21 +104,21 @@ function StyledSelect({
         aria-controls={`${id}-listbox`}
         onClick={() => setOpen((prev) => !prev)}
         onKeyDown={handleKeyDown}
-        className={`w-full h-11 px-3.5 pr-10 bg-[#FFFFEB] border rounded-[6px] text-[14px] text-left transition-colors cursor-pointer flex items-center focus:outline-none ${
+        className={`w-full h-[52px] px-[1.125rem] pr-11 border rounded-xl text-[0.9375rem] text-left transition-colors cursor-pointer flex items-center focus:outline-none ${
           open
-            ? 'border-[#F26522] ring-1 ring-[#F26522]'
-            : 'border-[rgba(255,255,235,0.22)] hover:border-[#F26522]'
-        } ${selectedLabel ? 'text-[#171714]' : 'text-[rgba(23,23,20,0.48)]'}`}
+            ? 'border-[var(--color-text)] bg-[rgba(236,231,222,0.07)]'
+            : 'border-[var(--color-hairline)] bg-[rgba(236,231,222,0.05)] hover:border-[rgba(236,231,222,0.22)]'
+        } ${selectedLabel ? 'text-[var(--color-text)]' : 'text-[var(--color-text-faint)]'}`}
       >
         <span className="truncate">{selectedLabel || placeholder}</span>
         {/* Chevron */}
-        <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+        <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
           <svg
             width="14"
             height="14"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="rgba(23,23,20,0.6)"
+            stroke="rgba(236,231,222,0.6)"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -136,7 +136,7 @@ function StyledSelect({
           ref={listRef}
           role="listbox"
           aria-activedescendant={value ? `${id}-option-${value}` : undefined}
-          className="absolute z-50 mt-1 w-full max-h-60 overflow-auto bg-[#FFFFEB] border border-[rgba(23,23,20,0.12)] rounded-[6px] shadow-[0_8px_24px_rgba(0,0,0,0.18)] py-1"
+          className="absolute z-50 mt-2 w-full max-h-64 overflow-auto rounded-xl border border-[var(--color-hairline)] bg-[#1F1D19] p-1.5 shadow-[0_20px_40px_rgba(0,0,0,0.45)]"
         >
           {options.map((opt) => {
             const isSelected = opt.value === value;
@@ -151,10 +151,10 @@ function StyledSelect({
                   onChange(opt.value);
                   setOpen(false);
                 }}
-                className={`flex items-center px-3.5 h-10 text-[14px] cursor-pointer transition-colors select-none ${
+                className={`flex items-center px-3.5 h-10 rounded-lg text-[0.9375rem] cursor-pointer transition-colors select-none ${
                   isSelected
-                    ? 'text-[#F26522] bg-[#F26522]/[0.08] font-medium'
-                    : 'text-[#171714] hover:bg-[#EFECE3]'
+                    ? 'text-[var(--color-text)] bg-[rgba(236,231,222,0.08)]'
+                    : 'text-[var(--color-text-muted)] hover:bg-[rgba(236,231,222,0.05)] hover:text-[var(--color-text)]'
                 }`}
               >
                 {opt.label}
@@ -175,17 +175,18 @@ function StyledSelect({
 /* ─── Field Error Display ─── */
 function FieldError({ error }: { error?: string }) {
   if (!error) return null;
-  return <p className="mt-1 text-[12px] text-[#FCA5A5] font-medium">{error}</p>;
+  return <p className="mt-1.5 text-[0.8125rem] text-[#E8907A]">{error}</p>;
 }
 
 /* ─── Input Styles ─── */
-const inputBase =
-  'w-full h-11 px-3.5 bg-[#FFFFEB] border border-[rgba(255,255,235,0.22)] rounded-[6px] text-[14px] text-[#171714] placeholder:text-[rgba(23,23,20,0.48)] focus:outline-none focus:border-[#F26522] focus:ring-1 focus:ring-[#F26522] transition-colors';
+const fieldBase =
+  'w-full rounded-xl border border-[var(--color-hairline)] bg-[rgba(236,231,222,0.05)] px-[1.125rem] text-[0.9375rem] text-[var(--color-text)] placeholder:text-[var(--color-text-faint)] transition-colors hover:border-[rgba(236,231,222,0.22)] focus:outline-none focus:border-[var(--color-text)] focus:bg-[rgba(236,231,222,0.07)]';
 
-const textareaBase =
-  'w-full px-3.5 py-3 bg-[#FFFFEB] border border-[rgba(255,255,235,0.22)] rounded-[6px] text-[14px] text-[#171714] placeholder:text-[rgba(23,23,20,0.48)] focus:outline-none focus:border-[#F26522] focus:ring-1 focus:ring-[#F26522] transition-colors resize-none';
+const inputBase = `${fieldBase} h-[52px]`;
 
-const labelBase = 'block text-[13px] font-medium text-[#FFFFEB] mb-1.5';
+const textareaBase = `${fieldBase} min-h-36 py-3.5 resize-y`;
+
+const labelBase = 'block text-[0.875rem] text-[var(--color-text-muted)] mb-2';
 
 /* ─── Types ─── */
 interface FormData {
@@ -625,7 +626,7 @@ export function ContactForm() {
             value={form.purchaseDealerDetails}
             onChange={(e) => update('purchaseDealerDetails', e.target.value)}
           />
-          <p className="mt-1 text-[12px] text-[rgba(255,255,235,0.65)]">
+          <p className="mt-1 text-[12px] text-[var(--color-text-faint)]">
             If you remember the dealer or studio, share their name and city.
           </p>
         </div>
@@ -694,7 +695,7 @@ export function ContactForm() {
         />
         <div className="flex items-center justify-between mt-1">
           <FieldError error={errors.message} />
-          <p className="text-[12px] text-[rgba(255,255,235,0.65)] ml-auto">
+          <p className="text-[12px] text-[var(--color-text-faint)] ml-auto">
             {form.message.length}/2000
           </p>
         </div>
@@ -702,7 +703,7 @@ export function ContactForm() {
 
       {/* Submit Error */}
       {submitError && (
-        <div className="px-4 py-3 rounded-[6px] bg-[#991B1B]/40 border border-[#F87171]/40 text-[#FEE2E2]">
+        <div className="px-[1.125rem] py-3.5 rounded-xl bg-[rgba(232,144,122,0.08)] border border-[rgba(232,144,122,0.4)] text-[#E8907A]">
           <p className="text-[13px]">{submitError}</p>
         </div>
       )}
@@ -712,7 +713,7 @@ export function ContactForm() {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full sm:w-auto h-12 px-8 bg-[#F26522] text-white text-[15px] font-semibold rounded-[3px] hover:bg-[#DC5414] active:bg-[#C4460D] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_1px_2px_rgba(242,101,34,0.12)] inline-flex items-center justify-center gap-2 cursor-pointer"
+          className="pill-button w-full sm:w-auto sm:min-w-48"
         >
           {submitting ? (
             <>
@@ -722,7 +723,7 @@ export function ContactForm() {
               Submitting...
             </>
           ) : (
-            'Send Enquiry'
+            'Send enquiry'
           )}
         </button>
       </div>

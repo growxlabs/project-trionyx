@@ -132,12 +132,12 @@ const termsSections: LegalSection[] = [
         <div className="pt-2">
           <Link
             href="/warranty"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[6px] bg-[#FFFFEB] border border-[#171714]/15 text-[#171714] text-[13.5px] font-semibold hover:border-[#F26522] hover:text-[#F26522] transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--color-surface)] border border-[var(--color-hairline)] text-[var(--color-text)] text-[13.5px] font-semibold hover:border-[rgba(236,231,222,0.35)] hover:text-[#F26522] transition-colors"
           >
             Check Warranty Registry (/warranty) →
           </Link>
         </div>
-        <p className="pt-2 text-[13.5px] text-[#68665F]">
+        <p className="pt-2 text-[13.5px] text-[var(--color-text-faint)]">
           General Terms &amp; Conditions do not duplicate or alter specific warranty coverage terms, exclusion schedules, or
           claim procedures established in product warranty documentation.
         </p>
@@ -171,7 +171,7 @@ const termsSections: LegalSection[] = [
         <p>
           You are granted a limited, non-exclusive, revocable license to access and use the website for:
         </p>
-        <ul className="list-disc pl-5 space-y-2 text-[#171714]/85">
+        <ul className="list-disc pl-5 space-y-2 text-[var(--color-text-muted)]">
           <li>Reviewing technical formulation specifications and product documentation.</li>
           <li>Submitting genuine commercial enquiries regarding dealership or distribution.</li>
           <li>Performing authentic serial-number warranty lookups.</li>
@@ -189,7 +189,7 @@ const termsSections: LegalSection[] = [
         <p>
           When using our website or digital services, you agree not to:
         </p>
-        <ul className="list-disc pl-5 space-y-2 text-[#171714]/85">
+        <ul className="list-disc pl-5 space-y-2 text-[var(--color-text-muted)]">
           <li>Engage in automated scraping, data extraction, web crawling, or harvesting of serial numbers or dealer profiles.</li>
           <li>Attempt to probe, scan, or breach system security vulnerabilities or circumvent rate limits.</li>
           <li>Transmit malicious code, viruses, trojans, or destructive computational payloads.</li>
@@ -308,47 +308,47 @@ const termsSections: LegalSection[] = [
         </p>
 
         {/* Restrained Information Block */}
-        <div className="bg-[#FFFFEB] border border-[#171714]/12 rounded-[6px] p-5 sm:p-6 mt-4 max-w-lg space-y-3 text-[14px]">
+        <div className="bg-[var(--color-surface)] border border-[var(--color-hairline)] rounded-xl p-5 sm:p-6 mt-4 max-w-lg space-y-3 text-[14px]">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#68665F] block">
+            <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--color-text-faint)] block">
               Legal Entity
             </span>
-            <span className="font-semibold text-[#171714] text-[15px] block mt-0.5">
+            <span className="font-semibold text-[var(--color-text)] text-[15px] block mt-0.5">
               Trionyx India Private Limited
             </span>
           </div>
 
-          <div className="pt-2 border-t border-[#171714]/08 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="pt-2 border-t border-[var(--color-hairline)] grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#68665F] block">
+              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--color-text-faint)] block">
                 Official Email
               </span>
               <a
                 href={companyContact.emailHref}
-                className="font-medium text-[#171714] hover:text-[#F26522] transition-colors block mt-0.5"
+                className="font-medium text-[var(--color-text)] hover:text-[#F26522] transition-colors block mt-0.5"
               >
                 {companyContact.email}
               </a>
             </div>
 
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#68665F] block">
+              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--color-text-faint)] block">
                 Telephone
               </span>
               <a
                 href={companyContact.phoneHref}
-                className="font-medium text-[#171714] hover:text-[#F26522] transition-colors block mt-0.5"
+                className="font-medium text-[var(--color-text)] hover:text-[#F26522] transition-colors block mt-0.5"
               >
                 {companyContact.phone}
               </a>
             </div>
           </div>
 
-          <div className="pt-2 border-t border-[#171714]/08">
-            <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#68665F] block">
+          <div className="pt-2 border-t border-[var(--color-hairline)]">
+            <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--color-text-faint)] block">
               Jurisdiction &amp; Region
             </span>
-            <p className="text-[#171714]/80 m-0 mt-0.5 text-[13px] leading-relaxed">
+            <p className="text-[var(--color-text-muted)] m-0 mt-0.5 text-[13px] leading-relaxed">
               {companyContact.location.city}, {companyContact.location.region}, {companyContact.location.country}
             </p>
           </div>
@@ -361,7 +361,6 @@ const termsSections: LegalSection[] = [
 export default function TermsAndConditionsPage() {
   return (
     <LegalPageShell
-      eyebrow="LEGAL"
       title="Terms & Conditions"
       supportingLine="Terms governing use of the Trionyx website, dealer access and related digital services."
       lastUpdated="September 27, 2026"

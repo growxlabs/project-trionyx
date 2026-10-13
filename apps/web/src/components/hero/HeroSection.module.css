@@ -1,0 +1,134 @@
+.hero {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: clamp(38rem, 100svh, 60rem);
+  padding-top: clamp(7.5rem, 15vh, 10rem);
+  padding-bottom: 3rem;
+  overflow: hidden;
+  background: var(--color-background);
+}
+
+.media {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Keep the ribbon slightly subdued so it reads as atmosphere rather than a graphic. */
+.media canvas {
+  filter: brightness(0.85) saturate(0.92);
+}
+
+/* Darken the top behind the navigation and fade the bottom into the page. */
+.vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 70% 45%, rgba(14, 13, 11, 0) 35%, rgba(14, 13, 11, 0.5) 85%, var(--color-background) 100%),
+    linear-gradient(180deg, rgba(14, 13, 11, 0.8) 0%, rgba(14, 13, 11, 0) 22%, rgba(14, 13, 11, 0) 70%, var(--color-background) 100%);
+}
+
+.grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 80px 80px;
+  opacity: 0.6;
+}
+
+/* Exactly two lines at every width: each line is unbreakable and the size scales with the viewport. */
+.headline {
+  margin: 0;
+  font-size: min(4.5rem, 5.1vw);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  color: #fff;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85), 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.headline span {
+  display: block;
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+/* The ghost button sits over the ribbon, so give it a dark backing for contrast. */
+.actions :global(.pill-button-ghost) {
+  background: rgba(14, 13, 11, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-color: rgba(236, 231, 222, 0.3);
+}
+
+.marks {
+  display: flex;
+  gap: 0.75rem;
+  color: rgba(236, 231, 222, 0.8);
+  animation: marks-in 1200ms 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.symbol {
+  width: clamp(1.625rem, 1.9vw, 1.875rem);
+  height: auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  overflow: visible;
+}
+
+.targetRing {
+  transform-origin: 24px 24px;
+  animation: target-spin 24s linear infinite;
+}
+
+.arrow {
+  animation: arrow-nudge 3.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes marks-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes target-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes arrow-nudge {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(3px); }
+}
+
+@media (max-width: 40rem) {
+  .hero {
+    min-height: 40rem;
+  }
+
+  .headline {
+    font-size: 6.6vw;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marks,
+  .targetRing,
+  .arrow {
+    animation: none;
+  }
+}

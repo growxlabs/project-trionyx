@@ -44,7 +44,7 @@ const privacySections: LegalSection[] = [
         <p>
           The types of information processed depend directly upon your interaction with our digital platforms:
         </p>
-        <ul className="list-disc pl-5 space-y-2 text-[#171714]/85">
+        <ul className="list-disc pl-5 space-y-2 text-[var(--color-text-muted)]">
           <li>
             <strong>Trade &amp; Customer Enquiries:</strong> When you initiate contact regarding product formulations,
             dealer partnerships, or distribution networks, we collect your full name, business or detailing studio name,
@@ -82,7 +82,7 @@ const privacySections: LegalSection[] = [
         <p>
           We collect information directly from you or through verified operational interactions:
         </p>
-        <ul className="list-disc pl-5 space-y-2 text-[#171714]/85">
+        <ul className="list-disc pl-5 space-y-2 text-[var(--color-text-muted)]">
           <li>
             <strong>Direct Submissions:</strong> Information provided voluntarily through our public Contact form, Dealer
             Access applications, or customer support communication channels.
@@ -108,7 +108,7 @@ const privacySections: LegalSection[] = [
         <p>
           Information collected by Trionyx is deployed exclusively for legitimate, defined operational and commercial purposes:
         </p>
-        <ul className="list-disc pl-5 space-y-2 text-[#171714]/85">
+        <ul className="list-disc pl-5 space-y-2 text-[var(--color-text-muted)]">
           <li>
             <strong>Trade Communication:</strong> Evaluating and responding promptly to distribution inquiries, dealership
             onboarding requests, and technical formulation inquiries.
@@ -178,14 +178,14 @@ const privacySections: LegalSection[] = [
         <p>
           The Trionyx warranty verification engine is intentionally engineered with privacy-by-design principles:
         </p>
-        <ul className="list-disc pl-5 space-y-2 text-[#171714]/85">
+        <ul className="list-disc pl-5 space-y-2 text-[var(--color-text-muted)]">
           <li>
             <strong>Serial-Centric Model:</strong> Warranty records are linked directly to unique physical packaging Serial
             Numbers, rather than assembling centralized consumer surveillance profiles.
           </li>
           <li>
             <strong>Strict Sanitization on Public Verification:</strong> The public lookup tool at{' '}
-            <Link href="/warranty" className="text-[#F26522] underline font-medium hover:text-[#171714] transition-colors">
+            <Link href="/warranty" className="text-[#F26522] underline font-medium hover:text-[var(--color-text)] transition-colors">
               /warranty
             </Link>{' '}
             displays only product name, serial number, installation date, warranty expiration date, and servicing dealer.
@@ -215,7 +215,7 @@ const privacySections: LegalSection[] = [
         <p>
           We do not deploy cross-site advertising trackers or behavioral targeting pixels. For an exhaustive description
           of our technical cookie framework, please consult our dedicated{' '}
-          <Link href="/cookies" className="text-[#F26522] underline font-medium hover:text-[#171714] transition-colors">
+          <Link href="/cookies" className="text-[#F26522] underline font-medium hover:text-[var(--color-text)] transition-colors">
             Cookie Policy
           </Link>.
         </p>
@@ -232,7 +232,7 @@ const privacySections: LegalSection[] = [
           Trionyx does not trade, sell, or disclose information to outside entities except under clearly delimited
           circumstances:
         </p>
-        <ul className="list-disc pl-5 space-y-2 text-[#171714]/85">
+        <ul className="list-disc pl-5 space-y-2 text-[var(--color-text-muted)]">
           <li>
             <strong>Certified Channel Partners:</strong> If an enquiry originates in an authorized distributor&rsquo;s exclusive
             territory, relevant trade contact information may be shared to coordinate fulfillment and local technical support.
@@ -259,7 +259,7 @@ const privacySections: LegalSection[] = [
         <p>
           We retain operational data only for periods reasonable and necessary to fulfill the purposes set out in this Policy:
         </p>
-        <ul className="list-disc pl-5 space-y-2 text-[#171714]/85">
+        <ul className="list-disc pl-5 space-y-2 text-[var(--color-text-muted)]">
           <li>
             <strong>Warranty Records:</strong> Retained for the full duration of the active factory warranty term plus an
             administrative archival window to support audits and product traceability.
@@ -286,7 +286,7 @@ const privacySections: LegalSection[] = [
           Trionyx implements rigorous technical and organizational measures to safeguard data against unauthorized access,
           alteration, disclosure, or destruction:
         </p>
-        <ul className="list-disc pl-5 space-y-2 text-[#171714]/85">
+        <ul className="list-disc pl-5 space-y-2 text-[var(--color-text-muted)]">
           <li>Transport Layer Security (TLS 1.3) encryption for all web and API data transmissions.</li>
           <li>Cryptographically salted and hashed authentication credentials using modern hashing algorithms.</li>
           <li>Role-based access control (RBAC) ensuring internal staff access data solely on a verified need-to-know basis.</li>
@@ -304,7 +304,7 @@ const privacySections: LegalSection[] = [
         <p>
           You possess reasonable control over your contact information:
         </p>
-        <ul className="list-disc pl-5 space-y-2 text-[#171714]/85">
+        <ul className="list-disc pl-5 space-y-2 text-[var(--color-text-muted)]">
           <li>
             <strong>Review &amp; Correction:</strong> You may request the review, update, or correction of your business
             contact information by contacting our administrative team.
@@ -364,47 +364,47 @@ const privacySections: LegalSection[] = [
         </p>
 
         {/* Restrained Information Block (#FFFFEB, subtle border, 6px radius) */}
-        <div className="bg-[#FFFFEB] border border-[#171714]/12 rounded-[6px] p-5 sm:p-6 mt-4 max-w-lg space-y-3 text-[14px]">
+        <div className="bg-[var(--color-surface)] border border-[var(--color-hairline)] rounded-xl p-5 sm:p-6 mt-4 max-w-lg space-y-3 text-[14px]">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#68665F] block">
+            <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--color-text-faint)] block">
               Corporate Entity
             </span>
-            <span className="font-semibold text-[#171714] text-[15px] block mt-0.5">
+            <span className="font-semibold text-[var(--color-text)] text-[15px] block mt-0.5">
               Trionyx India Private Limited
             </span>
           </div>
 
-          <div className="pt-2 border-t border-[#171714]/08 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="pt-2 border-t border-[var(--color-hairline)] grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#68665F] block">
+              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--color-text-faint)] block">
                 Official Email
               </span>
               <a
                 href={companyContact.emailHref}
-                className="font-medium text-[#171714] hover:text-[#F26522] transition-colors block mt-0.5"
+                className="font-medium text-[var(--color-text)] hover:text-[#F26522] transition-colors block mt-0.5"
               >
                 {companyContact.email}
               </a>
             </div>
 
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#68665F] block">
+              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--color-text-faint)] block">
                 Telephone
               </span>
               <a
                 href={companyContact.phoneHref}
-                className="font-medium text-[#171714] hover:text-[#F26522] transition-colors block mt-0.5"
+                className="font-medium text-[var(--color-text)] hover:text-[#F26522] transition-colors block mt-0.5"
               >
                 {companyContact.phone}
               </a>
             </div>
           </div>
 
-          <div className="pt-2 border-t border-[#171714]/08">
-            <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#68665F] block">
+          <div className="pt-2 border-t border-[var(--color-hairline)]">
+            <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--color-text-faint)] block">
               Registered Office Region
             </span>
-            <p className="text-[#171714]/80 m-0 mt-0.5 text-[13px] leading-relaxed">
+            <p className="text-[var(--color-text-muted)] m-0 mt-0.5 text-[13px] leading-relaxed">
               {companyContact.location.city}, {companyContact.location.region}, {companyContact.location.country}
             </p>
           </div>
@@ -417,7 +417,6 @@ const privacySections: LegalSection[] = [
 export default function PrivacyPolicyPage() {
   return (
     <LegalPageShell
-      eyebrow="LEGAL"
       title="Privacy Policy"
       supportingLine="How Trionyx handles information across the website, dealer access, enquiries and warranty services."
       lastUpdated="September 27, 2026"

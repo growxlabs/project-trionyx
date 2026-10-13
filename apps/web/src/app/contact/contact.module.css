@@ -1,0 +1,68 @@
+.contact {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  gap: 3rem clamp(2.5rem, 6vw, 6rem);
+  align-items: start;
+  padding-block: clamp(4rem, 9vw, 7.5rem) var(--section-space);
+}
+
+.intro {
+  position: sticky;
+  top: 6.5rem;
+}
+
+.intro h1 {
+  margin: 0;
+  font-size: clamp(2.5rem, 5vw, 4.25rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.details {
+  margin: clamp(2rem, 4vw, 3rem) 0 0;
+  border-top: 1px solid var(--color-hairline);
+}
+
+.details > div {
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.6fr);
+  gap: 1rem;
+  padding-block: 1rem;
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.details dt {
+  font-size: 0.875rem;
+  color: var(--color-text-faint);
+}
+
+.details dd {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+}
+
+.details a {
+  color: var(--color-text);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  transition: color 200ms ease;
+}
+
+.details a:hover {
+  color: var(--color-primary-hover);
+}
+
+.form {
+  min-width: 0;
+}
+
+@media (max-width: 56rem) {
+  .contact {
+    grid-template-columns: 1fr;
+  }
+
+  .intro {
+    position: static;
+  }
+}
