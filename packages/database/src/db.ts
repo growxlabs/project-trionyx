@@ -1591,6 +1591,218 @@ export async function runMigrations(client: Client = getDbClient()): Promise<voi
         args: ['0015_human_readable_warranty_policy_ids'],
       });
     }
+
+    // Check if canonical trionyx products migration has been applied
+    const existingCanonicalProductsMigration = await client.execute({
+      sql: 'SELECT name FROM _migrations WHERE name = ?',
+      args: ['0016_canonical_trionyx_products'],
+    });
+
+    if (existingCanonicalProductsMigration.rows.length === 0) {
+      try {
+        // 1. Hide legacy dummy test products
+        await client.execute(
+          `UPDATE products SET public_visibility = 'PRIVATE' WHERE name LIKE 'Graphene Diamond Shield %' OR name LIKE 'Graphene Matrix Pro %'`
+        );
+
+        // 2. Ensure canonical categories exist
+        const defaultCats = [
+          {
+            id: 'cat-trionyx-ceramic-01',
+            name: 'Ceramic Coatings',
+            slug: 'ceramic-coatings',
+            description: 'Molecular surface bond and high-clarity optical depth.',
+            sortOrder: 1,
+          },
+          {
+            id: 'cat-trionyx-graphene-01',
+            name: 'Graphene Coatings',
+            slug: 'graphene-coatings',
+            description: 'Reinforced carbon-matrix formulation with extreme thermal dissipation.',
+            sortOrder: 2,
+          },
+          {
+            id: 'cat-trionyx-borophene-01',
+            name: 'Borophene Coatings',
+            slug: 'borophene-coatings',
+            description: 'Atomic-grade protective lattice engineered for extreme resilience.',
+            sortOrder: 3,
+          },
+        ];
+
+        const now = new Date().toISOString();
+
+        for (const cat of defaultCats) {
+          const existingCat = await client.execute({
+            sql: 'SELECT id FROM product_categories WHERE slug = ? LIMIT 1',
+            args: [cat.slug],
+          });
+          if (existingCat.rows.length === 0) {
+            await client.execute({
+              sql: `INSERT INTO product_categories (id, business_code, organization_id, name, slug, description, status, sort_order, created_at, updated_at)
+                    VALUES (?, 'TRIONYX', 'org-trionyx', ?, ?, ?, 'ACTIVE', ?, ?, ?)`,
+              args: [cat.id, cat.name, cat.slug, cat.description, cat.sortOrder, now, now],
+            });
+          }
+        }
+
+        // 3. Ensure canonical products exist
+        const defaultProducts = [
+          {
+            id: 'prod-trionyx-ceramic-01',
+            productCode: 'TRX-PROD-000101',
+            name: 'Ceramic Coating',
+            slug: 'ceramic-coating',
+            categoryId: 'cat-trionyx-ceramic-01',
+            shortDescription: 'High-clarity protective clearcoat formulation engineered for molecular surface bonding and deep gloss retention.',
+            description: 'Trionyx Ceramic Coating forms a semi-permanent clear protective shield over automotive clearcoats. Engineered for deep gloss retention, UV stability, and hydrophobic water-beading performance across demanding environmental conditions.',
+            specs: [
+              { label: 'Technology', value: 'Nano-Ceramic SiO2 Matrix' },
+              { label: 'Hardness', value: '10H Certified (Pencil Scale)' },
+              { label: 'Durability', value: '36 to 48 Months' },
+              { label: 'Contact Angle', value: '115° Hydrophobic Angle' },
+              { label: 'Surface Compatibility', value: 'Automotive Clearcoat, Exterior Painted Surfaces' },
+              { label: 'Finish', value: 'High-Gloss Optical Clarity' },
+              { label: 'Chemical Resistance', value: 'pH 2 - pH 12' },
+              { label: 'Curing Time', value: '24 Hours Initial / 7 Days Full' },
+            ],
+            media: [
+              {
+                storagePath: '/images/about/ceramic-coating-surface.jpg',
+                fileName: 'ceramic-coating-surface.jpg',
+                mimeType: 'image/jpeg',
+                altText: 'Trionyx Ceramic Coating surface finish',
+              },
+            ],
+          },
+          {
+            id: 'prod-trionyx-graphene-01',
+            productCode: 'TRX-PROD-000102',
+            name: 'Graphene Coating',
+            slug: 'graphene-coating',
+            categoryId: 'cat-trionyx-graphene-01',
+            shortDescription: 'Reinforced carbon-matrix formulation engineered with reduced heat absorption and extreme thermal dissipation.',
+            description: 'Trionyx Graphene Coating infuses high-purity graphene nanoplatelets into an advanced ceramic matrix. Engineered specifically to solve dark-vehicle heat absorption and mineral water spotting while providing exceptional mechanical toughness.',
+            specs: [
+              { label: 'Technology', value: 'Reduced Graphene Oxide (rGO) Reinforced Matrix' },
+              { label: 'Hardness', value: '10H Matrix Hardness' },
+              { label: 'Durability', value: 'Up to 60 Months' },
+              { label: 'Contact Angle', value: '118° Superhydrophobic Angle' },
+              { label: 'Thermal Dissipation', value: 'Conductive Heat Shedding' },
+              { label: 'Water Spot Resistance', value: 'High Anti-Etching Grade' },
+              { label: 'Chemical Resistance', value: 'pH 1 - pH 13 Complete Range' },
+              { label: 'Curing Time', value: '12 Hours Initial / 5 Days Full' },
+            ],
+            media: [
+              {
+                storagePath: '/images/hero/graphene-protected-vehicle.png',
+                fileName: 'graphene-protected-vehicle.png',
+                mimeType: 'image/png',
+                altText: 'Trionyx Graphene Coating vehicle surface',
+              },
+            ],
+          },
+          {
+            id: 'prod-trionyx-borophene-01',
+            productCode: 'TRX-PROD-000103',
+            name: 'Borophene Coating',
+            slug: 'borophene-coating',
+            categoryId: 'cat-trionyx-borophene-01',
+            shortDescription: 'Atomic-grade protective lattice engineered for extreme resilience and ultra-high chemical tolerance.',
+            description: 'Trionyx Borophene Coating represents the absolute pinnacle of material science in surface defense. Utilizing 2D boron atomic lattices, this formulation delivers unmatched tensile toughness, extreme thermal resistance up to 900°C, and total chemical immunity.',
+            specs: [
+              { label: 'Technology', value: '2D Borophene Atomic Crystalline Network' },
+              { label: 'Hardness', value: 'Beyond 10H Industrial Scale' },
+              { label: 'Durability', value: '60+ Months Multi-Year Retention' },
+              { label: 'Contact Angle', value: '120° Hyper-Hydrophobic Angle' },
+              { label: 'Thermal Resistance', value: 'Up to 900°C Surface Tolerance' },
+              { label: 'Chemical Resistance', value: 'pH 1 - pH 14 Universal Resilience' },
+              { label: 'Tensile Toughness', value: 'Multi-Directional Boron Network' },
+              { label: 'Curing Time', value: '8 Hours Initial / 3 Days Full' },
+            ],
+            media: [
+              {
+                storagePath: '/images/borophene/borophene-surface.jpg',
+                fileName: 'borophene-surface.jpg',
+                mimeType: 'image/jpeg',
+                altText: 'Trionyx Borophene Coating surface finish',
+              },
+            ],
+          },
+        ];
+
+        for (const prod of defaultProducts) {
+          const existingProd = await client.execute({
+            sql: 'SELECT id FROM products WHERE slug = ? LIMIT 1',
+            args: [prod.slug],
+          });
+
+          let targetProdId = prod.id;
+          if (existingProd.rows.length === 0) {
+            await client.execute({
+              sql: `INSERT INTO products (
+                      id, organization_id, business_code, product_code, name, slug, category_id,
+                      short_description, description, status, public_visibility, dealer_visibility,
+                      created_at, updated_at
+                    ) VALUES (?, 'org-trionyx', 'TRIONYX', ?, ?, ?, ?, ?, ?, 'ACTIVE', 'PUBLIC', 1, ?, ?)`,
+              args: [
+                prod.id,
+                prod.productCode,
+                prod.name,
+                prod.slug,
+                prod.categoryId,
+                prod.shortDescription,
+                prod.description,
+                now,
+                now,
+              ],
+            });
+          } else {
+            targetProdId = String(existingProd.rows[0].id);
+            await client.execute({
+              sql: `UPDATE products SET status = 'ACTIVE', public_visibility = 'PUBLIC' WHERE id = ?`,
+              args: [targetProdId],
+            });
+          }
+
+          // Replace specifications
+          await client.execute({
+            sql: 'DELETE FROM product_specifications WHERE product_id = ?',
+            args: [targetProdId],
+          });
+          for (let i = 0; i < prod.specs.length; i++) {
+            const specId = `spec-${prod.slug}-${i + 1}`;
+            await client.execute({
+              sql: `INSERT INTO product_specifications (id, product_id, label, value, sort_order)
+                    VALUES (?, ?, ?, ?, ?)`,
+              args: [specId, targetProdId, prod.specs[i].label, prod.specs[i].value, i],
+            });
+          }
+
+          // Replace media
+          await client.execute({
+            sql: 'DELETE FROM product_media WHERE product_id = ?',
+            args: [targetProdId],
+          });
+          for (let m = 0; m < prod.media.length; m++) {
+            const mediaItem = prod.media[m];
+            const mediaId = `media-${prod.slug}-${m + 1}`;
+            await client.execute({
+              sql: `INSERT INTO product_media (id, product_id, type, storage_path, file_name, file_size, mime_type, alt_text, sort_order, created_at)
+                    VALUES (?, ?, 'IMAGE', ?, ?, 0, ?, ?, ?, ?)`,
+              args: [mediaId, targetProdId, mediaItem.storagePath, mediaItem.fileName, mediaItem.mimeType, mediaItem.altText, m, now],
+            });
+          }
+        }
+      } catch (err) {
+        console.error('[Migration 0016] Error seeding canonical products:', err);
+      }
+
+      await client.execute({
+        sql: 'INSERT INTO _migrations (name) VALUES (?)',
+        args: ['0016_canonical_trionyx_products'],
+      });
+    }
   }
 
 export async function withDatabaseTransaction<T>(client: Client, run: (transaction: Client) => Promise<T>): Promise<T> {
