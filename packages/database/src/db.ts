@@ -1544,6 +1544,53 @@ export async function runMigrations(client: Client = getDbClient()): Promise<voi
         'write'
       );
     }
+
+    // Check if human readable warranty policy ids migration has been applied
+    const existingWarrantyPolicyIdsMigration = await client.execute({
+      sql: 'SELECT name FROM _migrations WHERE name = ?',
+      args: ['0015_human_readable_warranty_policy_ids'],
+    });
+
+    if (existingWarrantyPolicyIdsMigration.rows.length === 0) {
+      try {
+        const legacyPolicies = await client.execute(
+          'SELECT wp.id, wp.product_id, p.product_code, p.organization_id, p.business_code FROM warranty_policies wp LEFT JOIN products p ON wp.product_id = p.id'
+        );
+        for (const row of legacyPolicies.rows) {
+          const rawId = String(row.id);
+          const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawId);
+          if (isUuid) {
+            const isLak =
+              String(row.product_code || '').startsWith('LAK-') ||
+              row.organization_id === 'org-lakshmi' ||
+              row.business_code === 'LAKSHMI';
+            const prefix = isLak ? 'LAK-POL-' : 'TRX-POL-';
+            const highest = await client.execute({
+              sql: 'SELECT id FROM warranty_policies WHERE id LIKE ? ORDER BY id DESC LIMIT 1',
+              args: [prefix + '%'],
+            });
+            let nextSeq = 1;
+            if (highest.rows.length > 0 && highest.rows[0].id) {
+              const numPart = String(highest.rows[0].id).replace(prefix, '');
+              const parsed = parseInt(numPart, 10);
+              if (!isNaN(parsed)) nextSeq = parsed + 1;
+            }
+            const cleanId = prefix + String(nextSeq).padStart(6, '0');
+            await client.execute({
+              sql: 'UPDATE warranty_policies SET id = ? WHERE id = ?',
+              args: [cleanId, rawId],
+            });
+          }
+        }
+      } catch (migrationErr) {
+        console.error('[Migration 0015] Error migrating warranty policy IDs:', migrationErr);
+      }
+
+      await client.execute({
+        sql: 'INSERT INTO _migrations (name) VALUES (?)',
+        args: ['0015_human_readable_warranty_policy_ids'],
+      });
+    }
   }
 
 export async function withDatabaseTransaction<T>(client: Client, run: (transaction: Client) => Promise<T>): Promise<T> {

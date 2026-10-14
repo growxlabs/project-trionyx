@@ -27,7 +27,7 @@ export const APPROVED_REVIEWS: Review[] = [
     quote:
       'Trionyx Graphene Coating has elevated our detailing studio. The slick finish, heat dissipation, and water contact angle make application seamless on high-end vehicles.',
     name: 'Rajesh Varma',
-    role: 'Lead Installer',
+    role: 'Master Detailer',
     company: 'Apex Auto Studio',
     city: 'Hyderabad',
     image: '/images/hero/graphene-protected-vehicle.png',

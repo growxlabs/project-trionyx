@@ -145,7 +145,7 @@ export function WarrantyCheckForm() {
                 {field('Serial number', result.serialNumber, true)}
                 {field('Installed / activated', formatDate(result.installationDate || result.activatedAt))}
                 {field('Valid until', formatDate(result.warrantyEndDate))}
-                {result.dealerName && field('Authorised studio / installer', result.dealerName)}
+                {result.dealerName && field('Authorised studio / dealer', result.dealerName)}
               </dl>
             </>
           )}
@@ -181,7 +181,7 @@ export function WarrantyCheckForm() {
               <p className={styles.resultNote}>
                 <span className={styles.mono}>{result.serialNumber}</span> is a valid Trionyx serial number, but no
                 active warranty registration was found. Activation is completed by your authorised Trionyx studio or
-                dealer after installation, so please reach out to your installer.
+                dealer after application, so please reach out to your authorized dealer.
               </p>
               <Link href="/contact" className="text-link">
                 Need help? Contact Trionyx support <span aria-hidden="true">→</span>

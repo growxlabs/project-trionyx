@@ -392,12 +392,16 @@ export const createContactEnquirySchema = z
       .min(1, 'Email is required')
       .email('Please enter a valid email address')
       .transform((val) => normalizeEmail(val)),
-    city: z.string().trim().min(1, 'City is required').max(100),
+    city: z.string().trim().max(100).optional().or(z.literal('')),
     state: z.string().trim().min(1, 'State is required').max(100),
     pincode: z
       .string()
       .trim()
-      .regex(/^\d{6}$/, 'Pincode must be exactly 6 digits'),
+      .refine((val) => !val || /^\d{6}$/.test(val), {
+        message: 'Pincode must be exactly 6 digits',
+      })
+      .optional()
+      .or(z.literal('')),
     companyName: z.string().trim().max(200).optional().or(z.literal('')),
     businessAddress: z.string().trim().max(500).optional().or(z.literal('')),
     businessType: z.string().trim().max(100).optional().or(z.literal('')),
@@ -407,6 +411,15 @@ export const createContactEnquirySchema = z
     message: z.string().trim().min(1, 'Message is required').max(2000, 'Message cannot exceed 2000 characters'),
   })
   .superRefine((data, ctx) => {
+    if (data.type !== 'DISTRIBUTION_ENQUIRY') {
+      if (!data.city || !data.city.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'City is required',
+          path: ['city'],
+        });
+      }
+    }
     if (data.type === 'DEALER_ENQUIRY') {
       if (!data.companyName || !data.companyName.trim()) {
         ctx.addIssue({
@@ -429,20 +442,6 @@ export const createContactEnquirySchema = z
           code: z.ZodIssueCode.custom,
           message: 'Company Name is required for distribution enquiries',
           path: ['companyName'],
-        });
-      }
-      if (!data.businessAddress || !data.businessAddress.trim()) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Business Address is required for distribution enquiries',
-          path: ['businessAddress'],
-        });
-      }
-      if (!data.territory || !data.territory.trim()) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Territory / Area is required for distribution enquiries',
-          path: ['territory'],
         });
       }
     }

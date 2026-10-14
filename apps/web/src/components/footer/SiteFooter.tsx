@@ -14,6 +14,7 @@ const navigation = [
   {
     title: 'Partners & support',
     links: [
+      { label: 'Distributors', href: '/distributors' },
       { label: 'Distributor access', href: '/dealer-access' },
       { label: 'Warranty', href: '/warranty' },
       { label: 'Product enquiries', href: '/contact' },

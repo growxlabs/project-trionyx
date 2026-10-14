@@ -44,7 +44,7 @@ export const contactEnquiriesRepository = {
       businessType?: string | null;
       city: string;
       state: string;
-      pincode: string;
+      pincode?: string | null;
       territory?: string | null;
       productId?: string | null;
       purchaseDealerDetails?: string | null;
@@ -105,7 +105,7 @@ export const contactEnquiriesRepository = {
       businessType: data.businessType || null,
       city: data.city,
       state: data.state,
-      pincode: data.pincode,
+      pincode: data.pincode || '',
       territory: data.territory || null,
       productId: data.productId || null,
       productName: null,

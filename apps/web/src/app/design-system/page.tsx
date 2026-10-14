@@ -288,7 +288,7 @@ export default function DesignSystemPage() {
 
               <div className="border-b border-[#EFEDEB] pb-4">
                 <span className="text-[11px] font-mono text-[#626262] block mb-1">H6 (15px)</span>
-                <H6>Warranty Registration & Certified Installer Network</H6>
+                <H6>Warranty Registration & Certified Dealer Network</H6>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
@@ -598,7 +598,7 @@ export default function DesignSystemPage() {
                     Download Technical Spec
                   </Button>
                   <Button variant="secondary" trailingIcon={<ChevronRightIcon size={16} color="inverse" />}>
-                    Request Installer Access
+                    Request Dealer Access
                   </Button>
                 </div>
               </div>
@@ -635,7 +635,7 @@ export default function DesignSystemPage() {
                   <Chip onRemove={() => alert('Filter cleared')} selected>
                     9H Rated
                   </Chip>
-                  <Chip disabled>Certified Installer Only</Chip>
+                  <Chip disabled>Certified Dealer Only</Chip>
                 </div>
               </div>
 
@@ -654,7 +654,7 @@ export default function DesignSystemPage() {
                     ASTM Certified
                   </Pill>
                   <Pill variant="warning" dot>
-                    Installer Only
+                    Dealer Only
                   </Pill>
                   <Pill variant="brandRed" dot>
                     Restricted Access
@@ -684,7 +684,7 @@ export default function DesignSystemPage() {
                 </div>
                 <div>
                   <FormLabel htmlFor="text-demo" required>
-                    Installer Company Name
+                    Dealer Company Name
                   </FormLabel>
                   <TextInput id="text-demo" placeholder="e.g. Apex Detailing Lab" />
                 </div>
@@ -711,7 +711,7 @@ export default function DesignSystemPage() {
                 <FormLabel htmlFor="textarea-demo">Technical Specifications & Notes</FormLabel>
                 <Textarea
                   id="textarea-demo"
-                  placeholder="Provide vehicle paint condition, clearcoat type, and installation temperature range..."
+                  placeholder="Provide vehicle paint condition, clearcoat type, and application temperature range..."
                 />
               </div>
 
@@ -722,7 +722,7 @@ export default function DesignSystemPage() {
                   <div className="space-y-2">
                     <Checkbox
                       label="Automotive Ceramic Coating Specialist"
-                      description="Certified installer access included"
+                      description="Certified dealer access included"
                       defaultChecked
                     />
                     <Checkbox
@@ -745,7 +745,7 @@ export default function DesignSystemPage() {
                     />
                     <Radio
                       name="pricing-tier"
-                      label="Certified Installer Tier"
+                      label="Certified Dealer Tier"
                       description="Includes marketing collateral and lead referrals"
                       checked={radioVal === 'option2'}
                       onChange={() => setRadioVal('option2')}
@@ -871,14 +871,14 @@ export default function DesignSystemPage() {
               <H4 className="mb-4">4. Content & Dealer Enquiry Cards</H4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <ArticleCard
-                  category="Installation Guide"
+                  category="Application Guide"
                   date="September 2026"
                   readTime="6 min read"
                   title="Proper Clearcoat Decontamination Prior to Matrix-9H Application"
                   excerpt="Detailed protocol covering iron fallout neutralization, clay bar lubrication, and isopropyl alcohol wipe-downs for permanent ceramic bonding."
                 />
                 <ContactCard
-                  title="Apply for Certified Installer Status"
+                  title="Apply for Certified Dealer Status"
                   description="Access wholesale tier pricing, priority shipping, technical warranty coverage, and regional dealer referral leads."
                   buttonText="Submit Dealer Application"
                   supportNote="Dedicated technical representative assigned in 24 hours"
@@ -1096,11 +1096,11 @@ export default function DesignSystemPage() {
               <Alert
                 variant="success"
                 title="Certification Verified"
-                description="Your installer tax credential has been approved for wholesale tier allocation."
+                description="Your dealer tax credential has been approved for wholesale tier allocation."
               />
               <Alert
                 variant="warning"
-                title="Installation Temperature Threshold"
+                title="Application Temperature Threshold"
                 description="Ambient application temperature is below 15°C (59°F). Infrared curing lamps recommended."
               />
               <Alert

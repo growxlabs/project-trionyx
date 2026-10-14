@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { PageFrame } from '@/components/frame';
 import { HeaderShell } from '@/components/header/HeaderShell';
@@ -48,7 +49,9 @@ export default function ContactPage() {
           </div>
 
           <div className={styles.form}>
-            <ContactForm />
+            <Suspense fallback={<div className="min-h-96 flex items-center justify-center text-sm text-[var(--color-text-muted)]">Loading form...</div>}>
+              <ContactForm />
+            </Suspense>
           </div>
         </section>
       </main>
