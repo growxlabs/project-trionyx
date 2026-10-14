@@ -51,23 +51,18 @@ export default async function ProductsCataloguePage() {
     <PageFrame>
       <HeaderShell appearance="default" />
       <main className="flex flex-1 flex-col text-[var(--color-text)]">
-        {/* ─── Hero / Header ─── */}
-        <section className="pt-24 pb-12 sm:pt-32 sm:pb-16 border-b border-[var(--color-hairline)] bg-[rgba(23,22,19,0.3)]">
-          <div className="site-container max-w-4xl">
-            <span className="text-xs font-mono uppercase tracking-widest text-[var(--color-primary)] block mb-3">
-              Catalogue
-            </span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-[var(--color-text)]">
-              Products
-            </h1>
-            <p className="mt-4 text-base sm:text-lg text-[var(--color-text-muted)] leading-relaxed max-w-2xl">
-              Engineered surface protection systems across advanced ceramic, graphene, and borophene matrices.
-            </p>
+        <section className="pt-14 pb-10 sm:pt-20 sm:pb-14">
+          <div className="site-container">
+            <p className="mb-5 text-xs uppercase tracking-[0.16em] text-[var(--color-primary)]">Trionyx / Surface protection</p>
+            <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+              <h1 className="text-5xl font-normal leading-[1.05] tracking-[-0.045em] sm:text-6xl">Our formulations.</h1>
+              <p className="max-w-sm text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">Advanced coatings. Lasting protection.<br />Find the right finish for every surface.</p>
+            </div>
           </div>
         </section>
 
         {/* ─── Main Catalogue Section ─── */}
-        <section className="py-12 sm:py-16 lg:py-20">
+        <section className="pb-16 sm:pb-24">
           <div className="site-container">
             {activeProducts.length > 0 ? (
               <ProductsCatalogueView
@@ -95,29 +90,10 @@ export default async function ProductsCataloguePage() {
           </div>
         </section>
 
-        {/* ─── Bottom CTA ─── */}
-        <section className="py-20 sm:py-28 border-t border-[var(--color-hairline)] bg-[rgba(23,22,19,0.3)]">
-          <div className="site-container max-w-2xl text-center">
-            <h2 className="text-2xl sm:text-3xl font-normal tracking-tight text-[var(--color-text)]">
-              Partner with Trionyx
-            </h2>
-            <p className="mt-3 text-sm sm:text-base text-[var(--color-text-muted)] leading-relaxed">
-              Enquire about technical studio supply, distributor territories, or commercial fleet protection.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-              <Link
-                href="/distributors"
-                className="pill-button-ghost !min-h-[42px] !h-[42px] !py-0 !px-6 text-xs sm:text-sm font-medium rounded-full border border-[var(--color-hairline)] inline-flex items-center justify-center"
-              >
-                Distributor Opportunities
-              </Link>
-              <Link
-                href="/contact"
-                className="pill-button !min-h-[42px] !h-[42px] !py-0 !px-6 text-xs sm:text-sm font-medium"
-              >
-                Contact Form
-              </Link>
-            </div>
+        <section className="border-t border-[var(--color-hairline)] py-10 sm:py-14">
+          <div className="site-container flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
+            <h2 className="text-xl font-normal tracking-tight sm:text-2xl">Find the right coating for your project.</h2>
+            <Link href="/contact?type=PRODUCT_ENQUIRY" className="inline-flex min-h-11 items-center gap-4 text-sm text-[var(--color-text)]">Talk to our team <span aria-hidden="true">↗</span></Link>
           </div>
         </section>
       </main>

@@ -1,5 +1,6 @@
+import Image from 'next/image';
+import { ExploreHeader } from '@/components/ExploreHeader';
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { PageFrame } from '@/components/frame';
 import { HeaderShell } from '@/components/header/HeaderShell';
 import { SiteFooter } from '@/components/footer/SiteFooter';
@@ -42,52 +43,30 @@ export default function BlogPage() {
     <PageFrame>
       <HeaderShell />
       <main className="flex flex-1 flex-col text-[var(--color-text)]">
-        <section className="pt-24 pb-16 sm:pt-32 sm:pb-20 border-b border-[var(--color-hairline)] bg-[rgba(23,22,19,0.3)]">
-          <div className="site-container max-w-4xl">
-            <span className="text-xs font-mono uppercase tracking-widest text-[var(--color-primary)] block mb-3">
-              Journal
-            </span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-[var(--color-text)]">
-              Blog
-            </h1>
-            <p className="mt-4 text-lg sm:text-xl text-[var(--color-text-muted)] leading-relaxed max-w-2xl">
-              Technical insights, studio methodologies, and surface protection research from Trionyx.
-            </p>
-          </div>
-        </section>
+        <ExploreHeader active="Blog" description="Surface science, coating care, and application guides." />
 
-        <section className="py-16 sm:py-24">
-          <div className="site-container max-w-4xl">
-            <div className="space-y-6">
-              {articles.map((item) => (
-                <article
-                  key={item.title}
-                  className="rounded-2xl border border-[var(--color-hairline)] bg-[var(--color-surface)] p-6 sm:p-8 transition-all duration-200 hover:border-[rgba(236,231,222,0.22)] hover:bg-[#1A1916]"
-                >
-                  <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-[var(--color-text-muted)] mb-3">
-                    <span className="text-[var(--color-primary)] font-medium uppercase">{item.category}</span>
-                    <span>•</span>
-                    <span>{item.date}</span>
-                    <span>•</span>
-                    <span>{item.readTime}</span>
+        <section aria-label="Articles" className="pb-16 sm:pb-20">
+          <div className="site-container">
+            <div className="divide-y divide-[var(--color-hairline)] border-y border-[var(--color-hairline)]">
+              {articles.map((item, index) => (
+                <article key={item.title} className="grid gap-5 py-7 sm:grid-cols-[220px_1fr] sm:gap-8 sm:py-8 lg:grid-cols-[280px_1fr] lg:gap-10">
+                  <div className="relative aspect-[16/10] overflow-hidden rounded-lg bg-[var(--color-surface)]">
+                    <Image
+                      src={['/images/hero/graphene-protected-vehicle.png', '/images/about/installation.jpg', '/images/about/ceramic-coating-surface.jpg'][index]}
+                      alt={['Water beading on a protected vehicle', 'Automotive surface installation', 'Water droplets on coated paintwork'][index]}
+                      fill
+                      sizes="(max-width: 40rem) 100vw, (max-width: 64rem) 220px, 280px"
+                      className="object-cover"
+                    />
                   </div>
-                  <h2 className="text-xl sm:text-2xl font-medium tracking-tight text-[var(--color-text)] mb-3">
-                    {item.title}
-                  </h2>
-                  <p className="text-sm sm:text-base text-[var(--color-text-muted)] leading-relaxed">
-                    {item.excerpt}
-                  </p>
+                  <div className="max-w-3xl self-center">
+                    <p className="mb-2 text-xs text-[var(--color-primary)]">{item.category}</p>
+                    <h2 className="text-xl font-normal leading-snug tracking-tight sm:text-2xl">{item.title}</h2>
+                    <p className="mt-3 text-sm leading-relaxed text-[var(--color-text-muted)]">{item.excerpt}</p>
+                    <p className="mt-4 text-xs text-[var(--color-text-muted)]">{item.date}<span aria-hidden="true" className="mx-2">·</span>{item.readTime}</p>
+                  </div>
                 </article>
               ))}
-            </div>
-
-            <div className="mt-12 pt-8 border-t border-[var(--color-hairline)] flex items-center justify-between">
-              <span className="text-xs text-[var(--color-text-muted)]">
-                More articles published monthly.
-              </span>
-              <Link href="/products" className="text-xs font-mono uppercase text-[var(--color-primary)] hover:text-[var(--color-text)] transition-colors">
-                Explore Coatings →
-              </Link>
             </div>
           </div>
         </section>
