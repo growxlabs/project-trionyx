@@ -51,16 +51,12 @@ export function DistributorEnquiryModal({
 
   const fullNameInputRef = useRef<HTMLInputElement>(null);
 
-  // Reset form state when opportunity changes or modal opens
+  // The parent remounts this component per opportunity (via `key`), so state starts fresh; only focus needs syncing.
   useEffect(() => {
-    if (isOpen) {
-      setForm(initialFormState);
-      setErrors({});
-      setSubmitError(null);
-      setEnquiryCode(null);
-      setTimeout(() => fullNameInputRef.current?.focus(), 100);
-    }
-  }, [isOpen, opportunity]);
+    if (!isOpen) return;
+    const timer = setTimeout(() => fullNameInputRef.current?.focus(), 100);
+    return () => clearTimeout(timer);
+  }, [isOpen]);
 
   // Handle ESC key to close modal
   useEffect(() => {
@@ -173,7 +169,7 @@ export function DistributorEnquiryModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="distributor-enquiry-heading"
-        className="relative z-10 w-full max-w-lg my-8 overflow-hidden rounded-2xl border border-[var(--color-hairline)] bg-[#171613] p-6 sm:p-8 shadow-2xl"
+        className="relative z-10 my-8 w-full max-w-lg overflow-hidden rounded-2xl border border-[var(--color-hairline)] bg-[var(--color-surface)] p-6 shadow-[0_30px_80px_rgba(0,0,0,0.6)] sm:p-8"
       >
         {/* Close button */}
         <button
@@ -199,28 +195,17 @@ export function DistributorEnquiryModal({
 
         {enquiryCode ? (
           /* Success View */
-          <div className="text-center py-6">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[rgba(242,101,34,0.12)] text-[var(--color-primary)]">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-            </div>
-
-            <h3 className="text-2xl font-semibold text-[var(--color-text)]">
-              Enquiry Received
+          <div className="pt-2">
+            <h3 id="distributor-enquiry-heading" className="m-0 pr-10 text-[clamp(1.75rem,3vw,2.25rem)] font-normal leading-tight tracking-[-0.025em] text-[var(--color-text)]">
+              Thank you. We&apos;ll be in touch shortly.
             </h3>
 
-            <div className="my-5 inline-block rounded-lg border border-[var(--color-hairline)] bg-[rgba(236,231,222,0.04)] px-4 py-2 font-mono text-sm text-[var(--color-text)]">
-              {enquiryCode}
-            </div>
-
-            <p className="text-sm text-[var(--color-text-muted)] leading-relaxed max-w-md mx-auto mb-6">
-              Thank you for your interest in becoming a Trionyx distributor for{' '}
-              <strong className="text-[var(--color-text)] font-semibold">
-                {opportunity.state}
-              </strong>
-              . Our distribution team will review your enquiry and contact you within 1–2 business days.
-            </p>
+            <dl className="my-6 border-y border-[var(--color-hairline)]">
+              <div className="flex items-baseline justify-between gap-4 py-4">
+                <dt className="text-sm text-[var(--color-text-faint)]">Reference</dt>
+                <dd className="m-0 font-mono text-[var(--color-text)]">{enquiryCode}</dd>
+              </div>
+            </dl>
 
             <button
               type="button"
@@ -235,23 +220,13 @@ export function DistributorEnquiryModal({
           <>
             <h2
               id="distributor-enquiry-heading"
-              className="text-2xl font-semibold tracking-tight text-[var(--color-text)] pr-8"
+              className="mb-6 mt-0 pr-10 text-[clamp(1.75rem,3vw,2.25rem)] font-normal leading-tight tracking-[-0.025em] text-[var(--color-text)]"
             >
-              Distributor Enquiry
+              {opportunity.state}
             </h2>
 
-            {/* State Display: locked to the state without exposing/inventing cities */}
-            <div className="mt-4 mb-6 rounded-xl border border-[var(--color-hairline)] bg-[rgba(236,231,222,0.04)] px-4 py-3 flex items-center justify-between">
-              <span className="text-xs font-mono uppercase tracking-wider text-[var(--color-text-muted)]">
-                State
-              </span>
-              <span className="text-sm font-semibold text-[var(--color-primary)]">
-                {opportunity.state}
-              </span>
-            </div>
-
             {submitError && (
-              <div className="mb-5 rounded-xl border border-red-500/30 bg-red-500/10 p-3.5 text-sm text-red-300">
+              <div className="mb-5 rounded-xl border border-[rgba(232,144,122,0.4)] bg-[rgba(232,144,122,0.08)] px-4 py-3.5 text-sm text-[#E8907A]">
                 {submitError}
               </div>
             )}
@@ -389,7 +364,7 @@ export function DistributorEnquiryModal({
                   disabled={submitting}
                   className="pill-button w-full justify-center"
                 >
-                  {submitting ? 'Submitting Enquiry...' : 'Submit Enquiry'}
+                  {submitting ? 'Sending…' : 'Send enquiry'}
                 </button>
               </div>
             </form>

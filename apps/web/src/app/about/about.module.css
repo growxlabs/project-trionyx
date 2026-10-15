@@ -1,0 +1,78 @@
+.banner {
+  position: relative;
+  aspect-ratio: 21 / 9;
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+.bannerImage {
+  object-fit: cover;
+  object-position: center 55%;
+}
+
+/* Large figures with a small caption beneath each (dt follows dd visually), separated by hairlines. */
+.facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem clamp(1.25rem, 2.5vw, 2rem);
+  margin: clamp(3rem, 6vw, 5rem) 0 var(--section-space);
+}
+
+.facts > div {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-hairline);
+}
+
+.facts dt {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+}
+
+.facts dd {
+  margin: 0;
+  font-size: clamp(2.5rem, 5vw, 4.25rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.closing {
+  padding-block: var(--section-space);
+  border-top: 1px solid var(--color-hairline);
+}
+
+.closingInner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.closingInner h2 {
+  margin: 0;
+  font-size: clamp(2.25rem, 4.4vw, 4rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+@media (max-width: 48rem) {
+  .banner {
+    aspect-ratio: 4 / 3;
+  }
+
+  .facts {
+    grid-template-columns: 1fr;
+  }
+}

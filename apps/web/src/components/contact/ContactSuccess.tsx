@@ -32,7 +32,7 @@ export function ContactSuccess({ enquiryCode, onReset }: { enquiryCode: string; 
       </dl>
 
       <div className={styles.actions}>
-        <Link href="/#graphene" className="pill-button">
+        <Link href="/products" className="pill-button">
           Explore our products
         </Link>
         <button type="button" onClick={onReset} className="text-link">

@@ -32,7 +32,7 @@ export const HeaderShell = ({ appearance = 'default' }: HeaderShellProps = {}) =
   const closeProductsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const closeExploreTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const isActive = (href: string) => href !== '/#about' && (pathname === href || pathname.startsWith(`${href}/`));
+  const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
   const isExploreActive = pathname === '/blog' || pathname.startsWith('/blog/') || pathname === '/gallery' || pathname.startsWith('/gallery/');
 
   const closeAll = () => {
@@ -168,8 +168,9 @@ export const HeaderShell = ({ appearance = 'default' }: HeaderShellProps = {}) =
 
           {/* 5. About */}
           <Link
-            href="/#about"
-            className={`${styles.navLink} ${isActive('/#about') ? styles.active : ''}`}
+            href="/about"
+            className={`${styles.navLink} ${isActive('/about') ? styles.active : ''}`}
+            aria-current={isActive('/about') ? 'page' : undefined}
           >
             About
           </Link>
@@ -213,7 +214,7 @@ export const HeaderShell = ({ appearance = 'default' }: HeaderShellProps = {}) =
               </Link>
             ))}
 
-            <Link href="/#about" className={styles.mobileLink} onClick={closeAll}>
+            <Link href="/about" className={styles.mobileLink} onClick={closeAll}>
               About
             </Link>
           </nav>

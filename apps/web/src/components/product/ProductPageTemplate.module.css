@@ -1,0 +1,245 @@
+.page {
+  padding-block: clamp(1.5rem, 4vw, 3rem) var(--section-space);
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+
+.back:hover {
+  color: var(--color-text);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 3rem clamp(2rem, 5vw, 5rem);
+  align-items: start;
+}
+
+/* Gallery */
+.gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.mainImage {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+.image {
+  object-fit: cover;
+}
+
+.placeholder {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 70% 30%, rgba(242, 101, 34, 0.18), transparent 60%), var(--color-surface);
+}
+
+.thumbnails {
+  display: flex;
+  gap: 0.625rem;
+  overflow-x: auto;
+  padding: 3px;
+  scrollbar-width: none;
+}
+
+.thumb {
+  position: relative;
+  flex: none;
+  width: 4.75rem;
+  height: 4.75rem;
+  padding: 0;
+  overflow: hidden;
+  background: var(--color-surface);
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity 200ms ease, box-shadow 200ms ease;
+}
+
+.thumb:hover {
+  opacity: 0.85;
+}
+
+.thumb[aria-pressed='true'] {
+  opacity: 1;
+  box-shadow: 0 0 0 1.5px var(--color-text);
+}
+
+/* Info */
+.info {
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(2.25rem, 4vw, 3.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.ref {
+  margin: 0.75rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--color-text-faint);
+}
+
+.enquire {
+  margin-top: 2rem;
+}
+
+.specs {
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--color-hairline);
+}
+
+.specs h2 {
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+  letter-spacing: 0;
+  color: var(--color-text-faint);
+}
+
+.specs dl {
+  margin: 0;
+}
+
+.specs dl > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1.5rem;
+  padding-block: 0.875rem;
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.specs dl > div:last-child {
+  border-bottom: 0;
+}
+
+.specs dt {
+  color: var(--color-text-muted);
+}
+
+.specs dd {
+  margin: 0;
+  max-width: 60%;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.description {
+  border-top: 1px solid var(--color-hairline);
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.description summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding-block: 1.375rem;
+  font-size: 1.0625rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.description summary::-webkit-details-marker {
+  display: none;
+}
+
+.icon {
+  position: relative;
+  flex: none;
+  width: 12px;
+  height: 12px;
+}
+
+.icon::before,
+.icon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 12px;
+  height: 1px;
+  background: var(--color-text-muted);
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.icon::after {
+  transform: rotate(90deg);
+}
+
+.description[open] .icon::after {
+  transform: rotate(0deg);
+}
+
+.description p {
+  max-width: 60ch;
+  margin: 0;
+  padding-bottom: 1.5rem;
+  color: var(--color-text-muted);
+  white-space: pre-line;
+}
+
+/* Application steps */
+.application {
+  margin-top: var(--section-space);
+  padding-top: clamp(3rem, 6vw, 4.5rem);
+  border-top: 1px solid var(--color-hairline);
+}
+
+.application h2 {
+  margin: 0 0 clamp(2rem, 4vw, 3rem);
+  font-size: clamp(2rem, 3.2vw, 3rem);
+  letter-spacing: -0.025em;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem clamp(1.25rem, 2.5vw, 2rem);
+}
+
+.steps h3 {
+  margin: 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-hairline);
+  font-size: clamp(1.375rem, 2vw, 1.875rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 56rem) and (min-height: 46rem) {
+  .gallery {
+    position: sticky;
+    top: 6.5rem;
+  }
+}
+
+@media (max-width: 56rem) {
+  .layout,
+  .steps {
+    grid-template-columns: 1fr;
+  }
+}

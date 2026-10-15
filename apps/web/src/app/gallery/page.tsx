@@ -1,9 +1,10 @@
-import { ExploreHeader } from '@/components/ExploreHeader';
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import { ExploreHeader } from '@/components/ExploreHeader';
 import { PageFrame } from '@/components/frame';
 import { HeaderShell } from '@/components/header/HeaderShell';
 import { SiteFooter } from '@/components/footer/SiteFooter';
+import styles from './gallery.module.css';
 
 export const metadata: Metadata = {
   title: 'Gallery — Trionyx Automotive Formulations',
@@ -13,28 +14,24 @@ export const metadata: Metadata = {
 
 const galleryItems = [
   {
-    title: 'Graphene Hydrophobic Surface',
-    category: 'Graphene Coating',
+    title: 'Graphene hydrophobic surface',
     src: '/images/hero/graphene-protected-vehicle.png',
     alt: 'Black car bonnet beaded with water after a graphene coating',
   },
   {
-    title: 'Ceramic Optical Reflection',
-    category: 'Ceramic Coating',
+    title: 'Ceramic optical reflection',
     src: '/images/about/ceramic-coating-surface.jpg',
     alt: 'Hydrophobic ceramic-coated paintwork with dense water beading',
   },
   {
-    title: 'Borophene Crystalline Bodywork',
-    category: 'Borophene Coating',
+    title: 'Borophene crystalline bodywork',
     src: '/images/borophene/borophene-surface.jpg',
     alt: 'Dark car body panel with a crystalline borophene finish',
   },
   {
-    title: 'Fleet Protection Endurance',
-    category: 'Commercial Fleet',
+    title: 'Fleet protection endurance',
     src: '/images/graphene/mountain-bridge-cars.png',
-    alt: 'Vehicles on road protected by Trionyx formulations',
+    alt: 'Vehicles on a mountain road protected by Trionyx formulations',
   },
 ];
 
@@ -42,35 +39,18 @@ export default function GalleryPage() {
   return (
     <PageFrame>
       <HeaderShell />
-      <main className="flex flex-1 flex-col text-[var(--color-text)]">
-        <ExploreHeader active="Gallery" description="A closer look at Trionyx finishes and surface protection." />
+      <main className="flex flex-1 flex-col">
+        <ExploreHeader active="Gallery" />
 
-        <section aria-label="Gallery images" className="pb-16 sm:pb-20">
-          <div className="site-container">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-8">
-              {galleryItems.map((item) => (
-                <figure
-                  key={item.title}
-                  className="min-w-0"
-                >
-                  <div className="relative aspect-[3/2] overflow-hidden rounded-lg bg-[var(--color-surface)]">
-                  <Image
-                    src={item.src}
-                    alt={item.alt}
-                    fill
-                    sizes="(max-width: 40rem) 100vw, (max-width: 80rem) 50vw, 640px"
-                    className="object-cover object-center"
-                  />
-                  </div>
-                  <figcaption className="pt-3">
-                    <h2 className="text-base font-normal text-[var(--color-text)]">
-                      {item.title}
-                    </h2>
-                  </figcaption>
-                </figure>
-              ))}
-            </div>
-
+        <section aria-label="Gallery images" className="pb-[var(--section-space)]">
+          <div className={`site-container ${styles.grid}`}>
+            {galleryItems.map((item) => (
+              <figure key={item.title} className={styles.tile}>
+                <Image src={item.src} alt={item.alt} fill sizes="(max-width: 40rem) 100vw, 50vw" className={styles.image} />
+                <div className={styles.blur} aria-hidden="true" />
+                <figcaption className={styles.caption}>{item.title}</figcaption>
+              </figure>
+            ))}
           </div>
         </section>
       </main>

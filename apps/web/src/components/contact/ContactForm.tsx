@@ -240,62 +240,58 @@ const BUSINESS_TYPES: SelectOption[] = [
 
 const STATE_OPTIONS: SelectOption[] = INDIAN_STATES.map((s) => ({ value: s, label: s }));
 
+/* ─── Query-string prefill (distribution location, product name) ─── */
+function prefillFromSearchParams(searchParams: URLSearchParams): {
+  form: FormData;
+  lockedLocation: { city: string; state: string } | null;
+} {
+  let form: FormData = initialFormData;
+  let lockedLocation: { city: string; state: string } | null = null;
+
+  const typeParam = searchParams.get('type');
+  const locationParam = searchParams.get('location');
+  const cityParam = searchParams.get('city');
+  const stateParam = searchParams.get('state');
+
+  if (typeParam === 'DISTRIBUTION_ENQUIRY' || locationParam || cityParam || stateParam) {
+    let city = cityParam || '';
+    let state = stateParam || '';
+
+    if (locationParam && (!city || !state)) {
+      const parts = locationParam.split(',').map((part) => part.trim());
+      if (parts.length > 1) {
+        city = parts[0] || '';
+        state = parts[1] || '';
+      } else {
+        state = parts[0] || '';
+      }
+    }
+
+    form = { ...form, type: 'DISTRIBUTION_ENQUIRY', city, state, territory: state };
+    if (state) lockedLocation = { city, state };
+  }
+
+  const productParam = searchParams.get('product') || searchParams.get('productName');
+  if (productParam || typeParam === 'PRODUCT_ENQUIRY') {
+    form = { ...form, type: 'PRODUCT_ENQUIRY', productName: productParam || form.productName };
+  }
+
+  return { form, lockedLocation };
+}
+
 export function ContactForm() {
   const searchParams = useSearchParams();
-  const [form, setForm] = useState<FormData>(initialFormData);
+  // Links from product and distributor pages prefill the form through the query string.
+  const [prefill] = useState(() => prefillFromSearchParams(searchParams));
+  const lockedLocation = prefill.lockedLocation;
+  const [form, setForm] = useState<FormData>(prefill.form);
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [enquiryCode, setEnquiryCode] = useState<string>('');
-  const [lockedLocation, setLockedLocation] = useState<{ city: string; state: string } | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
-  // Read URL query parameters for prefilling distribution enquiries
-  useEffect(() => {
-    const typeParam = searchParams.get('type');
-    const locationParam = searchParams.get('location');
-    const cityParam = searchParams.get('city');
-    const stateParam = searchParams.get('state');
-
-    // Handle distribution prefilling
-    if (typeParam === 'DISTRIBUTION_ENQUIRY' || locationParam || cityParam || stateParam) {
-      let city = cityParam || '';
-      let state = stateParam || '';
-
-      if (locationParam && (!city || !state)) {
-        const parts = locationParam.split(',').map((s) => s.trim());
-        if (parts.length > 1) {
-          city = parts[0] || '';
-          state = parts[1] || '';
-        } else {
-          state = parts[0] || '';
-        }
-      }
-
-      setForm((prev) => ({
-        ...prev,
-        type: 'DISTRIBUTION_ENQUIRY',
-        city: city || prev.city,
-        state: state || prev.state,
-        territory: state || prev.territory,
-      }));
-
-      if (state) {
-        setLockedLocation({ city, state });
-      }
-    }
-
-    // Handle product enquiry prefilling
-    const productParam = searchParams.get('product') || searchParams.get('productName');
-    if (productParam || typeParam === 'PRODUCT_ENQUIRY') {
-      setForm((prev) => ({
-        ...prev,
-        type: 'PRODUCT_ENQUIRY',
-        productName: productParam || prev.productName,
-      }));
-    }
-  }, [searchParams]);
 
   const update = (field: keyof FormData, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -605,13 +601,9 @@ export function ContactForm() {
       {showDistributionFields && (
         <>
           {(lockedLocation || form.state) && (
-            <div className="rounded-xl border border-[var(--color-hairline)] bg-[rgba(236,231,222,0.04)] px-4 py-3 flex items-center justify-between">
-              <span className="text-xs font-mono uppercase tracking-wider text-[var(--color-text-muted)]">
-                State
-              </span>
-              <span className="text-sm font-semibold text-[var(--color-primary)]">
-                {form.state}
-              </span>
+            <div className="flex items-baseline justify-between gap-4 border-y border-[var(--color-hairline)] py-4">
+              <span className="text-sm text-[var(--color-text-faint)]">State</span>
+              <span className="text-[var(--color-text)]">{form.state}</span>
             </div>
           )}
 

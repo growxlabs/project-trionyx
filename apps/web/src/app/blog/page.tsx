@@ -1,6 +1,6 @@
 import Image from 'next/image';
-import { ExploreHeader } from '@/components/ExploreHeader';
 import type { Metadata } from 'next';
+import { ExploreHeader } from '@/components/ExploreHeader';
 import { PageFrame } from '@/components/frame';
 import { HeaderShell } from '@/components/header/HeaderShell';
 import { SiteFooter } from '@/components/footer/SiteFooter';
@@ -13,28 +13,22 @@ export const metadata: Metadata = {
 
 const articles = [
   {
-    category: 'Material Science',
     date: 'October 2026',
     readTime: '4 min read',
     title: 'The Role of 2D Carbon Allotropes in Automotive Paint Protection',
-    excerpt:
-      'How reduced graphene oxide lattices distribute surface heat and minimize water spot etching on modern automotive clearcoats.',
+    image: { src: '/images/hero/graphene-protected-vehicle.png', alt: 'Water beading on a protected vehicle' },
   },
   {
-    category: 'Application Standards',
     date: 'September 2026',
     readTime: '5 min read',
     title: 'Flash Timing and Cross-Link Stabilization across High-Humidity Climates',
-    excerpt:
-      'Studio parameters and curing considerations when applying 10H ceramic and graphene coatings during Indian monsoon seasons.',
+    image: { src: '/images/about/installation.jpg', alt: 'Automotive surface installation' },
   },
   {
-    category: 'Surface Science',
     date: 'August 2026',
     readTime: '3 min read',
     title: 'Understanding Contact Angle: Hydrophobic Water Beading vs. Sheeting',
-    excerpt:
-      'The physics behind surface tension, droplet angle dynamics, and how nano-matrix coatings shed road grime effortlessly.',
+    image: { src: '/images/about/ceramic-coating-surface.jpg', alt: 'Water droplets on coated paintwork' },
   },
 ];
 
@@ -42,28 +36,29 @@ export default function BlogPage() {
   return (
     <PageFrame>
       <HeaderShell />
-      <main className="flex flex-1 flex-col text-[var(--color-text)]">
-        <ExploreHeader active="Blog" description="Surface science, coating care, and application guides." />
+      <main className="flex flex-1 flex-col">
+        <ExploreHeader active="Blog" />
 
-        <section aria-label="Articles" className="pb-16 sm:pb-20">
+        <section aria-label="Articles" className="pb-[var(--section-space)]">
           <div className="site-container">
-            <div className="divide-y divide-[var(--color-hairline)] border-y border-[var(--color-hairline)]">
-              {articles.map((item, index) => (
-                <article key={item.title} className="grid gap-5 py-7 sm:grid-cols-[220px_1fr] sm:gap-8 sm:py-8 lg:grid-cols-[280px_1fr] lg:gap-10">
-                  <div className="relative aspect-[16/10] overflow-hidden rounded-lg bg-[var(--color-surface)]">
-                    <Image
-                      src={['/images/hero/graphene-protected-vehicle.png', '/images/about/installation.jpg', '/images/about/ceramic-coating-surface.jpg'][index]}
-                      alt={['Water beading on a protected vehicle', 'Automotive surface installation', 'Water droplets on coated paintwork'][index]}
-                      fill
-                      sizes="(max-width: 40rem) 100vw, (max-width: 64rem) 220px, 280px"
-                      className="object-cover"
-                    />
+            <div className="border-t border-[var(--color-hairline)]">
+              {articles.map((article) => (
+                <article
+                  key={article.title}
+                  className="grid items-center gap-5 border-b border-[var(--color-hairline)] py-8 sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] sm:gap-10 lg:py-10"
+                >
+                  <div className="relative aspect-[3/2] overflow-hidden rounded-2xl bg-[var(--color-surface)]">
+                    <Image src={article.image.src} alt={article.image.alt} fill sizes="(max-width: 40rem) 100vw, 33vw" className="object-cover" />
                   </div>
-                  <div className="max-w-3xl self-center">
-                    <p className="mb-2 text-xs text-[var(--color-primary)]">{item.category}</p>
-                    <h2 className="text-xl font-normal leading-snug tracking-tight sm:text-2xl">{item.title}</h2>
-                    <p className="mt-3 text-sm leading-relaxed text-[var(--color-text-muted)]">{item.excerpt}</p>
-                    <p className="mt-4 text-xs text-[var(--color-text-muted)]">{item.date}<span aria-hidden="true" className="mx-2">·</span>{item.readTime}</p>
+                  <div>
+                    <h2 className="m-0 text-[clamp(1.5rem,2.6vw,2.25rem)] leading-[1.2] tracking-[-0.02em]">{article.title}</h2>
+                    <p className="mt-4 text-sm text-[var(--color-text-faint)]">
+                      {article.date}
+                      <span aria-hidden="true" className="mx-2">
+                        ·
+                      </span>
+                      {article.readTime}
+                    </p>
                   </div>
                 </article>
               ))}

@@ -6,8 +6,8 @@ const navigation = [
   {
     title: 'Explore',
     links: [
-      { label: 'Our products', href: '/#graphene' },
-      { label: 'About Trionyx', href: '/#about' },
+      { label: 'Our products', href: '/products' },
+      { label: 'About Trionyx', href: '/about' },
       { label: 'Contact us', href: '/contact' },
     ],
   },
