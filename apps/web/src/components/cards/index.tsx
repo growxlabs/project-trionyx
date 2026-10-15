@@ -272,7 +272,7 @@ export const FeatureCard = ({
 
 /* =========================================================================
    6. ARTICLE / CONTENT CARD
-   Technical installation guides, case studies, product release notes.
+   Technical application guides, case studies, product release notes.
    ========================================================================= */
 
 export interface ArticleCardProps {
@@ -348,7 +348,7 @@ export const ContactCard = ({
     >
       <div>
         <span className="text-[11px] font-mono uppercase tracking-wider text-[#FF6A00] font-semibold block mb-1">
-          Dealer & Certified Installer Network
+          Dealer & Distributor Network
         </span>
         <h3 className="text-[18px] font-bold text-[#151515]">{title}</h3>
         <p className="text-[13px] text-[#626262] mt-2 leading-relaxed">{description}</p>

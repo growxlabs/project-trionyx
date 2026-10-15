@@ -8,21 +8,21 @@ const PRODUCTS = [
     name: 'Graphene Coating',
     imageSrc: '/images/hero/graphene-protected-vehicle.png',
     imageAlt: 'Black car bonnet beaded with water after a graphene coating',
-    href: '/products#graphene',
+    href: '/products/graphene-coating',
   },
   {
     id: 'ceramic',
     name: 'Ceramic Coating',
     imageSrc: '/images/about/ceramic-coating-surface.jpg',
     imageAlt: 'Hydrophobic ceramic-coated paintwork with dense water beading',
-    href: '/products#ceramic',
+    href: '/products/ceramic-coating',
   },
   {
     id: 'borophene',
     name: 'Borophene Coating',
     imageSrc: '/images/borophene/borophene-surface.jpg',
     imageAlt: 'Dark car body panel with a crystalline borophene finish',
-    href: '/products#borophene',
+    href: '/products/borophene-coating',
   },
 ];
 

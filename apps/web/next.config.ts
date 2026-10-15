@@ -19,6 +19,15 @@ const nextConfig: NextConfig = {
     ],
   },
   serverExternalPackages: ['@libsql/client', 'pg'],
+  async redirects() {
+    return [
+      {
+        source: '/installer-network',
+        destination: '/distributors',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import type { ContactEnquiryType } from '@trionyx/types';
 import { ContactSuccess } from './ContactSuccess';
 
@@ -240,13 +241,61 @@ const BUSINESS_TYPES: SelectOption[] = [
 const STATE_OPTIONS: SelectOption[] = INDIAN_STATES.map((s) => ({ value: s, label: s }));
 
 export function ContactForm() {
+  const searchParams = useSearchParams();
   const [form, setForm] = useState<FormData>(initialFormData);
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [enquiryCode, setEnquiryCode] = useState<string>('');
+  const [lockedLocation, setLockedLocation] = useState<{ city: string; state: string } | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+
+  // Read URL query parameters for prefilling distribution enquiries
+  useEffect(() => {
+    const typeParam = searchParams.get('type');
+    const locationParam = searchParams.get('location');
+    const cityParam = searchParams.get('city');
+    const stateParam = searchParams.get('state');
+
+    // Handle distribution prefilling
+    if (typeParam === 'DISTRIBUTION_ENQUIRY' || locationParam || cityParam || stateParam) {
+      let city = cityParam || '';
+      let state = stateParam || '';
+
+      if (locationParam && (!city || !state)) {
+        const parts = locationParam.split(',').map((s) => s.trim());
+        if (parts.length > 1) {
+          city = parts[0] || '';
+          state = parts[1] || '';
+        } else {
+          state = parts[0] || '';
+        }
+      }
+
+      setForm((prev) => ({
+        ...prev,
+        type: 'DISTRIBUTION_ENQUIRY',
+        city: city || prev.city,
+        state: state || prev.state,
+        territory: state || prev.territory,
+      }));
+
+      if (state) {
+        setLockedLocation({ city, state });
+      }
+    }
+
+    // Handle product enquiry prefilling
+    const productParam = searchParams.get('product') || searchParams.get('productName');
+    if (productParam || typeParam === 'PRODUCT_ENQUIRY') {
+      setForm((prev) => ({
+        ...prev,
+        type: 'PRODUCT_ENQUIRY',
+        productName: productParam || prev.productName,
+      }));
+    }
+  }, [searchParams]);
 
   const update = (field: keyof FormData, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -288,17 +337,24 @@ export function ContactForm() {
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
       errs.email = 'Please enter a valid email address';
     }
-    if (!form.city.trim()) {
+    if (form.type !== 'DISTRIBUTION_ENQUIRY' && !form.city.trim()) {
       errs.city = 'City is required';
     }
     if (!form.state.trim()) {
       errs.state = 'State is required';
     }
-    if (!form.pincode.trim()) {
-      errs.pincode = 'Pincode is required';
-    } else if (!/^\d{6}$/.test(form.pincode.trim())) {
+
+    // Pincode is optional for distribution enquiries, required for others
+    if (form.type !== 'DISTRIBUTION_ENQUIRY') {
+      if (!form.pincode.trim()) {
+        errs.pincode = 'Pincode is required';
+      } else if (!/^\d{6}$/.test(form.pincode.trim())) {
+        errs.pincode = 'Pincode must be exactly 6 digits';
+      }
+    } else if (form.pincode.trim() && !/^\d{6}$/.test(form.pincode.trim())) {
       errs.pincode = 'Pincode must be exactly 6 digits';
     }
+
     if (!form.message.trim()) {
       errs.message = form.type === 'PRODUCT_SUPPORT' ? 'Please describe the issue' : 'Message is required';
     }
@@ -315,13 +371,10 @@ export function ContactForm() {
 
     if (form.type === 'DISTRIBUTION_ENQUIRY') {
       if (!form.companyName.trim()) {
-        errs.companyName = 'Company Name is required';
+        errs.companyName = 'Company / Business Name is required';
       }
-      if (!form.businessAddress.trim()) {
-        errs.businessAddress = 'Business Address is required';
-      }
-      if (!form.territory.trim()) {
-        errs.territory = 'Territory / Area is required';
+      if (!form.businessType.trim()) {
+        errs.businessType = 'Current Business is required';
       }
     }
 
@@ -551,15 +604,26 @@ export function ContactForm() {
       {/* Distribution Enquiry Fields */}
       {showDistributionFields && (
         <>
+          {(lockedLocation || form.state) && (
+            <div className="rounded-xl border border-[var(--color-hairline)] bg-[rgba(236,231,222,0.04)] px-4 py-3 flex items-center justify-between">
+              <span className="text-xs font-mono uppercase tracking-wider text-[var(--color-text-muted)]">
+                State
+              </span>
+              <span className="text-sm font-semibold text-[var(--color-primary)]">
+                {form.state}
+              </span>
+            </div>
+          )}
+
           <div>
             <label htmlFor="companyName" className={labelBase}>
-              Company Name <span className="text-[#F26522]">*</span>
+              Company / Business Name <span className="text-[#F26522]">*</span>
             </label>
             <input
               type="text"
               id="companyName"
               className={inputBase}
-              placeholder="Your distribution company name"
+              placeholder="Your company or business name"
               value={form.companyName}
               onChange={(e) => update('companyName', e.target.value)}
               autoComplete="organization"
@@ -568,46 +632,18 @@ export function ContactForm() {
           </div>
 
           <div>
-            <label htmlFor="businessAddress" className={labelBase}>
-              Business Address <span className="text-[#F26522]">*</span>
-            </label>
-            <input
-              type="text"
-              id="businessAddress"
-              className={inputBase}
-              placeholder="Office/warehouse address, street"
-              value={form.businessAddress}
-              onChange={(e) => update('businessAddress', e.target.value)}
-            />
-            <FieldError error={errors.businessAddress} />
-          </div>
-
-          <div>
-            <label htmlFor="territory" className={labelBase}>
-              Territory / Area <span className="text-[#F26522]">*</span>
-            </label>
-            <input
-              type="text"
-              id="territory"
-              className={inputBase}
-              placeholder="e.g. Western Maharashtra / North Karnataka"
-              value={form.territory}
-              onChange={(e) => update('territory', e.target.value)}
-            />
-            <FieldError error={errors.territory} />
-          </div>
-
-          <div>
             <label htmlFor="businessType" className={labelBase}>
-              Business Type
+              Current Business <span className="text-[#F26522]">*</span>
             </label>
-            <StyledSelect
+            <input
+              type="text"
               id="businessType"
-              options={BUSINESS_TYPES}
+              className={inputBase}
+              placeholder="e.g. Detailing Studio, Automotive Distribution, Workshop"
               value={form.businessType}
-              onChange={(val) => update('businessType', val)}
-              placeholder="Select business type"
+              onChange={(e) => update('businessType', e.target.value)}
             />
+            <FieldError error={errors.businessType} />
           </div>
         </>
       )}
@@ -632,52 +668,56 @@ export function ContactForm() {
         </div>
       )}
 
-      {/* ─── Base Location Fields: City, State, Pincode ─── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* ─── Base Location Fields: City, State, Pincode (hidden when state is already selected for distribution) ─── */}
+      {!(form.type === 'DISTRIBUTION_ENQUIRY' && form.state) && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="city" className={labelBase}>
+              City <span className="text-[#F26522]">*</span>
+            </label>
+            <input
+              type="text"
+              id="city"
+              className={inputBase}
+              placeholder="Your city"
+              value={form.city}
+              onChange={(e) => update('city', e.target.value)}
+            />
+            <FieldError error={errors.city} />
+          </div>
+          <div>
+            <label htmlFor="state" className={labelBase}>
+              State <span className="text-[#F26522]">*</span>
+            </label>
+            <StyledSelect
+              id="state"
+              options={STATE_OPTIONS}
+              value={form.state}
+              onChange={(val) => update('state', val)}
+              placeholder="Select state"
+            />
+            <FieldError error={errors.state} />
+          </div>
+        </div>
+      )}
+
+      {form.type !== 'DISTRIBUTION_ENQUIRY' && (
         <div>
-          <label htmlFor="city" className={labelBase}>
-            City <span className="text-[#F26522]">*</span>
+          <label htmlFor="pincode" className={labelBase}>
+            Pincode <span className="text-[#F26522]">*</span>
           </label>
           <input
             type="text"
-            id="city"
+            id="pincode"
+            maxLength={6}
             className={inputBase}
-            placeholder="Your city"
-            value={form.city}
-            onChange={(e) => update('city', e.target.value)}
+            placeholder="6-digit Indian postal code"
+            value={form.pincode}
+            onChange={(e) => update('pincode', e.target.value.replace(/\D/g, '').slice(0, 6))}
           />
-          <FieldError error={errors.city} />
+          <FieldError error={errors.pincode} />
         </div>
-        <div>
-          <label htmlFor="state" className={labelBase}>
-            State <span className="text-[#F26522]">*</span>
-          </label>
-          <StyledSelect
-            id="state"
-            options={STATE_OPTIONS}
-            value={form.state}
-            onChange={(val) => update('state', val)}
-            placeholder="Select state"
-          />
-          <FieldError error={errors.state} />
-        </div>
-      </div>
-
-      <div>
-        <label htmlFor="pincode" className={labelBase}>
-          Pincode <span className="text-[#F26522]">*</span>
-        </label>
-        <input
-          type="text"
-          id="pincode"
-          maxLength={6}
-          className={inputBase}
-          placeholder="6-digit Indian postal code"
-          value={form.pincode}
-          onChange={(e) => update('pincode', e.target.value.replace(/\D/g, '').slice(0, 6))}
-        />
-        <FieldError error={errors.pincode} />
-      </div>
+      )}
 
       {/* Message — label changes for Product Support */}
       <div>
@@ -722,6 +762,8 @@ export function ContactForm() {
               </svg>
               Submitting...
             </>
+          ) : form.type === 'DISTRIBUTION_ENQUIRY' ? (
+            'Submit Enquiry'
           ) : (
             'Send enquiry'
           )}

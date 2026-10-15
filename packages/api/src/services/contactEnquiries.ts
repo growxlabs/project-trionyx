@@ -22,9 +22,9 @@ export const contactEnquiriesService = {
       companyName?: string | null;
       businessAddress?: string | null;
       businessType?: string | null;
-      city: string;
+      city?: string | null;
       state: string;
-      pincode: string;
+      pincode?: string | null;
       territory?: string | null;
       productId?: string | null;
       purchaseDealerDetails?: string | null;
@@ -34,7 +34,7 @@ export const contactEnquiriesService = {
     meta?: { ipAddress?: string | null; userAgent?: string | null }
   ): Promise<ContactEnquiry> {
     const client = await ensureDatabaseReady();
-    const created = await contactEnquiriesRepository.create(data, client);
+    const created = await contactEnquiriesRepository.create({ ...data, city: data.city || '' }, client);
 
     // Record audit event
     await auditLogsRepository.recordEvent(

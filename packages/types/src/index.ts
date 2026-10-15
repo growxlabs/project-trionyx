@@ -704,7 +704,8 @@ export interface EnquiryNote {
  */
 
 export interface WarrantyPolicy {
-  id: string;
+  id: string; // e.g. TRX-POL-000001 or LAK-POL-000001
+  policyCode?: string; // Human-readable policy code (alias for id)
   productId: string;
   durationMonths: number;
   status: 'ACTIVE' | 'INACTIVE';

@@ -21,7 +21,7 @@ const FAQS: FaqItem[] = [
         <code className="rounded-md bg-[rgba(236,231,222,0.08)] px-1.5 py-0.5 font-mono text-[0.875em] text-[var(--color-text)]">
           TRX-SN-YYYY-XXXX
         </code>
-        . If your installation was recent, check with your installer to ensure the customer record was finalized in the dealer portal.
+        . If your application was recent, check with your authorized studio or dealer to ensure the customer record was finalized in the dealer portal.
       </>
     ),
   },

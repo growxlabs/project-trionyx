@@ -58,6 +58,24 @@ export function ProductDetailView({
   const [showArchiveDialog, setShowArchiveDialog] = useState(false);
   const [isArchiving, setIsArchiving] = useState(false);
 
+  const isLakshmi =
+    product.businessCode === 'LAKSHMI' ||
+    product.organizationId === 'org-lakshmi' ||
+    (product.productCode ? product.productCode.startsWith('LAK-') : false);
+
+  const isUuid = (val?: string | null) =>
+    Boolean(val && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val));
+
+  const displayPolicyId = policy
+    ? policy.policyCode && !isUuid(policy.policyCode)
+      ? policy.policyCode
+      : !isUuid(policy.id)
+      ? policy.id
+      : isLakshmi
+      ? 'LAK-POL-000001'
+      : 'TRX-POL-000001'
+    : null;
+
   // Serial status adjustment state
   const [adjustTargetSerial, setAdjustTargetSerial] = useState<SerialNumberWithDetails | null>(null);
   const [adjustNewStatus, setAdjustNewStatus] = useState<SerialStatus>('INACTIVE');
@@ -889,7 +907,7 @@ export function ProductDetailView({
                   Product Warranty Policy
                 </h2>
                 <p className="text-[12.5px] text-[var(--text-secondary)] mt-0.5 m-0">
-                  Controls factory warranty eligibility, duration, and dealer activation rules for this product formulation.
+                  Controls factory warranty eligibility, duration, and dealer activation rules for this {isLakshmi ? 'product' : 'product formulation'}.
                 </p>
               </div>
 
@@ -958,7 +976,9 @@ export function ProductDetailView({
                       Standard Terms & Coverage
                     </h3>
                     <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed m-0">
-                      Standard factory warranty covers manufacturing defects, formulation integrity, adhesion performance, and environmental degradation when applied according to official Trionyx surface preparation protocol by an authorized dealer.
+                      {isLakshmi
+                        ? 'Standard factory warranty covers manufacturing defects, operational integrity, and component performance when installed according to official Lakshmi protocol by an authorized dealer.'
+                        : 'Standard factory warranty covers manufacturing defects, formulation integrity, adhesion performance, and environmental degradation when applied according to official Trionyx surface preparation protocol by an authorized dealer.'}
                     </p>
                     <p className="text-[12px] text-[var(--text-muted)] m-0 pt-1">
                       Warranty period begins strictly from the documented <strong>Installation Date</strong> entered during registration.
@@ -969,7 +989,7 @@ export function ProductDetailView({
                 <div className="bg-[var(--background)] border border-[var(--border)] rounded-[6px] p-4 space-y-3 self-start text-[12.5px]">
                   <div>
                     <span className="text-[var(--text-muted)] block text-[11px] uppercase font-semibold">Policy ID</span>
-                    <span className="font-mono text-[var(--text-primary)] break-all">{policy.id}</span>
+                    <span className="font-mono text-[var(--text-primary)] break-all font-medium">{displayPolicyId}</span>
                   </div>
                   <div>
                     <span className="text-[var(--text-muted)] block text-[11px] uppercase font-semibold">Product Code</span>

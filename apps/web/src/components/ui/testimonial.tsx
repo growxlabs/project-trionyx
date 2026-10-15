@@ -42,7 +42,7 @@ export function ClientFeedback() {
           customVariants={revealVariants}
           timelineRef={testimonialRef}
         >
-          Trusted across studios and certified installers.
+          Trusted across studios and certified detailers.
         </TimelineContent>
       </article>
 
@@ -65,7 +65,7 @@ export function ClientFeedback() {
 
             <article className="mt-auto relative z-10">
               <p className="text-[15px] sm:text-[16px] leading-[1.65] font-normal text-[#171714]">
-                &ldquo;Trionyx PPF has elevated our detailing studio. The edge stretchability and self-healing clear coat make installation seamless on complex body contours.&rdquo;
+                &ldquo;Trionyx PPF has elevated our detailing studio. The edge stretchability and self-healing clear coat make application seamless on complex body contours.&rdquo;
               </p>
               <div className="flex justify-between items-end pt-6 border-t border-[rgba(23,23,20,0.06)] mt-6">
                 <div>
@@ -73,7 +73,7 @@ export function ClientFeedback() {
                     Rajesh Varma
                   </h3>
                   <p className="text-[12px] font-mono text-[#68665F]">
-                    Lead Installer · Apex Auto Studio, Hyderabad
+                    Master Detailer · Apex Auto Studio, Hyderabad
                   </p>
                 </div>
                 <Image
