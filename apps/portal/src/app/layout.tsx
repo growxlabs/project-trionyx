@@ -5,6 +5,7 @@ import React from 'react';
 import './globals.css';
 import { ThemeProvider } from '../components/shell/ThemeProvider';
 import { themeInitializationScript } from '../components/shell/theme-init-script';
+import { NetworkStatus } from '@trionyx/ui';
 
 export const metadata: Metadata = {
   title: 'Internal Access — Trionyx Operations Portal',
@@ -34,7 +35,7 @@ export default async function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeInitializationScript(userId) }} />
       </head>
       <body className="min-h-screen bg-[var(--background)] text-[var(--text-primary)] antialiased selection:bg-[var(--accent)]/20 selection:text-[var(--text-primary)]">
-        <ThemeProvider key={userId ?? "guest"} userId={userId}>{children}</ThemeProvider>
+        <ThemeProvider key={userId ?? "guest"} userId={userId}>{children}<NetworkStatus /></ThemeProvider>
       </body>
     </html>
   );

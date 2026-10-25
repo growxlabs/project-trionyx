@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { M_PLUS_Rounded_1c } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import { NetworkStatus } from '@trionyx/ui';
 
 const rounded = M_PLUS_Rounded_1c({
   variable: "--font-rounded",
@@ -29,7 +30,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${rounded.variable} ${paperMono.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">{children}<NetworkStatus /></body>
     </html>
   );
 }

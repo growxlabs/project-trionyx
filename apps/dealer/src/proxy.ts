@@ -23,9 +23,10 @@ export function proxy(request: NextRequest) {
   }
 
   const isLoginPage = pathname === '/login';
+  const isProtectedPage = pathname === '/' || /^\/(overview|products|availability|dealers|requests|warranty|account|guide)(\/|$)/.test(pathname);
 
   // 1. Guest trying to access protected route -> redirect to /login
-  if (!token && !isLoginPage) {
+  if (!token && isProtectedPage) {
     const loginUrl = new URL('/login', request.url);
     const response = NextResponse.redirect(loginUrl);
     response.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate');

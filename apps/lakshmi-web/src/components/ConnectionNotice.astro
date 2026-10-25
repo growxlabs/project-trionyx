@@ -1,0 +1,41 @@
+---
+import '../../../../packages/ui/src/status.css';
+---
+<aside id="connection-notice" class="tx-network-notice" aria-label="Connection status" hidden>
+  <svg class="tx-status-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9.5L8 5.5l5 4M3 9.5v10h10v-10M6.5 19.5v-5h3v5M13 14h3M18.5 11.5L22 15M22 11.5L18.5 15"/><rect x="18" y="17.5" width="4" height="4" rx=".5"/></svg>
+  <div role="status"><strong data-connection-title></strong><p data-connection-message></p></div>
+  <button class="tx-network-dismiss" aria-label="Dismiss connection notice">×</button>
+</aside>
+<script>
+  const notice = document.querySelector<HTMLElement>('#connection-notice');
+  const title = notice?.querySelector<HTMLElement>('[data-connection-title]');
+  const message = notice?.querySelector<HTMLElement>('[data-connection-message]');
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  function show(offline: boolean) {
+    if (!notice || !title || !message) return;
+    title.textContent = offline ? 'You’re offline' : 'Taking a little longer';
+    message.textContent = offline ? 'Check your connection. Keep this page open to preserve anything you’ve entered.' : 'We’re still waiting for the next page. You can keep waiting or try another link.';
+    notice.hidden = false;
+  }
+  function syncConnection() {
+    clearTimeout(timeout);
+    if (!navigator.onLine) show(true);
+    else if (notice) notice.hidden = true;
+  }
+  window.addEventListener('online', syncConnection);
+  window.addEventListener('offline', syncConnection);
+  window.addEventListener('pageshow', syncConnection);
+  window.addEventListener('pagehide', () => clearTimeout(timeout));
+  notice?.querySelector('button')?.addEventListener('click', () => { if (notice) notice.hidden = true; });
+  document.addEventListener('click', (event) => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const link = event.target instanceof Element ? event.target.closest('a') : null;
+    if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+    const url = new URL(link.href, location.href);
+    if (url.origin !== location.origin || !['http:', 'https:'].includes(url.protocol) || (url.pathname === location.pathname && url.search === location.search)) return;
+    clearTimeout(timeout);
+    if (!navigator.onLine) { event.preventDefault(); show(true); return; }
+    timeout = setTimeout(() => show(false), 8000);
+  });
+  syncConnection();
+</script>

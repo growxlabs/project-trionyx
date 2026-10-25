@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { WorkspaceSidebar, type WorkspaceViewsConfig } from './WorkspaceSidebar';
 import { cn } from '@/lib/utils';
+import { OrganizationContent } from '../shell/OrganizationContent';
 
 type RegisterFn = (config: WorkspaceViewsConfig | null) => void;
 
@@ -30,7 +31,7 @@ export function WorkspaceViewsProvider({ children }: { children: React.ReactNode
               isTrix ? 'h-full p-0 flex flex-col overflow-hidden' : 'px-4 py-4 sm:px-6 sm:py-5 lg:px-7 lg:py-5'
             )}
           >
-            {children}
+            <OrganizationContent>{children}</OrganizationContent>
           </main>
         </div>
       </div>

@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "@trionyx/ui/skeleton.css";
+@import "@trionyx/ui/status.css";
 @source "../../../packages/ui/src";
 
 /*

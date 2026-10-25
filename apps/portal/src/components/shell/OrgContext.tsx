@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useTransition } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import type { Organization, OrganizationMembership } from '@trionyx/types';
 
@@ -35,6 +35,7 @@ export function OrgProvider({
   const [membership, setMembership] = useState<OrganizationMembership | null>(initialMembership || null);
   const [memberships, setMemberships] = useState<OrganizationMembership[]>(initialMemberships);
   const [isLoading, setIsLoading] = useState<boolean>(!initialActiveOrg);
+  const [isRefreshing, startRefresh] = useTransition();
   const [switchingOrganizationId, setSwitchingOrganizationId] = useState<string | null>(null);
 
   // Sync state if SSR props change on server component re-renders
@@ -83,7 +84,7 @@ export function OrgProvider({
   }, [initialActiveOrg]);
 
   const switchOrg = useCallback(async (orgIdOrSlug: string) => {
-    if (switchingOrganizationId) return;
+    if (switchingOrganizationId || isRefreshing) return;
     setSwitchingOrganizationId(orgIdOrSlug);
     setIsLoading(true);
 
@@ -121,16 +122,18 @@ export function OrgProvider({
       }
 
       // 3. Handle route transitions: warranty is strictly Trionyx-only
-      if (pathname.startsWith('/warranty') && newActiveOrg.slug !== 'trionyx') {
-        router.replace('/overview');
-      } else {
-        router.refresh();
-      }
+      startRefresh(() => {
+        if (pathname.startsWith('/warranty') && newActiveOrg.slug !== 'trionyx') {
+          router.replace('/overview');
+        } else {
+          router.refresh();
+        }
+      });
     } finally {
       setIsLoading(false);
       setSwitchingOrganizationId(null);
     }
-  }, [pathname, router, switchingOrganizationId]);
+  }, [pathname, router, switchingOrganizationId, isRefreshing]);
 
   return (
     <OrgContext.Provider
@@ -138,7 +141,7 @@ export function OrgProvider({
         activeOrg,
         membership,
         memberships,
-        isLoading,
+        isLoading: isLoading || isRefreshing,
         switchingOrganizationId,
         switchOrg,
       }}
