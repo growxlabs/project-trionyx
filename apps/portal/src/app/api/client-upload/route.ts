@@ -37,7 +37,7 @@ export async function POST(request: Request) {
 
     if (!providedToken || !isAuthorizedToken(providedToken)) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized: Invalid or expired upload link.' },
+        { success: false, error: 'This upload link has expired or is invalid. Please request a new link.' },
         { status: 401 }
       );
     }
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
 
     if (!files || files.length === 0) {
       return NextResponse.json(
-        { success: false, error: 'No photos provided in upload.' },
+        { success: false, error: 'No photos were selected. Please select at least one photo.' },
         { status: 400 }
       );
     }
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
         return NextResponse.json(
           {
             success: false,
-            error: `File "${file.name}" exceeds the 25 MB limit (${(file.size / 1024 / 1024).toFixed(1)} MB).`,
+            error: `"${file.name}" is too large. Please select a photo under 25 MB.`,
           },
           { status: 400 }
         );
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
         return NextResponse.json(
           {
             success: false,
-            error: `Unsupported format for "${file.name}". Please upload JPEG, PNG, WebP, or HEIC images.`,
+            error: `"${file.name}" is not a supported format. Please upload JPG, PNG, or HEIC images.`,
           },
           { status: 400 }
         );
@@ -109,7 +109,10 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Upload failed';
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+    console.error('Client upload error:', err);
+    return NextResponse.json(
+      { success: false, error: 'Unable to upload photo right now. Please try again in a moment.' },
+      { status: 500 }
+    );
   }
 }

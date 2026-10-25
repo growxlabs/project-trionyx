@@ -8,6 +8,68 @@ interface PreviewFile {
   previewUrl: string;
 }
 
+// Client-side image optimizer to keep photos under Vercel's 4.5 MB request limit
+async function optimizeImage(file: File): Promise<File> {
+  // If file is already small (under 2.5 MB), keep original
+  if (file.size <= 2.5 * 1024 * 1024) return file;
+
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_DIM = 2400; // 2400px is crystal-clear for product packaging & labels
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_DIM) {
+            height = Math.round((height * MAX_DIM) / width);
+            width = MAX_DIM;
+          }
+        } else {
+          if (height > MAX_DIM) {
+            width = Math.round((width * MAX_DIM) / height);
+            height = MAX_DIM;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(file);
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (!blob || blob.size >= file.size) {
+              resolve(file);
+            } else {
+              const cleanName = file.name.replace(/\.[^/.]+$/, '') + '.jpg';
+              const optimized = new File([blob], cleanName, {
+                type: 'image/jpeg',
+                lastModified: Date.now(),
+              });
+              resolve(optimized);
+            }
+          },
+          'image/jpeg',
+          0.85
+        );
+      };
+      img.onerror = () => resolve(file);
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = () => resolve(file);
+    reader.readAsDataURL(file);
+  });
+}
+
 function UploadContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token') || '';
@@ -15,11 +77,11 @@ function UploadContent() {
   const [previews, setPreviews] = useState<PreviewFile[]>([]);
   const [note, setNote] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadStatusText, setUploadStatusText] = useState('');
   const [progress, setProgress] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successCount, setSuccessCount] = useState<number | null>(null);
 
-  // Clean up object URLs on unmount or file clear
   useEffect(() => {
     return () => {
       previews.forEach((p) => URL.revokeObjectURL(p.previewUrl));
@@ -34,8 +96,8 @@ function UploadContent() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </div>
-        <h2 className="text-base font-semibold text-white mb-1">Invalid Link</h2>
-        <p className="text-xs text-[#7d8590]">Please use the link shared on WhatsApp.</p>
+        <h2 className="text-base font-semibold text-white mb-1">Link Expired or Invalid</h2>
+        <p className="text-xs text-[#7d8590]">Please use the link shared with you on WhatsApp.</p>
       </div>
     );
   }
@@ -58,42 +120,75 @@ function UploadContent() {
     });
   };
 
+  // Upload photos sequentially one by one to never exceed cloud serverless size limits
   const handleUpload = async () => {
     if (previews.length === 0) return;
 
     setIsUploading(true);
-    setProgress(15);
     setErrorMessage(null);
+    setProgress(5);
+
+    let uploadedCount = 0;
+    const total = previews.length;
 
     try {
-      const formData = new FormData();
-      formData.append('token', token);
-      if (note.trim()) formData.append('note', note.trim());
-      previews.forEach((p) => formData.append('photos', p.file));
+      for (let i = 0; i < total; i++) {
+        setUploadStatusText(`Sending photo ${i + 1} of ${total}...`);
+        const item = previews[i];
 
-      const timer = setInterval(() => {
-        setProgress((prev) => (prev < 90 ? prev + 15 : prev));
-      }, 250);
+        // Optimize photo if it is from a high-megapixel phone camera
+        const fileToSend = await optimizeImage(item.file);
 
-      const res = await fetch('/api/client-upload', {
-        method: 'POST',
-        headers: { 'x-upload-token': token },
-        body: formData,
-      });
+        const formData = new FormData();
+        formData.append('token', token);
+        if (note.trim() && i === 0) {
+          formData.append('note', note.trim());
+        }
+        formData.append('photos', fileToSend);
 
-      clearInterval(timer);
-      setProgress(100);
+        let res: Response;
+        try {
+          res = await fetch('/api/client-upload', {
+            method: 'POST',
+            headers: { 'x-upload-token': token },
+            body: formData,
+          });
+        } catch {
+          throw new Error('Connection lost. Please check your internet and try again.');
+        }
 
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Upload failed');
+        if (res.status === 413) {
+          throw new Error(`Photo ${i + 1} is too large. Please select a smaller photo or take a new picture.`);
+        }
+
+        let data: { success?: boolean; error?: string } | null = null;
+        try {
+          data = await res.json();
+        } catch {
+          // If server didn't return JSON
+          if (!res.ok) {
+            throw new Error('Unable to upload. Please try again in a moment.');
+          }
+        }
+
+        if (!res.ok || (data && !data.success)) {
+          const userFriendlyError = data?.error?.toLowerCase().includes('unauthorized')
+            ? 'This upload link has expired. Please ask for a new link.'
+            : (data?.error || 'Unable to upload photo. Please try again.');
+          throw new Error(userFriendlyError);
+        }
+
+        uploadedCount++;
+        setProgress(Math.round(((i + 1) / total) * 100));
       }
 
-      setSuccessCount(data.count);
+      setSuccessCount(uploadedCount);
     } catch (err: unknown) {
-      setErrorMessage(err instanceof Error ? err.message : 'Upload failed');
+      const message = err instanceof Error ? err.message : 'Upload failed. Please check your connection.';
+      setErrorMessage(message);
     } finally {
       setIsUploading(false);
+      setUploadStatusText('');
     }
   };
 
@@ -105,9 +200,9 @@ function UploadContent() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h2 className="text-lg font-semibold text-white mb-1">Photos Received</h2>
+        <h2 className="text-lg font-semibold text-white mb-1">Photos Received!</h2>
         <p className="text-xs text-[#7d8590] mb-6">
-          {successCount} photo{successCount > 1 ? 's' : ''} uploaded successfully.
+          All {successCount} photo{successCount > 1 ? 's' : ''} have been received successfully.
         </p>
         <button
           onClick={() => {
@@ -183,7 +278,8 @@ function UploadContent() {
                 <button
                   type="button"
                   onClick={() => removeFile(idx)}
-                  className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/70 hover:bg-red-500 text-white flex items-center justify-center text-xs transition"
+                  disabled={isUploading}
+                  className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/70 hover:bg-red-500 text-white flex items-center justify-center text-xs transition disabled:opacity-0"
                   title="Remove"
                 >
                   ×
@@ -192,17 +288,19 @@ function UploadContent() {
             ))}
 
             {/* Add More button */}
-            <label className="aspect-square rounded-lg border border-dashed border-[#2f333c] hover:border-[#f26522] flex flex-col items-center justify-center cursor-pointer transition text-[#7d8590] hover:text-white">
-              <input
-                type="file"
-                multiple
-                accept="image/*,.heic,.heif"
-                onChange={(e) => handleFiles(e.target.files)}
-                className="hidden"
-              />
-              <span className="text-xl leading-none mb-0.5">+</span>
-              <span className="text-[10px]">Add</span>
-            </label>
+            {!isUploading && (
+              <label className="aspect-square rounded-lg border border-dashed border-[#2f333c] hover:border-[#f26522] flex flex-col items-center justify-center cursor-pointer transition text-[#7d8590] hover:text-white">
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*,.heic,.heif"
+                  onChange={(e) => handleFiles(e.target.files)}
+                  className="hidden"
+                />
+                <span className="text-xl leading-none mb-0.5">+</span>
+                <span className="text-[10px]">Add</span>
+              </label>
+            )}
           </div>
 
           {/* Optional Note */}
@@ -211,7 +309,7 @@ function UploadContent() {
               type="text"
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Add note (optional)"
+              placeholder="Add product name (optional)"
               disabled={isUploading}
               className="w-full px-3.5 py-2 rounded-lg bg-[#16181d] border border-[#2a2e36] text-xs text-white placeholder-[#5a626d] focus:outline-none focus:border-[#f26522] transition"
             />
@@ -219,7 +317,7 @@ function UploadContent() {
         </div>
       )}
 
-      {/* Progress */}
+      {/* Progress & Upload status in user friendly words */}
       {isUploading && (
         <div className="mt-4">
           <div className="w-full h-1 bg-[#1e2127] rounded-full overflow-hidden">
@@ -228,15 +326,17 @@ function UploadContent() {
               style={{ width: `${progress}%` }}
             />
           </div>
-          <p className="text-[11px] text-[#7d8590] text-center mt-1.5">Uploading... {progress}%</p>
+          <p className="text-[11px] text-[#8a929e] text-center mt-2 font-medium">
+            {uploadStatusText || `Sending photos... ${progress}%`}
+          </p>
         </div>
       )}
 
-      {/* Error */}
+      {/* Error message in clean, friendly language */}
       {errorMessage && (
-        <p className="text-xs text-red-400 text-center mt-3 bg-red-500/10 py-1.5 px-3 rounded-md">
+        <div className="mt-3.5 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-xs text-red-300 text-center leading-relaxed">
           {errorMessage}
-        </p>
+        </div>
       )}
 
       {/* Upload Action Button */}
@@ -244,9 +344,19 @@ function UploadContent() {
         <button
           onClick={handleUpload}
           disabled={isUploading}
-          className="mt-4 w-full py-3 px-4 rounded-xl bg-[#f26522] hover:bg-[#ff7332] active:bg-[#e05615] text-white font-medium text-sm transition disabled:opacity-40 shadow-lg shadow-[#f26522]/15"
+          className="mt-4 w-full py-3.5 px-4 rounded-xl bg-[#f26522] hover:bg-[#ff7332] active:bg-[#e05615] text-white font-medium text-sm transition disabled:opacity-40 shadow-lg shadow-[#f26522]/15 flex items-center justify-center gap-2"
         >
-          {isUploading ? 'Uploading...' : `Upload ${previews.length} Photo${previews.length > 1 ? 's' : ''}`}
+          {isUploading ? (
+            <>
+              <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+              </svg>
+              <span>{uploadStatusText || 'Uploading...'}</span>
+            </>
+          ) : (
+            `Upload ${previews.length} Photo${previews.length > 1 ? 's' : ''}`
+          )}
         </button>
       )}
     </div>
