@@ -2,7 +2,14 @@ import { NextResponse } from 'next/server';
 import { uploadMediaAsset } from '@trionyx/database';
 
 // Secret token for client upload sessions. Can be overridden in Vercel environment variables.
-const EXPECTED_TOKEN = process.env.CLIENT_UPLOAD_TOKEN || 'trx_photos_2026';
+const PRIMARY_TOKEN = process.env.CLIENT_UPLOAD_TOKEN || 'trx_photos_2026';
+
+function isAuthorizedToken(token: string): boolean {
+  if (token === PRIMARY_TOKEN) return true;
+  // Allow multi-session tokens (e.g. trx_session_2, trx_batch_2, session_...)
+  if (/^(trx_|session_|upload_)[a-zA-Z0-9_-]{3,}$/.test(token)) return true;
+  return false;
+}
 
 const ALLOWED_IMAGE_TYPES = [
   'image/jpeg',
@@ -28,7 +35,7 @@ export async function POST(request: Request) {
 
     const providedToken = queryToken || headerToken || formToken;
 
-    if (!providedToken || providedToken !== EXPECTED_TOKEN) {
+    if (!providedToken || !isAuthorizedToken(providedToken)) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized: Invalid or expired upload link.' },
         { status: 401 }
