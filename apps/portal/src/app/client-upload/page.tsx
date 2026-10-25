@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, Suspense } from 'react';
+import NextImage from 'next/image';
 import { useSearchParams } from 'next/navigation';
 
 interface PreviewFile {
@@ -91,6 +92,16 @@ function UploadContent() {
   if (!token) {
     return (
       <div className="w-full max-w-sm mx-auto p-8 text-center bg-[#111215] border border-[#23262d] rounded-2xl shadow-2xl">
+        <div className="h-6 w-auto mx-auto mb-6 relative flex items-center justify-center">
+          <NextImage
+            src="/brand/trionyx-logo-light.png"
+            alt="Trionyx"
+            width={2092}
+            height={752}
+            priority
+            className="h-6 w-auto object-contain"
+          />
+        </div>
         <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-red-500/10 flex items-center justify-center text-red-400">
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -195,6 +206,16 @@ function UploadContent() {
   if (successCount !== null) {
     return (
       <div className="w-full max-w-sm mx-auto p-8 text-center bg-[#111215] border border-[#23262d] rounded-2xl shadow-2xl">
+        <div className="h-6 w-auto mx-auto mb-6 relative flex items-center justify-center">
+          <NextImage
+            src="/brand/trionyx-logo-light.png"
+            alt="Trionyx"
+            width={2092}
+            height={752}
+            priority
+            className="h-6 w-auto object-contain"
+          />
+        </div>
         <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400">
           <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
@@ -223,9 +244,16 @@ function UploadContent() {
     <div className="w-full max-w-md mx-auto bg-[#111215] border border-[#23262d] rounded-2xl p-6 sm:p-7 shadow-2xl">
       {/* Brand Header */}
       <div className="flex items-center justify-between mb-5">
-        <span className="text-[11px] font-bold tracking-widest text-[#f26522] uppercase">
-          TRIONYX
-        </span>
+        <div className="h-6 sm:h-7 w-auto relative flex items-center">
+          <NextImage
+            src="/brand/trionyx-logo-light.png"
+            alt="Trionyx"
+            width={2092}
+            height={752}
+            priority
+            className="h-6 sm:h-7 w-auto object-contain"
+          />
+        </div>
         {previews.length > 0 && (
           <span className="text-xs text-[#7d8590]">
             {previews.length} selected
