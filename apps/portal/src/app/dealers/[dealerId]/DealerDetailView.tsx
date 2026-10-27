@@ -1,5 +1,7 @@
 'use client';
 
+import { formatUserFriendlyError } from '@trionyx/validation';
+
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -210,7 +212,7 @@ export function DealerDetailView({
 
       setRequests(requests.map((r) => (r.id === requestId ? data.request : r)));
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to update request status');
+      alert(formatUserFriendlyError(err, 'Failed to update request status'));
     }
   };
 
@@ -284,7 +286,7 @@ export function DealerDetailView({
 
       const data = await res.json();
       if (!res.ok || !data.success) {
-        alert(data.error || 'Failed to update user status');
+        alert(formatUserFriendlyError(data.error || 'Failed to update user status'));
         return;
       }
 
@@ -292,7 +294,7 @@ export function DealerDetailView({
         prev.map((u) => (u.id === userId ? { ...u, status: nextStatus, lockedUntil: null } : u))
       );
     } catch {
-      alert('Error updating user status');
+      alert('Unable to update user status right now. Please try again.');
     } finally {
       setTogglingUserId(null);
     }

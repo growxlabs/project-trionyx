@@ -519,3 +519,112 @@ export type UpsertWarrantyPolicyInput = z.infer<typeof upsertWarrantyPolicySchem
 
 
 export * from './preparedActions';
+
+/**
+ * Translates raw database errors, internal engine exceptions, and network errors
+ * into clean, professional, human-understandable sentences.
+ */
+export function formatUserFriendlyError(err: unknown, fallback = 'Something went wrong. Please try again.'): string {
+  if (!err) return fallback;
+
+  let msg = '';
+  if (typeof err === 'string') {
+    msg = err;
+  } else if (err instanceof Error) {
+    msg = err.message;
+  } else if (typeof err === 'object' && err !== null && 'message' in err && typeof (err as any).message === 'string') {
+    msg = (err as any).message;
+  } else {
+    return fallback;
+  }
+
+  const lower = msg.toLowerCase();
+
+  // 1. Unique constraint violations (Postgres 23505 / SQLite UNIQUE)
+  if (lower.includes('unique constraint') || lower.includes('duplicate key') || lower.includes('already exists')) {
+    if (lower.includes('category') || lower.includes('product_categories')) {
+      return 'A category with this name or slug already exists. Please choose a different name.';
+    }
+    if (lower.includes('product') || lower.includes('products_slug')) {
+      return 'A product with this name already exists in the catalog.';
+    }
+    if (lower.includes('dealers_code') || lower.includes('dealer code')) {
+      return 'This dealer code is already in use. Please choose another code.';
+    }
+    if (lower.includes('dealer_users_email') || lower.includes('users_email') || lower.includes('email')) {
+      return 'An account with this email address already exists.';
+    }
+    if (lower.includes('gstin') || lower.includes('gst')) {
+      return 'This GSTIN number is already registered with another dealer.';
+    }
+    if (lower.includes('serial_number') || lower.includes('serial')) {
+      return 'This serial number already exists or has an active warranty registered.';
+    }
+    if (lower.includes('sku') || lower.includes('code')) {
+      return 'This product code or SKU is already in use.';
+    }
+    return 'A record with this information already exists. Please check your inputs.';
+  }
+
+  // 2. Foreign key constraint violations (Postgres 23503)
+  if (lower.includes('violates foreign key constraint') || lower.includes('foreign key')) {
+    if (lower.includes('category')) {
+      return 'The selected category is invalid or has been removed.';
+    }
+    if (lower.includes('dealer')) {
+      return 'The selected dealer is invalid or has been removed.';
+    }
+    if (lower.includes('distributor')) {
+      return 'The selected distributor is invalid or has been removed.';
+    }
+    return 'One of the selected items is invalid or no longer exists.';
+  }
+
+  // 3. Not null constraint violations (Postgres 23502)
+  if (lower.includes('violates not-null constraint') || lower.includes('not-null')) {
+    const colMatch = msg.match(/column "([^"]+)"/i);
+    const colName = colMatch ? colMatch[1].replace(/_/g, ' ') : 'required';
+    return `Please fill in the ${colName} field. It cannot be left empty.`;
+  }
+
+  // 4. Invalid input syntax / UUID (Postgres 22P02)
+  if (lower.includes('invalid input syntax') || lower.includes('invalid uuid')) {
+    return 'Invalid data format provided. Please refresh the page and try again.';
+  }
+
+  // 5. Value too long (Postgres 22001)
+  if (lower.includes('value too long') || lower.includes('string too long')) {
+    return 'One of your entries is too long. Please shorten your text and try again.';
+  }
+
+  // 6. Statement timeout (Postgres 57014)
+  if (lower.includes('statement timeout') || lower.includes('timed out') || lower.includes('timeout')) {
+    return 'The server took too long to process this request. Please try again.';
+  }
+
+  // 7. Network / connection errors
+  if (lower.includes('networkerror') || lower.includes('failed to fetch') || lower.includes('econnrefused') || lower.includes('connection terminated')) {
+    return 'Connection lost. Please check your internet connection and try again.';
+  }
+
+  // 8. Auth / Permissions
+  if (msg === 'UNAUTHENTICATED' || lower.includes('unauthorized') || lower.includes('jwt expired')) {
+    return 'Your session has expired. Please sign in again.';
+  }
+  if (msg === 'FORBIDDEN' || lower.includes('insufficient permissions')) {
+    return 'You do not have permission to perform this action.';
+  }
+
+  // 9. Payload too large (413)
+  if (lower.includes('payload too large') || lower.includes('request entity too large') || lower.includes('413')) {
+    return 'The uploaded file is too large. Please select a smaller photo.';
+  }
+
+  // 10. Hide raw SQL syntax, internal table names, or JSON parsing leaks
+  if (lower.includes('syntax error') || lower.includes('relation "') || lower.includes('column "') || lower.includes('unexpected token')) {
+    return 'Unable to save changes right now. Please refresh and try again.';
+  }
+
+  return msg;
+}
+

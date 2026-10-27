@@ -193,8 +193,9 @@ export const productsService = {
     return categoriesRepository.listAllActive(organizationId);
   },
 
-  async createCategory(data: { name: string; description?: string | null; organizationId?: string | null }) {
-    const slug = generateSlug(data.name);
+  async createCategory(data: { name: string; slug?: string; description?: string | null; organizationId?: string | null }) {
+    const rawSlug = data.slug && data.slug.trim().length > 0 ? data.slug : data.name;
+    const slug = generateSlug(rawSlug);
     return categoriesRepository.create({
       name: data.name,
       slug,

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type { ProductCategory, ProductWithRelations, SafeUser } from '@trionyx/types';
+import { formatUserFriendlyError } from '@trionyx/validation';
 
 interface ProductFormProps {
   categories: ProductCategory[];
@@ -45,6 +46,7 @@ export function ProductForm({ categories: initialCategories, initialData, isEdit
   const [newCatName, setNewCatName] = useState('');
   const [newCatSlug, setNewCatSlug] = useState('');
   const [isCreatingCat, setIsCreatingCat] = useState(false);
+  const [categoryModalError, setCategoryModalError] = useState<string | null>(null);
 
   // Auto-generate slug from name if not manually edited
   const handleNameChange = (val: string) => {
@@ -78,6 +80,7 @@ export function ProductForm({ categories: initialCategories, initialData, isEdit
     e.preventDefault();
     if (!newCatName || !newCatSlug || isCreatingCat) return;
     setIsCreatingCat(true);
+    setCategoryModalError(null);
 
     try {
       const res = await fetch('/api/v1/internal/product-categories', {
@@ -93,11 +96,13 @@ export function ProductForm({ categories: initialCategories, initialData, isEdit
         setShowCategoryModal(false);
         setNewCatName('');
         setNewCatSlug('');
+        setCategoryModalError(null);
       } else {
-        alert(data.error?.message || data.error || 'Failed to create category');
+        const rawErr = data.error?.message || data.error || 'Failed to create category';
+        setCategoryModalError(formatUserFriendlyError(rawErr));
       }
-    } catch {
-      alert('Error creating category');
+    } catch (err: unknown) {
+      setCategoryModalError(formatUserFriendlyError(err, 'Unable to connect to server. Please check your internet connection.'));
     } finally {
       setIsCreatingCat(false);
     }
@@ -150,15 +155,15 @@ export function ProductForm({ categories: initialCategories, initialData, isEdit
 
       const data = await res.json();
       if (!data.success) {
-        setErrorBanner(data.error || 'Failed to save product.');
+        setErrorBanner(formatUserFriendlyError(data.error?.message || data.error || 'Failed to save product.'));
         setIsSubmitting(false);
         return;
       }
 
       router.push(`/products/${data.product.id}`);
       router.refresh();
-    } catch {
-      setErrorBanner('Network error while saving product.');
+    } catch (err: unknown) {
+      setErrorBanner(formatUserFriendlyError(err, 'Unable to connect to server. Please check your internet connection.'));
       setIsSubmitting(false);
     }
   };
@@ -385,6 +390,18 @@ export function ProductForm({ categories: initialCategories, initialData, isEdit
             <h3 className="text-[16px] font-semibold text-[var(--text-primary)] mb-4">
               Add New Category
             </h3>
+
+            {categoryModalError && (
+              <div className="mb-4 p-3 rounded-[6px] bg-red-500/10 border border-red-500/20 text-xs text-red-400 leading-relaxed flex items-start gap-2">
+                <svg className="w-4 h-4 shrink-0 mt-0.5 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+                <span>{categoryModalError}</span>
+              </div>
+            )}
+
             <form onSubmit={handleCreateCategory} className="space-y-4">
               <div>
                 <label className="block text-[11px] font-semibold text-[var(--text-secondary)] uppercase mb-1">
@@ -425,7 +442,10 @@ export function ProductForm({ categories: initialCategories, initialData, isEdit
               <div className="flex justify-end gap-2 pt-2">
                 <button
                   type="button"
-                  onClick={() => setShowCategoryModal(false)}
+                  onClick={() => {
+                    setShowCategoryModal(false);
+                    setCategoryModalError(null);
+                  }}
                   className="px-3 py-1.5 rounded border border-[var(--border)] text-[12px] font-medium"
                 >
                   Cancel

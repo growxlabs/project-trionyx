@@ -5,6 +5,7 @@ import type {
   ApiErrorCode,
   PaginationMeta,
 } from '@trionyx/types';
+import { formatUserFriendlyError } from '@trionyx/validation';
 
 /**
  * Standard successful single-resource response
@@ -49,15 +50,20 @@ export function apiError(
   details?: unknown,
   headers?: HeadersInit
 ): Response {
+  const friendlyMessage = formatUserFriendlyError(message);
+  let resolvedStatus = status;
+  if (status === 500 && (friendlyMessage.includes('already exists') || friendlyMessage.includes('already in use'))) {
+    resolvedStatus = 409;
+  }
   const body: ApiErrorResponse = {
     error: {
       code,
-      message,
+      message: friendlyMessage,
       ...(details !== undefined ? { details } : {}),
     },
   };
   return Response.json(body, {
-    status,
+    status: resolvedStatus,
     headers: {
       'Content-Type': 'application/json',
       ...headers,

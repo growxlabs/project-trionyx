@@ -16,6 +16,7 @@ import { ConfirmDialog } from '../../../components/ui/ConfirmDialog';
 import { Modal } from '../../../components/ui/Modal';
 import { SerialNumberLookupModal } from '../../../components/inventory/SerialNumberLookupModal';
 import { StatusBadge } from '../../../components/workspace';
+import { formatUserFriendlyError } from '@trionyx/validation';
 
 interface ProductDetailViewProps {
   product: ProductWithRelations;
