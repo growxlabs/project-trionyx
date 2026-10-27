@@ -11,22 +11,38 @@ interface ProductOption {
   code: string;
 }
 
+interface DealerOption {
+  id: string;
+  name: string;
+  code: string;
+}
+
 interface NewRequestFormProps {
   products: ProductOption[];
+  dealers?: DealerOption[];
   initialProductId?: string;
   initialSubject?: string;
+  initialType?: string;
 }
 
 export function NewRequestForm({
   products,
+  dealers = [],
   initialProductId = '',
   initialSubject = '',
+  initialType = '',
 }: NewRequestFormProps) {
   const router = useRouter();
 
-  const [type, setType] = useState<DealerRequestType>(
-    initialProductId ? 'AVAILABILITY' : 'PRODUCT_ENQUIRY'
-  );
+  const validTypes: DealerRequestType[] = ['PRODUCT_ENQUIRY', 'AVAILABILITY', 'GENERAL_SUPPORT', 'OTHER'];
+  const resolvedType = validTypes.includes(initialType as DealerRequestType)
+    ? (initialType as DealerRequestType)
+    : initialProductId
+    ? 'AVAILABILITY'
+    : 'PRODUCT_ENQUIRY';
+
+  const [type, setType] = useState<DealerRequestType>(resolvedType);
+  const [dealerId, setDealerId] = useState<string>(dealers.length === 1 ? dealers[0].id : '');
   const [productId, setProductId] = useState<string>(initialProductId);
   const [priority, setPriority] = useState<DealerRequestPriority>('MEDIUM');
   const [subject, setSubject] = useState<string>(initialSubject);
@@ -47,6 +63,7 @@ export function NewRequestForm({
         body: JSON.stringify({
           type,
           productId: productId || undefined,
+          dealerId: dealerId || undefined,
           priority,
           subject,
           description,
@@ -123,6 +140,26 @@ export function NewRequestForm({
           </div>
         </div>
 
+        {dealers.length > 0 && (
+          <div>
+            <label className="block text-[11px] font-semibold tracking-[0.14em] text-[#737373] mb-1.5">
+              Territory Dealership <span className="font-normal lowercase text-[#737373]/80">(optional)</span>
+            </label>
+            <select
+              value={dealerId}
+              onChange={(e) => setDealerId(e.target.value)}
+              className="w-full px-3 py-2 rounded-[4px] border border-[#171717]/15 bg-white text-[13.5px] text-[#171717] focus:outline-none focus:border-[#F26522]"
+            >
+              <option value="">Regional Hub / Direct</option>
+              {dealers.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.name} ({d.code})
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
         <div>
           <label className="block text-[11px] font-semibold tracking-[0.14em] text-[#737373] mb-1.5">
             Product <span className="font-normal lowercase text-[#737373]/80">(optional)</span>
@@ -177,7 +214,7 @@ export function NewRequestForm({
           <button
             type="submit"
             disabled={loading}
-            className="px-5 py-2.5 rounded-[4px] bg-[#F26522] hover:opacity-90 disabled:opacity-50 text-white text-[13.5px] font-semibold transition-opacity cursor-pointer shadow-xs"
+            className="px-5 py-2.5 rounded-[4px] bg-[#F26522] hover:bg-[#d9531e] disabled:opacity-50 text-white text-[13.5px] font-semibold transition-colors cursor-pointer shadow-xs"
           >
             {loading ? 'Submitting...' : 'Submit Request'}
           </button>

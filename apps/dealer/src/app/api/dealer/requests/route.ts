@@ -1,15 +1,16 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { requireDealerSession, DEALER_AUTH_CONFIG } from '@trionyx/auth';
-import { dealerRequestsRepository, auditLogsRepository } from '@trionyx/database';
+import { getWorkspaceSession } from '@/lib/auth';
+import {
+  dealerRequestsRepository,
+  dealersRepository,
+  auditLogsRepository,
+} from '@trionyx/database';
 import { createDealerPortalRequestSchema } from '@trionyx/validation';
 import type { DealerRequestStatus, DealerRequestType } from '@trionyx/types';
 
 export async function GET(request: Request) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(DEALER_AUTH_CONFIG.cookieName)?.value;
-    const { dealer } = await requireDealerSession(token);
+    const session = await getWorkspaceSession();
 
     const { searchParams } = new URL(request.url);
     const status = (searchParams.get('status') as DealerRequestStatus) || undefined;
@@ -17,14 +18,27 @@ export async function GET(request: Request) {
     const page = searchParams.get('page') ? parseInt(searchParams.get('page')!, 10) : 1;
     const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!, 10) : 20;
 
-    // Strict multi-tenant isolation: always force dealerId = dealer.id
-    const { items, total } = await dealerRequestsRepository.list({
-      dealerId: dealer.id,
+    const filter: {
+      dealerId?: string;
+      distributorId?: string;
+      status?: DealerRequestStatus;
+      type?: DealerRequestType;
+      page: number;
+      limit: number;
+    } = {
       status: status !== ('ALL' as any) ? status : undefined,
       type: type !== ('ALL' as any) ? type : undefined,
       page,
       limit,
-    });
+    };
+
+    if (session.type === 'DEALER') {
+      filter.dealerId = session.dealer.id;
+    } else {
+      filter.distributorId = session.distributor.id;
+    }
+
+    const { items, total } = await dealerRequestsRepository.list(filter);
 
     return NextResponse.json({
       success: true,
@@ -44,9 +58,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(DEALER_AUTH_CONFIG.cookieName)?.value;
-    const { dealerUser, dealer } = await requireDealerSession(token);
+    const session = await getWorkspaceSession();
 
     const body = await request.json().catch(() => ({}));
     const parseResult = createDealerPortalRequestSchema.safeParse(body);
@@ -63,24 +75,79 @@ export async function POST(request: Request) {
 
     const data = parseResult.data;
 
-    // Create request strictly bound to the authenticated session's dealer
+    let targetDealerId: string;
+    let createdByUserId: string;
+    let auditMetadata: Record<string, unknown>;
+
+    if (session.type === 'DEALER') {
+      targetDealerId = session.dealer.id;
+      createdByUserId = session.dealerUser.id;
+      auditMetadata = {
+        dealerUserId: session.dealerUser.id,
+        dealerId: session.dealer.id,
+        dealerCode: session.dealer.dealerCode,
+      };
+    } else {
+      // Distributor session
+      const distributor = session.distributor;
+      createdByUserId = session.user.id;
+
+      if (body.dealerId && typeof body.dealerId === 'string') {
+        const assignedDealer = await dealersRepository.findById(body.dealerId);
+        if (!assignedDealer || assignedDealer.distributorId !== distributor.id) {
+          return NextResponse.json(
+            { success: false, error: 'Selected dealer is not in your regional territory' },
+            { status: 403 }
+          );
+        }
+        targetDealerId = assignedDealer.id;
+      } else {
+        const territoryDealers = await dealersRepository.list({
+          distributorId: distributor.id,
+          limit: 1,
+        });
+
+        if (territoryDealers.items.length > 0) {
+          targetDealerId = territoryDealers.items[0].id;
+        } else {
+          // If no dealer exists yet in this territory, resolve/create a primary territory dealership entry
+          const directDealer = await dealersRepository.create({
+            businessName: `${distributor.businessName} (Direct)`,
+            contactPerson: distributor.contactPerson || distributor.businessName,
+            phone: distributor.phone || '0000000000',
+            email: distributor.email || null,
+            city: distributor.city || 'Central',
+            state: distributor.state || 'Central',
+            distributorId: distributor.id,
+            createdBy: session.user.id,
+          });
+          targetDealerId = directDealer.id;
+        }
+      }
+
+      auditMetadata = {
+        userId: session.user.id,
+        distributorId: distributor.id,
+        distributorCode: distributor.distributorCode,
+        dealerId: targetDealerId,
+      };
+    }
+
     const created = await dealerRequestsRepository.create({
-      dealerId: dealer.id,
+      dealerId: targetDealerId,
       productId: data.productId || null,
       type: data.type,
       subject: data.subject,
       description: data.description,
       priority: data.priority,
-      createdBy: dealerUser.id,
+      createdBy: createdByUserId,
     });
 
     await auditLogsRepository.recordEvent({
-      userId: null,
+      userId: session.type === 'DISTRIBUTOR' ? session.user.id : null,
       event: 'DEALER_REQUEST_CREATED',
       metadata: {
-        dealerUserId: dealerUser.id,
-        dealerId: dealer.id,
-        dealerCode: dealer.dealerCode,
+        ...auditMetadata,
         requestId: created.id,
         requestCode: created.requestCode,
         subject: created.subject,

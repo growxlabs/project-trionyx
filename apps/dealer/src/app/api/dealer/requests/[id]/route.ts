@@ -1,23 +1,35 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { requireDealerSession, DEALER_AUTH_CONFIG } from '@trionyx/auth';
-import { dealerRequestsRepository, dealerRequestMessagesRepository } from '@trionyx/database';
+import { getWorkspaceSession } from '@/lib/auth';
+import {
+  dealerRequestsRepository,
+  dealerRequestMessagesRepository,
+  dealersRepository,
+} from '@trionyx/database';
 
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(DEALER_AUTH_CONFIG.cookieName)?.value;
-    const { dealer } = await requireDealerSession(token);
+    const session = await getWorkspaceSession();
 
     const { id } = await params;
     const item = await dealerRequestsRepository.findById(id);
 
-    // Multi-tenant check: if request does not exist or belongs to another dealer, return 404
-    if (!item || item.dealerId !== dealer.id) {
+    if (!item) {
       return NextResponse.json({ success: false, error: 'Request not found' }, { status: 404 });
+    }
+
+    // Tenancy isolation check
+    if (session.type === 'DEALER') {
+      if (item.dealerId !== session.dealer.id) {
+        return NextResponse.json({ success: false, error: 'Request not found' }, { status: 404 });
+      }
+    } else {
+      const itemDealer = await dealersRepository.findById(item.dealerId);
+      if (!itemDealer || itemDealer.distributorId !== session.distributor.id) {
+        return NextResponse.json({ success: false, error: 'Request not found' }, { status: 404 });
+      }
     }
 
     const messages = await dealerRequestMessagesRepository.listByRequest(id);

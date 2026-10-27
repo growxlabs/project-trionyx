@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { requireDealerSession, DEALER_AUTH_CONFIG } from '@trionyx/auth';
+import { getWorkspaceSession } from '@/lib/auth';
 import {
   dealerRequestsRepository,
   dealerRequestMessagesRepository,
+  dealersRepository,
   auditLogsRepository,
 } from '@trionyx/database';
 import { createDealerRequestMessageSchema } from '@trionyx/validation';
@@ -13,16 +13,25 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(DEALER_AUTH_CONFIG.cookieName)?.value;
-    const { dealerUser, dealer } = await requireDealerSession(token);
+    const session = await getWorkspaceSession();
 
     const { id } = await params;
     const reqItem = await dealerRequestsRepository.findById(id);
 
-    // Multi-tenant check
-    if (!reqItem || reqItem.dealerId !== dealer.id) {
+    if (!reqItem) {
       return NextResponse.json({ success: false, error: 'Request not found' }, { status: 404 });
+    }
+
+    // Tenancy isolation check
+    if (session.type === 'DEALER') {
+      if (reqItem.dealerId !== session.dealer.id) {
+        return NextResponse.json({ success: false, error: 'Request not found' }, { status: 404 });
+      }
+    } else {
+      const itemDealer = await dealersRepository.findById(reqItem.dealerId);
+      if (!itemDealer || itemDealer.distributorId !== session.distributor.id) {
+        return NextResponse.json({ success: false, error: 'Request not found' }, { status: 404 });
+      }
     }
 
     const body = await request.json().catch(() => ({}));
@@ -35,20 +44,27 @@ export async function POST(
       );
     }
 
+    const isDealerSession = session.type === 'DEALER';
+    const senderType = isDealerSession ? 'DEALER' : 'INTERNAL';
+    const senderId = isDealerSession ? session.dealerUser.id : session.user.id;
+    const senderName = isDealerSession
+      ? session.dealerUser.name
+      : session.user.name || session.distributor.businessName;
+
     const message = await dealerRequestMessagesRepository.create({
       requestId: id,
-      senderType: 'DEALER',
-      senderId: dealerUser.id,
-      senderName: dealerUser.name,
+      senderType,
+      senderId,
+      senderName,
       body: parseResult.data.body,
     });
 
     await auditLogsRepository.recordEvent({
-      userId: null,
+      userId: isDealerSession ? null : session.user.id,
       event: 'DEALER_REQUEST_MESSAGE_CREATED',
       metadata: {
-        dealerUserId: dealerUser.id,
-        dealerId: dealer.id,
+        senderType,
+        senderId,
         requestId: id,
         requestCode: reqItem.requestCode,
       },

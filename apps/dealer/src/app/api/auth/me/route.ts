@@ -1,17 +1,24 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { requireDealerSession, DEALER_AUTH_CONFIG } from '@trionyx/auth';
+import { getWorkspaceSession } from '@/lib/auth';
 
 export async function GET() {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(DEALER_AUTH_CONFIG.cookieName)?.value;
-    const { dealerUser, dealer } = await requireDealerSession(token);
+    const session = await getWorkspaceSession();
+
+    if (session.type === 'DEALER') {
+      return NextResponse.json({
+        success: true,
+        user: session.dealerUser,
+        dealer: session.dealer,
+        role: 'DEALER',
+      });
+    }
 
     return NextResponse.json({
       success: true,
-      user: dealerUser,
-      dealer,
+      user: session.user,
+      distributor: session.distributor,
+      role: session.user.role,
     });
   } catch (err) {
     if (err instanceof Error && (err.message === 'UNAUTHENTICATED' || err.message === 'FORBIDDEN')) {

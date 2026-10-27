@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { requireDealerSession, DEALER_AUTH_CONFIG, changeDealerPassword } from '@trionyx/auth';
+import { getWorkspaceSession } from '@/lib/auth';
+import { changeDealerPassword, verifyPassword, hashPassword } from '@trionyx/auth';
+import { usersRepository } from '@trionyx/database';
 import { changeDealerPasswordSchema } from '@trionyx/validation';
 
 export async function POST(request: Request) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(DEALER_AUTH_CONFIG.cookieName)?.value;
-    const { dealerUser } = await requireDealerSession(token);
+    const session = await getWorkspaceSession();
 
     const body = await request.json().catch(() => ({}));
     const parseResult = changeDealerPasswordSchema.safeParse(body);
@@ -23,7 +22,26 @@ export async function POST(request: Request) {
     }
 
     const { currentPassword, newPassword } = parseResult.data;
-    await changeDealerPassword(dealerUser.id, currentPassword, newPassword);
+
+    if (session.type === 'DEALER') {
+      await changeDealerPassword(session.dealerUser.id, currentPassword, newPassword);
+    } else {
+      const user = await usersRepository.findById(session.user.id);
+      if (!user || !user.passwordHash) {
+        return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
+      }
+
+      const isValid = await verifyPassword(currentPassword, user.passwordHash);
+      if (!isValid) {
+        return NextResponse.json(
+          { success: false, error: 'Current password is incorrect.' },
+          { status: 400 }
+        );
+      }
+
+      const newHash = await hashPassword(newPassword);
+      await usersRepository.update(user.id, { passwordHash: newHash });
+    }
 
     return NextResponse.json({
       success: true,

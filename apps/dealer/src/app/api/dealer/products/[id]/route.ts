@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { requireDealerSession, DEALER_AUTH_CONFIG } from '@trionyx/auth';
+import { getWorkspaceSession } from '@/lib/auth';
 import { productsRepository } from '@trionyx/database';
 
 export async function GET(
@@ -8,9 +7,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(DEALER_AUTH_CONFIG.cookieName)?.value;
-    await requireDealerSession(token);
+    await getWorkspaceSession();
 
     const { id } = await params;
     const product = await productsRepository.getDealerProductById(id);

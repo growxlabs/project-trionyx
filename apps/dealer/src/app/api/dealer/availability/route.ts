@@ -1,14 +1,11 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { requireDealerSession, DEALER_AUTH_CONFIG } from '@trionyx/auth';
+import { getWorkspaceSession } from '@/lib/auth';
 import { productsRepository, categoriesRepository } from '@trionyx/database';
 import type { DealerProductAvailability } from '@trionyx/types';
 
 export async function GET(request: Request) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(DEALER_AUTH_CONFIG.cookieName)?.value;
-    await requireDealerSession(token);
+    await getWorkspaceSession();
 
     const { searchParams } = new URL(request.url);
     const categoryId = searchParams.get('categoryId') || undefined;
