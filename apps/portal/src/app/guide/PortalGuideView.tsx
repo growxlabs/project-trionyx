@@ -422,7 +422,7 @@ export function PortalGuideView({ user }: PortalGuideViewProps) {
           </div>
           <Link
             href={section.actionHref}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[6px] bg-[var(--text-primary)] text-[var(--background)] hover:opacity-90 text-[12.5px] font-semibold transition-opacity shrink-0 shadow-xs"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[6px] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-foreground)] text-[12.5px] font-semibold transition-opacity shrink-0 shadow-xs"
           >
             <span>{section.actionLabel}</span>
             <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25">

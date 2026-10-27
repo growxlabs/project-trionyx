@@ -679,7 +679,7 @@ export function WarrantyListView({
                     type="button"
                     onClick={() => handleValidateSerial()}
                     disabled={isValidating || !serialNumber.trim()}
-                    className="px-4 py-2 rounded-[6px] bg-[var(--text-primary)] hover:bg-[var(--surface-subtle)] disabled:opacity-50 text-[var(--background)] text-[13px] font-semibold transition-colors cursor-pointer shrink-0"
+                    className="px-4 py-2 rounded-[6px] bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 text-[var(--accent-foreground)] text-[13px] font-semibold transition-colors cursor-pointer shrink-0 shadow-sm"
                   >
                     {isValidating ? 'Checking...' : 'Verify'}
                   </button>

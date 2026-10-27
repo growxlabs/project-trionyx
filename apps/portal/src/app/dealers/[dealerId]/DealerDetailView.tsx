@@ -1262,7 +1262,7 @@ export function DealerDetailView({
                         setLinkCopied(true);
                         setTimeout(() => setLinkCopied(false), 2500);
                       }}
-                      className="px-3.5 py-2 rounded bg-[var(--text-primary)] hover:bg-black text-[var(--background)] text-[12px] font-semibold shrink-0"
+                      className="px-3.5 py-2 rounded bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-foreground)] text-[12px] font-semibold shrink-0 shadow-sm"
                     >
                       {linkCopied ? 'Copied!' : 'Copy Link'}
                     </button>

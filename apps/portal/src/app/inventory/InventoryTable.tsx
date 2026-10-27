@@ -1078,7 +1078,7 @@ export function InventoryTable({
             <button
               type="submit"
               disabled={isSubmitting || parsedSerials.length === 0}
-              className="px-4 py-2 rounded-[6px] bg-[var(--text-primary)] hover:bg-[var(--surface-subtle)] disabled:opacity-50 text-[var(--background)] text-[13px] font-semibold transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-[6px] bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 text-[var(--accent-foreground)] text-[13px] font-semibold transition-colors cursor-pointer shadow-sm"
             >
               {isSubmitting ? 'Transferring...' : `Execute Transfer (${parsedSerials.length} Serials)`}
             </button>
@@ -1182,7 +1182,7 @@ export function InventoryTable({
             <button
               type="submit"
               disabled={isSubmitting || !adjustSerialNumber.trim()}
-              className="px-4 py-2 rounded-[6px] bg-[var(--text-primary)] hover:bg-[var(--surface-subtle)] disabled:opacity-50 text-[var(--background)] text-[13px] font-semibold transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-[6px] bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 text-[var(--accent-foreground)] text-[13px] font-semibold transition-colors cursor-pointer shadow-sm"
             >
               {isSubmitting ? 'Adjusting...' : 'Update Serial Status'}
             </button>

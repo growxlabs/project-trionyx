@@ -499,7 +499,7 @@ export function ReceiveStockModal({
                   type="button"
                   onClick={handleAddInputSerial}
                   disabled={!inputSerial.trim()}
-                  className="px-3.5 h-[40px] rounded-[6px] bg-[var(--surface-subtle)] hover:bg-[var(--surface-sunken)] disabled:opacity-40 text-[var(--text-primary)] text-[13px] font-semibold transition-colors cursor-pointer shrink-0"
+                  className="px-4 h-[40px] rounded-[6px] bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-40 disabled:cursor-not-allowed text-[var(--accent-foreground)] text-[13px] font-semibold transition-colors cursor-pointer shrink-0 shadow-xs"
                 >
                   Add
                 </button>

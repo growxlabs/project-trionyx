@@ -111,7 +111,7 @@ export function LocationsTable({ locations: initialLocations, user }: LocationsT
                 setModalError(null);
                 setShowCreateModal(true);
               }}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[6px] bg-[var(--text-primary)] hover:bg-[var(--surface-subtle)] text-[var(--background)] text-[13px] font-medium transition-colors shadow-sm"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[6px] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-foreground)] text-[13px] font-medium transition-colors shadow-sm"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -241,7 +241,7 @@ export function LocationsTable({ locations: initialLocations, user }: LocationsT
             <button
               type="submit"
               disabled={isSubmitting || !code.trim() || !name.trim()}
-              className="px-4 py-2 rounded-[6px] bg-[var(--text-primary)] hover:bg-[var(--surface-subtle)] disabled:opacity-50 text-[var(--background)] text-[13px] font-medium transition-colors"
+              className="px-4 py-2 rounded-[6px] bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 text-[var(--accent-foreground)] text-[13px] font-medium transition-colors shadow-sm"
             >
               {isSubmitting ? 'Registering...' : 'Create Location'}
             </button>

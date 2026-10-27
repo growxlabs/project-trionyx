@@ -49,7 +49,7 @@ export function ConfirmDialog({
             className={`px-4 py-2 rounded-[6px] text-[13px] font-semibold transition-colors cursor-pointer disabled:opacity-50 flex items-center gap-2 ${
               isDestructive
                 ? 'bg-[var(--status-danger)] hover:bg-[var(--status-danger)] active:bg-[var(--status-danger)] text-[var(--background)]'
-                : 'bg-[var(--text-primary)] hover:bg-[var(--surface-subtle)] active:bg-[var(--surface-subtle)] text-[var(--background)]'
+                : 'bg-[var(--accent)] hover:bg-[var(--accent-hover)] active:bg-[var(--accent-primary-active)] text-[var(--accent-foreground)] shadow-sm'
             }`}
           >
             {isLoading && (
