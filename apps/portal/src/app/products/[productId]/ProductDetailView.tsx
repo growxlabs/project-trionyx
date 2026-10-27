@@ -16,6 +16,7 @@ import { ConfirmDialog } from '../../../components/ui/ConfirmDialog';
 import { Modal } from '../../../components/ui/Modal';
 import { SerialNumberLookupModal } from '../../../components/inventory/SerialNumberLookupModal';
 import { StatusBadge } from '../../../components/workspace';
+import { MediaEmptyIllustration } from '../MediaEmptyIllustration';
 import { formatUserFriendlyError } from '@trionyx/validation';
 
 interface ProductDetailViewProps {
@@ -750,8 +751,31 @@ export function ProductDetailView({
             </div>
 
             {product.media.length === 0 ? (
-              <div className="p-8 text-center text-[var(--text-muted)] text-[13.5px]">
-                No media assets or documentation files uploaded for this product yet.
+              <div className="py-12 px-6 flex flex-col items-center justify-center text-center border border-dashed border-[var(--border)] rounded-[8px] bg-[var(--surface-subtle)]/30">
+                <MediaEmptyIllustration className="w-28 h-28 mb-3" />
+                <h3 className="text-[15px] font-semibold text-[var(--text-primary)] m-0">
+                  No Media or Documents Uploaded
+                </h3>
+                <p className="text-[13px] text-[var(--text-secondary)] max-w-md mt-1.5 mb-5 leading-relaxed">
+                  Attach high-resolution product photography, packaging diagrams, wiring schematics, or Technical Data Sheets (TDS / MSDS) for this product.
+                </p>
+                {canWrite && (
+                  <button
+                    type="button"
+                    onClick={() => setShowUploadModal(true)}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-[6px] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-foreground)] text-[13px] font-semibold transition-colors cursor-pointer shadow-sm"
+                  >
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                    </svg>
+                    <span>Upload First File</span>
+                  </button>
+                )}
+                <div className="flex items-center gap-2 mt-4 text-[11.5px] text-[var(--text-muted)] flex-wrap justify-center">
+                  <span>Supported formats:</span>
+                  <span className="font-mono uppercase font-semibold">JPG, PNG, WebP, SVG, PDF, CSV</span>
+                  <span>• Max 10MB</span>
+                </div>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
