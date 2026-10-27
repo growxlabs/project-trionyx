@@ -34,44 +34,65 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
   return (
     <div className="space-y-8 text-[#171717]">
       {/* 1. Header */}
-      <div>
-        <h1 className="text-[26px] sm:text-[30px] font-semibold tracking-[-0.03em] m-0">
-          Products
-        </h1>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-[26px] sm:text-[32px] font-semibold tracking-[-0.03em] m-0">
+            Products Catalog
+          </h1>
+          <p className="text-[13.5px] text-[#737373] mt-1 m-0">
+            Authorized Trionyx automotive formulations, multimedia hardware, and studio collaterals.
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <Link
+            href="/availability"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-[4px] border border-[#171717]/15 bg-white hover:bg-[#F9FAFB] text-[13px] font-semibold text-[#171717] transition-colors shadow-xs"
+          >
+            <span>View Stock Availability</span>
+            <span>→</span>
+          </Link>
+        </div>
       </div>
 
-      {/* 2. Product Families (Section 6) */}
+      {/* 2. Product Families Category Pills */}
       {categories.length > 0 && (
-        <section aria-labelledby="product-families-heading" className="border-t border-[#171717]/10 pt-5 space-y-3">
-          <h2 id="product-families-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
-            Product Families
-          </h2>
+        <section aria-labelledby="product-families-heading" className="space-y-2.5">
+          <div className="flex items-center justify-between">
+            <h2 id="product-families-heading" className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#737373] m-0">
+              Technology & Product Families
+            </h2>
+            <span className="font-mono text-[11px] text-[#737373]">
+              {categories.length} Families
+            </span>
+          </div>
+
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
               onClick={() => setSelectedCategory('ALL')}
-              className={`px-3 py-1 rounded-[4px] text-[12.5px] font-medium border transition-colors cursor-pointer ${
+              className={`px-3 py-1.5 rounded-[4px] text-[12.5px] font-medium transition-colors cursor-pointer border ${
                 selectedCategory === 'ALL'
                   ? 'bg-[#171717] text-white border-[#171717]'
-                  : 'bg-white text-[#171717] border-[#171717]/15 hover:border-[#171717]/30'
+                  : 'bg-white text-[#737373] border-[#171717]/12 hover:text-[#171717] hover:border-[#171717]/30'
               }`}
             >
-              All Families
+              All Families ({products.length})
             </button>
             {categories.map((c) => {
               const isSelected = selectedCategory === c.id;
+              const count = products.filter((p) => p.categoryId === c.id).length;
               return (
                 <button
                   key={c.id}
                   type="button"
                   onClick={() => setSelectedCategory(isSelected ? 'ALL' : c.id)}
-                  className={`px-3 py-1 rounded-[4px] text-[12.5px] font-medium border transition-colors cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-[4px] text-[12.5px] font-medium transition-colors cursor-pointer border ${
                     isSelected
                       ? 'bg-[#171717] text-white border-[#171717]'
-                      : 'bg-white text-[#171717] border-[#171717]/15 hover:border-[#171717]/30'
+                      : 'bg-white text-[#737373] border-[#171717]/12 hover:text-[#171717] hover:border-[#171717]/30'
                   }`}
                 >
-                  {c.name}
+                  {c.name} ({count})
                 </button>
               );
             })}
@@ -80,23 +101,30 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
       )}
 
       {/* 3. Search & Filter Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 border-y border-[#171717]/10 py-3.5">
-        <div className="relative flex-1 max-w-md">
+      <div className="p-4 rounded-[8px] bg-white border border-[#171717]/10 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <div className="relative flex-1">
           <input
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search products..."
-            aria-label="Search products"
-            className="w-full px-3 py-1.5 rounded-[4px] border border-[#171717]/15 bg-white text-[13px] text-[#171717] placeholder-[#737373]/60 focus:border-[#F26522] focus:outline-none"
+            placeholder="Search by product name, code (TRX-PROD-...), or keywords..."
+            className="w-full pl-9 pr-4 py-2 rounded-[4px] border border-[#171717]/15 bg-white text-[13px] text-[#171717] placeholder-[#737373]/60 focus:border-[#F26522] focus:outline-none"
           />
+          <svg
+            className="w-4 h-4 absolute left-3 top-2.5 text-[#737373]"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
         </div>
+
         <div className="w-full sm:w-56">
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            aria-label="Filter by category"
-            className="w-full px-3 py-1.5 rounded-[4px] border border-[#171717]/15 bg-white text-[13px] text-[#171717] focus:border-[#F26522] focus:outline-none"
+            className="w-full px-3 py-2 rounded-[4px] border border-[#171717]/15 bg-white text-[13px] text-[#171717] focus:border-[#F26522] focus:outline-none font-medium"
           >
             <option value="ALL">All Categories</option>
             {categories.map((c) => (
@@ -106,6 +134,7 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
             ))}
           </select>
         </div>
+
         {(search || selectedCategory !== 'ALL') && (
           <button
             type="button"
@@ -113,77 +142,93 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
               setSearch('');
               setSelectedCategory('ALL');
             }}
-            className="text-[12px] text-[#F26522] hover:underline self-center cursor-pointer"
+            className="text-[12px] font-semibold text-[#F26522] hover:underline self-center cursor-pointer shrink-0"
           >
-            Clear filters
+            Reset
           </button>
         )}
       </div>
 
-      {/* 4. Editorial Products List */}
-      <section aria-labelledby="products-list-heading">
-        <div className="flex items-baseline justify-between border-b border-[#171717]/10 pb-2.5">
-          <h2 id="products-list-heading" className="text-[11px] font-semibold tracking-[0.14em] text-[#737373] m-0">
-            PRODUCTS ({filteredProducts.length})
-          </h2>
+      {/* 4. Product Registry Cards */}
+      <div className="rounded-[8px] border border-[#171717]/10 bg-white shadow-xs overflow-hidden">
+        <div className="px-6 py-3.5 bg-[#F9FAFB] border-b border-[#171717]/10 flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.1em] text-[#737373]">
+          <div className="w-1/2 sm:w-2/5">Product & Model</div>
+          <div className="hidden sm:block sm:w-1/4">Category Family</div>
+          <div className="w-1/4 sm:w-1/5 text-center">Dispatch Status</div>
+          <div className="w-1/4 sm:w-1/5 text-right">Actions</div>
         </div>
 
         {filteredProducts.length > 0 ? (
-          <div className="divide-y divide-[#171717]/10">
+          <div className="divide-y divide-[#171717]/08">
             {filteredProducts.map((p) => {
-              const availabilityLabel =
-                p.availability === 'AVAILABLE'
-                  ? 'Available'
-                  : p.availability === 'LIMITED'
-                  ? 'Limited'
-                  : 'Unavailable';
-
-              const availabilityColor =
-                p.availability === 'AVAILABLE'
-                  ? 'text-[#065F46]'
-                  : p.availability === 'LIMITED'
-                  ? 'text-[#D97706]'
-                  : 'text-[#DC2626]';
+              const availabilityBadge =
+                p.availability === 'AVAILABLE' ? (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[4px] text-[11.5px] font-semibold bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                    Available
+                  </span>
+                ) : p.availability === 'LIMITED' ? (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[4px] text-[11.5px] font-semibold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
+                    Limited
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[4px] text-[11.5px] font-semibold bg-[#FEF2F2] text-[#B91C1C] border border-[#FECACA]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#EF4444]" />
+                    Unavailable
+                  </span>
+                );
 
               return (
-                <div key={p.id} className="py-5 space-y-2 text-[13px]">
-                  <div className="text-[11px] font-semibold tracking-wider text-[#737373]">
-                    {p.categoryName || 'General'} / Coating
-                  </div>
-
-                  <div>
+                <div key={p.id} className="px-6 py-4.5 flex items-center justify-between gap-4 hover:bg-[#F9FAFB] transition-colors">
+                  {/* Left: Name and Code */}
+                  <div className="w-1/2 sm:w-2/5 min-w-0 space-y-1">
                     <Link
                       href={`/products/${p.id}`}
-                      className="text-[16px] font-semibold text-[#171717] hover:text-[#F26522] block leading-snug"
+                      className="text-[15px] font-semibold text-[#171717] hover:text-[#F26522] transition-colors block truncate"
                     >
                       {p.name}
                     </Link>
-                    {p.shortDescription && (
-                      <p className="mt-1 text-[13px] text-[#737373] max-w-2xl leading-relaxed m-0">
-                        {p.shortDescription}
-                      </p>
-                    )}
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-[11px] px-1.5 py-0.5 rounded-[3px] bg-[#171717]/05 text-[#171717] border border-[#171717]/10 font-medium">
+                        {p.productCode}
+                      </span>
+                      {p.shortDescription && (
+                        <span className="text-[12px] text-[#737373] truncate hidden md:inline">
+                          · {p.shortDescription}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
-                  <div className="text-[12.5px]">
-                    <span className="text-[#737373]">Availability: </span>
-                    <span className={`font-semibold ${availabilityColor}`}>{availabilityLabel}</span>
+                  {/* Center 1: Category */}
+                  <div className="hidden sm:block sm:w-1/4">
+                    <span className="px-2 py-0.5 rounded-[4px] bg-[#171717]/04 border border-[#171717]/08 text-[12px] font-medium text-[#171717]">
+                      {p.categoryName || 'General'}
+                    </span>
                   </div>
 
-                  <div className="flex items-center gap-4 pt-1">
+                  {/* Center 2: Status */}
+                  <div className="w-1/4 sm:w-1/5 flex justify-center">
+                    {availabilityBadge}
+                  </div>
+
+                  {/* Right: Actions */}
+                  <div className="w-1/4 sm:w-1/5 flex justify-end items-center gap-2">
                     <Link
                       href={`/products/${p.id}`}
-                      className="text-[12.5px] font-semibold text-[#171717] hover:text-[#F26522] hover:underline"
+                      className="px-3 py-1.5 rounded-[4px] border border-[#171717]/15 bg-white hover:bg-[#F9FAFB] text-[12px] font-semibold text-[#171717] transition-colors shadow-xs hidden sm:inline-flex"
                     >
-                      View product →
+                      View Details
                     </Link>
                     <Link
                       href={`/requests/new?productId=${p.id}&type=AVAILABILITY&subject=Stock+Check:+${encodeURIComponent(
                         p.name
                       )}`}
-                      className="text-[12.5px] font-semibold text-[#F26522] hover:underline"
+                      className="px-3 py-1.5 rounded-[4px] bg-[#F26522] hover:bg-[#d9531e] text-white text-[12px] font-semibold transition-colors shadow-xs inline-flex items-center gap-1"
                     >
-                      Ask about stock →
+                      <span>Inquire</span>
+                      <span>→</span>
                     </Link>
                   </div>
                 </div>
@@ -191,13 +236,14 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
             })}
           </div>
         ) : (
-          <div className="py-8 text-[13px] text-[#737373]">
-            {search || selectedCategory !== 'ALL'
-              ? 'No products match your search or filter.'
-              : 'No products are currently available for this dealership.'}
+          <div className="py-16 text-center space-y-2">
+            <p className="text-[14px] font-medium text-[#171717] m-0">No products match your search or filter.</p>
+            <p className="text-[12.5px] text-[#737373] m-0">
+              Clear your active filters to see all available inventory.
+            </p>
           </div>
         )}
-      </section>
+      </div>
     </div>
   );
 }
