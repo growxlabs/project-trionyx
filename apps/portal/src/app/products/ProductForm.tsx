@@ -160,7 +160,7 @@ export function ProductForm({ categories: initialCategories, initialData, isEdit
         return;
       }
 
-      router.push(`/products/${data.product.id}`);
+      router.push(`/products/${data.product.productCode || data.product.id}`);
       router.refresh();
     } catch (err: unknown) {
       setErrorBanner(formatUserFriendlyError(err, 'Unable to connect to server. Please check your internet connection.'));

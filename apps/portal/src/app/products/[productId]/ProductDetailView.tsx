@@ -370,7 +370,7 @@ export function ProductDetailView({
           {canWrite && (
             <>
               <Link
-                href={`/products/${product.id}/edit`}
+                href={`/products/${product.productCode || product.id}/edit`}
                 className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[6px] bg-[var(--text-primary)] hover:bg-[var(--surface-subtle)] text-[var(--background)] text-[13px] font-medium transition-colors shadow-sm"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -500,11 +500,7 @@ export function ProductDetailView({
               <div className="bg-[var(--background)] border border-[var(--border)] rounded-[6px] p-4 space-y-3 self-start text-[12.5px]">
                 <div>
                   <span className="text-[var(--text-muted)] block text-[11px] uppercase font-semibold">Product ID</span>
-                  <span className="font-mono text-[var(--text-primary)] break-all">{product.id}</span>
-                </div>
-                <div>
-                  <span className="text-[var(--text-muted)] block text-[11px] uppercase font-semibold">Product Code</span>
-                  <span className="font-mono font-bold text-[var(--accent-text)]">{product.productCode}</span>
+                  <span className="font-mono font-bold text-[13px] text-[var(--accent-text)]">{product.productCode}</span>
                 </div>
                 <div>
                   <span className="text-[var(--text-muted)] block text-[11px] uppercase font-semibold">Slug</span>
@@ -698,7 +694,7 @@ export function ProductDetailView({
             </div>
             {canWrite && (
               <Link
-                href={`/products/${product.id}/edit`}
+                href={`/products/${product.productCode || product.id}/edit`}
                 className="text-[12.5px] font-medium text-[var(--accent-text)] hover:underline"
               >
                 Edit Specifications →

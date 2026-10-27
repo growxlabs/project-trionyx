@@ -37,7 +37,19 @@ export default async function EditProductPage({
 
   await ensureDatabaseReady();
 
-  const product = await productsRepository.findWithRelations(productId);
+  let product = await productsRepository.findWithRelations(productId);
+  if (!product) {
+    const byCode = await productsRepository.findByCode(productId.toUpperCase());
+    if (byCode) {
+      product = await productsRepository.findWithRelations(byCode.id);
+    }
+  }
+  if (!product) {
+    const bySlug = await productsRepository.findBySlug(productId.toLowerCase());
+    if (bySlug) {
+      product = await productsRepository.findWithRelations(bySlug.id);
+    }
+  }
   if (!product) {
     notFound();
   }

@@ -35,16 +35,28 @@ export default async function ProductDetailPage({
 
   await ensureDatabaseReady();
 
-  const product = await productsRepository.findWithRelations(productId);
+  let product = await productsRepository.findWithRelations(productId);
+  if (!product) {
+    const byCode = await productsRepository.findByCode(productId.toUpperCase());
+    if (byCode) {
+      product = await productsRepository.findWithRelations(byCode.id);
+    }
+  }
+  if (!product) {
+    const bySlug = await productsRepository.findBySlug(productId.toLowerCase());
+    if (bySlug) {
+      product = await productsRepository.findWithRelations(bySlug.id);
+    }
+  }
   if (!product) {
     notFound();
   }
 
   const [category, serials, movements, warrantyPolicy] = await Promise.all([
     categoriesRepository.findById(product.categoryId),
-    serialsRepository.listByProduct(productId),
-    serialMovementsRepository.listWithDetails({ productId, limit: 100 }),
-    warrantyPoliciesRepository.findByProductId(productId),
+    serialsRepository.listByProduct(product.id),
+    serialMovementsRepository.listWithDetails({ productId: product.id, limit: 100 }),
+    warrantyPoliciesRepository.findByProductId(product.id),
   ]);
 
   return (

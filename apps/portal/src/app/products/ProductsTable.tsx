@@ -299,13 +299,13 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
                           return (
                             <tr key={p.id} className="hover:bg-[var(--surface-subtle)] transition-colors h-[42px]">
                               <td className="py-2.5 px-4 font-mono text-[12px] text-[var(--text-secondary)]">
-                                <Link href={`/products/${p.id}`} className="hover:text-[var(--accent)] hover:underline">
+                                <Link href={`/products/${p.productCode || p.id}`} className="hover:text-[var(--accent)] hover:underline">
                                   {p.productCode}
                                 </Link>
                               </td>
                               <td className="py-2.5 px-4">
                                 <Link
-                                  href={`/products/${p.id}`}
+                                  href={`/products/${p.productCode || p.id}`}
                                   className="text-[14px] font-medium text-[var(--text-primary)] hover:text-[var(--accent)] block"
                                 >
                                   {p.name}
@@ -348,7 +348,7 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
                               <td className="py-2.5 px-4 text-right">
                                 <div className="inline-flex items-center gap-2.5">
                                   <Link
-                                    href={`/products/${p.id}`}
+                                    href={`/products/${p.productCode || p.id}`}
                                     className="text-[13px] font-medium text-[var(--accent)] hover:underline"
                                   >
                                     View →
@@ -356,7 +356,7 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
                                   {canWrite && p.status !== 'ARCHIVED' && (
                                     <>
                                       <Link
-                                        href={`/products/${p.id}/edit`}
+                                        href={`/products/${p.productCode || p.id}/edit`}
                                         className="inline-flex items-center gap-1 text-[13px] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:underline"
                                       >
                                         <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -422,7 +422,7 @@ export function ProductsTable({ initialProducts, categories, user }: ProductsTab
                     <div key={p.id} className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[13px] hover:bg-[var(--surface-raised)] transition-colors">
                       <div className="flex items-center gap-3">
                         <span className="font-mono text-[12px] text-[var(--text-secondary)]">{p.productCode}</span>
-                        <Link href={`/products/${p.id}`} className="text-[14px] font-medium text-[var(--text-primary)] hover:text-[var(--accent)]">
+                        <Link href={`/products/${p.productCode || p.id}`} className="text-[14px] font-medium text-[var(--text-primary)] hover:text-[var(--accent)]">
                           {p.name}
                         </Link>
                         <span className="text-[13px] text-[var(--text-secondary)]">· {p.categoryName || 'General'}</span>
