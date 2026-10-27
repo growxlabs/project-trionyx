@@ -46,7 +46,7 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
         <div className="flex shrink-0 items-center gap-2">
           <Link
             href="/availability"
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-[4px] border border-[#171717]/15 bg-white hover:bg-[#F9FAFB] text-[13px] font-semibold text-[#171717] transition-colors shadow-xs"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-[4px] border border-neutral-200 bg-white hover:bg-neutral-50 text-[13px] font-semibold text-[#171717] transition-colors shadow-xs"
           >
             <span>View Stock Availability</span>
             <span>→</span>
@@ -73,7 +73,7 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
               className={`px-3 py-1.5 rounded-[4px] text-[12.5px] font-medium transition-colors cursor-pointer border ${
                 selectedCategory === 'ALL'
                   ? 'bg-[#171717] text-white border-[#171717]'
-                  : 'bg-white text-[#737373] border-[#171717]/12 hover:text-[#171717] hover:border-[#171717]/30'
+                  : 'bg-white text-[#737373] border-neutral-200 hover:text-[#171717] hover:border-neutral-300'
               }`}
             >
               All Families ({products.length})
@@ -89,7 +89,7 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
                   className={`px-3 py-1.5 rounded-[4px] text-[12.5px] font-medium transition-colors cursor-pointer border ${
                     isSelected
                       ? 'bg-[#171717] text-white border-[#171717]'
-                      : 'bg-white text-[#737373] border-[#171717]/12 hover:text-[#171717] hover:border-[#171717]/30'
+                      : 'bg-white text-[#737373] border-neutral-200 hover:text-[#171717] hover:border-neutral-300'
                   }`}
                 >
                   {c.name} ({count})
@@ -101,17 +101,17 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
       )}
 
       {/* 3. Search & Filter Bar */}
-      <div className="p-4 rounded-[8px] bg-white border border-[#171717]/10 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+      <div className="p-4 rounded-[8px] bg-white border border-neutral-200 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
         <div className="relative flex-1">
           <input
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by product name, code (TRX-PROD-...), or keywords..."
-            className="w-full pl-9 pr-4 py-2 rounded-[4px] border border-[#171717]/15 bg-white text-[13px] text-[#171717] placeholder-[#737373]/60 focus:border-[#F26522] focus:outline-none"
+            className="w-full pl-9 pr-4 py-2 rounded-[4px] border border-neutral-200 bg-white text-[13px] text-[#171717] placeholder-neutral-400 focus:border-[#F26522] focus:outline-none"
           />
           <svg
-            className="w-4 h-4 absolute left-3 top-2.5 text-[#737373]"
+            className="w-4 h-4 absolute left-3 top-2.5 text-neutral-400"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -124,7 +124,7 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full px-3 py-2 rounded-[4px] border border-[#171717]/15 bg-white text-[13px] text-[#171717] focus:border-[#F26522] focus:outline-none font-medium"
+            className="w-full px-3 py-2 rounded-[4px] border border-neutral-200 bg-white text-[13px] text-[#171717] focus:border-[#F26522] focus:outline-none font-medium"
           >
             <option value="ALL">All Categories</option>
             {categories.map((c) => (
@@ -150,8 +150,8 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
       </div>
 
       {/* 4. Product Registry Cards */}
-      <div className="rounded-[8px] border border-[#171717]/10 bg-white shadow-xs overflow-hidden">
-        <div className="px-6 py-3.5 bg-[#F9FAFB] border-b border-[#171717]/10 flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.1em] text-[#737373]">
+      <div className="rounded-[8px] border border-neutral-200 bg-white shadow-xs overflow-hidden">
+        <div className="px-6 py-3.5 bg-neutral-50 border-b border-neutral-200 flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.1em] text-[#737373]">
           <div className="w-1/2 sm:w-2/5">Product & Model</div>
           <div className="hidden sm:block sm:w-1/4">Category Family</div>
           <div className="w-1/4 sm:w-1/5 text-center">Dispatch Status</div>
@@ -159,28 +159,28 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
         </div>
 
         {filteredProducts.length > 0 ? (
-          <div className="divide-y divide-[#171717]/08">
+          <div className="divide-y divide-neutral-100">
             {filteredProducts.map((p) => {
               const availabilityBadge =
                 p.availability === 'AVAILABLE' ? (
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[4px] text-[11.5px] font-semibold bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[4px] text-[11.5px] font-medium bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
                     Available
                   </span>
                 ) : p.availability === 'LIMITED' ? (
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[4px] text-[11.5px] font-semibold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[4px] text-[11.5px] font-medium bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
                     Limited
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[4px] text-[11.5px] font-semibold bg-[#FEF2F2] text-[#B91C1C] border border-[#FECACA]">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[4px] text-[11.5px] font-medium bg-[#FEF2F2] text-[#B91C1C] border border-[#FECACA]">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#EF4444]" />
                     Unavailable
                   </span>
                 );
 
               return (
-                <div key={p.id} className="px-6 py-4.5 flex items-center justify-between gap-4 hover:bg-[#F9FAFB] transition-colors">
+                <div key={p.id} className="px-6 py-4.5 flex items-center justify-between gap-4 hover:bg-neutral-50/70 transition-colors">
                   {/* Left: Name and Code */}
                   <div className="w-1/2 sm:w-2/5 min-w-0 space-y-1">
                     <Link
@@ -190,7 +190,7 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
                       {p.name}
                     </Link>
                     <div className="flex items-center gap-2">
-                      <span className="font-mono text-[11px] px-1.5 py-0.5 rounded-[3px] bg-[#171717]/05 text-[#171717] border border-[#171717]/10 font-medium">
+                      <span className="font-mono text-[12px] text-[#737373]">
                         {p.productCode}
                       </span>
                       {p.shortDescription && (
@@ -202,10 +202,8 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
                   </div>
 
                   {/* Center 1: Category */}
-                  <div className="hidden sm:block sm:w-1/4">
-                    <span className="px-2 py-0.5 rounded-[4px] bg-[#171717]/04 border border-[#171717]/08 text-[12px] font-medium text-[#171717]">
-                      {p.categoryName || 'General'}
-                    </span>
+                  <div className="hidden sm:block sm:w-1/4 text-[13px] text-[#525252]">
+                    {p.categoryName || 'General'}
                   </div>
 
                   {/* Center 2: Status */}
@@ -217,7 +215,7 @@ export function ProductsView({ initialProducts, categories }: ProductsViewProps)
                   <div className="w-1/4 sm:w-1/5 flex justify-end items-center gap-2">
                     <Link
                       href={`/products/${p.id}`}
-                      className="px-3 py-1.5 rounded-[4px] border border-[#171717]/15 bg-white hover:bg-[#F9FAFB] text-[12px] font-semibold text-[#171717] transition-colors shadow-xs hidden sm:inline-flex"
+                      className="px-3 py-1.5 rounded-[4px] border border-neutral-200 bg-white hover:bg-neutral-50 text-[12px] font-semibold text-[#171717] transition-colors shadow-xs hidden sm:inline-flex"
                     >
                       View Details
                     </Link>

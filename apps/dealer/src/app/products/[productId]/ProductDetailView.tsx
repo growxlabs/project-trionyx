@@ -15,14 +15,14 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
     switch (availability) {
       case 'AVAILABLE':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] text-[12px] font-semibold bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] text-[12px] font-medium bg-[#ECFDF5] text-[#065F46] border border-[#A7F3D0]">
             <span className="w-2 h-2 rounded-full bg-[#10B981]" />
             Available for Dispatch
           </span>
         );
       case 'LIMITED':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] text-[12px] font-semibold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] text-[12px] font-medium bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]">
             <span className="w-2 h-2 rounded-full bg-[#F59E0B]" />
             Limited Allocation
           </span>
@@ -30,7 +30,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
       case 'UNAVAILABLE':
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] text-[12px] font-semibold bg-[#FEF2F2] text-[#B91C1C] border border-[#FECACA]">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] text-[12px] font-medium bg-[#FEF2F2] text-[#B91C1C] border border-[#FECACA]">
             <span className="w-2 h-2 rounded-full bg-[#EF4444]" />
             Currently Unavailable
           </span>
@@ -57,7 +57,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
 
     if (isElectronics) {
       return (
-        <div className="p-5 rounded-[8px] border border-[#171717]/10 bg-white space-y-2 text-[13.5px]">
+        <div className="p-5 rounded-[8px] border border-neutral-200 bg-white space-y-2 text-[13.5px]">
           <p className="font-semibold text-[#171717] m-0">Professional Automotive Electronics Installation</p>
           <p className="text-[#737373] leading-relaxed m-0">
             Trionyx multimedia units and electronic accessories must be installed using the vehicle-specific wiring harness adapter and compatible dashboard fascia. Ensure the vehicle battery is safely disconnected before making any electrical connections, and verify chassis grounding to prevent electrical interference.
@@ -68,7 +68,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
 
     if (isFilm) {
       return (
-        <div className="p-5 rounded-[8px] border border-[#171717]/10 bg-white space-y-2 text-[13.5px]">
+        <div className="p-5 rounded-[8px] border border-neutral-200 bg-white space-y-2 text-[13.5px]">
           <p className="font-semibold text-[#171717] m-0">Certified Cleanroom Installation</p>
           <p className="text-[#737373] leading-relaxed m-0">
             Paint Protection Film and window films must be applied in a dedicated, dust-controlled installation bay. Vehicle panels must undergo extensive decontamination and IPA wipe-down. Use authorized slip solution and squeegee pressure to achieve optically clear adhesion without silvering.
@@ -79,7 +79,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
 
     if (isDamping) {
       return (
-        <div className="p-5 rounded-[8px] border border-[#171717]/10 bg-white space-y-2 text-[13.5px]">
+        <div className="p-5 rounded-[8px] border border-neutral-200 bg-white space-y-2 text-[13.5px]">
           <p className="font-semibold text-[#171717] m-0">Substrate Preparation & Rolling Fitment</p>
           <p className="text-[#737373] leading-relaxed m-0">
             Acoustic damping sheets require degreased, dry vehicle sheet metal. Roll with high-pressure polyurethane application rollers to eliminate air pockets and guarantee maximum acoustic dissipation.
@@ -90,7 +90,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
 
     // Default for coatings / chemicals
     return (
-      <div className="p-5 rounded-[8px] border border-[#171717]/10 bg-white space-y-2 text-[13.5px]">
+      <div className="p-5 rounded-[8px] border border-neutral-200 bg-white space-y-2 text-[13.5px]">
         <p className="font-semibold text-[#171717] m-0">Certified Studio Surface Application</p>
         <p className="text-[#737373] leading-relaxed m-0">
           Trionyx surface formulations must be applied by certified detailers in climate-controlled environments (20°C–25°C, humidity &lt;50%). Surfaces must be thoroughly decontaminated, multi-stage paint corrected, and wiped down with dedicated panel prep prior to application.
@@ -105,7 +105,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
       <div>
         <Link
           href="/products"
-          className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-[#737373] hover:text-[#171717] transition-colors"
+          className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-[#737373] hover:text-[#171717] transition-colors"
         >
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -115,13 +115,14 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
       </div>
 
       {/* 2. Product Header & Quick Action */}
-      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6 border-b border-[#171717]/10 pb-6">
+      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6 border-b border-neutral-200 pb-6">
         <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded-[4px] bg-[#171717]/05 border border-[#171717]/08 text-[11px] font-semibold uppercase tracking-wider text-[#171717]">
+          <div className="flex items-center gap-2 text-[12px] text-[#737373]">
+            <span className="font-semibold uppercase tracking-wider text-[#525252]">
               {product.categoryName || 'General Product'}
             </span>
-            <span className="font-mono text-[11px] px-2 py-0.5 rounded-[4px] bg-[#171717]/05 text-[#171717] border border-[#171717]/10 font-medium">
+            <span>·</span>
+            <span className="font-mono text-[#737373]">
               {product.productCode}
             </span>
           </div>
@@ -143,7 +144,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
             href={`/requests/new?productId=${product.id}&type=AVAILABILITY&subject=Stock+Check:+${encodeURIComponent(
               product.name
             )}`}
-            className="inline-flex items-center justify-center gap-1.5 px-4.5 py-2.5 rounded-[4px] bg-[#F26522] hover:bg-[#d9531e] text-white text-[13px] font-semibold transition-colors shadow-xs"
+            className="inline-flex items-center justify-center gap-1.5 px-4.5 py-2 rounded-[4px] bg-[#F26522] hover:bg-[#d9531e] text-white text-[13px] font-semibold transition-colors shadow-xs"
           >
             <span>Request Stock Allocation</span>
             <span>→</span>
@@ -153,7 +154,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
 
       {/* 3. Operational KPI Metric Cards (Portal Style) */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white border border-[#171717]/10 rounded-[8px] p-4.5 shadow-xs">
+        <div className="bg-white border border-neutral-200 rounded-[8px] p-4.5 shadow-xs">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-[#737373] block mb-1">
             Dispatch Status
           </span>
@@ -167,7 +168,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
           <span className="text-[11.5px] text-[#737373] mt-0.5 block">Regional inventory status</span>
         </div>
 
-        <div className="bg-white border border-[#171717]/10 rounded-[8px] p-4.5 shadow-xs">
+        <div className="bg-white border border-neutral-200 rounded-[8px] p-4.5 shadow-xs">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-[#737373] block mb-1">
             Category Family
           </span>
@@ -177,7 +178,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
           <span className="text-[11.5px] text-[#737373] mt-0.5 block">Official product family</span>
         </div>
 
-        <div className="bg-white border border-[#171717]/10 rounded-[8px] p-4.5 shadow-xs">
+        <div className="bg-white border border-neutral-200 rounded-[8px] p-4.5 shadow-xs">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-[#737373] block mb-1">
             Technical Specs
           </span>
@@ -187,7 +188,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
           <span className="text-[11.5px] text-[#737373] mt-0.5 block">Verified characteristics</span>
         </div>
 
-        <div className="bg-white border border-[#171717]/10 rounded-[8px] p-4.5 shadow-xs">
+        <div className="bg-white border border-neutral-200 rounded-[8px] p-4.5 shadow-xs">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-[#737373] block mb-1">
             Media & Documentation
           </span>
@@ -199,7 +200,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
       </div>
 
       {/* 4. Portal-Style Navigation Tabs */}
-      <div className="border-b border-[#171717]/10 flex items-center gap-2 overflow-x-auto">
+      <div className="border-b border-neutral-200 flex items-center gap-2 overflow-x-auto">
         {(
           [
             { key: 'overview', label: 'Overview' },
@@ -236,7 +237,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
       {/* TAB 1: OVERVIEW */}
       {activeTab === 'overview' && (
         <div className="space-y-6">
-          <section className="bg-white p-6 rounded-[8px] border border-[#171717]/10 shadow-xs space-y-4">
+          <section className="bg-white p-6 rounded-[8px] border border-neutral-200 shadow-xs space-y-4">
             <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#737373] m-0">
               Product Overview
             </h2>
@@ -259,8 +260,8 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
 
       {/* TAB 2: SPECIFICATIONS */}
       {activeTab === 'specs' && (
-        <section className="bg-white rounded-[8px] border border-[#171717]/10 shadow-xs overflow-hidden">
-          <div className="px-6 py-4 bg-[#F9FAFB] border-b border-[#171717]/10 flex items-center justify-between">
+        <section className="bg-white rounded-[8px] border border-neutral-200 shadow-xs overflow-hidden">
+          <div className="px-6 py-4 bg-neutral-50 border-b border-neutral-200 flex items-center justify-between">
             <h2 className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#171717] m-0">
               Technical Specifications & Properties
             </h2>
@@ -270,9 +271,9 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
           </div>
 
           {product.specifications && product.specifications.length > 0 ? (
-            <div className="divide-y divide-[#171717]/08">
+            <div className="divide-y divide-neutral-100">
               {product.specifications.map((spec) => (
-                <div key={spec.id} className="grid grid-cols-1 sm:grid-cols-3 px-6 py-3.5 text-[13px] hover:bg-[#F9FAFB]/50 transition-colors">
+                <div key={spec.id} className="grid grid-cols-1 sm:grid-cols-3 px-6 py-3.5 text-[13px] hover:bg-neutral-50/70 transition-colors">
                   <span className="font-medium text-[#737373]">{cleanSpecLabel(spec.label)}</span>
                   <span className="sm:col-span-2 font-mono text-[#171717] mt-1 sm:mt-0 font-medium">
                     {spec.value}
@@ -292,7 +293,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
       {activeTab === 'media' && (
         <div className="space-y-8">
           {/* Images */}
-          <section className="bg-white p-6 rounded-[8px] border border-[#171717]/10 shadow-xs space-y-4">
+          <section className="bg-white p-6 rounded-[8px] border border-neutral-200 shadow-xs space-y-4">
             <h2 className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#171717] m-0">
               Approved Assets & Product Imagery
             </h2>
@@ -302,9 +303,9 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
                 {mediaImages.map((img) => (
                   <div
                     key={img.id}
-                    className="rounded-[6px] border border-[#171717]/10 bg-white p-2.5 text-center text-[12px] hover:border-[#171717]/30 transition-colors shadow-xs"
+                    className="rounded-[6px] border border-neutral-200 bg-white p-2.5 text-center text-[12px] hover:border-neutral-300 transition-colors shadow-xs"
                   >
-                    <div className="h-32 flex items-center justify-center bg-[#F9FAFB] rounded border border-[#171717]/05 mb-2 overflow-hidden">
+                    <div className="h-32 flex items-center justify-center bg-neutral-50 rounded border border-neutral-100 mb-2 overflow-hidden">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={img.storagePath}
@@ -324,7 +325,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
           </section>
 
           {/* Technical Documents */}
-          <section className="bg-white p-6 rounded-[8px] border border-[#171717]/10 shadow-xs space-y-4">
+          <section className="bg-white p-6 rounded-[8px] border border-neutral-200 shadow-xs space-y-4">
             <h2 className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#171717] m-0">
               Technical Documentation & Collateral
             </h2>
@@ -334,7 +335,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
                 {documents.map((doc) => (
                   <div
                     key={doc.id}
-                    className="p-4 rounded-[6px] border border-[#171717]/10 bg-white flex items-center justify-between gap-3 text-[13px] shadow-xs"
+                    className="p-4 rounded-[6px] border border-neutral-200 bg-white flex items-center justify-between gap-3 text-[13px] shadow-xs"
                   >
                     <div className="min-w-0">
                       <p className="font-semibold text-[#171717] truncate m-0">{doc.fileName}</p>
@@ -362,7 +363,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
 
       {/* TAB 4: INQUIRY & DISPATCH */}
       {activeTab === 'inquiry' && (
-        <section className="bg-white p-6 rounded-[8px] border border-[#171717]/10 shadow-xs space-y-5">
+        <section className="bg-white p-6 rounded-[8px] border border-neutral-200 shadow-xs space-y-5">
           <div>
             <h2 className="text-[15px] font-semibold text-[#171717] m-0">
               Stock Replenishment & Inquiries
@@ -372,7 +373,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
             </p>
           </div>
 
-          <div className="p-4.5 rounded-[6px] bg-[#F9FAFB] border border-[#171717]/10 space-y-3">
+          <div className="p-4.5 rounded-[6px] bg-neutral-50 border border-neutral-200 space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-[12.5px] font-medium text-[#737373]">Current Stock Availability:</span>
               <div>{getAvailabilityBadge(product.availability)}</div>
@@ -402,7 +403,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
       )}
 
       {/* 6. Consistent Bottom Banner */}
-      <div className="rounded-[8px] border border-[#171717]/10 bg-white p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="rounded-[8px] border border-neutral-200 bg-white p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h3 className="text-[15px] font-semibold text-[#171717] m-0">
             Need allocation or sample stock for this product?
@@ -415,7 +416,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
           href={`/requests/new?productId=${product.id}&type=AVAILABILITY&subject=Stock+Check:+${encodeURIComponent(
             product.name
           )}`}
-          className="inline-flex items-center justify-center gap-1.5 px-4.5 py-2.5 rounded-[4px] bg-[#F26522] hover:bg-[#d9531e] text-white text-[13px] font-semibold transition-colors shrink-0 shadow-xs"
+          className="inline-flex items-center justify-center gap-1.5 px-4.5 py-2 rounded-[4px] bg-[#F26522] hover:bg-[#d9531e] text-white text-[13px] font-semibold transition-colors shrink-0 shadow-xs"
         >
           <span>Submit Allocation Request</span>
           <span>→</span>
