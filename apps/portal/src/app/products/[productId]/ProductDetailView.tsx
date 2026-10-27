@@ -371,7 +371,7 @@ export function ProductDetailView({
             <>
               <Link
                 href={`/products/${product.productCode || product.id}/edit`}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[6px] bg-[var(--text-primary)] hover:bg-[var(--surface-subtle)] text-[var(--background)] text-[13px] font-medium transition-colors shadow-sm"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[6px] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-foreground)] text-[13px] font-medium transition-colors shadow-sm"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -581,7 +581,7 @@ export function ProductDetailView({
             </div>
             <Link
               href="/inventory"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] bg-[var(--status-success)] hover:bg-[var(--status-success)] text-[var(--background)] text-[12.5px] font-semibold transition-colors cursor-pointer self-start sm:self-auto"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-foreground)] text-[12.5px] font-semibold transition-colors cursor-pointer self-start sm:self-auto shadow-sm"
             >
               + Receive Serials
             </Link>
@@ -739,7 +739,7 @@ export function ProductDetailView({
                 <button
                   type="button"
                   onClick={() => setShowUploadModal(true)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] bg-[var(--text-primary)] hover:bg-[var(--surface-subtle)] text-[var(--background)] text-[12.5px] font-medium transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-foreground)] text-[12.5px] font-medium transition-colors cursor-pointer shadow-sm"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -917,7 +917,7 @@ export function ProductDetailView({
                     setPolicyError(null);
                     setShowPolicyModal(true);
                   }}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[6px] bg-[var(--text-primary)] hover:bg-[var(--surface-subtle)] text-[var(--background)] text-[13px] font-medium transition-colors shadow-sm self-start sm:self-auto cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[6px] bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-foreground)] text-[13px] font-medium transition-colors shadow-sm self-start sm:self-auto cursor-pointer"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -1129,7 +1129,7 @@ export function ProductDetailView({
             <button
               type="submit"
               disabled={isAdjusting || !adjustReason.trim()}
-              className="px-4 py-2 rounded-[6px] bg-[var(--text-primary)] hover:bg-[var(--surface-subtle)] disabled:opacity-50 text-[var(--background)] text-[13px] font-semibold transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-[6px] bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 text-[var(--accent-foreground)] text-[13px] font-semibold transition-colors cursor-pointer shadow-sm"
             >
               {isAdjusting ? 'Saving...' : 'Update Status'}
             </button>
@@ -1164,7 +1164,7 @@ export function ProductDetailView({
                   setUploadFile(e.target.files[0]);
                 }
               }}
-              className="w-full text-[13px] text-[var(--text-primary)] file:mr-4 file:py-2 file:px-4 file:rounded-[6px] file:border-0 file:text-[13px] file:font-semibold file:bg-[var(--text-primary)] file:text-[var(--background)] hover:file:bg-[var(--surface-subtle)]"
+              className="w-full text-[13px] text-[var(--text-primary)] file:mr-4 file:py-2 file:px-4 file:rounded-[6px] file:border-0 file:text-[13px] file:font-semibold file:bg-[var(--accent)] file:text-[var(--accent-foreground)] hover:file:bg-[var(--accent-hover)] cursor-pointer"
             />
             <p className="text-[11.5px] text-[var(--text-muted)] mt-1 m-0">
               Allowed: JPG, PNG, WebP, SVG (up to 5MB) or PDF, CSV (up to 10MB).
